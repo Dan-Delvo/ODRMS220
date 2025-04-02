@@ -1,0 +1,30 @@
+{
+  "resources/css/app.css": {
+    "file": "assets/app-DQq2N8VV.css",
+    "src": "resources/css/app.css",
+    "isEntry": true
+  },
+  "resources/js/app.js": {
+    "file": "assets/app-DCF3fk7r.js",
+    "name": "app",
+    "src": "resources/js/app.js",
+    "isEntry": true
+  },
+  "resources/js/datatables-simple-demo.js": {
+    "file": "assets/datatables-simple-demo-IsSzwyye.js",
+    "name": "datatables-simple-demo",
+    "src": "resources/js/datatables-simple-demo.js",
+    "isEntry": true
+  },
+  "resources/js/scripts.js": {
+    "file": "assets/scripts-Db-6I4BR.js",
+    "name": "scripts",
+    "src": "resources/js/scripts.js",
+    "isEntry": true
+  },
+  "resources/sass/app.scss": {
+    "file": "assets/app-BaVMVknW.css",
+    "src": "resources/sass/app.scss",
+    "isEntry": true
+  }
+}
