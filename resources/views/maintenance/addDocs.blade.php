@@ -4,7 +4,7 @@
 
 <div class="row">
     <div class="col-md-6">
-        <h1 class="mt-4">Add Document Type</h1>
+        <h1 class="mt-4">Add Document Types</h1>
         <ol class="breadcrumb mb-4">
             <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">Dashboard</a></li>
             <li class="breadcrumb-item"><a href="{{ route('doc') }}">Document Types</a></li>
