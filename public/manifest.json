@@ -1,0 +1,17 @@
+{
+    "name": "Online Document Request System",
+    "short_name": "ODRMS",
+    "start_url": "/",
+    "background_color": "#6777ef",
+    "description": "Online Document Request",
+    "display": "fullscreen",
+    "theme_color": "#6777ef",
+    "icons": [
+        {
+            "src": "/images/UBLOGO.png",
+            "sizes": "512x512",
+            "type": "image/png",
+            "purpose": "any maskable"
+        }
+    ]
+}
