@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Login</title>
 
     <!-- PWA -->
     <meta name="theme-color" content="#6777ef">
@@ -16,16 +16,35 @@
     <link href="https://cdn.jsdelivr.net/npm/simple-datatables@7.1.2/dist/style.min.css" rel="stylesheet" />
     <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
     @vite(['resources/css/app.css', 'resources/sass/app.scss', 'resources/js/scripts.js', 'resources/js/datatables-simple-demo.js'])
+
+    <style>
+        html, body {
+            height: 100%;
+            overflow: hidden;
+        }
+        body {
+            margin: 0;
+            background-color: #23272E;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        main {
+            width: 100%;
+            height: 100%;
+        }
+    </style>
 </head>
 
-<body class="bg-secondary-subtle">
-    <div id="layoutAuthentication">
-        <div id="layoutAuthentication_content">
-            <main class="pb-5"> <!-- Added padding-bottom here -->
+<body>
+    <div id="layoutAuthentication" class="w-100 h-100">
+        <div id="layoutAuthentication_content" class="w-100 h-100">
+            <main>
                 @yield('content')
             </main>
         </div>
-        @include('layout.partials.normalfooter')
+        {{-- Optional footer if needed --}}
+        {{-- @include('layout.partials.normalfooter') --}}
     </div>
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -40,7 +59,6 @@
                 });
         }
     </script>
-
 </body>
 
 </html>
