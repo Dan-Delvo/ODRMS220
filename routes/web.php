@@ -20,6 +20,7 @@ use App\Models\DocumentRequestModel;
 use Illuminate\Routing\RouteGroup;
 use SebastianBergmann\CodeCoverage\Report\Html\Dashboard;
 use App\Http\Controllers\FcmController;
+use App\Http\Controllers\forgotpassword;
 use Illuminate\Support\Facades\Http;
 
 Route::get('/', [AuthController::class, 'login'])->name('login'); // Para sa login
@@ -189,3 +190,12 @@ Route::get('completed', function () {
 // Route::get('ongoing', function () {
 //     return view('common.ongoing');
 // });
+
+
+
+Route::get('/forgotpassword', [forgotpassword::class, 'index'])->name('forgot');
+Route::post('/forgotpassword', [forgotpassword::class, 'forgotpost'])->name('forgot.submit');
+Route::get('/verifyotp', [forgotpassword::class, 'showVerifyOTP'])->name('verifyotp');
+Route::post('/verifyotp', [forgotpassword::class, 'verifyOTP'])->name('verifyotp.submit');
+Route::get('/newpassword', [forgotpassword::class, 'showNewPassword'])->name('newpassword');
+Route::post('/newpassword', [forgotpassword::class, 'newpassword'])->name('newpassword.submit');
