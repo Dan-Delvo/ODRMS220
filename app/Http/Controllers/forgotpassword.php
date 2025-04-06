@@ -19,6 +19,7 @@ class forgotpassword extends Controller
 
     public function forgotpost (Request $request){
         $email = DB::table('acc_users')->where('email_address', $request->variable)->first();
+  
 
         if ($email) {
             $otpCode = rand(100000, 999999);
@@ -31,6 +32,7 @@ class forgotpassword extends Controller
                     ]);
 
             Mail::to($request->variable)->send(new ResetPasswordMail($otpCode));
+            session(['password_reset_step' => 'otp']);
             return redirect()->route('verifyotp')->with('success', 'OTP sent sucessfully');
         } else {
             return redirect()->back()->with('error', 'Invalid email address!');
@@ -43,6 +45,7 @@ class forgotpassword extends Controller
 
     public function verifyOTP (Request $request) {
             Log::info("Nakapasok");
+
             $otp = "{$request->first}{$request->second}{$request->third}{$request->fourth}{$request->fifth}{$request->sixth}";
             $email = session('email');
             $otpCode = session('otp');
@@ -56,6 +59,8 @@ class forgotpassword extends Controller
             if ($otp == $otpCode) {
                 session()->forget(['otp', 'expiry']);
                 session(['otp_verified' => true]);
+
+                session(['password_reset_step' => 'newpassword']);
                 return redirect()->route('newpassword')->with('sucess', 'OTP sent sucessfully');
             }
 
@@ -68,6 +73,7 @@ class forgotpassword extends Controller
     }
 
     public function newpassword (Request $request) {
+
         $password = Hash::make($request->password);
         $email = session('email');
         DB::table('acc_users')->where('email_address', $email)->update([
@@ -75,6 +81,7 @@ class forgotpassword extends Controller
         ]);
         session(['password_change' => true]);
         session()->forget(['email_entered', 'otp_sent', 'otp_verified']);
-        return redirect()->route('login');
+        session()->forget('password_reset_step');
+        return redirect()->route('login')->with('status', 'Password updated successfully!');
     }
 }

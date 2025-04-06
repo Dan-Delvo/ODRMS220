@@ -4,7 +4,7 @@
             <!-- Dark Header -->
             <div class="card-header bg-dark text-white text-center py-4">
                 <h3 class="my-0 fw-bold">Create Account</h3>
-                <p class="text-muted">Fill in the details below to create your account</p>
+                <p class="text-white-50">Fill in the details below to create your account</p>
             </div>
             <div class="card-body">
                 @if($errors->any())

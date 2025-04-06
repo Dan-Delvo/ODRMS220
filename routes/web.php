@@ -110,7 +110,17 @@ Route::group(['middleware' => 'useradmin'], function(){
 
 });
 
+route::group(['middleware' => 'forgotpassword'],function(){
+    Route::get('/forgotpassword', [forgotpassword::class, 'index'])->name('forgot');
+    Route::post('/forgotpassword', [forgotpassword::class, 'forgotpost'])->name('forgot.submit');
+    Route::get('/verifyotp', [forgotpassword::class, 'showVerifyOTP'])->name('verifyotp');
+    Route::post('/verifyotp', [forgotpassword::class, 'verifyOTP'])->name('verifyotp.submit');
+    Route::get('/newpassword', [forgotpassword::class, 'showNewPassword'])->name('newpassword');
+    Route::post('/newpassword', [forgotpassword::class, 'newpassword'])->name('newpassword.submit');
+});
+
 Route::group(['middleware' => 'userstudent'], function(){
+
     Route::get('stpage', [StudentPageController::class, 'mainpage'])->name('st.page');
     // Display the document request form
     Route::get('/student-request', [StudentRequestController::class, 'create'])->name('studentrequest.create');
@@ -191,11 +201,3 @@ Route::get('completed', function () {
 //     return view('common.ongoing');
 // });
 
-
-
-Route::get('/forgotpassword', [forgotpassword::class, 'index'])->name('forgot');
-Route::post('/forgotpassword', [forgotpassword::class, 'forgotpost'])->name('forgot.submit');
-Route::get('/verifyotp', [forgotpassword::class, 'showVerifyOTP'])->name('verifyotp');
-Route::post('/verifyotp', [forgotpassword::class, 'verifyOTP'])->name('verifyotp.submit');
-Route::get('/newpassword', [forgotpassword::class, 'showNewPassword'])->name('newpassword');
-Route::post('/newpassword', [forgotpassword::class, 'newpassword'])->name('newpassword.submit');

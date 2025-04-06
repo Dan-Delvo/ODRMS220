@@ -6,13 +6,13 @@
                                         <form action="{{ route('forgot.submit') }}" method="POST">
                                         @csrf
                                         <div class="small mb-3 text-light">Enter your email address and we will send you a link to reset your password.</div>
-                                        <form>
+
                                             <div class="form-floating mb-3">
                                                 <input class="form-control" id="inputEmail" type="email" placeholder="name@example.com" name = "variable" style="color: black"/>
                                                 <label for="inputEmail">Email address</label>
                                             </div>
                                             <div class="container d-flex justify-content-end gap-2" >
-                                                <a href="{{ route('login') }}" class="btn btn-outline-light">Cancel</a>
+                                                <a href="{{ route('login') }}" class="btn btn-outline-light">Go Back</a>
                                                 <button type="submit" class="btn btn-outline-warning">Search</button>
                                             </div>
                                         </form>
