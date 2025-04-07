@@ -30,7 +30,7 @@
                     </div>
                 </div>
                 <div class="card-footer d-flex align-items-center justify-content-between" style="background-color: #f8f9fa; border-top: 1px solid #6c757d;">
-                    <a class="small text-dark stretched-link" href="#">View Details</a>
+                    <a class="small text-dark stretched-link" href="{{ route('pending.index') }}">View Details</a>
                     <div class="small text-dark"><i class="fas fa-angle-right"></i></div>
                 </div>
             </div>
@@ -49,7 +49,7 @@
                     </div>
                 </div>
                 <div class="card-footer d-flex align-items-center justify-content-between" style="background-color: #f8f9fa; border-top: 1px solid #6c757d;">
-                    <a class="small text-dark stretched-link" href="#">View Details</a>
+                    <a class="small text-dark stretched-link" href="{{ route('ongoing.index') }}">View Details</a>
                     <div class="small text-dark"><i class="fas fa-angle-right"></i></div>
                 </div>
             </div>
@@ -68,7 +68,7 @@
                     </div>
                 </div>
                 <div class="card-footer d-flex align-items-center justify-content-between" style="background-color: #f8f9fa; border-top: 1px solid #6c757d;">
-                    <a class="small text-dark stretched-link" href="#">View Details</a>
+                    <a class="small text-dark stretched-link" href="{{ route('tables.index') }}">View Details</a>
                     <div class="small text-dark"><i class="fas fa-angle-right"></i></div>
                 </div>
             </div>

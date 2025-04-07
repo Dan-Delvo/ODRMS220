@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
+use App\Models\PermissionRoleModel;
 
 class AuthController extends Controller
 {
@@ -25,9 +26,13 @@ class AuthController extends Controller
                 return redirect('stpage');
             }
 
-            if (Auth::user()->roles->id > 1 ) {
-
-                return redirect('dashboard');
+            $PermissionDashboard = PermissionRoleModel::getPermission('dashboard', Auth::user()->role_id);
+            if(empty($PermissionDashboard))
+            {
+                return redirect ('/tables');
+            }
+            else{
+                return redirect('/dashboard');
             }
         }
 
@@ -48,7 +53,14 @@ class AuthController extends Controller
 
             // Redirect based on the user's role
             if ($user->roles->id > 1) {
-                return redirect('/dashboard');
+                $PermissionDashboard = PermissionRoleModel::getPermission('dashboard', Auth::user()->role_id);
+                if(empty($PermissionDashboard))
+                {
+                    return redirect ('/tables');
+                }
+                else{
+                    return redirect('/dashboard');
+                }
 
             } elseif ($user->roles->name === 'student') {
                 return redirect('/stpage');

@@ -114,7 +114,7 @@ class OngoingController extends Controller
         $studentId = $documentRequestModel->student_information_id;
         $student = StudentInformationModel::find($studentId);
 
-        return redirect('/pending' )->with('Status', 'Updated Succesfully');
+        return redirect('/ongoing' )->with('Status', 'Updated Succesfully');
 
 
     }
@@ -126,7 +126,7 @@ class OngoingController extends Controller
             'claimer_id' => 'required',
             'document_id' => 'required',
             'request_schl_entity' => 'required|string|max:255',
-            'requested_sf10' => 'required|string|max:255',
+            'request_mode' => 'required|string|max:255',
             'release_mode' => 'required|string|max:255',
             'remarks' => 'nullable|string|max:500',
             'status' => 'required|string',

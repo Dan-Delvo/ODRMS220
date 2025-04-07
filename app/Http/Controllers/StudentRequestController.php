@@ -29,7 +29,8 @@ class StudentRequestController extends Controller
 
     public function create(){
         $DocType = DocumentsModel::all();
-        return view('common.studentrequest', compact('DocType'));
+        $ReleaseMode = ['Pickup', 'Online'];
+        return view('common.studentrequest', compact('DocType', 'ReleaseMode'));
     }
 
     public function store(Request $request)

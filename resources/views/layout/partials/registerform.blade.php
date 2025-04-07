@@ -38,7 +38,7 @@
                     <!-- Middle Name -->
                     <div class="form-floating mb-3">
                         <input class="form-control rounded-pill" id="inputMiddleName" type="text" name="MiddleName" placeholder="Enter your middle name" />
-                        <label for="inputMiddleName">Middle Name</label>
+                        <label for="inputMiddleName">Middle Name (Optional)</label>
                     </div>
 
                     <!-- Suffix -->
