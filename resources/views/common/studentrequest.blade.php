@@ -40,12 +40,12 @@
                     </div>
 
                     <div class="form-floating mb-3">
-                        <select class="form-select rounded-pill" id="inputDocumentId" name="document_id">
+                        <select class="form-select rounded-pill" id="ReleaseMode" name="release_mode">
                             @foreach($ReleaseMode as $RM)
                             <option value="{{$RM}}">{{$RM}}</option>
                             @endforeach
                         </select>
-                        <label for="inputDocumentId">Release Mode</label>
+                        <label for="ReleaseMode">Release Mode</label>
                     </div>
 
                     <h5 class="fw-bold">Claimer Information</h5>

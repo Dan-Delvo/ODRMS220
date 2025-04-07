@@ -35,6 +35,7 @@ class StudentRequestController extends Controller
 
     public function store(Request $request)
     {
+
         // Validate the request data
         $validatedData = $request->validate([
             'Fname' => 'required|string|max:255',
@@ -42,8 +43,10 @@ class StudentRequestController extends Controller
             'contact_no' => 'required|string|max:15',
             'document_id' => 'required|integer',
             'request_schl_entity' => 'required|string|max:255',
-            'release_mode' => 'required|string|max:255',
+            'release_mode' => 'required|max:255',
         ]);
+
+
 
         // Insert a new Claimer
         $claimer = ClaimerModel::create([
