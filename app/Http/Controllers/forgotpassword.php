@@ -33,7 +33,7 @@ class forgotpassword extends Controller
 
             Mail::to($request->variable)->send(new ResetPasswordMail($otpCode));
             session(['password_reset_step' => 'otp']);
-            return redirect()->route('verifyotp')->with('success', 'OTP sent sucessfully');
+            return view('redirect/redirectVerifyOtp')->with('status', 'OTP Sent successfully!');
         } else {
             return redirect()->back()->with('error', 'Invalid email address!');
         }
@@ -61,7 +61,7 @@ class forgotpassword extends Controller
                 session(['otp_verified' => true]);
 
                 session(['password_reset_step' => 'newpassword']);
-                return redirect()->route('newpassword')->with('sucess', 'OTP sent sucessfully');
+                return view('redirect/redirectNewPassword')->with('status', 'OTP Verified successfully!');
             }
 
             session()->flash('error', 'Invalid or expired OTP');
@@ -82,6 +82,6 @@ class forgotpassword extends Controller
         session(['password_change' => true]);
         session()->forget(['email_entered', 'otp_sent', 'otp_verified']);
         session()->forget('password_reset_step');
-        return redirect()->route('login')->with('status', 'Password updated successfully!');
+        return view('redirect/redirectLogin')->with('status', 'Password updated successfully!');
     }
 }

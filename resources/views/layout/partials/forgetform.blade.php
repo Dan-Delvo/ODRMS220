@@ -12,7 +12,7 @@
                                                 <label for="inputEmail">Email address</label>
                                             </div>
                                             <div class="container d-flex justify-content-end gap-2" >
-                                                <a href="{{ route('login') }}" class="btn btn-outline-light">Go Back</a>
+                                                <button type="button" class="btn btn-outline-light" onclick="window.location.replace('{{ route('login') }}')">Go Back</button>
                                                 <button type="submit" class="btn btn-outline-warning">Search</button>
                                             </div>
                                         </form>

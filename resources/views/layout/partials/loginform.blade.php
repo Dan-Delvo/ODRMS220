@@ -26,7 +26,7 @@
                                     <label class="form-check-label text-white" for="exampleCheck1">Remember Password</label>
                                 </div>
                                 <div class="d-flex align-items-center justify-content-between mt-4 mb-0">
-                                    <a class="small text-white-50" href="{{ route('forgot') }}">Forgot Password?</a>
+                                    <a href="javascript:void(0);" class="small text-white-50" onclick="window.location.replace('{{ route('forgot') }}')">Forgot Password?</a>
                                     <button type="submit" class="btn btn-outline-warning">Log In</button>
                                 </div>
                                 <!-- Hidden input for FCM token -->
