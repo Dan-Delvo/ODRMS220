@@ -62,7 +62,7 @@ class DocumentRequestModel extends Model
                 'request_date' => Carbon::now()->toDateString(),
 
                 'request_schl_entity' => $data['request_schl_entity'],
-                'request_mode' => $data['requested_sf10'],
+                'request_mode' => $data['request_mode'],
                 'release_mode' => $data['release_mode'],
 
                 'remarks' => $data['remarks'],

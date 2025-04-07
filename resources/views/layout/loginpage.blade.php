@@ -18,26 +18,11 @@
     <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
     @vite(['resources/css/app.css', 'resources/sass/app.scss', 'resources/js/scripts.js', 'resources/js/datatables-simple-demo.js'])
 
-    <style>
-        html, body {
-            height: 100%;
-            overflow: hidden;
-        }
-        body {
-            margin: 0;
-            background-color: #23272E;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        main {
-            width: 100%;
-            height: 100%;
-        }
-    </style>
+
 </head>
 
 <body>
+
     <div id="layoutAuthentication" class="w-100 h-100">
         <div id="layoutAuthentication_content" class="w-100 h-100">
             <main>

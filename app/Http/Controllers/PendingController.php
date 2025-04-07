@@ -123,6 +123,7 @@ class PendingController extends Controller
      */
     public function update(Request $request, DocumentRequestModel $documentRequestModel)
     {
+
         $validated = $this->validateDocumentRequest($request);
         DocumentRequestModel::updateOrCreateRequest($validated);
 
@@ -141,7 +142,7 @@ class PendingController extends Controller
             'claimer_id' => 'required',
             'document_id' => 'required',
             'request_schl_entity' => 'required|string|max:255',
-            'requested_sf10' => 'required|string|max:255',
+            'request_mode' => 'required|string|max:255',
             'release_mode' => 'required|string|max:255',
             'remarks' => 'nullable|string|max:500',
             'status' => 'required|string',

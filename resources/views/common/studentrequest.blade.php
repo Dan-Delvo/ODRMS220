@@ -40,8 +40,12 @@
                     </div>
 
                     <div class="form-floating mb-3">
-                        <input class="form-control rounded-pill" id="inputReleaseMode" type="text" name="release_mode" placeholder="Enter Release Mode" />
-                        <label for="inputReleaseMode">Release Mode</label>
+                        <select class="form-select rounded-pill" id="inputDocumentId" name="document_id">
+                            @foreach($ReleaseMode as $RM)
+                            <option value="{{$RM}}">{{$RM}}</option>
+                            @endforeach
+                        </select>
+                        <label for="inputDocumentId">Release Mode</label>
                     </div>
 
                     <h5 class="fw-bold">Claimer Information</h5>
