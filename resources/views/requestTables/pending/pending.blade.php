@@ -4,11 +4,14 @@
 
 <div class="row">
     <div class="col-md-6">
-        <h1 class="mt-4"><span class="badge text-bg-warning">Pending Requests</span></h1>
+        <h1 class="mt-4"><span class="badge text-bg-warning" style="font-size: 2rem;">Pending Requests</span></h1>
         <ol class="breadcrumb mb-4">
-            <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">Dashboard</a></li>
+            <li class="breadcrumb-item "><a href="{{ route('dashboard') }}" class="text-dark">Dashboard</a></li>
             <li class="breadcrumb-item active">Pending Requests</li>
         </ol>
+    </div>
+    <div class="col-md-6 text-end">
+        <h1 class="mt-4 text-dark"><span class="badge" style="background-color:#1f2937; font-size: 2rem;">Total Pending: {{ $totalCount }}</span></h1>
     </div>
 </div>
 
@@ -28,15 +31,14 @@
         @endif
 
         <div class="card shadow-lg border-0 rounded-lg mt-3">
-            <div class="card-header bg-dark text-white d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center">
-                <h5 class="mb-2 mb-md-0">Ongoing Document Requests</h5>
-                <span class="badge bg-warning fs-6 text-black">Total Pending: {{ $totalCount }}</span>
+            <div class="card-header text-white d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center" style="background-color: #1f2937;">
+                <h5 class="mb-2 mb-md-0">Pending Document Requests</h5>
             </div>
 
             <div class="card-body bg-light">
                 <div class="table-responsive">
                     <table class="table table-striped table-bordered align-middle">
-                        <thead class="table-dark">
+                        <thead class="table-dark" >
                             <tr>
                                 <th>ID</th>
                                 <th>Claimer</th>

@@ -4,9 +4,9 @@
 
 <div class="row mb-3">
     <div class="col-md-12">
-        <h1 class="mt-4">Ongoing Requests</h1>
+        <h1 class="mt-4"><span class="badge text-bg-warning">Ongoing Requests</span></h1>
         <ol class="breadcrumb mb-4">
-            <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">Dashboard</a></li>
+            <li class="breadcrumb-item"><a href="{{ route('dashboard') }}" class="text-dark">Dashboard</a></li>
             <li class="breadcrumb-item active">Edit Ongoing Request</li>
         </ol>
     </div>
@@ -14,10 +14,15 @@
 
 <div class="row">
     <div class="col-md-12">
-        <div class="card shadow-sm border-0">
-            <div class="card-header bg-dark text-white d-flex justify-content-between align-items-center">
-                <h4 class="mb-0">Edit Ongoing Request</h4>
-                <a href="{{ url('ongoing') }}" class="btn btn-danger btn-sm">Back</a>
+        <div class="card shadow border-0 rounded-lg">
+
+            <div class="card-header text-white d-flex align-items-center justify-content-between" style="background-color: #1f2937; height: 70px;">
+                <h4 class="mb-0">
+                    Edit Ongoing Request
+                </h4>
+                <a href="{{ url('ongoing') }}" class="btn btn-warning text-black fw-semibold" style="box-shadow: 0 4px 10px rgba(255, 193, 7, 0.5);">
+                    Back
+                </a>
             </div>
 
             <div class="card-body bg-light">
@@ -90,7 +95,7 @@
                     </div>
 
                     <div class="text-end">
-                        <button type="submit" class="btn btn-primary">Save Changes</button>
+                        <button type="submit" class="btn btn-warning text-black fw-semibold" style="box-shadow: 0 4px 10px rgba(255, 193, 7, 0.5);">Save Changes</button>
                     </div>
 
                 </form>

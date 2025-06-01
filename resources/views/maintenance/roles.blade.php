@@ -4,14 +4,16 @@
 
 <div class="row mb-4">
     <div class="col-md-6">
-        <h1 class="mt-4 text-dark">Roles</h1>
+        <h1 class="mt-4 text-dark">
+            <span class="badge text-bg-warning" style="font-size: 2rem;">Roles</span>
+        </h1>
         <ol class="breadcrumb mb-4">
-            <li class="breadcrumb-item"><a href="#" class="text-dark">Dashboard</a></li>
+            <li class="breadcrumb-item"><a href="{{ route('dashboard') }}" class="text-dark">Dashboard</a></li>
             <li class="breadcrumb-item active text-dark">Roles List</li>
         </ol>
     </div>
     <div class="col-md-6 text-end">
-        <h1 class="mt-4 text-dark">Roles Total: {{ $roles->count() }}</h1>
+        <h1 class="mt-4 text-dark"><span class="badge" style="background-color:#1f2937; font-size: 2rem;">Roles Total: {{ $roles->count() }}</span></h1>
     </div>
 </div>
 
@@ -36,10 +38,13 @@
 <div class="row">
     <div class="col-md-12">
         <div class="card shadow-lg border-0 bg-white text-dark">
-            <div class="card-header bg-black text-white">
-                <h4>Roles
-                    <a href="{{ route('role.add') }}" class="btn btn-light float-end text-dark">Add Role</a>
+            <div class="card-header text-white d-flex align-items-center justify-content-between" style="background-color: #1f2937; height: 60px;">
+                <h4 class="mb-0">
+                    Roles
                 </h4>
+                <a href="{{ route('role.add') }}" class="btn btn-warning text-black fw-semibold" style="box-shadow: 0 4px 10px rgba(255, 193, 7, 0.5);">
+                    Add Role
+                </a>
             </div>
 
             <div class="card-body">

@@ -6,7 +6,7 @@
 <div class="row justify-content-center">
     <div class="col-lg-7">
         <div class="card shadow-lg border-0 rounded-lg mt-5" style="min-height: 400px;">
-            <div class="card-header bg-dark text-white">
+            <div class="card-header text-white" style="background-color: #1f2937;">
                 <h3 class="text-center font-weight-light my-4">Create Account</h3>
             </div>
             <div class="card-body bg-light">
@@ -109,8 +109,13 @@
 
                     <!-- Submit Button -->
                     <div class="mt-4 mb-0">
-                        <div class="d-grid">
-                            <button class="btn btn-primary btn-block" type="submit">Submit</button>
+                        <div class="d-flex align-items-center justify-content-between">
+                            <button class="btn btn-warning text-black fw-semibold" style="box-shadow: 0 4px 10px rgba(255, 193, 7, 0.5);" type="submit">
+                                Submit
+                            </button>
+                            <a href="{{ url('panel/user') }}" class="btn text-white fw-semibold" style="background-color: #1f2937; box-shadow: 0 4px 10px rgba(31, 41, 55, 0.5);">
+                                Back
+                            </a>
                         </div>
                     </div>
                 </form>

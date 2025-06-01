@@ -3,12 +3,15 @@
 @section('content')
 
 <div class="row mb-3">
-    <div class="col-12">
-        <h1 class="mt-4"><span class="badge text-bg-success">Completed Requests</span></h1>
+    <div class="col-12 col-md-6">
+        <h1 class="mt-4"><span class="badge text-bg-warning" style="font-size: 2rem;">Completed Requests</span></h1>
         <ol class="breadcrumb mb-4">
-            <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">Dashboard</a></li>
+            <li class="breadcrumb-item"><a href="{{ route('dashboard') }}" class = "text-dark">Dashboard</a></li>
             <li class="breadcrumb-item active">Completed Requests</li>
         </ol>
+    </div>
+    <div class="col-md-6 text-end">
+        <h1 class="mt-4 text-dark"><span class="badge" style="background-color:#1f2937; font-size: 2rem;">Total Completed: {{ $totalCount }}</span></h1>
     </div>
 </div>
 
@@ -24,9 +27,8 @@
         @endif
 
         <div class="card shadow-sm border-0">
-            <div class="card-header bg-dark text-white d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center">
+            <div class="card-header text-white d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center" style="background-color: #1f2937;">
                 <h5 class="mb-2 mb-md-0">Completed Requests</h5>
-                <span class="badge bg-success fs-6">Total Completed: {{ $totalCount }}</span>
             </div>
 
             <div class="card-body bg-light">

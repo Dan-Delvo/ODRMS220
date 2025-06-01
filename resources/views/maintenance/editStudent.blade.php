@@ -2,20 +2,25 @@
 
 @section('content')
 
-<h1 class="mt-4">Edit Student</h1>
+<h1 class="mt-4">
+    <span class="badge text-bg-warning" style="font-size: 2rem;">Edit Student</span>
+</h1>
 <ol class="breadcrumb mb-4">
-    <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">Dashboard</a></li>
-    <li class="breadcrumb-item"><a href="{{ route('student') }}">Students List</a></li>
+    <li class="breadcrumb-item"><a href="{{ route('dashboard') }}" class="text-dark">Dashboard</a></li>
+    <li class="breadcrumb-item"><a href="{{ route('student') }}" class="text-dark">Students List</a></li>
     <li class="breadcrumb-item active">Edit Student</li>
 </ol>
 
 <div class="row">
     <div class="col-md-12">
         <div class="card shadow-lg border-0 rounded-lg mt-5">
-            <div class="card-header bg-dark text-white">
-                <h4>Edit Student
-                    <a href="{{ route('student') }}" class="btn btn-danger float-end">Back</a>
+            <div class="card-header text-white d-flex align-items-center justify-content-between" style="background-color: #1f2937; height: 60px;">
+                <h4 class="mb-0">
+                    Edit Student
                 </h4>
+                <a href="{{ route('student') }}" class="btn btn-warning text-black fw-semibold" style="box-shadow: 0 4px 10px rgba(255, 193, 7, 0.5);">
+                    Back
+                </a>
             </div>
 
             <div class="card-body bg-light">
@@ -79,8 +84,8 @@
                     </div>
 
                     <!-- Save Button -->
-                    <div>
-                        <button type="submit" class="btn btn-primary float-end">Update</button>
+                    <div class ="text-end">
+                        <button type="submit" class="btn btn-warning text-black fw-semibold" style="box-shadow: 0 4px 10px rgba(255, 193, 7, 0.5);">Update</button>
                     </div>
                 </form>
             </div>
