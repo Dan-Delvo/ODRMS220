@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\ClaimerModel;
 use App\Models\DocumentRequestModel;
+use App\Models\DocuPaymentFee;
 use App\Models\DocumentsModel;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
@@ -55,6 +56,16 @@ class StudentRequestController extends Controller
             'contact_no' => $validatedData['contact_no'],
         ]);
 
+        $document = DocumentsModel::find($validatedData['document_id']);
+
+        $receipt = DocuPaymentFee::create([
+            "receipt_no" => random_int(10000, 99999),
+            'docu_categories_id' => $validatedData['document_id'],
+            'doc_amount' => $document->DocPrice,
+            'name_request' => Auth::user()->std_students_id,
+            'time_request' => Carbon::now()
+        ]);
+
         // Insert a new Document Request with the claimer_id from the inserted claimer
         DocumentRequestModel::create([
             'id' => random_int(10000, 99999),
@@ -71,6 +82,7 @@ class StudentRequestController extends Controller
 
             'remarks' => "N/A",
             'status' => "Pending",
+            'receipt_no' => $receipt->receipt_no
         ]);
 
         // Redirect or respond with success

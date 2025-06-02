@@ -28,7 +28,8 @@ class DocumentRequestModel extends Model
         'release_mode',
 
         'remarks',
-        'status'
+        'status',
+        'receipt_no'
     ];
 
     public function claimer()
@@ -50,6 +51,13 @@ class DocumentRequestModel extends Model
     {
         return $this->belongsTo(Account::class, 'std_students_id', 'std_students_id');
     }
+
+    // In DocumentRequestModel.php
+    public function receipt()
+    {
+        return $this->hasOne(DocuPaymentFee::class, 'receipt_no', 'receipt_no');
+    }
+
 
     public static function updateOrCreateRequest(array $data)
     {

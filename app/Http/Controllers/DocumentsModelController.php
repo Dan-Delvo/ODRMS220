@@ -60,6 +60,7 @@ class DocumentsModelController extends Controller
         // Update the document with the validated data
         $document->update([
             'DocType' => $request->input('DocType'),
+            'DocPrice' => $request->input('DocPrice')
         ]);
 
         // Redirect back to the documents list with a success message

@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\AnalyticsController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DocumentRequestController;
 use App\Http\Controllers\OngoingController;
@@ -49,6 +50,10 @@ Route::post('send-fcm-notification', [FcmController::class, 'sendFcmNotification
 // });
 
 Route::group(['middleware' => 'useradmin'], function(){
+
+// in routes/web.php
+    Route::get('/analytics', [AnalyticsController::class, 'index'])->name('analytics');
+
 
 
     Route::get('dashboard', [DashboardController::class, 'dashboard'])->name('dashboard');
@@ -161,9 +166,6 @@ Route::group(['middleware' => 'userstudent'], function(){
 });
 
 
-Route::get('hompage', function () {
-    return view('common.homepage');
-});
 
 
 

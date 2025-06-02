@@ -1,3 +1,4 @@
+walkin.blade.php
 @extends('layout.blankpage')
 
 @section('content')
@@ -5,7 +6,7 @@
 <div class="row justify-content-center">
     <div class="col-lg-7">
         <div class="card shadow-lg border-0 rounded-lg mt-5" style="min-height: 600px;">
-            <div class="card-header">
+            <div class="card-header text-white" style="background-color: #1f2937;">
                 <h3 class="text-center font-weight-light my-4">Document Request Form</h3>
             </div>
             <div class="card-body">
@@ -99,14 +100,13 @@
                         <label for="inputLastSYAttended">Last SY Attended</label>
                     </div>
 
-                    <div class="mt-4 mb-0">
-                        <div class="d-grid"><button class="btn btn-primary btn-block" type="submit">Submit Request</button></div>
+                    <div class="mt-2 d-flex align-items-center justify-content-between">
+                        <div class="d-grid"><button class="btn text-black fw-semibold" style="background-color: #1dd3b0; box-shadow: 0 4px 10px rgba(29, 211, 176, 0.5);" type="submit">Submit Request</button></div>
+                        <a href="{{ route('dashboard') }}" class="btn text-white fw-semibold" style="background-color: #1f2937; box-shadow: 0 4px 10px #1f2937 ;">
+                            Back to dashboard
+                        </a>
                     </div>
                 </form>
-            </div>
-
-            <div class="card-footer text-center py-3 mt-auto">
-                <div class="small"><a href="dashboard.html">Back to Dashboard</a></div>
             </div>
         </div>
     </div>

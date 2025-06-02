@@ -1,50 +1,159 @@
 <!--Login Start-->
-<div class="container">
-    <div class="row justify-content-center">
-        <div class="col-lg-8">
-            <div class="card border-0 rounded-4 bg-white" style="box-shadow: 0 0.75rem 1.5rem rgba(0, 0, 0, 0.3);">
-                <div class="row g-0"> <!-- Row inside the card for grid split -->
-                    <div class="col-lg-6 p-4" style="background-color: #343a40; color: white; border-top-left-radius: .5rem; border-bottom-left-radius: .5rem;">
-                        <div class="card-header border-0 bg-transparent">
-                            <h3 class="text-center font-weight-light my-4 text-white">Login</h3>
-                        </div>
-                        <div class="card-body">
-                            @include('layout.partials.message')
-
-                            <form action="" method="post" id="loginForm">
-                                {{ csrf_field() }} <!-- para sa forms -->
-                                <div class="form-floating mb-3">
-                                    <input class="form-control" name="email" id="inputEmail" type="email" placeholder="name@example.com" />
-                                    <label for="inputEmail">Email address</label>
-                                </div>
-                                <div class="form-floating mb-3">
-                                    <input class="form-control" name="password" id="inputPassword" type="password" placeholder="Password" />
-                                    <label for="inputPassword">Password</label>
-                                </div>
-                                <div class="form-check mb-3">
-                                    <input type="checkbox" class="form-check-input" name="remember" id="exampleCheck1">
-                                    <label class="form-check-label text-white" for="exampleCheck1">Remember Password</label>
-                                </div>
-                                <div class="d-flex align-items-center justify-content-between mt-4 mb-0">
-                                    <a href="javascript:void(0);" class="small text-white-50" onclick="window.location.replace('{{ route('forgot') }}')">Forgot Password?</a>
-                                    <button type="submit" class="btn btn-outline-warning">Log In</button>
-                                </div>
-                                <!-- Hidden input for FCM token -->
-                                <input type="hidden" name="fcm_token" id="fcmToken">
-                            </form>
-                        </div>
-                        <div class="card-footer text-center py-3 bg-transparent">
-                            <div class="small">
-                                <a href="{{ route('student.create') }}" class="text-white-50">Need an account? Sign up!</a>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-lg-6 d-none d-lg-block">
-                        <img src="{{ asset('/images/UbnhsBg.jpg.jpg') }}" alt="Login Image" class="img-fluid h-100 w-100" style="object-fit: cover; border-top-right-radius: .5rem; border-bottom-right-radius: .5rem;">
-                    </div>
-                </div>
-            </div>
-        </div>
+<div class="container-fluid g-0">
+  <div class="row g-0 min-vh-100">
+    <!-- Left Side with Background Image (hidden on small screens) -->
+    <div class="col-lg-9 d-none d-lg-block">
+      <div
+        style="
+          height: 100vh;
+          background: url('{{ asset('images/BG_UBNHS.jpg') }}') center center / cover no-repeat;
+          filter: brightness(0.7);
+        "
+        aria-label="Background Image"
+      ></div>
     </div>
+
+    <!-- Right Side (Login Form) -->
+    <div
+      class="col-lg-3 d-flex flex-column justify-content-center align-items-center px-4 py-5"
+      style="
+        background-color: #1f2937;
+        color: white;
+        min-height: 100vh;
+        box-shadow: 0 8px 24px rgb(0 0 0 / 0.3);
+      "
+    >
+      <div class="w-100" style="max-width: 400px;">
+        <div class="text-center mb-4">
+          <h2
+            class="font-weight-bold"
+            style="color: #1dd3b0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;"
+          >
+            Login
+          </h2>
+        </div>
+
+        @include('layout.partials.message')
+
+        <form action="" method="post" id="loginForm" novalidate>
+          {{ csrf_field() }}
+
+          <div class="form-floating mb-3">
+            <input
+              class="form-control rounded-3"
+              name="email"
+              id="inputEmail"
+              type="email"
+              placeholder="name@example.com"
+              required
+              style="background: #2d3748; border: none; color: #e2e8f0;"
+            />
+            <label for="inputEmail" style="color: #a0aec0;">Email address</label>
+          </div>
+
+          <div class="form-floating mb-3">
+            <input
+              class="form-control rounded-3"
+              name="password"
+              id="inputPassword"
+              type="password"
+              placeholder="Password"
+              required
+              style="background: #2d3748; border: none; color: #e2e8f0;"
+            />
+            <label for="inputPassword" style="color: #a0aec0;">Password</label>
+          </div>
+
+          <div class="form-check mb-3">
+            <input
+              type="checkbox"
+              class="form-check-input"
+              name="remember"
+              id="exampleCheck1"
+            />
+            <label class="form-check-label" for="exampleCheck1" style="color: #cbd5e1;">
+              Remember me
+            </label>
+          </div>
+
+          <div class="d-flex flex-column flex-md-row justify-content-between align-items-center gap-3 mb-3">
+            <a class="custom-teal-link text-decoration-none small" href="password.html">Forgot Password?</a>
+
+            <button
+              type="submit"
+              class="btn btn-warning rounded-pill px-4 py-2 fw-semibold w-100 w-md-auto"
+              style="box-shadow: 0 4px 12px rgb(29 211 176 / 0.6); color: #1f2937;"
+            >
+              Log In
+            </button>
+          </div>
+
+          <input type="hidden" name="fcm_token" id="fcmToken" />
+        </form>
+
+        <div class="text-center mt-4 small">
+          <span style="color: #94a3b8;">Don't have an account? </span>
+          <a href="{{ route('student.create') }}" class="custom-teal-link fw-semibold">Sign up</a>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
 <!--Login End-->
+
+<style>
+  /* Responsiveness Enhancements */
+  @media (max-width: 991.98px) {
+    .col-lg-3 {
+      max-width: 100% !important;
+      box-shadow: none !important;
+      padding: 2rem 1.5rem;
+    }
+
+    .btn.btn-warning {
+      width: 100%;
+    }
+
+    h2.font-weight-bold {
+      font-size: 1.75rem;
+    }
+  }
+
+  @media (max-width: 576px) {
+    .col-lg-3 {
+      padding: 1.5rem 1rem;
+    }
+
+    .form-floating label {
+      font-size: 0.85rem;
+    }
+
+    .custom-teal-link {
+      font-size: 0.85rem;
+    }
+  }
+
+  .text-warning {
+    color: #1dd3b0 !important;
+  }
+
+  .btn-warning {
+    background-color: #1dd3b0 !important;
+    border-color: #1dd3b0 !important;
+  }
+
+  .btn-warning:hover,
+  .btn-warning:focus {
+    background-color: #14b59c !important;
+    border-color: #14b59c !important;
+  }
+
+  .custom-teal-link {
+    color: #1dd3b0;
+  }
+
+  .custom-teal-link:hover {
+    color: #14b1a2;
+    text-decoration: underline;
+  }
+</style>

@@ -1,5 +1,5 @@
 <!-- Sidebar Navigation Start -->
-<nav class="sb-sidenav accordion sb-sidenav-dark bg-dark shadow" id="sidenavAccordion">
+<nav class="sb-sidenav accordion sb-sidenav-dark  shadow" style="background-color: #1f2937;" id="sidenavAccordion">
     <div class="sb-sidenav-menu" style="max-height: 85vh; overflow-y: auto;">
         <div class="nav">
 
@@ -31,6 +31,11 @@
                 Generate Report
             </a>
             @endif
+
+            <a class="nav-link text-light sidebar-item" href="{{ route('analytics') }}">
+                <div class="sb-nav-link-icon"><i class="fas fa-chart-line"></i></div>
+                Analytics
+            </a>
 
             <div class="sb-sidenav-menu-heading text-uppercase text-light fw-bold mt-3">Maintenance</div>
 
@@ -96,7 +101,7 @@
     </div>
 
     <!-- Sidebar Footer -->
-    <div class="sb-sidenav-footer bg-secondary text-light text-center py-3">
+    <div class="sb-sidenav-footer bg-secondary text-light text-center py-3 ">
         <div class="small">Logged in as:</div>
         <span class="fw-bold">{{ Auth::user()->username }}</span>
     </div>
@@ -135,11 +140,12 @@
     .sidebar-item:hover {
         background-color: rgba(255, 255, 255, 0.1);
         padding-left: 18px;
+        color: #1dd3b0 !important;
     }
 
     /* Active Link Highlight */
     .sidebar-item.active, .sidebar-item:active {
         background-color: #007bff;
-        color: white !important;
+        color: #ffc107 !important;
     }
 </style>

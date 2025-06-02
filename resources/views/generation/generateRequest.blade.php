@@ -1,17 +1,18 @@
+generateRequest.blade.php
 @extends('layout.blankpage')
 
 @section ('content')
 
 <div class="row mb-4">
     <div class="col-md-6">
-        <h1 class="mt-4 text-dark">All Requests</h1>
+        <h1 class="mt-4 text-dark"><span class="badge" style="background-color: #1dd3b0; font-size: 2rem;">All Requests</span></h1>
         <ol class="breadcrumb mb-4">
-            <li class="breadcrumb-item"><a href="#" class="text-dark">Dashboard</a></li>
+            <li class="breadcrumb-item"><a href="{{ route('dashboard') }}" class="text-dark">Dashboard</a></li>
             <li class="breadcrumb-item active text-dark">All Requests</li>
         </ol>
     </div>
     <div class="col-md-6 text-end">
-        <h1 class="mt-4 text-dark">Requests Total: {{ $totalCount }}</h1>
+        <h1 class="mt-4 text-dark"><span class="badge" style="background-color:#1f2937; font-size: 2rem;">Requests Total: {{ $totalCount }}</span></h1>
     </div>
 </div>
 
@@ -20,10 +21,10 @@
     <div class="col-md-12">
         <form action="{{ route('generateReports') }}" method="GET" class="d-flex align-items-center">
             <label for="start_date" class="me-2 text-dark">Start Date:</label>
-            <input type="date" id="start_date" name="start_date" class="form-control me-3" required>
+            <input type="date" id="start_date" name="start_date" class="form-control me-3" required >
             <label for="end_date" class="me-2 text-dark">End Date:</label>
             <input type="date" id="end_date" name="end_date" class="form-control me-3" required>
-            <button type="submit" name="action" value="pdf" class="btn btn-primary me-2">Generate PDF</button>
+            <button type="submit" name="action" value="pdf" class="btn btn-danger me-2">Generate PDF</button>
             <button type="submit" name="action" value="excel" class="btn btn-success">Generate Excel</button>
         </form>
     </div>
@@ -50,8 +51,10 @@
 <div class="row">
     <div class="col-md-12">
         <div class="card shadow-sm">
-            <div class="card-header bg-black text-white">
-                <h4>Requests</h4>
+            <div class="card-header text-white d-flex align-items-center justify-content-between" style="background-color: #1f2937; height: 60px;">
+                <h4 class="mb-0">
+                    Requests
+                </h4>
             </div>
 
             <div class="card-body">

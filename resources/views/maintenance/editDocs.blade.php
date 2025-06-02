@@ -34,6 +34,15 @@
                         @error('DocType') <small class="text-danger">{{ $message }}</small> @enderror
                     </div>
 
+
+                    <!-- Document Price -->
+                    <div class="mb-3">
+                        <label for="DocType" class="form-label">Document Price</label>
+                        <input type="text" name="DocPrice" id="DocPrice" class="form-control" value="{{ old('DocPrice', $document->DocPrice) }}">
+                        @error('DocPrice') <small class="text-danger">{{ $message }}</small> @enderror
+                    </div>
+
+
                     <!-- Save Button -->
                     <div>
                         <button type="submit" class="btn btn-primary float-end">Update</button>

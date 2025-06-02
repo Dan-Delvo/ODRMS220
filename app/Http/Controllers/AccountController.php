@@ -147,8 +147,9 @@ class AccountController extends Controller
     {
         $grade = ['7', '8', '9', '10', '11', '12'];
         $stat = ['Alumni', 'Regular', 'ALS'];
+        $role = RolesModel::all();
 
-        return view('maintenance.addUserStudent', compact('grade', 'stat'));
+        return view('maintenance.addUserStudent', compact('grade', 'stat', 'role'));
 
     }
 
@@ -161,6 +162,7 @@ class AccountController extends Controller
             'LRN' => 'required|string|max:20',
             'Grade_level' => 'required|string|max:50',
             'Std_status' => 'required|string|max:50',
+            'role' => 'required',
 
             // Validation for account information
             'email_address' => 'required|email|unique:acc_users,email_address',
@@ -184,7 +186,7 @@ class AccountController extends Controller
         Account::create([
             'user_account_id' => $studentId,
             'std_students_id' => $studentId,
-            'role_id' => 1,
+            'role_id' => $request->role,
             'email_address' => $request->email_address,
             'username' => $request->username,
             'password' => bcrypt($request->password),
