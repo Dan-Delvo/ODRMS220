@@ -110,7 +110,7 @@
                     <!-- Submit Button -->
                     <div class="mt-4 mb-0">
                         <div class="d-flex align-items-center justify-content-between">
-                            <button class="btn btn-warning text-black fw-semibold" style="box-shadow: 0 4px 10px rgba(255, 193, 7, 0.5);" type="submit">
+                            <button class="btn text-black fw-semibold" style="background-color: #1dd3b0; box-shadow: 0 4px 10px rgba(29, 211, 176, 0.5);" type="submit">
                                 Submit
                             </button>
                             <a href="{{ url('panel/user') }}" class="btn text-white fw-semibold" style="background-color: #1f2937; box-shadow: 0 4px 10px rgba(31, 41, 55, 0.5);">

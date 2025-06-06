@@ -100,7 +100,7 @@
                     </div>
 
                     <div class="mt-2 d-flex align-items-center justify-content-between">
-                        <div class="d-grid"><button class="btn btn-warning text-black fw-semibold" style="box-shadow: 0 4px 10px rgba(255, 193, 7, 0.5);" type="submit">Submit Request</button></div>
+                        <div class="d-grid"><button class="btn text-black fw-semibold" style="background-color: #1dd3b0; box-shadow: 0 4px 10px rgba(29, 211, 176, 0.5);" type="submit">Submit Request</button></div>
                         <a href="{{ route('dashboard') }}" class="btn text-white fw-semibold" style="background-color: #1f2937; box-shadow: 0 4px 10px #1f2937 ;">
                             Back to dashboard
                         </a>

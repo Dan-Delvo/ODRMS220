@@ -5,14 +5,14 @@
 <!-- Page Title and Breadcrumbs -->
 <div class="row mb-4">
     <div class="col-md-6">
-        <h1 class="mt-4 text-dark"><span class="badge text-bg-warning" style="font-size: 2rem;">Edit Roles</span></h1>
+        <h1 class="mt-4 text-dark"><span class="badge" style="background-color: #1dd3b0; font-size: 2rem;">Edit Roles</span></h1>
         <ol class="breadcrumb mb-4">
             <li class="breadcrumb-item"><a href="#" class="text-dark">Dashboard</a></li>
             <li class="breadcrumb-item active text-dark">Edit Role</li>
         </ol>
     </div>
     <div class="col-md-6 text-end">
-        <h1 class="mt-4 text-dark"><span class="badge" style="background-color:#1f2937;">Edit Role</span></h1>
+        <h1 class="mt-4 text-dark"><span class="badge" style="background-color:#1f2937; font-size: 2rem;">Edit Role</span></h1>
     </div>
 </div>
 
@@ -41,7 +41,7 @@
                 <h4 class="mb-0">
                     Edit Role
                 </h4>
-                <a href="{{ url('panel/role') }}" class="btn btn-warning text-black fw-semibold" style="box-shadow: 0 4px 10px rgba(255, 193, 7, 0.5);">
+                <a href="{{ url('panel/role') }}" class="btn text-black fw-semibold" style="background-color: #1dd3b0; box-shadow: 0 4px 10px rgba(29, 211, 176, 0.5);">
                     Back
                 </a>
             </div>
@@ -67,7 +67,7 @@
                         @foreach($getPermission as $value)
                         <div class="rounded p-3 mb-4" style="background: #2d3748; border: none; color: #e2e8f0;">
                             <div class="mb-2">
-                                <strong class="text-warning fs-6">{{ $value['name'] }}</strong>
+                                <strong class="fs-6" style="color: #1dd3b0;">{{ $value['name'] }}</strong>
                             </div>
 
                             <div class="row">
@@ -98,7 +98,7 @@
 
                     <!-- Save Button -->
                     <div class="text-end">
-                        <button type="submit" class="btn btn-warning text-black fw-semibold" style="box-shadow: 0 4px 10px rgba(255, 193, 7, 0.5);">Save</button>
+                        <button type="submit" class="btn text-black fw-semibold" style="background-color: #1dd3b0; box-shadow: 0 4px 10px rgba(29, 211, 176, 0.5);">Save</button>
                     </div>
                 </form>
             </div>

@@ -9,7 +9,7 @@
 
         <a class="navbar-brand d-flex align-items-center ps-3" href="#">
             <img src="/images/UBLOGO.png" alt="Logo" width="40" height="40" class="me-2">
-            <span class="fw-bold text-uppercase text-warning">ODRMS</span>
+            <span class="fw-bold text-uppercase" style="color: #1dd3b0;">ODRMS</span>
         </a>
 
         <!-- Sidebar Toggle (for small screens)
@@ -32,7 +32,7 @@
             <li class="nav-item dropdown d-flex align-items-center">
                 <span class="fw-bold text-white">{{ Auth::user()->username }}</span>
                 <a class="nav-link dropdown-toggle text-white" id="navbarDropdown" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                    <i class="fas fa-user fa-fw text-warning"></i>
+                    <i class="fas fa-user fa-fw" style="color: #1dd3b0;"></i>
                 </a>
                 <ul class="dropdown-menu dropdown-menu-end shadow" aria-labelledby="navbarDropdown">
                     <li><a class="dropdown-item" href="#!"><i class="fas fa-cog me-2"></i> Settings</a></li>

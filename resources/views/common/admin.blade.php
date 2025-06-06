@@ -11,7 +11,7 @@
 
 <div class="container-fluid px-4">
     <!-- Page Header -->
-    <h1 class="mt-4 text-dark"><span class="badge text-bg-warning" style="font-size: 2rem;">Dashboard</span></h1>
+    <h1 class="mt-4 text-dark"><span class="badge" style="background-color: #1dd3b0; font-size: 2rem;">Dashboard</span></h1>
     <ol class="breadcrumb mb-4">
         <li class="breadcrumb-item active text-dark"><a href="{{ route('dashboard') }}" class="text-dark">Dashboard</a></li>
     </ol>
@@ -40,8 +40,8 @@
                 </div>
 
                 <div class="card-footer d-flex align-items-center justify-content-between" style="background-color: rgba(255,255,255,0.05); border-top: 1px solid rgba(255,255,255,0.1);">
-                    <a class="small text-warning stretched-link" style="font-weight: bold;" href="#">View Details</a>
-                    <div class="small text-warning"><i class="fas fa-angle-right"></i></div>
+                    <a class="small stretched-link" style="font-weight: bold; color: #1dd3b0" href="#">View Details</a>
+                    <div class="small" style="color: #1dd3b0;"><i class="fas fa-angle-right"></i></div>
                 </div>
             </div>
         </div>
@@ -61,8 +61,8 @@
                 </div>
                 
                 <div class="card-footer d-flex align-items-center justify-content-between" style="background-color: rgba(255,255,255,0.05); border-top: 1px solid rgba(255,255,255,0.1);">
-                    <a class="small text-warning stretched-link" style="font-weight: bold;" href="#">View Details</a>
-                    <div class="small text-warning"><i class="fas fa-angle-right"></i></div>
+                    <a class="small stretched-link" style="font-weight: bold; color: #1dd3b0" href="#">View Details</a>
+                    <div class="small" style="color: #1dd3b0;"><i class="fas fa-angle-right"></i></div>
                 </div>
             </div>
         </div>
@@ -82,8 +82,8 @@
                 </div>
 
                 <div class="card-footer d-flex align-items-center justify-content-between" style="background-color: rgba(255,255,255,0.05); border-top: 1px solid rgba(255,255,255,0.1);">
-                    <a class="small text-warning stretched-link" style="font-weight: bold;" href="#">View Details</a>
-                    <div class="small text-warning"><i class="fas fa-angle-right"></i></div>
+                    <a class="small stretched-link" style="font-weight: bold; color: #1dd3b0" href="#">View Details</a>
+                    <div class="small" style="color: #1dd3b0;"><i class="fas fa-angle-right"></i></div>
                 </div>
             </div>
         </div>
@@ -92,7 +92,7 @@
     <!-- Additional Quick Action Buttons -->
     <div class="row mb-4">
         <div class="col-md-6">
-            <button class="btn btn-warning btn-lg w-100 text-light" onclick="window.location.href='{{ route('walkin.form') }}'">
+            <button class="btn btn-lg w-100 text-light" style="background-color: #1dd3b0;" onclick="window.location.href='{{ route('walkin.form') }}'">
                 <i class="fas fa-plus-circle me-2"></i> Create New Request
             </button>
         </div>

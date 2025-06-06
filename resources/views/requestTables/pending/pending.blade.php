@@ -4,7 +4,9 @@
 
 <div class="row">
     <div class="col-md-6">
-        <h1 class="mt-4"><span class="badge text-bg-warning" style="font-size: 2rem;">Pending Requests</span></h1>
+        <h1 class="mt-4">
+            <span class="badge" style="background-color: #1dd3b0; font-size: 2rem;">Pending Requests</span>
+        </h1>
         <ol class="breadcrumb mb-4">
             <li class="breadcrumb-item "><a href="{{ route('dashboard') }}" class="text-dark">Dashboard</a></li>
             <li class="breadcrumb-item active">Pending Requests</li>

@@ -4,7 +4,7 @@
 
 <div class="row">
     <div class="col-md-6">
-        <h1 class="mt-4"><span class="badge text-bg-warning">Edit User</span></h1>
+        <h1 class="mt-4"><span class="badge" style="background-color: #1dd3b0; font-size: 2rem;">Edit User</span></h1>
         <ol class="breadcrumb mb-4">
             <li class="breadcrumb-item"><a href="{{ route('dashboard') }}" class="text-dark">Dashboard</a></li>
             <li class="breadcrumb-item"><a href="{{ url('users') }}" class="text-dark">Users List</a></li>
@@ -20,7 +20,7 @@
                 <h4 class="mb-0">
                     Edit User
                 </h4>
-                <a href="{{ route('user') }}" class="btn btn-warning text-black fw-semibold" style="box-shadow: 0 4px 10px rgba(255, 193, 7, 0.5);">
+                <a href="{{ route('user') }}" class="btn text-black fw-semibold" style="background-color: #1dd3b0; box-shadow: 0 4px 10px rgba(29, 211, 176, 0.5);">
                     Back
                 </a>
             </div>
@@ -70,7 +70,7 @@
 
                     <!-- Save Button -->
                     <div>
-                        <button type="submit" class="btn btn-warning text-black fw-semibold float-end" style="box-shadow: 0 4px 10px rgba(255, 193, 7, 0.5);">Update</button>
+                        <button type="submit" class="btn text-black fw-semibold float-end" style="background-color: #1dd3b0; box-shadow: 0 4px 10px rgba(29, 211, 176, 0.5);">Update</button>
                     </div>
                 </form>
             </div>

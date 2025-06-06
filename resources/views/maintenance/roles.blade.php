@@ -5,7 +5,7 @@
 <div class="row mb-4">
     <div class="col-md-6">
         <h1 class="mt-4 text-dark">
-            <span class="badge text-bg-warning" style="font-size: 2rem;">Roles</span>
+            <span class="badge" style="background-color: #1dd3b0; font-size: 2rem;">Roles</span>
         </h1>
         <ol class="breadcrumb mb-4">
             <li class="breadcrumb-item"><a href="{{ route('dashboard') }}" class="text-dark">Dashboard</a></li>
@@ -42,7 +42,7 @@
                 <h4 class="mb-0">
                     Roles
                 </h4>
-                <a href="{{ route('role.add') }}" class="btn btn-warning text-black fw-semibold" style="box-shadow: 0 4px 10px rgba(255, 193, 7, 0.5);">
+                <a href="{{ route('role.add') }}" class="btn text-black fw-semibold" style="background-color: #1dd3b0; box-shadow: 0 4px 10px rgba(29, 211, 176, 0.5);">
                     Add Role
                 </a>
             </div>

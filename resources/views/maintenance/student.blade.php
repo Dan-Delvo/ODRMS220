@@ -5,7 +5,7 @@
 <!-- Page Title and Breadcrumbs -->
 <div class="row mb-4">
     <div class="col-md-6">
-        <h1 class="mt-4 text-dark"><span class="badge text-bg-warning" style="font-size: 2rem;">Students Information</span></h1>
+        <h1 class="mt-4 text-dark"><span class="badge" style="background-color: #1dd3b0; font-size: 2rem;">Students Information</span></h1>
         <ol class="breadcrumb mb-4">
             <li class="breadcrumb-item"><a href="{{ route('dashboard') }}" class="text-dark">Dashboard</a></li>
             <li class="breadcrumb-item active text-dark">Students Information List</li>

@@ -23,8 +23,8 @@
         .page-item.active .page-link {
             z-index: 1;
             color: #fff;
-            background-color: #ffc107;
-            border-color: #ffc107;
+            background-color: #1dd3b0;
+            border-color: #1dd3b0;
             
         }
         .page-item:not(.active) .page-link {

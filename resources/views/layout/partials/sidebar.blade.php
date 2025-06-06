@@ -135,7 +135,7 @@
     .sidebar-item:hover {
         background-color: rgba(255, 255, 255, 0.1);
         padding-left: 18px;
-        color: #ffc107 !important;
+        color: #1dd3b0 !important;
     }
 
     /* Active Link Highlight */
