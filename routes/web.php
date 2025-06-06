@@ -54,8 +54,6 @@ Route::group(['middleware' => 'useradmin'], function(){
 // in routes/web.php
     Route::get('/analytics', [AnalyticsController::class, 'index'])->name('analytics');
 
-
-
     Route::get('dashboard', [DashboardController::class, 'dashboard'])->name('dashboard');
 
     //Request Management        ================================================================================

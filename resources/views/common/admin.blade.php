@@ -40,7 +40,7 @@
                 </div>
 
                 <div class="card-footer d-flex align-items-center justify-content-between" style="background-color: rgba(255,255,255,0.05); border-top: 1px solid rgba(255,255,255,0.1);">
-                    <a class="small stretched-link" style="font-weight: bold; color: #1dd3b0" href="#">View Details</a>
+                    <a class="small stretched-link" style="font-weight: bold; color: #1dd3b0" href="{{ route('pending.index') }}">View Details</a>
                     <div class="small" style="color: #1dd3b0;"><i class="fas fa-angle-right"></i></div>
                 </div>
             </div>
@@ -61,7 +61,7 @@
                 </div>
 
                 <div class="card-footer d-flex align-items-center justify-content-between" style="background-color: rgba(255,255,255,0.05); border-top: 1px solid rgba(255,255,255,0.1);">
-                    <a class="small stretched-link" style="font-weight: bold; color: #1dd3b0" href="#">View Details</a>
+                    <a class="small stretched-link" style="font-weight: bold; color: #1dd3b0" href="{{ route('ongoing.index') }}">View Details</a>
                     <div class="small" style="color: #1dd3b0;"><i class="fas fa-angle-right"></i></div>
                 </div>
             </div>
@@ -82,7 +82,7 @@
                 </div>
 
                 <div class="card-footer d-flex align-items-center justify-content-between" style="background-color: rgba(255,255,255,0.05); border-top: 1px solid rgba(255,255,255,0.1);">
-                    <a class="small stretched-link" style="font-weight: bold; color: #1dd3b0" href="#">View Details</a>
+                    <a class="small stretched-link" style="font-weight: bold; color: #1dd3b0" href="{{ route('tables.index') }}">View Details</a>
                     <div class="small" style="color: #1dd3b0;"><i class="fas fa-angle-right"></i></div>
                 </div>
             </div>

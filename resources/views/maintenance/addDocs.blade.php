@@ -32,6 +32,12 @@
                         @error('DocType') <small class="text-danger">{{ $message }}</small> @enderror
                     </div>
 
+                    <div class="mb-3">
+                        <label for="DocPrice" class="form-label">Document Price</label>
+                        <input type="text" name="DocPrice" id="DocPrice" class="form-control" value="0">
+                        @error('DocPrice') <small class="text-danger">{{ $message }}</small> @enderror
+                    </div>
+
                     <!-- Submit Button -->
                     <div>
                         <button type="submit" class="btn btn-success float-end">Add</button>

@@ -159,9 +159,9 @@ class AccountController extends Controller
             // Validation for personal information
             'FirstName' => 'required|string|max:255',
             'LastName' => 'required|string|max:255',
-            'LRN' => 'required|string|max:20',
-            'Grade_level' => 'required|string|max:50',
-            'Std_status' => 'required|string|max:50',
+            'LRN' => 'string|max:20',
+            'Grade_level' => 'string|max:50',
+            'Std_status' => 'string|max:50',
             'role' => 'required',
 
             // Validation for account information
@@ -176,10 +176,10 @@ class AccountController extends Controller
             'LastName' => $request->LastName,
             'MiddleName' => $request->MiddleName,
             'Suffix' => $request->Suffix,
-            'LRN' => $request->LRN,
-            'Grade_level' => $request->Grade_level,
-            'Std_status' => $request->Std_status,
-            'Last_sy_attended' => $request->Last_sy_attended,
+            'LRN' => $request->LRN ?? '0000',
+            'Grade_level' => $request->Grade_level ?? '0',
+            'Std_status' => $request->Std_status ?? 'NA',
+            'Last_sy_attended' => $request->Last_sy_attended ?? '0000',
         ])->id;
 
         // Store account information
@@ -192,7 +192,7 @@ class AccountController extends Controller
             'password' => bcrypt($request->password),
         ]);
 
-        return redirect()->to(url()->previous())->with('Success', 'Account created successfully!');
+        return redirect('panel/user')->with('Status', 'Account created successfully!');
 
 
     }

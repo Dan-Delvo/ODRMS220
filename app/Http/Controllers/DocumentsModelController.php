@@ -40,6 +40,7 @@ class DocumentsModelController extends Controller
         // Create a new document record
         DocumentsModel::create([
             'DocType' => $request->input('DocType'),
+            'DocPrice' => $request->input('DocPrice'),
         ]);
 
         // Redirect back to the documents list with a success message

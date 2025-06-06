@@ -103,23 +103,7 @@ class OngoingController extends Controller
         return view('requestTables.ongoing.editTable', compact('ongoing', 'DocType'));
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, DocumentRequestModel $documentRequestModel)
-    {
-        $validated = $this->validateDocumentRequest($request);
-        DocumentRequestModel::updateOrCreateRequest($validated);
-
-        $studentId = $documentRequestModel->student_information_id;
-        $student = StudentInformationModel::find($studentId);
-
-        return redirect('/ongoing' )->with('Status', 'Updated Succesfully');
-
-
-    }
-
-    public function validateDocumentRequest(Request $request)
+        public function validateDocumentRequest(Request $request)
     {
         return $request->validate([
             'id' => 'required',
@@ -132,6 +116,25 @@ class OngoingController extends Controller
             'status' => 'required|string',
         ]);
     }
+
+    /**
+     * Update the specified resource in storage.
+     */
+    public function update(Request $request, DocumentRequestModel $documentRequestModel)
+    {
+        $validated = $this->validateDocumentRequest($request);
+
+        DocumentRequestModel::updateOrCreateRequest($validated);
+
+        $studentId = $documentRequestModel->student_information_id;
+        $student = StudentInformationModel::find($studentId);
+
+        return redirect('/ongoing' )->with('Status', 'Updated Succesfully');
+
+
+    }
+
+
 
     /**
      * Remove the specified resource from storage.

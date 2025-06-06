@@ -94,7 +94,7 @@
             <!-- Footer -->
             <div class="card-footer text-center py-3 bg-dark">
                 <div class="small">
-                    <a href="login.html" class="text-light">Have an account? Go to login</a>
+                    <a href="{{ route('login') }}" class="text-light">Have an account? Go to login</a>
                 </div>
             </div>
         </div>

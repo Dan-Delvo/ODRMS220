@@ -1,3 +1,4 @@
+@section('content')
 <!--Login Start-->
 <div class="container-fluid g-0">
   <div class="row g-0 min-vh-100">
@@ -35,7 +36,7 @@
 
         @include('layout.partials.message')
 
-        <form action="" method="post" id="loginForm" novalidate>
+        <form action="/" method="post" id="loginForm" novalidate>
           {{ csrf_field() }}
 
           <div class="form-floating mb-3">
@@ -51,7 +52,7 @@
             <label for="inputEmail" style="color: #a0aec0;">Email address</label>
           </div>
 
-          <div class="form-floating mb-3">
+          <div class="form-floating mb-3 position-relative">
             <input
               class="form-control rounded-3"
               name="password"
@@ -62,6 +63,18 @@
               style="background: #2d3748; border: none; color: #e2e8f0;"
             />
             <label for="inputPassword" style="color: #a0aec0;">Password</label>
+
+            <!-- Toggle Button -->
+            <button
+              type="button"
+              class="btn btn-sm btn-link position-absolute top-50 end-0 translate-middle-y me-3 text-white"
+              id="togglePassword"
+              tabindex="-1"
+              aria-label="Toggle password visibility"
+              style="z-index: 10;"
+            >
+              <i class="fas fa-eye" id="eyeIcon"></i>
+            </button>
           </div>
 
           <div class="form-check mb-3">
@@ -77,7 +90,7 @@
           </div>
 
           <div class="d-flex flex-column flex-md-row justify-content-between align-items-center gap-3 mb-3">
-            <a class="custom-teal-link text-decoration-none small" href="password.html">Forgot Password?</a>
+            <a class="custom-teal-link text-decoration-none small" href="{{ route('forgot') }}">Forgot Password?</a>
 
             <button
               type="submit"
@@ -102,18 +115,15 @@
 <!--Login End-->
 
 <style>
-  /* Responsiveness Enhancements */
   @media (max-width: 991.98px) {
     .col-lg-3 {
       max-width: 100% !important;
       box-shadow: none !important;
       padding: 2rem 1.5rem;
     }
-
     .btn.btn-warning {
       width: 100%;
     }
-
     h2.font-weight-bold {
       font-size: 1.75rem;
     }
@@ -123,11 +133,9 @@
     .col-lg-3 {
       padding: 1.5rem 1rem;
     }
-
     .form-floating label {
       font-size: 0.85rem;
     }
-
     .custom-teal-link {
       font-size: 0.85rem;
     }
@@ -157,3 +165,21 @@
     text-decoration: underline;
   }
 </style>
+@endsection
+
+@push('scripts')
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    const toggleBtn = document.getElementById('togglePassword');
+    const passwordInput = document.getElementById('inputPassword');
+    const eyeIcon = document.getElementById('eyeIcon');
+
+    toggleBtn.addEventListener('click', function () {
+      const type = passwordInput.type === 'password' ? 'text' : 'password';
+      passwordInput.type = type;
+      eyeIcon.classList.toggle('fa-eye');
+      eyeIcon.classList.toggle('fa-eye-slash');
+    });
+  });
+</script>
+@endpush
