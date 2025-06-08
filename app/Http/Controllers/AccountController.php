@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\VerifyMail;
 use App\Models\Account;
 use App\Models\RolesModel;
 use App\Models\StudentInformationModel;
@@ -11,6 +12,8 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Validator;
 
 class AccountController extends Controller
 {
@@ -115,32 +118,137 @@ class AccountController extends Controller
     // Store the account information and link it with the student information
     public function store(Request $request)
     {
-        $id = Session::get('std_students_id'); // Get the student ID from session
+        $otp = "{$request->first}{$request->second}{$request->third}{$request->fourth}{$request->fifth}{$request->sixth}";
+        $otpCode = session('otp');
+        $expiry = session('expiresAt') ? \Carbon\Carbon::parse(session('expiresAt')) : null;
 
-        if (!$id) {
-            return redirect()->route('student.create')->with('error', 'No student information found.');
+        if (!$otpCode || !$expiry || now()->greaterThan($expiry)) {
+            session()->flash('error', 'OTP Expired. Please request a new one');
+            session()->forget(['otp', 'countdown_start', 'durationInSeconds', 'expiresAt']);
+            return view('common.verifyEmail');
         }
 
-        $request->validate([
-            'email_address' => 'required|email|unique:acc_users,email_address',
-            'username' => 'required|string|max:255',
-            'password' => 'required|string|min:8|confirmed',
-        ]);
+        if ($otp == $otpCode) {
+                session()->forget(['otp', 'countdown_start', 'durationInSeconds', 'expiresAt']);
+                // dd(session('std_students_id'));
+                // dd($data);
+                // return redirect()->route('account.store')->with($data);
+                $id = Session::get('std_students_id'); // Get the student ID from session
+                if (!$id) {
+                    dd($id);
+                    return redirect()->route('student.create')->with('error', 'No student information found.');
+                }
+                $request->validate([
+                    'email_address' => 'required|email|unique:acc_users,email_address',
+                    'username' => 'required|string|max:255',
+                    'password' => 'required|string|min:8',
+                ]);
+                // Create the account and associate it with the student information
+                Account::create([
+                    'user_account_id' => $id,
+                    'std_students_id' => $id,
+                    'role_id' => 1,  // Adjust the role as necessary (here it's set to 1)
+                    'email_address' => $request->email_address,
+                    'username' => $request->username,
+                    'password' => bcrypt($request->password),  // Hash the password
+                ]);
 
-        // Create the account and associate it with the student information
-        Account::create([
-            'user_account_id' => $id,
-            'std_students_id' => $id,
-            'role_id' => 1,  // Adjust the role as necessary (here it's set to 1)
-            'email_address' => $request->email_address,
-            'username' => $request->username,
-            'password' => bcrypt($request->password),  // Hash the password
-        ]);
+                // Optionally, clear the session
+                Session::forget('std_students_id');
 
-        // Optionally, clear the session
-        Session::forget('std_students_id');
+                return redirect()->route('login');  // Redirect to dashboard or another page
+        }
+        session()->flash('error', 'Invalid or expired OTP');
+        return view('common.verifyEmail');
 
-        return redirect()->route('login');  // Redirect to dashboard or another page
+        // $email = session('email_address');
+        // $username = session('username');
+        // $password = session('password');
+
+        // $validator = Validator::make([
+        //     'email_address' => $email,
+        //     'username' => $username,
+        //     'password' => $password,
+        // ], [
+        //     'email_address' => 'required|email|unique:acc_users,email_address',
+        //     'username' => 'required|string|max:255',
+        //     'password' => 'required|string|min:8',
+        // ]);
+
+        // if ($validator->fails()) {
+        //     // Session::forget('email_address');
+        //     // Session::forget('username');
+        //     // Session::forget('password');
+        //     return redirect()->route('account.create')
+        //         ->withErrors($validator)
+        //         ->withInput();
+        // }
+
+        // $request->validate([
+        //     'email_address' => 'required|email|unique:acc_users,email_address',
+        //     'username' => 'required|string|max:255',
+        //     'password' => 'required|string|min:8|confirmed',
+        // ]);
+
+        // $data = [
+        //     'email_address' => session('email_address'),
+        //     'username' => session('username'),
+        //     'password' => session('password'),
+        // ];
+
+        // $validator = Validator::make($data, [
+        //     'email_address' => 'required|email|unique:acc_users,email_address',
+        //     'username' => 'required|string|max:255',
+        //     'password' => 'required|string|min:8|confirmed',
+        // ]);
+
+        // if ($validator->fails()) {
+        //     dd("Hello");
+        //     return redirect()->route('account.create')->withErrors($validator)->withInput();
+
+        // }
+    }
+
+    public function viewOtp(Request $request) {
+        $email = $request->input('email_address');
+        $username = $request->input('username');
+        $password = $request->input('password');
+
+        $otpCode = rand(100000, 999999);
+        $duration = 300;
+        if (!session()->has('countdown_start')) {
+            session([
+                'countdown_start' => now(),
+                'durationInSeconds' => $duration,
+                'expiresAt' => now()->addSeconds($duration)
+            ]);
+        }
+        session(['otp' => $otpCode]);
+        Mail::to($email)->send(new VerifyMail($otpCode));
+        return view('common.verifyEmail', compact('email', 'username', 'password')); 
+    }
+
+    public function verifyEmail(Request $request) {
+        // $otp = "{$request->first}{$request->second}{$request->third}{$request->fourth}{$request->fifth}{$request->sixth}";
+        // $otpCode = session('otp');
+        // $expiry = session('expiresAt');
+
+        // $data = $request->only('email_address', 'username', 'password');
+
+        // if (!$otpCode || now()->greaterThan($expiry)) {
+        //         session()->flash('error', 'OTP Expired. Please request a new one');
+        //         session()->forget('expiresAt');
+        //         return view('common.verifyEmail');
+        // }
+
+        // if ($otp == $otpCode) {
+        //         session()->forget(['otp', 'expiry']);
+        //         // dd(session('std_students_id'));
+        //         // dd($data);
+        //         return redirect()->route('account.store')->with($data);
+        // }
+        // session()->flash('error', 'Invalid or expired OTP');
+        // return view('common.verifyEmail');
     }
 
     public function addUserStud()

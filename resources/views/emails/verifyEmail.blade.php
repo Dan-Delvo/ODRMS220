@@ -52,7 +52,7 @@
 <body>
     <div class="email-container">
         <div class="email-header">
-            <h1>Requesting Password Reset</h1>
+            <h1>Email Verification</h1>
         </div>
         <div class="email-body">
             <p>NEVER SHARE YOUR OTP especially on

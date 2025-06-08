@@ -32,7 +32,9 @@ Route::post('/', [AuthController::class, 'auth_login']); //  Authentication sa d
 Route::get('/student/create', [RegistrationController::class, 'create'])->name('student.create');
 Route::post('/student/store', [RegistrationController::class, 'store'])->name('student.store');
 
-Route::get('/account/create', [AccountController::class, 'create'])->name('account.create');
+Route::get('/account/otp', [AccountController::class, 'create'])->name('account.create');
+Route::post('/account/otp', [AccountController::class, 'viewOtp'])->name('account.otp');  
+// Route::get('/account/verify', [AccountController::class, 'verifyEmail'])->name('account.verify');  
 Route::post('/account/store', [AccountController::class, 'store'])->name('account.store');
 
 

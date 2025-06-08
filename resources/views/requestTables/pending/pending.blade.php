@@ -85,7 +85,9 @@
                                     <a href="{{ route('pending.edit', $item->id) }}" class="btn btn-sm btn-warning mb-1">Edit</a>
                                     @endif
 
-                                    <a href="{{ route('pending.show', $item->id) }}" class="btn btn-sm btn-info mb-1">Info</a>
+                                    <button class="btn btn-sm btn-info" data-bs-toggle="modal" data-bs-target="#receiptModal{{ $item->id }}">
+                                        Receipt
+                                    </button>
                                 </td>
                             </tr>
                             @endforeach
@@ -96,6 +98,65 @@
                 <div class="mt-3">
                     {{ $DocRequests->links() }}
                 </div>
+
+                @foreach ($DocRequests as $item)
+                    @if ($item->receipt)
+                        <div class="modal fade" id="receiptModal{{ $item->id }}" tabindex="-1" aria-labelledby="receiptModalLabel{{ $item->id }}" aria-hidden="true">
+                            <div class="modal-dialog modal-dialog-centered modal-md">
+                                <div class="modal-content border-0 shadow-sm">
+                                    <div class="modal-header bg-dark text-white">
+                                        <h5 class="modal-title mx-auto" id="receiptModalLabel{{ $item->id }}">
+                                            Receipt #{{ $item->receipt->receipt_no }}
+                                        </h5>
+                                        <button type="button" class="btn-close btn-close-white position-absolute end-0 me-3" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    </div>
+
+                                    <div class="modal-body bg-white text-dark px-4 py-3" style="font-family: 'Courier New', Courier, monospace;">
+                                        <div class="text-center mb-3">
+                                            <!-- 🖼 Logo -->
+                                            <img src="{{ asset('images/UBLOGO.png') }}" alt="UB Logo" class="mb-2" style="max-height: 80px;">
+
+                                            <h5 class="fw-bold mb-1">Upper Bicutan National High School</h5>
+                                            <div class="text-muted small">Official Receipt</div>
+                                        </div>
+
+                                        <hr>
+
+                                        <div class="mb-2 d-flex justify-content-between">
+                                            <strong>Document:</strong>
+                                            <span>{{ $item->documents->DocType }}</span>
+                                        </div>
+
+                                        <div class="mb-2 d-flex justify-content-between">
+                                            <strong>Amount Paid:</strong>
+                                            <span>₱{{ number_format($item->receipt->doc_amount, 2) }}</span>
+                                        </div>
+
+                                        <div class="mb-2 d-flex justify-content-between">
+                                            <strong>Student ID:</strong>
+                                            <span>{{ $item->receipt->name_request }}</span>
+                                        </div>
+
+                                        <div class="mb-2 d-flex justify-content-between">
+                                            <strong>Date:</strong>
+                                            <span>{{ \Carbon\Carbon::parse($item->receipt->time_request)->format('F d, Y - h:i A') }}</span>
+                                        </div>
+
+                                        <hr>
+
+                                        <div class="text-center mt-3">
+                                            <div class="text-muted small">Thank you for your request!</div>
+                                        </div>
+                                    </div>
+
+                                    <div class="modal-footer bg-light border-top-0">
+                                        <button type="button" class="btn btn-secondary w-100" data-bs-dismiss="modal">Close Receipt</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    @endif
+                @endforeach
             </div>
         </div>
     </div>

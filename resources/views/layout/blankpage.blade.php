@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>UBNHS: Online Document Request and Management System</title>
 
     <!-- PWA -->
     <meta name="theme-color" content="#6777ef">
