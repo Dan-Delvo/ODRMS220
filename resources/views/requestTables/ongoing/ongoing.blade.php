@@ -79,6 +79,12 @@
                                                     @method('PUT')
                                                     <button type="submit" class="btn btn-sm btn-success">Complete</button>
                                                 </form>
+                                                @if($item->documents->DocType == 'Good Moral')
+                                                    <form action="{{ route('doc.print', $item->id) }}" method="POST">
+                                                    @csrf
+                                                    <button type="submit" class="btn btn-sm btn-info">Print</button>
+                                                </form>
+                                                @endif
                                             @endif
 
                                             @if (!empty($PermissionEdit))

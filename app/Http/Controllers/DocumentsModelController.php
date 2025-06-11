@@ -3,7 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Models\DocumentsModel;
+use App\Models\DocumentRequestModel;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
+use PhpOffice\PhpWord\TemplateProcessor;
+use Illuminate\Support\Facades\Storage;
 
 class DocumentsModelController extends Controller
 {
@@ -78,6 +82,42 @@ class DocumentsModelController extends Controller
 
         // Redirect back to the documents list with a success message
         return redirect()->route('doc')->with('Danger', 'Document deleted successfully.');
+    }
+
+    public function generateCertificate($id)
+    {
+        $document = DocumentRequestModel::findOrFail($id);
+        $name = $document->studentInformation->full_name;
+        $gradeSection = '7 - Grow A Garden';
+        $date = Carbon::now();
+        $year = Carbon::now()->year;
+        $nextYr = Carbon::now()->addYear()->year;
+        $principal = 'Shallum Gil Salazar';
+        $lrn = $document->studentInformation->LRN;
+
+
+
+        // Load the template
+        $templatePath = storage_path('\CERTIFICATE OF GOOD MORAL CHARACTER.docx');
+        $templateProcessor = new TemplateProcessor($templatePath);
+
+        // Replace placeholders
+        $templateProcessor->setValue('name', $name);
+        $templateProcessor->setValue('grade_section', $gradeSection);
+        $templateProcessor->setValue('date', $date);
+        $templateProcessor->setValue('year', $year);
+        $templateProcessor->setValue('nextYr', $nextYr);
+        $templateProcessor->setValue('principal', $principal);
+        $templateProcessor->setValue('lrn', $lrn);
+
+
+        // Save the file
+        $fileName = 'certificate_' . time() . '.docx';
+        $outputPath = storage_path("app/generated/{$fileName}");
+        $templateProcessor->saveAs($outputPath);
+
+        // Return file as download
+        return response()->download($outputPath)->deleteFileAfterSend(true);
     }
 
 

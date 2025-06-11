@@ -34,8 +34,8 @@ Route::get('/student/create', [RegistrationController::class, 'create'])->name('
 Route::post('/student/store', [RegistrationController::class, 'store'])->name('student.store');
 
 Route::get('/account/otp', [AccountController::class, 'create'])->name('account.create');
-Route::post('/account/otp', [AccountController::class, 'viewOtp'])->name('account.otp');  
-// Route::get('/account/verify', [AccountController::class, 'verifyEmail'])->name('account.verify');  
+Route::post('/account/otp', [AccountController::class, 'viewOtp'])->name('account.otp');
+// Route::get('/account/verify', [AccountController::class, 'verifyEmail'])->name('account.verify');
 Route::post('/account/store', [AccountController::class, 'store'])->name('account.store');
 
 
@@ -103,6 +103,7 @@ Route::group(['middleware' => 'useradmin'], function(){
     Route::get('panel/doc/edit/{id}', [DocumentsModelController::class, 'edit'])->name('doc.edit');
     Route::put('panel/doc/{id}', [DocumentsModelController::class, 'update'])->name('doc.update');
     Route::delete('panel/doc/{id}', [DocumentsModelController::class, 'destroy'])->name('doc.destroy');
+    Route::post('panel/doc/{id}', [DocumentsModelController::class, 'generateCertificate'])->name('doc.print');
     //DocType Maintenance       ================================================================================
 
     //Report Generation         ================================================================================
