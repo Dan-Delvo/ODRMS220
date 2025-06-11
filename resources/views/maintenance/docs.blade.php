@@ -1,3 +1,4 @@
+docs.blade.php
 @extends('layout.blankpage')
 
 @section ('content')
@@ -60,6 +61,7 @@
                             <tr>
                                 <td>{{ $item->id }}</td>
                                 <td>{{ $item->DocType }}</td>
+                                <td>{{ $item->DocPrice }}</td>
                                 <td class="d-flex justify-content-start">
                                     <a href="{{ route('doc.edit', ['id' => $item->id]) }}" class="btn btn-success me-2">Edit</a>
 

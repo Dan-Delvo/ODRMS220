@@ -103,35 +103,38 @@ class OngoingController extends Controller
         return view('requestTables.ongoing.editTable', compact('ongoing', 'DocType'));
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, DocumentRequestModel $documentRequestModel)
-    {
-        $validated = $this->validateDocumentRequest($request);
-        DocumentRequestModel::updateOrCreateRequest($validated);
-
-        $studentId = $documentRequestModel->student_information_id;
-        $student = StudentInformationModel::find($studentId);
-
-        return redirect('/pending' )->with('Status', 'Updated Succesfully');
-
-
-    }
-
-    public function validateDocumentRequest(Request $request)
+        public function validateDocumentRequest(Request $request)
     {
         return $request->validate([
             'id' => 'required',
             'claimer_id' => 'required',
             'document_id' => 'required',
             'request_schl_entity' => 'required|string|max:255',
-            'requested_sf10' => 'required|string|max:255',
+            'request_mode' => 'required|string|max:255',
             'release_mode' => 'required|string|max:255',
             'remarks' => 'nullable|string|max:500',
             'status' => 'required|string',
         ]);
     }
+
+    /**
+     * Update the specified resource in storage.
+     */
+    public function update(Request $request, DocumentRequestModel $documentRequestModel)
+    {
+        $validated = $this->validateDocumentRequest($request);
+
+        DocumentRequestModel::updateOrCreateRequest($validated);
+
+        $studentId = $documentRequestModel->student_information_id;
+        $student = StudentInformationModel::find($studentId);
+
+        return redirect('/ongoing' )->with('Status', 'Updated Succesfully');
+
+
+    }
+
+
 
     /**
      * Remove the specified resource from storage.

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\ClaimerModel;
 use App\Models\DocumentRequestModel;
+use App\Models\DocuPaymentFee;
 use App\Models\DocumentsModel;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
@@ -29,11 +30,13 @@ class StudentRequestController extends Controller
 
     public function create(){
         $DocType = DocumentsModel::all();
-        return view('common.studentrequest', compact('DocType'));
+        $ReleaseMode = ['Pickup', 'Online'];
+        return view('common.studentrequest', compact('DocType', 'ReleaseMode'));
     }
 
     public function store(Request $request)
     {
+
         // Validate the request data
         $validatedData = $request->validate([
             'Fname' => 'required|string|max:255',
@@ -41,14 +44,26 @@ class StudentRequestController extends Controller
             'contact_no' => 'required|string|max:15',
             'document_id' => 'required|integer',
             'request_schl_entity' => 'required|string|max:255',
-            'release_mode' => 'required|string|max:255',
+            'release_mode' => 'required|max:255',
         ]);
+
+
 
         // Insert a new Claimer
         $claimer = ClaimerModel::create([
             'Fname' => $validatedData['Fname'],
             'Lname' => $validatedData['Lname'],
             'contact_no' => $validatedData['contact_no'],
+        ]);
+
+        $document = DocumentsModel::find($validatedData['document_id']);
+
+        $receipt = DocuPaymentFee::create([
+            "receipt_no" => random_int(10000, 99999),
+            'docu_categories_id' => $validatedData['document_id'],
+            'doc_amount' => $document->DocPrice,
+            'name_request' => Auth::user()->std_students_id,
+            'time_request' => Carbon::now()
         ]);
 
         // Insert a new Document Request with the claimer_id from the inserted claimer
@@ -67,6 +82,7 @@ class StudentRequestController extends Controller
 
             'remarks' => "N/A",
             'status' => "Pending",
+            'receipt_no' => $receipt->receipt_no
         ]);
 
         // Redirect or respond with success

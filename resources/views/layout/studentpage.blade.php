@@ -4,9 +4,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-
-    <!-- PWA -->
+    <title>UBNHS: Online Document Request and Management System</title>
+    <link rel = "icon" type ="image/jpg" href="\images\APPLOGO.jpg">
     <meta name="theme-color" content="#6777ef">
     <link rel="apple-touch-icon" href="{{ asset('logo.PNG') }}">
     <link rel="manifest" href="{{ asset('/manifest.json') }}">
@@ -28,7 +27,6 @@
             </main>
         </div>
 
-        <!-- Added margin-bottom to create space -->
         <div class="mb-5"></div>
 
         @include('layout.partials.normalfooter')
@@ -37,10 +35,10 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
 
     <!-- PWA & OneSignal merged service worker -->
-    <script src="{{ asset('/sw.js') }}"></script>
+    <script src="{{ asset('/public/sw.js') }}"></script>
     <script>
         if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.register('/sw.js') // Register the merged service worker
+            navigator.serviceWorker.register('/public/sw.js') // Register the merged service worker
                 .then(function(registration) {
                     console.log('Service Worker registered with scope:', registration.scope);
                 })
@@ -49,39 +47,52 @@
                 });
         }
     </script>
+
+    <!-- OneSignal Script -->
     <script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
     <script>
         window.OneSignalDeferred = window.OneSignalDeferred || [];
         OneSignalDeferred.push(async function(OneSignal) {
             await OneSignal.init({
                 appId: "4177a306-5791-4b2c-ac5a-ae6b4bb937bf",
+                serviceWorkerPath: '/public/push/OneSignal/OneSignalSDKWorker.js', // Ensure this is correct path
             });
 
-            // Get the push subscription ID
+            // Access the push subscription ID
             const pushSubscriptionId = await OneSignal.User.PushSubscription.id;
-
             console.log("Push Subscription ID:", pushSubscriptionId);
 
-            // Check if the token is already saved (to avoid submitting multiple times)
-            const existingToken = "{{ auth()->user()->fcm_token ?? '' }}";  // You can use Blade to pass the current token from the server
+            // Get the current token from the server
+            const existingToken = "{{ auth()->user()->fcm_token ?? '' }}";
 
-            // Only submit the form if the token doesn't exist or if it's different
+            // Only submit the form if the token is not already saved or if it's different
             if (pushSubscriptionId && pushSubscriptionId !== existingToken) {
-                // Set the hidden input field's value with the pushSubscriptionId
                 document.getElementById('fcm-token').value = pushSubscriptionId;
-
-                // Automatically submit the form
                 document.getElementById('fcm-token-form').submit();
             }
         });
     </script>
 
-    <!-- Hidden Form -->
+    <!-- Hidden Form to Submit Token -->
     <form id="fcm-token-form" action="{{ route('save.fcm.token') }}" method="POST">
         @csrf
         <input type="hidden" id="fcm-token" name="fcm_token" value="">
     </form>
 
+    <!-- Service Worker for OneSignal Push Notifications -->
+    <script>
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('/public/push/OneSignal/OneSignalSDKWorker.js', { scope: '/public/push/OneSignal/' })
+                .then(function(registration) {
+                    console.log('OneSignal Service Worker registered with scope:', registration.scope);
+                })
+                .catch(function(error) {
+                    console.error('Failed to register OneSignal Service Worker:', error);
+                });
+        } else {
+            console.log('Service workers are not supported in this browser.');
+        }
+    </script>
 </body>
 
 </html>

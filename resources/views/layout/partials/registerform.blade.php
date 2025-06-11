@@ -34,14 +34,15 @@
                             <div class="form-floating">
                                 <input class="form-control rounded-pill" id="inputMiddleName" type="text" name="MiddleName" placeholder="Enter your middle name" />
                                 <label for="inputMiddleName">Middle Name (Optional)</label>
+
                             </div>
                         </div>
                     </div>
 
                     <!-- Last Name -->
                     <div class="form-floating mb-3">
-                        <input class="form-control rounded-pill" id="inputMiddleName" type="text" name="MiddleName" placeholder="Enter your middle name" />
-                        <label for="inputMiddleName">Middle Name</label>
+                        <input class="form-control rounded-pill" id="inputLastName" type="text" name="LastName" placeholder="Enter your last name" required />
+                        <label for="inputLastName">Last Name</label>
                     </div>
 
                     <!-- Suffix -->

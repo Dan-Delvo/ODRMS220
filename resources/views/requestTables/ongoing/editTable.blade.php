@@ -1,3 +1,4 @@
+editTable.blade.php
 @extends('layout.blankpage')
 
 @section('content')
@@ -66,7 +67,7 @@
 
                     <div class="mb-3">
                         <label class="form-label">Request Mode</label>
-                        <input type="text" name="requested_sf10" class="form-control" value="{{ $ongoing->request_mode }}">
+                        <input type="text" name="request_mode" class="form-control" value="{{ $ongoing->request_mode }}">
                         @error('requested_sf10')
                             <small class="text-danger">{{ $message }}</small>
                         @enderror

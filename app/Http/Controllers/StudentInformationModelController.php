@@ -60,7 +60,7 @@ class StudentInformationModelController extends Controller
             'LastName' => 'required|string|max:255',
             'LRN' => 'nullable|string|max:255',
             'Grade_level' => 'required|string|max:255',
-            'Std_status' => 'required|in:Active,Inactive',
+            'Std_status' => 'required|in:Regular,Alumni,ALS',
             'Last_sy_attended' => 'nullable|string|max:255',
         ]);
 

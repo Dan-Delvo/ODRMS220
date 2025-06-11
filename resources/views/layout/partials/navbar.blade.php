@@ -1,3 +1,4 @@
+navbar.blade.php
 <!-- Navbar Start -->
 <nav class="sb-topnav navbar navbar-expand-lg  shadow-sm" style="background-color: #1f2937;">
     <div class="container-fluid">

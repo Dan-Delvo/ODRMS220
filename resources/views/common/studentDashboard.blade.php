@@ -1,79 +1,212 @@
 @extends('layout.studentpage')
 
 @section('content')
-<div class="container mt-5">
-    <!-- Student Information Section -->
+
+<style>
+    body, html {
+        background-color: #0f172a;
+        color: #e2e8f0;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    .id-header h5 {
+        color: #1dd3b0;
+        font-weight: bold;
+        font-size: 1.6rem;
+    }
+
+    .id-card {
+        background-color: #1e293b;
+        padding: 20px 25px;
+        margin-bottom: 20px;
+        border-radius: 12px;
+        border: 2px solid #334155;
+        margin-top: 3rem;
+    }
+
+    .id-card h5 {
+        font-size: 1.4rem;
+        font-weight: 700;
+        color: #1dd3b0;
+        margin-bottom: 20px;
+        border-bottom: 2px solid #334155;
+        padding-bottom: 10px;
+    }
+
+    .id-card ul {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+
+    .id-card li {
+        font-size: 1rem;
+        line-height: 1.8;
+        padding: 8px 0;
+        border-bottom: 1px solid #475569;
+        display: flex;
+        justify-content: space-between;
+    }
+
+    .id-card li:last-child {
+        border-bottom: none;
+    }
+
+    .id-card li strong {
+        color: #f1f5f9;
+        font-weight: 600;
+        width: 50%;
+    }
+
+    .card-container {
+        background-color: #1e293b;
+        border: 2px solid #334155;
+        border-radius: 1rem;
+        padding: 2rem;
+    }
+
+    .card-header-custom {
+        background-color: transparent;
+        padding-bottom: 1rem;
+        border-bottom: 1px solid #334155;
+    }
+
+    .custom-table th {
+        background-color: #334155;
+        color: #f1f5f9;
+    }
+
+    .custom-table td {
+        background-color: #1e293b;
+        color: #e2e8f0;
+        vertical-align: middle;
+    }
+
+    .custom-table tr:hover td {
+        background-color: #475569;
+    }
+
+    .badge {
+        font-size: 0.75rem;
+        padding: 5px 10px;
+        border-radius: 8px;
+    }
+
+    .badge.bg-success {
+        background-color: #16a34a;
+        color: #fff;
+    }
+
+    .badge.bg-warning {
+        background-color: #1dd3b0;
+        color: #1f2937;
+    }
+
+    .badge.bg-secondary {
+        background-color: #64748b;
+        color: #f8fafc;
+    }
+
+    .pagination > .page-item > .page-link {
+        background-color: #334155;
+        color: #f8fafc;
+        border: none;
+    }
+
+    .pagination > .page-item.active > .page-link {
+        background-color: #1dd3b0;
+        color: #1e293b;
+        font-weight: bold;
+    }
+
+    .pagination > .page-item > .page-link:hover {
+        background-color: #64748b;
+    }
+
+    .custom-table th,
+    .custom-table td {
+        border: 1px solid #64748b !important;
+    }
+
+    .custom-table {
+        border: 1px solid #64748b;
+        border-radius: 8px;
+        overflow: hidden;
+    }
+
+    .text-accent {
+        color: #1dd3b0 !important;
+    }
+</style>
+
+<div class="container-fluid mt-4">
     <div class="row">
-        <div class="col-lg-8 mx-auto">
-            <div class="card shadow-lg border-0 rounded-4">
-                <div class="card-header bg-dark text-white text-center">
-                    <h4 class="mb-0">Student Dashboard</h4>
-                </div>
-                <div class="card-body bg-light">
-                    <h5 class="card-title text-center fw-bold text-dark">{{ $studInfo->FirstName }} {{ $studInfo->LastName }}</h5>
-                    <p class="text-center text-muted">{{ $studInfo->Grade_level }} - {{ $studInfo->Std_status }}</p>
-                    <ul class="list-group list-group-flush">
-                        <li class="list-group-item bg-light"><strong>Student ID:</strong> {{ $studInfo->id }}</li>
-                        <li class="list-group-item bg-light"><strong>LRN:</strong> {{ $studInfo->LRN }}</li>
-                        <li class="list-group-item bg-light"><strong>Grade Level:</strong> {{ $studInfo->Grade_level }}</li>
-                        <li class="list-group-item bg-light"><strong>Status:</strong> {{ $studInfo->Std_status }}</li>
-                        <li class="list-group-item bg-light"><strong>Last School Year Attended:</strong> {{ $studInfo->Last_sy_attended }}</li>
-                    </ul>
-                </div>
+        <!-- Left: Student Info -->
+        <div class="col-md-3">
+            <div class="id-header mb-3">
+                <h5>Student Dashboard</h5>
+            </div>
+            <div class="id-card">
+                <h5>{{ $studInfo->FirstName }} {{ $studInfo->LastName }}</h5>
+                <ul>
+                    <li><strong>Student ID:</strong> <span>{{ $studInfo->id }}</span></li>
+                    <li><strong>LRN:</strong> <span>{{ $studInfo->LRN }}</span></li>
+                    <li><strong>Grade Level:</strong> <span>{{ $studInfo->Grade_level }}</span></li>
+                    <li><strong>Status:</strong> <span>{{ $studInfo->Std_status }}</span></li>
+                    <li><strong>Last SY Attended:</strong> <span>{{ $studInfo->Last_sy_attended }}</span></li>
+                </ul>
             </div>
         </div>
-    </div>
 
-    <!-- Document Requests Table Section -->
-    <div class="row mt-5">
-        <div class="col-lg-10 mx-auto">
-            <div class="card shadow-lg border-0 rounded-4">
-                <div class="card-header bg-dark text-white text-center">
-                    <h5 class="mb-0">Your Document Requests</h5>
+        <!-- Right: Document Request Table -->
+        <div class="col-md-9">
+            <div class="card-container shadow">
+                <div class="card-header-custom mb-3">
+                    <h4 class="text-accent fw-semibold mb-0">Your Document Requests</h4>
                 </div>
-                <div class="card-body bg-light">
-                    <div class="table-responsive">
-                        <table class="table table-hover align-middle">
-                            <thead class="bg-secondary text-white">
+
+                <div class="table-responsive">
+                    <table class="table table-sm table-bordered custom-table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Claimer</th>
+                                <th>Student</th>
+                                <th>Document</th>
+                                <th>School</th>
+                                <th>Release Mode</th>
+                                <th>Remarks</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach ($DocRequests as $item)
                                 <tr>
-                                    <th>ID</th>
-                                    <th>Claimer</th>
-                                    <th>Student</th>
-                                    <th>Document</th>
-                                    <th>School</th>
-                                    <th>Release Mode</th>
-                                    <th>Remarks</th>
-                                    <th>Status</th>
+                                    <td>{{ $item->id }}</td>
+                                    <td>{{ $item->claimer->full_name }}</td>
+                                    <td>{{ $item->studentInformation->full_name }}</td>
+                                    <td>{{ $item->documents->DocType }}</td>
+                                    <td>{{ $item->request_schl_entity }}</td>
+                                    <td>{{ $item->release_mode }}</td>
+                                    <td>{{ $item->remarks }}</td>
+                                    <td>
+                                        @if($item->status == 'Completed')
+                                            <span class="badge bg-success">Completed</span>
+                                        @elseif($item->status == 'Ongoing')
+                                            <span class="badge bg-warning">Ongoing</span>
+                                        @else
+                                            <span class="badge bg-secondary">Pending</span>
+                                        @endif
+                                    </td>
                                 </tr>
-                            </thead>
-                            <tbody class="table-light">
-                                @foreach ($DocRequests as $item)
-                                    <tr class="shadow-sm">
-                                        <td>{{ $item->id }}</td>
-                                        <td>{{ $item->claimer->full_name }}</td>
-                                        <td>{{ $item->studentInformation->full_name }}</td>
-                                        <td>{{ $item->documents->DocType }}</td>
-                                        <td>{{ $item->request_schl_entity }}</td>
-                                        <td>{{ $item->release_mode }}</td>
-                                        <td>{{ $item->remarks }}</td>
-                                        <td>
-                                            @if($item->status == 'Completed')
-                                                <span class="badge bg-success px-3 py-2 rounded-pill">Completed</span>
-                                            @elseif($item->status == 'Ongoing')
-                                                <span class="badge bg-warning text-dark px-3 py-2 rounded-pill">Ongoing</span>
-                                            @else
-                                                <span class="badge bg-secondary px-3 py-2 rounded-pill">Pending</span>
-                                            @endif
-                                        </td>
-                                    </tr>
-                                @endforeach
-                            </tbody>
-                        </table>
-                    </div>
-                    <!-- Pagination -->
-                    <div class="d-flex justify-content-center mt-4">
-                        {{ $DocRequests->links() }}
-                    </div>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Pagination -->
+                <div class="d-flex justify-content-center mt-4">
+                    {{ $DocRequests->links() }}
                 </div>
             </div>
         </div>

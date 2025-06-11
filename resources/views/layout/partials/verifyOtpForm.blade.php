@@ -34,8 +34,11 @@
                 </div>
                 <div class="text-center mt-3 d-flex justify-content-between align-items-center">
                     <button type="submit" class="btn btn-primary">Verify</button>
-                    <p><span id="countdown" class ="text-white">Loading...</span></p>
+                    <a href="#" class="btn" style="background-color: #1dd3b0; display: inline-block; padding: 0.5em 1em; color: white; text-decoration: none; border-radius: 4px;">
+                        Send again
+                    </a>
                 </div>
+                <p><span id="countdown" class ="text-white">Loading...</span></p>
             </form>
 
         </div>

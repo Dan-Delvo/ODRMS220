@@ -1,6 +1,6 @@
 @extends('layout.blankpage')
 
-@section ('content')
+@section('content')
 
 <!-- Main Content Wrapper -->
 <div class="row justify-content-center">
@@ -28,6 +28,8 @@
 
                     <!-- Personal Information Section -->
                     <h4 class="mb-3 text-dark">Personal Information</h4>
+
+                    <!-- First and Last Name -->
                     <div class="row mb-3">
                         <div class="col-md-6">
                             <div class="form-floating mb-3 mb-md-0">
@@ -43,21 +45,38 @@
                         </div>
                     </div>
 
+                    <!-- Middle Name -->
                     <div class="form-floating mb-3">
                         <input class="form-control" id="inputMiddleName" type="text" name="MiddleName" placeholder="Enter your middle name" />
                         <label for="inputMiddleName">Middle Name</label>
                     </div>
 
+                    <!-- Suffix -->
                     <div class="form-floating mb-3">
                         <input class="form-control" id="inputSuffix" type="text" name="Suffix" placeholder="Enter your suffix" />
                         <label for="inputSuffix">Suffix (Optional)</label>
                     </div>
 
+                    <!-- Role Selection -->
+                    <div class="form-floating mb-3">
+                        <div class="form-group">
+                            <label for="role" class="form-label">Role</label>
+                            <select class="form-control" id="role" name="role" onchange="toggleStudentFields()">
+                                <option value="" disabled selected>Select Role</option>
+                                @foreach ($role as $roles)
+                                    <option value="{{ $roles->id }}">{{ $roles->name }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- LRN -->
                     <div class="form-floating mb-3">
                         <input class="form-control" id="inputLRN" type="text" name="LRN" placeholder="Enter your LRN" />
                         <label for="inputLRN">LRN (Learner's Reference Number)</label>
                     </div>
 
+                    <!-- Grade Level -->
                     <div class="form-floating mb-3">
                         <div class="form-group">
                             <label for="grade_level" class="form-label">Grade Level</label>
@@ -70,6 +89,7 @@
                         </div>
                     </div>
 
+                    <!-- Student Status -->
                     <div class="form-floating mb-3">
                         <div class="form-group">
                             <label for="std_status" class="form-label">Student Status</label>
@@ -82,6 +102,7 @@
                         </div>
                     </div>
 
+                    <!-- Last School Year Attended -->
                     <div class="form-floating mb-3">
                         <input class="form-control" id="inputLastSYAttended" type="text" name="Last_sy_attended" placeholder="Enter last school year attended" />
                         <label for="inputLastSYAttended">Last School Year Attended</label>
@@ -89,25 +110,32 @@
 
                     <!-- Account Information Section -->
                     <h4 class="mb-3 text-dark">Account Information</h4>
+
+                    <!-- Email -->
                     <div class="form-floating mb-3">
                         <input class="form-control" id="inputEmail" type="email" name="email_address" placeholder="name@example.com" />
                         <label for="inputEmail">Email Address</label>
                     </div>
+
+                    <!-- Username -->
                     <div class="form-floating mb-3">
                         <input class="form-control" id="inputUsername" type="text" name="username" placeholder="Enter your username" />
                         <label for="inputUsername">Username</label>
                     </div>
+
+                    <!-- Password -->
                     <div class="form-floating mb-3">
                         <input class="form-control" id="inputPassword" type="password" name="password" placeholder="Create a password" />
                         <label for="inputPassword">Password</label>
                     </div>
 
+                    <!-- Confirm Password -->
                     <div class="form-floating mb-3">
                         <input class="form-control" id="inputPasswordConfirm" type="password" name="password_confirmation" placeholder="Confirm password" />
                         <label for="inputPasswordConfirm">Confirm Password</label>
                     </div>
 
-                    <!-- Submit Button -->
+                    <!-- Submit and Back Buttons -->
                     <div class="mt-4 mb-0">
                         <div class="d-flex align-items-center justify-content-between">
                             <button class="btn text-black fw-semibold" style="background-color: #1dd3b0; box-shadow: 0 4px 10px rgba(29, 211, 176, 0.5);" type="submit">
@@ -123,5 +151,42 @@
         </div>
     </div>
 </div>
+
+<!-- Optional styles to show disabled fields clearly -->
+<style>
+    input:disabled, select:disabled {
+        background-color: #e9ecef !important;
+        cursor: not-allowed;
+    }
+</style>
+
+<!-- JavaScript to toggle student-related fields -->
+<script>
+    function toggleStudentFields() {
+        const role = document.getElementById("role").value;
+        const isStudent = parseInt(role) === 1;
+
+        // Fields to toggle
+        document.getElementById("inputLRN").disabled = !isStudent;
+        document.getElementById("grade_level").disabled = !isStudent;
+        document.getElementById("inputLastSYAttended").disabled = !isStudent;
+        document.getElementById("inputStdStatus").disabled = !isStudent;
+
+        // Optionally hide the entire divs if you prefer to completely remove visibility
+        const stdFields = [
+            "inputLRN", "grade_level", "inputLastSYAttended", "inputStdStatus"
+        ];
+        stdFields.forEach(id => {
+            const el = document.getElementById(id);
+            if (el) {
+                el.closest(".form-group")?.classList.toggle("d-none", !isStudent);
+                el.closest(".form-floating")?.classList.toggle("d-none", !isStudent);
+            }
+        });
+    }
+
+    window.addEventListener('DOMContentLoaded', toggleStudentFields);
+</script>
+
 
 @endsection

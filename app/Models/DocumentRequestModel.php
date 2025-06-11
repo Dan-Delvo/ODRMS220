@@ -28,7 +28,8 @@ class DocumentRequestModel extends Model
         'release_mode',
 
         'remarks',
-        'status'
+        'status',
+        'receipt_no'
     ];
 
     public function claimer()
@@ -51,6 +52,13 @@ class DocumentRequestModel extends Model
         return $this->belongsTo(Account::class, 'std_students_id', 'std_students_id');
     }
 
+    // In DocumentRequestModel.php
+    public function receipt()
+    {
+        return $this->hasOne(DocuPaymentFee::class, 'receipt_no', 'receipt_no');
+    }
+
+
     public static function updateOrCreateRequest(array $data)
     {
         return self::updateOrCreate(
@@ -62,7 +70,7 @@ class DocumentRequestModel extends Model
                 'request_date' => Carbon::now()->toDateString(),
 
                 'request_schl_entity' => $data['request_schl_entity'],
-                'request_mode' => $data['requested_sf10'],
+                'request_mode' => $data['request_mode'],
                 'release_mode' => $data['release_mode'],
 
                 'remarks' => $data['remarks'],

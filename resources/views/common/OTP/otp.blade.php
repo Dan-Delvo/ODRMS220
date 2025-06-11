@@ -3,7 +3,7 @@
 
 <!-- @if (session('success'))
 <div id="successAlert" class="alert alert-success alert-dismissible fade show position-fixed top-0 start-50 translate-middle-x mt-5 shadow-lg" role="alert" style="z-index: 1050; width: 20%;">
-        {{ session('success') }} 
+        {{ session('success') }}
         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
     </div>
 @endif
@@ -25,17 +25,17 @@
             <form action="{{route('verifyotp.submit')}}"  method="POST">
                 @csrf
                 <div class="d-flex justify-content-center align-items-center p-3 gap-1" >
-                    <input type="text" name = "first" class="otp-input form-control text-center" maxlength="1" 
+                    <input type="text" name = "first" class="otp-input form-control text-center" maxlength="1"
                     style="font-family: 'Courier New', monospace; font-size: 24px; font-weight: bold; text-align: center; color: black; background-color: white; border: 2px solid black; width: 50px; height: 50px; border-radius: 8px;">
-                    <input type="text" name = "second" class="otp-input form-control text-center" maxlength="1" 
+                    <input type="text" name = "second" class="otp-input form-control text-center" maxlength="1"
                     style="font-family: 'Courier New', monospace; font-size: 24px; font-weight: bold; text-align: center; color: black; background-color: white; border: 2px solid black; width: 50px; height: 50px; border-radius: 8px;">
-                    <input type="text" name = "third" class="otp-input form-control text-center" maxlength="1" 
+                    <input type="text" name = "third" class="otp-input form-control text-center" maxlength="1"
                     style="font-family: 'Courier New', monospace; font-size: 24px; font-weight: bold; text-align: center; color: black; background-color: white; border: 2px solid black; width: 50px; height: 50px; border-radius: 8px;">
-                    <input type="text" name = "fourth" class="otp-input form-control text-center" maxlength="1" 
+                    <input type="text" name = "fourth" class="otp-input form-control text-center" maxlength="1"
                     style="font-family: 'Courier New', monospace; font-size: 24px; font-weight: bold; text-align: center; color: black; background-color: white; border: 2px solid black; width: 50px; height: 50px; border-radius: 8px;">
-                    <input type="text" name = "fifth" class="otp-input form-control text-center" maxlength="1" 
+                    <input type="text" name = "fifth" class="otp-input form-control text-center" maxlength="1"
                     style="font-family: 'Courier New', monospace; font-size: 24px; font-weight: bold; text-align: center; color: black; background-color: white; border: 2px solid black; width: 50px; height: 50px; border-radius: 8px;">
-                    <input type="text" name = "sixth" class="otp-input form-control text-center" maxlength="1" 
+                    <input type="text" name = "sixth" class="otp-input form-control text-center" maxlength="1"
                     style="font-family: 'Courier New', monospace; font-size: 24px; font-weight: bold; text-align: center; color: black; background-color: white; border: 2px solid black; width: 50px; height: 50px; border-radius: 8px;">
 
                 </div>

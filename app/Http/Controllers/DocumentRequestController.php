@@ -119,7 +119,7 @@ class DocumentRequestController extends Controller
         $studentId = $documentRequestModel->student_information_id;
         $student = StudentInformationModel::find($studentId);
 
-        return redirect('/pending' )->with('Status', 'Updated Succesfully');
+        return redirect('/tables' )->with('Status', 'Updated Succesfully');
 
 
     }
@@ -131,7 +131,7 @@ class DocumentRequestController extends Controller
             'claimer_id' => 'required',
             'document_id' => 'required',
             'request_schl_entity' => 'required|string|max:255',
-            'requested_sf10' => 'required|string|max:255',
+            'request_mode' => 'required|string|max:255',
             'release_mode' => 'required|string|max:255',
             'remarks' => 'nullable|string|max:500',
             'status' => 'required|string',
@@ -182,7 +182,7 @@ class DocumentRequestController extends Controller
             // Student Information Validation
             'student_first_name' => 'required|string|max:255',
             'student_last_name' => 'required|string|max:255',
-            'lrn' => 'required|string|max:12',
+            'lrn' => 'string|max:12',
             'grade_level' => 'required|string|max:50',
             'student_status' => 'required|string|max:20',
             'last_sy_attended' => 'required|string|max:50',
@@ -199,7 +199,7 @@ class DocumentRequestController extends Controller
             [
                 'FirstName' => $validated['student_first_name'],
                 'LastName' => $validated['student_last_name'],
-                'LRN' => $validated['lrn'],
+                'LRN' => $validated['lrn'] ?? 0000,
             ],
             [
                 'Grade_level' => $validated['grade_level'],

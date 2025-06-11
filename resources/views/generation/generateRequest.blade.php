@@ -1,3 +1,4 @@
+generateRequest.blade.php
 @extends('layout.blankpage')
 
 @section ('content')

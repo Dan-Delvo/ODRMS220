@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login</title>
-
+     <link rel = "icon" type ="image/jpg" href="\images\APPLOGO.jpg">
     <!-- PWA -->
     <meta name="theme-color" content="#6777ef">
     <link rel="apple-touch-icon" href="{{ asset('/images/UBLOGO.png') }}">
@@ -20,23 +20,7 @@
 
     @vite(['resources/css/app.css', 'resources/sass/app.scss', 'resources/js/scripts.js', 'resources/js/datatables-simple-demo.js'])
 
-    <style>
-        html, body {
-            height: 100%;
-            overflow: hidden;
-        }
-        body {
-            margin: 0;
-            background-color: #23272E;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        main {
-            width: 100%;
-            height: 100%;
-        }
-    </style>
+
 </head>
 
 <body>
@@ -62,6 +46,7 @@
                 });
         }
     </script>
+        @stack('scripts')
 </body>
 
 </html>

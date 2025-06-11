@@ -1,3 +1,4 @@
+users.blade.php
 @extends('layout.blankpage')
 
 @section ('content')
@@ -44,7 +45,11 @@
                     <a href="{{ route('userStud.add') }}" class="btn text-black fw-semibold" style="background-color: #1dd3b0; box-shadow: 0 4px 10px rgba(29, 211, 176, 0.5);">
                         Add User
                     </a>
+<<<<<<< HEAD
                 
+=======
+
+>>>>>>> origin/main
             </div>
 
             <div class="card-body">

@@ -5,10 +5,16 @@
 <style>
     input::placeholder {
         color: #D3D3D3 !important;
+<<<<<<< HEAD
         opacity: 1; /* For full visibility in some browsers */
     }
 
     /* Optional: Only target specific input */
+=======
+        opacity: 1;
+    }
+
+>>>>>>> origin/main
     input[name="role"]::placeholder {
         color: #D3D3D3 !important;
     }
@@ -32,6 +38,7 @@
 <div class="row mb-4">
     <div class="col-md-12">
         @if(session('Status'))
+<<<<<<< HEAD
             <div class="alert alert-success">
                 {{ session('Status') }}
             </div>
@@ -41,6 +48,12 @@
             <div class="alert alert-danger">
                 {{ session('Danger') }}
             </div>
+=======
+            <div class="alert alert-success">{{ session('Status') }}</div>
+        @endif
+        @if(session('Danger'))
+            <div class="alert alert-danger">{{ session('Danger') }}</div>
+>>>>>>> origin/main
         @endif
     </div>
 </div>
@@ -57,13 +70,23 @@
             </div>
 
             <div class="card-body" style="background-color: rgb(34, 43, 55);">
+<<<<<<< HEAD
                 <form action="{{ route('role.insert') }}" method="POST">
+=======
+                <form action="{{ route('role.insert') }}" method="POST" id="addRoleForm">
+>>>>>>> origin/main
                     @csrf
 
                     <!-- Role Name -->
                     <div class="mb-4">
                         <label class="form-label fw-bold text-uppercase text-white">Role Name</label>
+<<<<<<< HEAD
                         <input type="text" name="role" class="form-control shadow-sm text-light" placeholder="Enter role name" style="background: #2d3748; border: none; color: #e2e8f0;" />
+=======
+                        <input type="text" name="role" class="form-control shadow-sm text-light"
+                            placeholder="Enter role name"
+                            style="background: #2d3748; border: none; color: #e2e8f0;" />
+>>>>>>> origin/main
                         @error('role')
                             <div class="text-danger mt-1">{{ $message }}</div>
                         @enderror
@@ -81,6 +104,7 @@
 
                             <div class="row">
                                 @foreach($value['group'] as $group)
+<<<<<<< HEAD
                                     <div class="col-md-3 mb-2">
                                         <div class="form-check">
                                             <input type="checkbox" class="form-check-input" id="permission_{{ $group['id'] }}" name="permission_id[]" value="{{ $group['id'] }}">
@@ -89,15 +113,37 @@
                                             </label>
                                         </div>
                                     </div>
+=======
+                                <div class="col-md-3 mb-2">
+                                    <div class="form-check">
+                                        <input type="checkbox" class="form-check-input" id="permission_{{ $group['id'] }}" name="permission_id[]" value="{{ $group['id'] }}">
+                                        <label class="form-check-label text-light" for="permission_{{ $group['id'] }}">
+                                            {{ $group['name'] }}
+                                        </label>
+                                    </div>
+                                </div>
+>>>>>>> origin/main
                                 @endforeach
                             </div>
                         </div>
                         @endforeach
                     </div>
 
+<<<<<<< HEAD
                     <!-- Submit Button -->
                     <div class="text-end">
                         <button type="submit" class="btn text-black fw-semibold" style="background-color: #1dd3b0; box-shadow: 0 4px 10px rgba(29, 211, 176, 0.5);">Save</button>
+=======
+                    <!-- Error Message -->
+                    <div id="permission-error" class="text-danger fw-semibold mb-3" style="display: none;">
+                        Please select at least one permission.
+                    </div>
+
+                    <!-- Submit Button -->
+                    <div class="text-end">
+                        <button type="submit" class="btn text-black fw-semibold"
+                            style="background-color: #1dd3b0; box-shadow: 0 4px 10px rgba(29, 211, 176, 0.5);">Save</button>
+>>>>>>> origin/main
                     </div>
                 </form>
             </div>
@@ -105,6 +151,29 @@
     </div>
 </div>
 
+<!-- Client-side Validation Script -->
+<script>
+    document.getElementById('addRoleForm').addEventListener('submit', function (e) {
+        const checkboxes = document.querySelectorAll('input[name="permission_id[]"]');
+        const errorDiv = document.getElementById('permission-error');
+        let isChecked = false;
 
+        checkboxes.forEach((checkbox) => {
+            if (checkbox.checked) {
+                isChecked = true;
+            }
+        });
 
+<<<<<<< HEAD
+=======
+        if (!isChecked) {
+            e.preventDefault();
+            errorDiv.style.display = 'block';
+        } else {
+            errorDiv.style.display = 'none';
+        }
+    });
+</script>
+
+>>>>>>> origin/main
 @endsection

@@ -1,3 +1,4 @@
+blankpage.blade.php
 <!DOCTYPE html>
 <html lang="en">
 
@@ -5,7 +6,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>UBNHS: Online Document Request and Management System</title>
-
+    <link rel = "icon" type ="image/jpg" href="\images\APPLOGO.jpg">
     <!-- PWA -->
     <meta name="theme-color" content="#6777ef">
     <link rel="apple-touch-icon" href="{{ asset('logo.PNG') }}">

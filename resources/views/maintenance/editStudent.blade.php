@@ -1,3 +1,4 @@
+editStudent.blade.php
 @extends('layout.blankpage')
 
 @section('content')
@@ -70,8 +71,9 @@
                     <div class="mb-3">
                         <label for="Std_status" class="form-label">Student Status</label>
                         <select name="Std_status" id="Std_status" class="form-select">
-                            <option value="Active" {{ $student->Std_status == 'Active' ? 'selected' : '' }}>Active</option>
-                            <option value="Inactive" {{ $student->Std_status == 'Inactive' ? 'selected' : '' }}>Inactive</option>
+                            <option value="Regular" {{ $student->Std_status == 'Regular' ? 'selected' : '' }}>Regular</option>
+                            <option value="Alumni" {{ $student->Std_status == 'Alumni' ? 'selected' : '' }}>Alumni</option>
+                            <option value="ALS" {{ $student->Std_status == 'ALS' ? 'selected' : '' }}>ALS</option>
                         </select>
                         @error('Std_status') <small class="text-danger">{{ $message }}</small> @enderror
                     </div>

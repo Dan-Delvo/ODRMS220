@@ -1,3 +1,4 @@
+walkin.blade.php
 @extends('layout.blankpage')
 
 @section('content')
@@ -5,6 +6,7 @@
 <div class="row justify-content-center">
     <div class="col-lg-7">
         <div class="card shadow-lg border-0 rounded-lg mt-5" style="min-height: 600px;">
+            <div class="card-header text-white" style="background-color: #1f2937;">
             <div class="card-header text-white" style="background-color: #1f2937;">
                 <h3 class="text-center font-weight-light my-4">Document Request Form</h3>
             </div>
