@@ -54,7 +54,7 @@
                         <i class="fas fa-spinner fa-3x text-warning"></i>
                     </div>
                     <div>
-                        <h3 class="mb-1" style="font-weight: bold;">Ongoing Requests</h3>
+                        <h3 class="mb-1" style="font-weight: bold;">Processing Requests</h3>
                         <h2 class="mb-2" style="font-weight: bold;">{{ $totalOngoing }}</h2>
                         <p class="mb-0 text-light small">Requests that are being processed currently.</p>
                     </div>
@@ -75,7 +75,7 @@
                         <i class="fas fa-check-circle fa-3x text-success"></i>
                     </div>
                     <div>
-                        <h3 class="mb-1" style="font-weight: bold;">Completed Requests</h3>
+                        <h3 class="mb-1" style="font-weight: bold;">For Release Requests</h3>
                         <h2 class="mb-2" style="font-weight: bold;">{{ $totalCompleted }}</h2>
                         <p class="mb-0 text-light small">Requests that have been fully completed.</p>
                     </div>
