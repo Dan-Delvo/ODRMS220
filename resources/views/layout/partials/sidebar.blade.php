@@ -89,16 +89,21 @@
                 @if(!empty($PermissionOngoing))
                 <a class="nav-link text-light sidebar-item" href="{{ route('ongoing.index') }}">
                     <div class="sb-nav-link-icon"><i class="fas fa-spinner"></i></div>
-                    Ongoing Requests
+                    Processing Requests
                 </a>
                 @endif
 
                 @if(!empty($PermissionCompleted))
                 <a class="nav-link text-light sidebar-item" href="{{ route('tables.index') }}">
                     <div class="sb-nav-link-icon"><i class="fas fa-check-circle"></i></div>
-                    Completed Requests
+                    For Release Requests
                 </a>
                 @endif
+
+                <a class="nav-link text-light sidebar-item" href="{{ route('claimed-documents.index') }}">
+                    <div class="sb-nav-link-icon"><i class="fas fa-check-circle"></i></div>
+                    Claimed Requests
+                </a>
 
                 @if(!empty($PermissionWalk))
                 <a class="nav-link text-light sidebar-item" href="{{ route('walkin.form') }}">

@@ -36,9 +36,10 @@ class PendingController extends Controller
 
         $totalCount = DocumentRequestModel::where('status', 'pending')->count();
         $DocRequests = DocumentRequestModel::where('status', 'pending')
-        ->with('claimer')
-        ->with('studentInformation')
-        ->paginate(9);
+            ->with('claimer')
+            ->with('studentInformation')
+            ->orderBy('req_no', 'asc') // ascending order
+            ->paginate(9);
 
 
         return view('requestTables.pending.pending', [
@@ -217,12 +218,16 @@ class PendingController extends Controller
         }
 
         // Update the document request status to 'Ongoing'
-        $documentRequest->update([
-            'status' => 'Ongoing',
-        ]);
+            $documentRequest->update([
+                'status' => 'Processing',
+                'approve_date' => Carbon::now(),
+            ]);
+
 
         return redirect('/pending')->with('Status', 'Updated Successfully');
     }
+
+
 
 
 

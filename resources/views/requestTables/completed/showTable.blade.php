@@ -4,7 +4,7 @@ showTable.blade.php
 @section ('content')
 
 <h1 class="mt-4">
-    <span class="badge" style="background-color: #1dd3b0; font-size: 2rem;">Completed Requests</span>
+    <span class="badge" style="background-color: #1dd3b0; font-size: 2rem;">For Release Requests</span>
 </h1>
 <ol class="breadcrumb mb-4">
     <li class="breadcrumb-item"><a href="{{ route('dashboard') }}" class="text-dark">Dashboard</a></li>

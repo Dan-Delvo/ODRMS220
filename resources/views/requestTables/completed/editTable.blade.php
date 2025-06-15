@@ -1,10 +1,10 @@
 @extends('layout.blankpage')
 
 @section('content')
-    <h1 class="mt-4">Completed Requests</h1>
+    <h1 class="mt-4">For Release Requests</h1>
     <ol class="breadcrumb mb-4">
         <li class="breadcrumb-item"><a href="index.html">Dashboard</a></li>
-        <li class="breadcrumb-item active">Completed Requests</li>
+        <li class="breadcrumb-item active">For Release Requests</li>
     </ol>
 
     <div class="row">

@@ -3,26 +3,50 @@
 @section('content')
 
 <style>
+    :root {
+        --sidebar-width: 270px;
+        --sidebar-collapsed-width: 85px;
+    }
+
     body, html {
         background-color: #0f172a;
         color: #e2e8f0;
     }
 
+    footer,
+    .footer {
+        display: none !important;
+    }
+
+    #main-content {
+        margin-left: var(--sidebar-width);
+        transition: margin-left 0.4s ease;
+        padding: 6rem 2rem 2rem;
+    }
+
+    body.sidebar-shrink #main-content {
+        margin-left: var(--sidebar-collapsed-width);
+    }
+
     .page-title {
-        color: #1dd3b0; /* teal */
+        color: #1dd3b0;
         font-weight: 600;
         font-size: 1.8rem;
+        margin-bottom: 1.5rem;
+        text-align: left;
     }
 
     .custom-table th {
         background-color: #334155;
         color: #f1f5f9;
+        white-space: nowrap;
     }
 
     .custom-table td {
         background-color: #1e293b;
         color: #e2e8f0;
         vertical-align: middle;
+        white-space: nowrap;
     }
 
     .custom-table tr:hover td {
@@ -49,7 +73,7 @@
     }
 
     .pagination > .page-item.active > .page-link {
-        background-color: #1dd3b0; /* changed from #facc15 */
+        background-color: #1dd3b0;
         color: #1e293b;
         font-weight: bold;
     }
@@ -60,31 +84,65 @@
 
     .custom-table th,
     .custom-table td {
-        border: 1px solid #64748b !important; /* Soft slate border */
+        border: 1px solid #64748b !important;
     }
 
     .custom-table {
-        border: 1px solid #64748b; /* Optional: border around full table */
+        border: 1px solid #64748b;
         border-radius: 8px;
         overflow: hidden;
+        width: 100%;
     }
 
-    /* Replace Bootstrap .text-warning to teal */
     .text-warning {
         color: #1dd3b0 !important;
     }
 
+    /* Responsive Design */
+    @media (max-width: 768px) {
+        #main-content {
+            margin-left: 0 !important;
+            padding: 6.5rem 1rem 2rem;
+        }
+
+        .card-container {
+            padding: 1rem;
+        }
+
+        .page-title {
+            font-size: 1.4rem;
+            text-align: center;
+            margin-top: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .card-header-custom h4 {
+            font-size: 1.1rem;
+        }
+
+        .table-responsive {
+            overflow-x: auto;
+        }
+
+        .custom-table th,
+        .custom-table td {
+            font-size: 0.875rem;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .custom-table th, .custom-table td {
+            font-size: 0.8rem;
+            padding: 0.5rem;
+        }
+    }
 </style>
 
-<div class="container-fluid py-5">
-    <div class="row justify-content-center mb-4">
-        <div class="col-lg-10">
-            <h1 class="page-title text-center">📋 All Requests: {{ $totalCount }}</h1>
-        </div>
-    </div>
+<div id="main-content">
+    <div class="container-fluid py-5">
+        <h1 class="page-title">All Requests: {{ $totalCount }}</h1>
 
-    <div class="row justify-content-center">
-        <div class="col-lg-10">
+        <div class="col-12"> <!-- 🔄 Changed from centered row to full-width column -->
             <div class="card-container shadow">
                 <div class="card-header-custom mb-3">
                     <h4 class="text-warning fw-semibold mb-0">All Document Requests</h4>
@@ -129,5 +187,16 @@
         </div>
     </div>
 </div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const sidebarToggler = document.querySelector('.sidebar-toggler');
+        if (sidebarToggler) {
+            sidebarToggler.addEventListener('click', function () {
+                document.body.classList.toggle('sidebar-shrink');
+            });
+        }
+    });
+</script>
 
 @endsection

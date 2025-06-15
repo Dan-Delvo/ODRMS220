@@ -4,11 +4,11 @@ showTable.blade.php
 @section ('content')
 
 <h1 class="mt-4">
-    <span class="badge" style="background-color: #1dd3b0; font-size: 2rem;">Ongoing Requests</span>
+    <span class="badge" style="background-color: #1dd3b0; font-size: 2rem;">Processing Requests</span>
 </h1>
 <ol class="breadcrumb mb-4">
     <li class="breadcrumb-item"><a href="{{ route('dashboard') }}" class="text-dark">Dashboard</a></li>
-    <li class="breadcrumb-item active">Ongoing Requests</li>
+    <li class="breadcrumb-item active">Processing Requests</li>
 </ol>
 
 <div class="row">

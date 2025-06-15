@@ -29,7 +29,12 @@ class DocumentRequestModel extends Model
 
         'remarks',
         'status',
-        'receipt_no'
+        'receipt_no',
+        'approve_date',
+        'forRelease_date',
+        'claimed_date',
+        'req_no',
+        'image'
     ];
 
     public function claimer()

@@ -15,6 +15,7 @@ use App\Http\Controllers\GenerateRequestController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\StudentInformationModelController;
 use App\Http\Controllers\StudentRequestController;
+use App\Http\Controllers\ClaimedDocumentController;
 use App\Models\Account;
 use Illuminate\Support\Facades\Mail;
 use App\Models\DocumentRequestModel;
@@ -64,8 +65,26 @@ Route::group(['middleware' => 'useradmin'], function(){
     Route::resource('ongoing', OngoingController::class);
     Route::put('/pending/completeRequest/{id}', [PendingController::class, 'completeRequest'])->name('document-request.complete');
     Route::put('/ongoing/completeRequest/{id}', [OngoingController::class, 'completeRequest'])->name('document-request2.complete');
+    Route::put('/tables/completeRequest/{id}', [DocumentRequestController::class, 'completeRequest'])->name('document-request3.complete');
     Route::get('/walkin/form', [DocumentRequestController::class, 'showRequestForm'])->name('walkin.form');
     Route::post('/walkin/store', [DocumentRequestController::class, 'storeWalkIn'])->name('walkin.store');
+    Route::get('/pending/ajax', [PendingController::class, 'ajaxPending'])->name('pending.ajax');
+    Route::resource('claimed-documents', ClaimedDocumentController::class);
+
+    // Additional custom routes for specific functionality
+    Route::prefix('claimed-documents')->group(function () {
+        // Revert a claimed document back to "For Release" status
+        Route::put('{id}/revert', [ClaimedDocumentController::class, 'revertToForRelease'])
+            ->name('claimed-documents.revert');
+
+        // Generate report for claimed documents
+        Route::post('report', [ClaimedDocumentController::class, 'generateReport'])
+            ->name('claimed-documents.report');
+
+        // Export claimed documents to CSV
+        Route::post('export-csv', [ClaimedDocumentController::class, 'exportToCsv'])
+            ->name('claimed-documents.export-csv');
+    });
 
     //Request Management       ================================================================================
 
