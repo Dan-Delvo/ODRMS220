@@ -273,9 +273,9 @@
                 <li class="nav-item">
                     <a href="{{ route('studentrequest.view') }}" class="nav-link">
                         <span class="nav-icon material-symbols-rounded">visibility</span>
-                        <span class="nav-label">View Document</span>
+                        <span class="nav-label">View Request</span>
                     </a>
-                    <span class="nav-tooltip">View Document</span>
+                    <span class="nav-tooltip">View Request</span>
                 </li>
             </ul>
 

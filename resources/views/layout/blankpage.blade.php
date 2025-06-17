@@ -1,4 +1,4 @@
-blankpage.blade.php
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -26,18 +26,18 @@ blankpage.blade.php
             color: #fff;
             background-color: #1dd3b0;
             border-color: #1dd3b0;
-            
+
         }
         .page-item:not(.active) .page-link {
-            color: #1f2937; 
+            color: #1f2937;
         }
         .page-item:not(.active) .page-link:hover {
-            background-color: #cbd5e1; 
+            background-color: #cbd5e1;
         }
         .page-item .page-link[aria-label="« Previous"],
         .page-item .page-link[aria-label="Next »"] {
-            background-color: #1f2937; 
-            color: #fff; 
+            background-color: #1f2937;
+            color: #fff;
         }
 
     </style>

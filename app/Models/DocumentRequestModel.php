@@ -34,7 +34,8 @@ class DocumentRequestModel extends Model
         'forRelease_date',
         'claimed_date',
         'req_no',
-        'image'
+        'image',
+        'supporting_document'
     ];
 
     public function claimer()

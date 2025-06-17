@@ -177,25 +177,25 @@ class DocumentRequestController extends Controller
             'document_id' => 'required|exists:doc_categories,id',
             'release_mode' => 'required|string|max:255',
 
-            // Claimer Validation
-            'Fname' => 'required|string|max:255',
-            'Lname' => 'required|string|max:255',
-            'contact_no' => 'required|string|max:15',
-
             // Student Information Validation
             'student_first_name' => 'required|string|max:255',
             'student_last_name' => 'required|string|max:255',
-            'lrn' => 'string|max:12',
+            'lrn' => 'max:12',
             'grade_level' => 'required|string|max:50',
             'student_status' => 'required|string|max:20',
             'last_sy_attended' => 'required|string|max:50',
         ]);
 
-        // Create or update the Claimer record
         $claimer = ClaimerModel::updateOrCreate(
-            ['Fname' => $validated['Fname'], 'Lname' => $validated['Lname']],
-            ['contact_no' => $validated['contact_no']]
+            [
+                'Fname' => 'Blank',
+                'Lname' => 'Blank',
+            ],
+            [
+                'contact_no' => '000000',
+            ]
         );
+
 
         // Create or update the Student Information record
         $student = StudentInformationModel::updateOrCreate(

@@ -156,9 +156,10 @@
                                     </button>
 
                                     <!-- Image Button -->
-                                    @if($item->image)
-                                    <button class="btn btn-sm btn-primary mb-1" data-bs-toggle="modal" data-bs-target="#imageModal{{ $item->id }}" title="View Image">
-                                        <i class="fas fa-image"></i> Image
+                                    @if($item->supporting_document)
+                                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#documentModal{{ $item->id }}">
+                                        <i class="fas fa-file-alt me-1"></i>
+                                        View Document
                                     </button>
                                     @endif
                                 </td>
@@ -237,55 +238,123 @@
                     </div>
                     @endif
 
-                    <!-- Image Modal -->
-                    @if($item->image)
-                    <div class="modal fade" id="imageModal{{ $item->id }}" tabindex="-1" aria-labelledby="imageModalLabel{{ $item->id }}" aria-hidden="true">
+                    <!-- Supporting Document Modal -->
+                    @if($item->supporting_document)
+                    <div class="modal fade" id="documentModal{{ $item->id }}" tabindex="-1" aria-labelledby="documentModalLabel{{ $item->id }}" aria-hidden="true">
                         <div class="modal-dialog modal-dialog-centered modal-lg">
                             <div class="modal-content border-0 shadow-sm">
                                 <div class="modal-header bg-primary text-white">
-                                    <h5 class="modal-title" id="imageModalLabel{{ $item->id }}">
-                                        <i class="fas fa-image me-2"></i>
-                                        Request Image - {{ $item->req_no }}
+                                    <h5 class="modal-title" id="documentModalLabel{{ $item->id }}">
+                                        <i class="fas fa-file-alt me-2"></i>
+                                        Supporting Document - {{ $item->req_no }}
                                     </h5>
                                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
                                 </div>
 
                                 <div class="modal-body p-0 text-center bg-light">
                                     <div class="position-relative">
-                                        <img src="{{ asset('storage/' . $item->image) }}"
-                                             alt="Request Image for {{ $item->req_no }}"
-                                             class="img-fluid w-100"
-                                             style="max-height: 70vh; object-fit: contain;"
-                                             loading="lazy"
-                                             onerror="this.onerror=null; this.src='{{ asset('images/no-image-placeholder.png') }}'; this.alt='Image not available';">
+                                        @php
+                                            $fileExtension = strtolower(pathinfo($item->supporting_document, PATHINFO_EXTENSION));
+                                            // Since database already stores full path, use it directly
+                                            $documentPath = $item->supporting_document;
+                                        @endphp
+
+                                        @if(in_array($fileExtension, ['jpg', 'jpeg', 'png', 'gif', 'webp']))
+                                            <!-- Display image if it's an image file -->
+                                            <img src="{{ asset($documentPath) }}"
+                                                alt="Supporting Document for {{ $item->req_no }}"
+                                                class="img-fluid w-100"
+                                                style="max-height: 70vh; object-fit: contain;"
+                                                loading="lazy"
+                                                onerror="this.onerror=null; this.src='{{ asset('images/no-image-placeholder.png') }}'; this.alt='Document not available';">
+
+                                        @elseif($fileExtension === 'pdf')
+                                            <!-- Display PDF preview -->
+                                            <div class="p-4">
+                                                <div class="text-center mb-3">
+                                                    <i class="fas fa-file-pdf text-danger" style="font-size: 4rem;"></i>
+                                                    <h5 class="mt-2">PDF Document</h5>
+                                                    <p class="text-muted">{{ basename($item->supporting_document) }}</p>
+                                                </div>
+                                                <iframe src="{{ asset($documentPath) }}"
+                                                        width="100%"
+                                                        height="400px"
+                                                        style="border: 1px solid #ddd;">
+                                                    <p>Your browser does not support PDFs.
+                                                    <a href="{{ asset($documentPath) }}" target="_blank">Download the PDF</a>
+                                                    </p>
+                                                </iframe>
+                                            </div>
+
+                                        @else
+                                            <!-- Display file icon for other file types -->
+                                            <div class="p-5 text-center">
+                                                @switch($fileExtension)
+                                                    @case('doc')
+                                                    @case('docx')
+                                                        <i class="fas fa-file-word text-primary" style="font-size: 4rem;"></i>
+                                                        @break
+                                                    @case('xls')
+                                                    @case('xlsx')
+                                                        <i class="fas fa-file-excel text-success" style="font-size: 4rem;"></i>
+                                                        @break
+                                                    @case('ppt')
+                                                    @case('pptx')
+                                                        <i class="fas fa-file-powerpoint text-warning" style="font-size: 4rem;"></i>
+                                                        @break
+                                                    @case('txt')
+                                                        <i class="fas fa-file-alt text-secondary" style="font-size: 4rem;"></i>
+                                                        @break
+                                                    @default
+                                                        <i class="fas fa-file text-muted" style="font-size: 4rem;"></i>
+                                                @endswitch
+
+                                                <h5 class="mt-3">{{ strtoupper($fileExtension) }} Document</h5>
+                                                <p class="text-muted">{{ basename($item->supporting_document) }}</p>
+                                                <p class="small text-info">
+                                                    <i class="fas fa-info-circle me-1"></i>
+                                                    Click "Download" or "Open in New Tab" to view this document
+                                                </p>
+                                            </div>
+                                        @endif
 
                                         <!-- Loading overlay -->
-                                        <div class="position-absolute top-50 start-50 translate-middle" id="imageLoader{{ $item->id }}" style="display: none;">
+                                        <div class="position-absolute top-50 start-50 translate-middle" id="documentLoader{{ $item->id }}" style="display: none;">
                                             <div class="spinner-border text-primary" role="status">
-                                                <span class="visually-hidden">Loading image...</span>
+                                                <span class="visually-hidden">Loading document...</span>
                                             </div>
                                         </div>
                                     </div>
 
-                                    <!-- Image details -->
+                                    <!-- Document details -->
                                     <div class="p-3 bg-white border-top">
                                         <div class="row text-start">
-                                            <div class="col-md-6">
+                                            <div class="col-md-4">
                                                 <small class="text-muted">Student:</small><br>
                                                 <strong>{{ $item->studentInformation->full_name }}</strong>
                                             </div>
-                                            <div class="col-md-6">
+                                            <div class="col-md-4">
                                                 <small class="text-muted">Document Type:</small><br>
                                                 <strong>{{ $item->documents->DocType }}</strong>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <small class="text-muted">File Type:</small><br>
+                                                <strong>{{ strtoupper($fileExtension) }}</strong>
+                                            </div>
+                                        </div>
+                                        <div class="row mt-2">
+                                            <div class="col-12">
+                                                <small class="text-muted">File Name:</small><br>
+                                                <strong>{{ basename($item->supporting_document) }}</strong>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
 
                                 <div class="modal-footer bg-light">
-                                    <a href="{{ asset('storage/' . $item->image) }}"
-                                       target="_blank"
-                                       class="btn btn-outline-primary btn-sm">
+                                    <a href="{{ asset($documentPath) }}"
+                                    target="_blank"
+                                    class="btn btn-outline-primary btn-sm">
                                         <i class="fas fa-external-link-alt me-1"></i>
                                         Open in New Tab
                                     </a>

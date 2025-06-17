@@ -315,7 +315,7 @@
                     </div>
 
                     <div class="form-floating mb-3">
-                        <input type="text" class="form-control" id="release_mode" name="release_mode" placeholder="Release Mode">
+                        <input type="text" class="form-control" id="release_mode" name="release_mode" placeholder="Release Mode" value="Pick Up" readonly>
                         <label for="release_mode">Release Mode</label>
                     </div>
                 </div>

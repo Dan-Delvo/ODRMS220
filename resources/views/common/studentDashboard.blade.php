@@ -248,7 +248,11 @@
                                 @foreach ($DocRequests as $item)
                                     <tr>
                                         <td>{{ $item->id }}</td>
-                                        <td>{{ $item->claimer->full_name }}</td>
+                                        @if($item->claimer->full_name  == 'Blank Blank')
+                                            <td> </td>
+                                        @else
+                                            <td>{{ $item->claimer->full_name }}</td>
+                                        @endif
                                         <td>{{ $item->studentInformation->full_name }}</td>
                                         <td>{{ $item->documents->DocType }}</td>
                                         <td>{{ $item->request_schl_entity }}</td>

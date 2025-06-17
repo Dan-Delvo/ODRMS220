@@ -130,6 +130,24 @@ Route::group(['middleware' => 'useradmin'], function(){
     Route::get('panel/pdf', [GenerateRequestController::class, 'pdfGenerator'])->name('generatePDF');
     Route::get('panel/excel', [GenerateRequestController::class, 'exportExcel'])->name('generateExcel');
     Route::get('/generate-reports', [GenerateRequestController::class, 'handleReports'])->name('generateReports');
+    // Display the generate request page with optional filtering
+    Route::get('/generate-reports', [GenerateRequestController::class, 'display'])
+        ->name('generateReports.display');
+
+    // Handle report generation (both PDF and Excel)
+    Route::get('/generate-reports/create', [GenerateRequestController::class, 'handleReports'])
+        ->name('generateReports');
+
+    // API endpoint for status statistics (optional - for dashboard widgets)
+    Route::get('/api/request-statistics', [GenerateRequestController::class, 'getStatusStatistics'])
+        ->name('api.request.statistics');
+
+    // Alternative individual routes (if you prefer separate routes)
+    Route::get('/generate-reports/pdf', [GenerateRequestController::class, 'pdfGenerator'])
+        ->name('generateReports.pdf');
+
+    Route::get('/generate-reports/excel', [GenerateRequestController::class, 'exportExcel'])
+        ->name('generateReports.excel');
     //Report Generation         ================================================================================
 
 
