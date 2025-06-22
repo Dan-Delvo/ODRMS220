@@ -30,10 +30,11 @@ class OngoingController extends Controller
         $data = PermissionRoleModel::getPermission('editOngoing', Auth::user()->role_id);
         $data1 = PermissionRoleModel::getPermission('approveOngoing', Auth::user()->role_id);
 
-        $totalCount = DocumentRequestModel::where('status', 'ongoing')->count();
-        $DocRequests = DocumentRequestModel::where('status', 'ongoing')
+        $totalCount = DocumentRequestModel::where('status', 'Processing')->count();
+        $DocRequests = DocumentRequestModel::where('status', 'Processing')
         ->with('claimer')
         ->with('studentInformation')
+        ->orderBy('req_no', 'asc') // ascending order
         ->paginate(9);
 
 
@@ -192,7 +193,7 @@ class OngoingController extends Controller
             ])->post('https://onesignal.com/api/v1/notifications', [
                 'app_id' => '4177a306-5791-4b2c-ac5a-ae6b4bb937bf',
                 'include_player_ids' => [$pushId], // Send notification to the user based on their push subscription ID
-                'contents' => ['en' => $name . ', Your document request has been approved and completed.'], // Updated message content for completed status
+                'contents' => ['en' => $name . ', Your document request has been approved and now Processing.'], // Updated message content for completed status
             ]);
 
             Log::info('Notification sent: ' . $response->body());
@@ -204,7 +205,8 @@ class OngoingController extends Controller
 
         // Update the document request status to 'Completed'
         $documentRequest->update([
-            'status' => 'Completed',
+            'status' => 'For Release',
+            'forRelease_date' => Carbon::now(),
         ]);
 
         return redirect('/ongoing')->with('Status', 'Completed Successfully');

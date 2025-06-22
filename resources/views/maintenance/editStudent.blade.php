@@ -1,4 +1,4 @@
-editStudent.blade.php
+
 @extends('layout.blankpage')
 
 @section('content')

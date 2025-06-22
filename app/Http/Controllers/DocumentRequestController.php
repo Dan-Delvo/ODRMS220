@@ -12,6 +12,8 @@ use Carbon\Carbon;
 use App\Http\Requests\StoreDocumentRequest;
 use App\Models\ClaimerModel;
 use App\Models\DocumentsModel;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Http;
 
 class DocumentRequestController extends Controller
 {
@@ -29,10 +31,11 @@ class DocumentRequestController extends Controller
         $data = PermissionRoleModel::getPermission('editCompleted', Auth::user()->role_id);
         $data1 = PermissionRoleModel::getPermission('deleteCompleted', Auth::user()->role_id);
 
-        $totalCount = DocumentRequestModel::where('status', 'completed')->count();
-        $DocRequests = DocumentRequestModel::where('status', 'completed')
+        $totalCount = DocumentRequestModel::where('status', 'For Release')->count();
+        $DocRequests = DocumentRequestModel::where('status', 'For Release')
         ->with('claimer')
         ->with('studentInformation')
+        ->orderBy('req_no', 'asc') // ascending order
         ->paginate(9);
 
 
@@ -174,25 +177,25 @@ class DocumentRequestController extends Controller
             'document_id' => 'required|exists:doc_categories,id',
             'release_mode' => 'required|string|max:255',
 
-            // Claimer Validation
-            'Fname' => 'required|string|max:255',
-            'Lname' => 'required|string|max:255',
-            'contact_no' => 'required|string|max:15',
-
             // Student Information Validation
             'student_first_name' => 'required|string|max:255',
             'student_last_name' => 'required|string|max:255',
-            'lrn' => 'string|max:12',
+            'lrn' => 'max:12',
             'grade_level' => 'required|string|max:50',
             'student_status' => 'required|string|max:20',
             'last_sy_attended' => 'required|string|max:50',
         ]);
 
-        // Create or update the Claimer record
         $claimer = ClaimerModel::updateOrCreate(
-            ['Fname' => $validated['Fname'], 'Lname' => $validated['Lname']],
-            ['contact_no' => $validated['contact_no']]
+            [
+                'Fname' => 'Blank',
+                'Lname' => 'Blank',
+            ],
+            [
+                'contact_no' => '000000',
+            ]
         );
+
 
         // Create or update the Student Information record
         $student = StudentInformationModel::updateOrCreate(
@@ -243,9 +246,143 @@ class DocumentRequestController extends Controller
         return view('requestTables.walkin', compact('DocType', 'grade', 'stat'));
     }
 
+    public function completeRequest(Request $request, $id)
+    {
+        try {
+            // Validate the request
+            $request->validate([
+                'claimer_first_name' => 'max:255',
+                'claimer_last_name' => 'max:255',
+                'claimer_contact' => 'max:50',
+            ]);
 
+            // Find the document request by ID
+            $documentRequest = DocumentRequestModel::findOrFail($id);
+
+            // Check if claimer exists - but don't stop execution with dd()
+            $claimer = null;
+            if ($documentRequest->clm_claimers_id) {
+                $claimer = ClaimerModel::find($documentRequest->clm_claimers_id);
+            }
+
+
+            // Log claimer info instead of using dd()
+            if ($claimer) {
+                Log::info('Claimer found: ' . $claimer->id);
+            } else {
+                Log::info('No claimer found for document request: ' . $id);
+            }
+
+            $account = $documentRequest->account;
+            $stud = $documentRequest->studentInformation;
+
+            $email = $account->email_address;
+            $name = $stud->full_name;
+            $subject = 'Your Request is Approved and Completed!';
+            Log::info("Sending email to: " . $account->email_address);
+
+            // Send email notification
+            try {
+                Mail::send('emails.toClaimed', compact('subject', 'name'), function ($message) use ($email, $subject) {
+                    $message->to($email)->subject($subject);
+                });
+                Log::info('Email sent successfully to: ' . $email);
+            } catch (\Exception $e) {
+                Log::error('Email sending failed: ' . $e->getMessage());
+                // Don't stop execution, just log the error
+            }
+
+            // Send push notification via OneSignal
+            $pushId = $account->fcm_token;
+
+            if ($pushId) {
+                try {
+                    $response = Http::withHeaders([
+                        'Authorization' => 'Basic os_v2_app_if32gbsxsffszlc2vzvuxojxx5v5u3kriweuqn4s2luqs6vfjt5gaoxdhoqhd6vi5w33ake2swiwgpvwudxdidn35dzpgubfyjeszsq',
+                        'accept' => 'application/json',
+                        'content-type' => 'application/json',
+                    ])->post('https://onesignal.com/api/v1/notifications', [
+                        'app_id' => '4177a306-5791-4b2c-ac5a-ae6b4bb937bf',
+                        'include_player_ids' => [$pushId],
+                        'contents' => ['en' => $name . ', Your document request has been approved and Processed.'],
+                    ]);
+
+                    Log::info('Notification sent: ' . $response->body());
+                } catch (\Exception $e) {
+                    Log::error('Push notification failed: ' . $e->getMessage());
+                    // Don't stop execution, just log the error
+                }
+            }
+
+            // Update the document request status to 'Claimed'
+            $documentRequest->update([
+                'status' => 'Claimed',
+                'claimed_date' => Carbon::now(),
+            ]);
+
+            // Update claimer if exists
+            if ($claimer) {
+                $claimer->update([
+                    'Fname' => $request->claimer_first_name,
+                    'Lname' => $request->claimer_last_name,
+                    'contact_no' => $request->claimer_contact,
+                ]);
+            }
+
+            // Handle both AJAX and regular requests
+            if ($request->expectsJson()) {
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Document has been successfully marked as claimed.',
+                    'redirect' => route('tables.index') // or wherever you want to redirect
+                ]);
+            }
+
+            return redirect('/tables')->with('Status', 'Completed Successfully');
+
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            Log::error('Validation error in completeRequest: ' . json_encode($e->errors()));
+
+            if ($request->expectsJson()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Validation failed.',
+                    'errors' => $e->errors(),
+                ], 422);
+            }
+
+            return redirect()->back()
+                ->withErrors($e->validator)
+                ->withInput()
+                ->with('Danger', 'Please check the form for errors.');
+
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            Log::error('Model not found in completeRequest: ' . $e->getMessage());
+
+            if ($request->expectsJson()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Document request not found.',
+                ], 404);
+            }
+
+            return redirect()->back()->with('Danger', 'Document request not found.');
+
+        } catch (\Exception $e) {
+            Log::error('Error in completeRequest: ' . $e->getMessage());
+            Log::error('Stack trace: ' . $e->getTraceAsString());
+
+            if ($request->expectsJson()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'An error occurred while processing the request. Please try again.',
+                ], 500);
+            }
+
+            return redirect()->back()->with('Danger', 'An error occurred while processing the request. Please try again.');
+        }
+
+    }
 
 
 }
-
-

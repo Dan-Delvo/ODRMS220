@@ -18,8 +18,8 @@ class DashboardController extends Controller
             abort(404);
         }
         $totalPending = DocumentRequestModel::where('status', 'pending')->count();
-        $totalOngoing = DocumentRequestModel::where('status', 'ongoing')->count();
-        $totalCompleted = DocumentRequestModel::where('status', 'completed')->count();
+        $totalOngoing = DocumentRequestModel::where('status', 'Processing')->count();
+        $totalCompleted = DocumentRequestModel::where('status', 'For Release')->count();
         $username = Auth::user()->username;
         return view('common.admin', [
             'totalPending' => $totalPending,

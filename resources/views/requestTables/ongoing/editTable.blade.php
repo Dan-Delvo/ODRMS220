@@ -6,11 +6,11 @@ editTable.blade.php
 <div class="row mb-3">
     <div class="col-md-12">
         <h1 class="mt-4">
-            <span class="badge" style="background-color: #1dd3b0; font-size: 2rem;">Ongoing Requests</span>
+            <span class="badge" style="background-color: #1dd3b0; font-size: 2rem;">Processing Requests</span>
         </h1>
         <ol class="breadcrumb mb-4">
             <li class="breadcrumb-item"><a href="{{ route('dashboard') }}" class="text-dark">Dashboard</a></li>
-            <li class="breadcrumb-item active">Edit Ongoing Request</li>
+            <li class="breadcrumb-item active">Edit Processing Request</li>
         </ol>
     </div>
 </div>
@@ -21,7 +21,7 @@ editTable.blade.php
 
             <div class="card-header text-white d-flex align-items-center justify-content-between" style="background-color: #1f2937; height: 70px;">
                 <h4 class="mb-0">
-                    Edit Ongoing Request
+                    Edit Processing Request
                 </h4>
                 <a href="{{ url('ongoing') }}" class="btn text-black fw-semibold" style="background-color: #1dd3b0; box-shadow: 0 4px 10px rgba(29, 211, 176, 0.5);">
                     Back

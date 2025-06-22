@@ -1,4 +1,3 @@
-roles.blade.php
 @extends('layout.blankpage')
 
 @section ('content')
@@ -65,11 +64,13 @@ roles.blade.php
                                 <td>{{ $item->name }}</td>
                                 <td>
                                     <a href="{{ route('role.edit', ['id' => $item->id]) }}" class="btn btn-success">Edit</a>
+                                    @if(!in_array($item->id, [1, 2, 4]))
                                     <form action="{{ route('role.delete', ['id' => $item->id]) }}" method="POST" class="d-inline">
                                         @csrf
                                         @method('DELETE')
                                         <button type="submit" class="btn btn-danger">Delete</button>
                                     </form>
+                                    @endif
                                 </td>
                             </tr>
                             @endforeach

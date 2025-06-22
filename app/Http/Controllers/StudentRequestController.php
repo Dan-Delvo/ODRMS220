@@ -36,28 +36,50 @@ class StudentRequestController extends Controller
 
     public function store(Request $request)
     {
-
-        // Validate the request data
+        // Step 1: Validate the request data
         $validatedData = $request->validate([
-            'Fname' => 'required|string|max:255',
-            'Lname' => 'required|string|max:255',
-            'contact_no' => 'required|string|max:15',
             'document_id' => 'required|integer',
             'request_schl_entity' => 'required|string|max:255',
             'release_mode' => 'required|max:255',
+            'supporting_document' => 'nullable|file|mimes:jpeg,jpg,png,pdf,doc,docx|max:10240', // 10MB max
         ]);
 
+        // Step 2: Initialize file path variable
+        $supportingDocumentPath = null;
 
+        // Step 3: Handle file upload if present
+        if ($request->hasFile('supporting_document')) {
+            $file = $request->file('supporting_document');
 
-        // Insert a new Claimer
+            // Generate a unique filename
+            $filename = time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
+
+            // Define upload path
+            $uploadPath = public_path('uploads/supporting_documents');
+
+            // Create directory if it doesn't exist
+            if (!file_exists($uploadPath)) {
+                mkdir($uploadPath, 0755, true);
+            }
+
+            // Move file to the upload directory
+            $file->move($uploadPath, $filename);
+
+            // Store relative path for database
+            $supportingDocumentPath = 'uploads/supporting_documents/' . $filename;
+        }
+
+        // Step 4: Insert a new Claimer (your existing code)
         $claimer = ClaimerModel::create([
-            'Fname' => $validatedData['Fname'],
-            'Lname' => $validatedData['Lname'],
-            'contact_no' => $validatedData['contact_no'],
+            'Fname' => 'Blank',
+            'Lname' => 'Blank',
+            'contact_no' => '000000',
         ]);
 
+        // Step 5: Get document details (your existing code)
         $document = DocumentsModel::find($validatedData['document_id']);
 
+        // Step 6: Create payment receipt (your existing code)
         $receipt = DocuPaymentFee::create([
             "receipt_no" => random_int(10000, 99999),
             'docu_categories_id' => $validatedData['document_id'],
@@ -66,47 +88,25 @@ class StudentRequestController extends Controller
             'time_request' => Carbon::now()
         ]);
 
-        // Insert a new Document Request with the claimer_id from the inserted claimer
+        // Step 7: Create document request with file path
         DocumentRequestModel::create([
             'id' => random_int(10000, 99999),
-            'clm_claimers_id' => $claimer->id, // Use the id from the newly created Claimer
+            'clm_claimers_id' => $claimer->id,
             'std_students_id' => Auth::user()->std_students_id,
             'doc_categories_id' => $validatedData['document_id'],
-
             'request_time' => Carbon::now()->format('H:i:s'),
             'request_date' => Carbon::now()->toDateString(),
-
             'request_schl_entity' => $validatedData['request_schl_entity'],
             'request_mode' => "Online",
             'release_mode' => $validatedData['release_mode'],
-
+            'supporting_document' => $supportingDocumentPath, // This is the important line
             'remarks' => "N/A",
             'status' => "Pending",
             'receipt_no' => $receipt->receipt_no
         ]);
 
-        // Redirect or respond with success
+        // Step 8: Redirect with success message
         return redirect()->route('st.page')->with('success', 'Document request submitted successfully!');
     }
-
-    public function destroy($id)
-    {
-        // Find the record by ID
-        $table = DocumentRequestModel::find($id);
-
-        if ($table) {
-            // Delete the record
-            $table->delete();
-
-            // Redirect with a success message
-            return redirect('/pending')->with('Danger', 'Deleted Successfully');
-        }
-
-        // Redirect with an error message if the record was not found
-        return redirect('/pending')->with('error', 'Record not found');
-    }
-
-
-
 
 }

@@ -1,4 +1,4 @@
-docs.blade.php
+
 @extends('layout.blankpage')
 
 @section ('content')
@@ -53,6 +53,7 @@ docs.blade.php
                             <tr>
                                 <th>Document ID</th>
                                 <th>Document Name</th>
+                                <th>Document Price</th>
                                 <th>Actions</th>
                             </tr>
                         </thead>
