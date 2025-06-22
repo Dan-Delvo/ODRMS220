@@ -283,7 +283,7 @@ class DocumentRequestController extends Controller
 
             // Send email notification
             try {
-                Mail::send('emails.toComplete', compact('subject', 'name'), function ($message) use ($email, $subject) {
+                Mail::send('emails.toClaimed', compact('subject', 'name'), function ($message) use ($email, $subject) {
                     $message->to($email)->subject($subject);
                 });
                 Log::info('Email sent successfully to: ' . $email);

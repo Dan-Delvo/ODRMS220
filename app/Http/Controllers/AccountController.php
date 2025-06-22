@@ -418,80 +418,56 @@ private function checkUserHasRequests($userId)
 
     public function addUserStud()
     {
-        try {
-            $grade = ['7', '8', '9', '10', '11', '12'];
-            $stat = ['Alumni', 'Regular', 'ALS'];
-            $role = RolesModel::all();
+        $grade = ['7', '8', '9', '10', '11', '12'];
+        $stat = ['Alumni', 'Regular', 'ALS'];
+        $role = RolesModel::all();
 
-            if ($role->isEmpty()) {
-                return redirect()->back()->with('Danger', 'No roles available. Please contact administrator.');
-            }
+        return view('maintenance.addUserStudent', compact('grade', 'stat', 'role'));
 
-            return view('maintenance.addUserStudent', compact('grade', 'stat', 'role'));
-        } catch (Exception $e) {
-            Log::error('Error in addUserStud method: ' . $e->getMessage());
-            return redirect()->back()->with('Danger', 'An error occurred while loading the form.');
-        }
     }
 
     public function storeUserStud(Request $request)
     {
-        try {
-            $request->validate([
-                // Validation for personal information
-                'FirstName' => 'required|string|max:255',
-                'LastName' => 'required|string|max:255',
-                'LRN' => 'nullable|string|max:20',
-                'Grade_level' => 'nullable|string|max:50',
-                'Std_status' => 'nullable|string|max:50',
-                'role' => 'required|integer|exists:roles,id',
+        $request->validate([
+            // Validation for personal information
+            'FirstName' => 'required|string|max:255',
+            'LastName' => 'required|string|max:255',
+            'LRN' => 'string|max:20',
+            'Grade_level' => 'string|max:50',
+            'Std_status' => 'string|max:50',
+            'role' => 'required',
 
-                // Validation for account information
-                'email_address' => 'required|email|unique:acc_users,email_address|max:255',
-                'username' => 'required|string|max:255|unique:acc_users,username',
-                'password' => 'required|string|min:8|confirmed',
-            ]);
+            // Validation for account information
+            'email_address' => 'required|email|unique:acc_users,email_address',
+            'username' => 'required|string|max:255|unique:acc_users,username',
+            'password' => 'required|string|min:8|confirmed',
+        ]);
 
-            DB::beginTransaction();
+        // Store personal information
+        $studentId = StudentInformationModel::create([
+            'FirstName' => $request->FirstName,
+            'LastName' => $request->LastName,
+            'MiddleName' => $request->MiddleName,
+            'Suffix' => $request->Suffix,
+            'LRN' => $request->LRN ?? '0000',
+            'Grade_level' => $request->Grade_level ?? '0',
+            'Std_status' => $request->Std_status ?? 'NA',
+            'Last_sy_attended' => $request->Last_sy_attended ?? '0000',
+        ])->id;
 
-            // Store personal information
-            $student = StudentInformationModel::create([
-                'FirstName' => $request->FirstName,
-                'LastName' => $request->LastName,
-                'MiddleName' => $request->MiddleName,
-                'Suffix' => $request->Suffix,
-                'LRN' => $request->LRN ?? '0000',
-                'Grade_level' => $request->Grade_level ?? '0',
-                'Std_status' => $request->Std_status ?? 'NA',
-                'Last_sy_attended' => $request->Last_sy_attended ?? '0000',
-            ]);
+        // Store account information
+        Account::create([
+            'user_account_id' => $studentId,
+            'std_students_id' => $studentId,
+            'role_id' => $request->role,
+            'email_address' => $request->email_address,
+            'username' => $request->username,
+            'password' => bcrypt($request->password),
+        ]);
 
-            if (!$student) {
-                throw new Exception('Failed to create student information');
-            }
+        return redirect('panel/user')->with('Status', 'Account created successfully!');
 
-            // Store account information
-            $account = Account::create([
-                'user_account_id' => $student->id,
-                'std_students_id' => $student->id,
-                'role_id' => $request->role,
-                'email_address' => $request->email_address,
-                'username' => $request->username,
-                'password' => bcrypt($request->password),
-            ]);
 
-            if (!$account) {
-                throw new Exception('Failed to create account');
-            }
-
-            DB::commit();
-            return redirect('panel/user')->with('Status', 'Account created successfully!');
-
-        } catch (Exception $e) {
-            DB::rollback();
-            Log::error('Error in storeUserStud method: ' . $e->getMessage());
-            return redirect()->back()->with('Danger', 'An error occurred while creating the account. Please try again.');
-        }
     }
 
     public function saveFcmToken(Request $request)

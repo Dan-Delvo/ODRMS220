@@ -152,14 +152,6 @@
                                     </span>
                                 </td>
                                 <td class="text-nowrap">
-                                    <button type="button" class="btn btn-warning btn-sm revert-btn mb-1"
-                                            data-request-id="{{ $item->id }}"
-                                            data-request-no="{{ $item->req_no }}"
-                                            data-student-name="{{ $item->studentInformation->full_name }}"
-                                            data-bs-toggle="modal"
-                                            data-bs-target="#revertModal">
-                                        Revert
-                                    </button>
 
                                     @if(!empty($PermissionEdit))
                                     <a href="{{ route('claimed-documents.edit', $item->id) }}" class="btn btn-sm btn-info mb-1">Edit</a>

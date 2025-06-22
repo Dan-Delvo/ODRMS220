@@ -21,7 +21,7 @@
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
         }
         .email-header {
-            background-color: #ffc107;
+            background-color: #28a745;
             color: #ffffff;
             text-align: center;
             padding: 20px;
@@ -35,11 +35,6 @@
             color: #333333;
             line-height: 1.6;
         }
-        .email-body a {
-            color: #007bff;
-            text-decoration: none;
-            font-weight: bold;
-        }
         .email-footer {
             background-color: #f9f9f9;
             text-align: center;
@@ -52,24 +47,13 @@
 <body>
     <div class="email-container">
         <div class="email-header">
-            <h1>Document Now Processing</h1>
+            <h1>Document Successfully Claimed</h1>
         </div>
         <div class="email-body">
             <p>Hello <strong>{{ $name }}</strong>,</p>
-            <p>We're currently processing your requested document. Our team is working to ensure everything is completed promptly and accurately.</p>
-            <p>Please stay tuned for further updates. You will receive another notification once your document is ready for release.</p>
-            <p style="text-align: center; margin-top: 20px;">
-                <a href="{{ url('http://127.0.0.1:8000/') }}" style="
-                    display: inline-block;
-                    padding: 10px 20px;
-                    background-color: #ffc107;
-                    color: #ffffff;
-                    border-radius: 4px;
-                    text-decoration: none;
-                    font-size: 16px;
-                ">Check Status</a>
-            </p>
-            <p>If you have any questions, feel free to contact our support team.</p>
+            <p>We’re happy to inform you that your requested document has been successfully claimed.</p>
+            <p>If you have any further requests or need additional documents, feel free to reach out through the system or contact the registrar’s office.</p>
+            <p>Thank you for using the Online Document Request Management System (ODRMS).</p>
         </div>
         <div class="email-footer">
             <p>&copy; {{ date('Y') }} ODRMS. All rights reserved.</p>
