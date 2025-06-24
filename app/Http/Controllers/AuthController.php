@@ -44,7 +44,7 @@ class AuthController extends Controller
     public function auth_login(Request $request)
     {
         // Validate login credentials
-        $credentials = ['email_address' => $request->email, 'password' => $request->password];
+        $credentials = ['email_address' => $request->email_address, 'password' => $request->password];
         $remember = $request->has('remember');
 
         // Attempt authentication
