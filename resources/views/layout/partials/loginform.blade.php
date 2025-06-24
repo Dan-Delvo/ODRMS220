@@ -42,7 +42,7 @@
           <div class="form-floating mb-3">
             <input
               class="form-control rounded-3"
-              name="email"
+              name="email_address"
               id="inputEmail"
               type="email"
               placeholder="name@example.com"
