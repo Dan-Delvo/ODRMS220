@@ -37,7 +37,7 @@
         @include('layout.partials.message')
 
         <form action="/" method="post" id="loginForm" novalidate>
-          {{ csrf_field() }}
+          @csrf
 
           <div class="form-floating mb-3">
             <input
