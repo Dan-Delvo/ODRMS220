@@ -25,6 +25,24 @@
       "
     >
       <div class="w-100" style="max-width: 400px;">
+        <!-- PWA Install Button -->
+        <div class="text-center mb-3">
+          <button
+            id="installButton"
+            class="btn btn-outline-light btn-sm rounded-pill px-3 py-1"
+            style="
+              display: none;
+              border-color: #1dd3b0;
+              color: #1dd3b0;
+              font-size: 0.85rem;
+              transition: all 0.3s ease;
+            "
+          >
+            <i class="fas fa-download me-1"></i>
+            Install App
+          </button>
+        </div>
+
         <div class="text-center mb-4">
           <h2
             class="font-weight-bold"
@@ -164,12 +182,27 @@
     color: #14b1a2;
     text-decoration: underline;
   }
+
+  /* PWA Install Button Styles */
+  #installButton:hover {
+    background-color: #1dd3b0 !important;
+    color: #1f2937 !important;
+    border-color: #1dd3b0 !important;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgb(29 211 176 / 0.4);
+  }
+
+  #installButton:focus {
+    outline: none;
+    box-shadow: 0 0 0 0.2rem rgba(29, 211, 176, 0.25);
+  }
 </style>
 @endsection
 
 @push('scripts')
 <script>
   document.addEventListener('DOMContentLoaded', function () {
+    // Password toggle functionality
     const toggleBtn = document.getElementById('togglePassword');
     const passwordInput = document.getElementById('inputPassword');
     const eyeIcon = document.getElementById('eyeIcon');
@@ -180,6 +213,55 @@
       eyeIcon.classList.toggle('fa-eye');
       eyeIcon.classList.toggle('fa-eye-slash');
     });
+
+    // PWA Install functionality
+    let deferredPrompt;
+    const installButton = document.getElementById('installButton');
+
+    // Listen for the beforeinstallprompt event
+    window.addEventListener('beforeinstallprompt', (e) => {
+      // Prevent the mini-infobar from appearing on mobile
+      e.preventDefault();
+      // Stash the event so it can be triggered later
+      deferredPrompt = e;
+      // Show the install button
+      installButton.style.display = 'inline-block';
+      console.log('PWA install prompt is available');
+    });
+
+    // Handle install button click
+    installButton.addEventListener('click', async () => {
+      if (deferredPrompt) {
+        // Show the install prompt
+        deferredPrompt.prompt();
+        // Wait for the user to respond to the prompt
+        const { outcome } = await deferredPrompt.userChoice;
+        console.log(`User response to the install prompt: ${outcome}`);
+        // Clear the deferredPrompt
+        deferredPrompt = null;
+        // Hide the install button
+        installButton.style.display = 'none';
+      }
+    });
+
+    // Listen for the app being installed
+    window.addEventListener('appinstalled', (evt) => {
+      console.log('PWA was installed');
+      // Hide the install button
+      installButton.style.display = 'none';
+      // Optional: Show a success message
+      // You can add a toast notification here if you want
+    });
+
+    // Check if app is already installed (iOS Safari)
+    if (window.navigator.standalone === true) {
+      installButton.style.display = 'none';
+    }
+
+    // Check if app is already installed (Android Chrome)
+    if (window.matchMedia('(display-mode: standalone)').matches) {
+      installButton.style.display = 'none';
+    }
   });
 </script>
 @endpush
