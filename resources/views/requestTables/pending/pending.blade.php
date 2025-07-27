@@ -133,7 +133,7 @@
                                 <td>{{ $item->forRelease_date }}</td>
                                 <td>{{ $item->claimed_date }}</td>
                                 <td class="text-nowrap">
-                                    @if(!empty($approvePending))
+                                    <!-- @if(!empty($approvePending))
                                     <form action="{{ route('pending.destroy', $item->id) }}" method="POST" class="d-inline decline-form">
                                         @csrf
                                         @method('DELETE')
@@ -145,7 +145,7 @@
                                         @method('PUT')
                                         <button type="submit" class="btn btn-sm btn-success mb-1 accept-btn" data-original-text="Accept">Accept</button>
                                     </form>
-                                    @endif
+                                    @endif -->
 
                                     @if(!empty($PermissionEdit))
                                     <a href="{{ route('pending.edit', $item->id) }}" class="btn btn-sm btn-warning mb-1">Edit</a>
@@ -237,18 +237,35 @@
                         </div>
                     </div>
                     @endif
-
+            
                     <!-- Supporting Document Modal -->
                     @if($item->supporting_document)
                     <div class="modal fade" id="documentModal{{ $item->id }}" tabindex="-1" aria-labelledby="documentModalLabel{{ $item->id }}" aria-hidden="true">
                         <div class="modal-dialog modal-dialog-centered modal-lg">
                             <div class="modal-content border-0 shadow-sm">
-                                <div class="modal-header bg-primary text-white">
-                                    <h5 class="modal-title" id="documentModalLabel{{ $item->id }}">
+                                <div class="modal-header text-white justify-content-between align-items-center" style="background-color: #1f2937;">
+                                    <h5 class="modal-title" id="documentModalLabel{{ $item->id }}" style = "color: #1dd3b0;">
                                         <i class="fas fa-file-alt me-2"></i>
-                                        Supporting Document - {{ $item->req_no }}
+                                        Supporting Document - Request No. {{ $item->req_no }}
                                     </h5>
-                                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    
+                                    <div>
+                                        @if(!empty($approvePending))
+                                        <form action="{{ route('pending.decline', $item->id) }}" method="POST" class="d-inline decline-form">
+                                            @csrf
+                                            @method('DELETE')
+                                            <input type="hidden" name="remarks" class="decline-reason">
+                                            <button type="button" class="btn btn-sm btn-danger mb-1 decline-btn">Decline</button>
+                                        </form>
+                                        <form action="{{ route('document-request.complete', $item->id) }}" method="POST" class="d-inline accept-form">
+                                            @csrf
+                                            @method('PUT')
+                                            <button type="submit" class="btn btn-sm btn-success mb-1 accept-btn" data-original-text="Accept">Accept</button>
+                                        </form>
+                                        @endif
+                                    </div>
+
+                                    <!-- <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button> -->
                                 </div>
 
                                 <div class="modal-body p-0 text-center bg-light">
@@ -351,14 +368,14 @@
                                     </div>
                                 </div>
 
-                                <div class="modal-footer bg-light">
+                                <div class="modal-footer" style="background-color: #1f2937;">
                                     <a href="{{ asset($documentPath) }}"
                                     target="_blank"
                                     class="btn btn-outline-primary btn-sm">
                                         <i class="fas fa-external-link-alt me-1"></i>
                                         Open in New Tab
                                     </a>
-                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                                    <button type="button" class="btn btn-outline-light btn-sm" data-bs-dismiss="modal" style="border-color: #1dd3b0; color: #1dd3b0;">
                                         <i class="fas fa-times me-1"></i>
                                         Close
                                     </button>
@@ -373,8 +390,79 @@
     </div>
 </div>
 
+<!-- Confirmation Modal -->
+
+
+<!-- Reason Modal -->
+<div class="modal fade" id="reasonModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header d-flex justify-content-start" style="background-color: #1f2937;">>
+        <h5 class="modal-title" style="color: #1dd3b0;">Decline Reason</h5>
+      </div>
+      <div class="modal-body">
+        <textarea class="form-control" id="reasonInput" rows="3" placeholder="Enter reason for declining"></textarea>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn text-white" style="background-color: #1f2937;" data-bs-dismiss="modal">Cancel</button>
+        <button type="button" class="btn text-white" id="proceedToConfirmBtn" style="background-color: #1dd3b0;">Proceed</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
 {{-- Enhanced JavaScript with loading spinners and search functionality --}}
 <script>
+    document.addEventListener('DOMContentLoaded', function () {
+    let targetForm;
+
+    const reasonModal = new bootstrap.Modal(document.getElementById('reasonModal'));
+
+    // Step 1: Click decline → open reason modal
+    document.querySelectorAll('.decline-btn').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+            targetForm = btn.closest('form');
+            document.getElementById('reasonInput').value = ''; // clear previous
+            reasonModal.show();
+        });
+    });
+
+    // Step 2: After entering reason → show SweetAlert confirmation
+    document.getElementById('proceedToConfirmBtn').addEventListener('click', function () {
+        const reason = document.getElementById('reasonInput').value.trim();
+
+        if (!reason) {
+            Swal.fire({
+                icon: 'warning',
+                title: 'Please enter a reason!',
+                confirmButtonColor: '#1dd3b0'
+            });
+            return;
+        }
+
+        targetForm.querySelector('.decline-reason').value = reason;
+
+        reasonModal.hide();
+
+            Swal.fire({
+                icon: 'warning',
+                title: 'Are you sure?',
+                html: `You are about to decline with reason:<br><strong>${reason}</strong><br>You won't be able to revert this!`,
+                showCancelButton: true,
+                confirmButtonColor: '#1dd3b0',
+                cancelButtonColor: '#1f2937', 
+                confirmButtonText: 'Confirm',
+                cancelButtonText: 'Cancel'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    targetForm.submit();
+                }
+            });
+        });
+    });
+
+
     document.addEventListener("DOMContentLoaded", function() {
         // Initial page load spinner
         const spinner = document.getElementById("spinner");
@@ -540,35 +628,41 @@
         }
 
         // Handle Accept button clicks with loading spinner
-        const acceptForms = document.querySelectorAll(".accept-form");
+        const acceptForms = document.querySelectorAll('.accept-form');
+
         acceptForms.forEach(form => {
-            form.addEventListener("submit", function (e) {
-                e.preventDefault();
+            let manualSubmit = false;
 
-                const acceptBtn = form.querySelector(".accept-btn");
-                const originalText = acceptBtn.getAttribute("data-original-text");
+            form.addEventListener('submit', function (e) {
+                if (!manualSubmit) {
+                    e.preventDefault();
 
-                // Disable button and show spinner
-                acceptBtn.disabled = true;
-                acceptBtn.innerHTML = `
-                    <span class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"></span>
-                    Processing...
-                `;
+                    const acceptBtn = form.querySelector('.accept-btn');
+                    const originalText = acceptBtn.getAttribute('data-original-text') || 'Accept';
 
-                // Optional: Disable other buttons in the same row to prevent multiple actions
-                const row = form.closest('tr');
-                const allButtons = row.querySelectorAll('button, a.btn');
-                allButtons.forEach(btn => {
-                    if (btn !== acceptBtn) {
-                        btn.disabled = true;
-                        btn.style.opacity = '0.5';
+                    acceptBtn.disabled = true;
+                    acceptBtn.innerHTML = `
+                        <span class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"></span>
+                        Processing...
+                    `;
+
+                    const row = form.closest('tr') || form.closest('.modal-header'); 
+                    if (row) {
+                        const allButtons = row.querySelectorAll('button, a.btn');
+                        allButtons.forEach(btn => {
+                            if (btn !== acceptBtn) {
+                                btn.disabled = true;
+                                btn.style.opacity = '0.5';
+                            }
+                        });
                     }
-                });
 
-                // Submit form after a brief delay
-                setTimeout(() => {
-                    form.submit();
-                }, 200);
+                    // allow next submission
+                    manualSubmit = true;
+                    setTimeout(() => {
+                        form.submit();
+                    }, 100);
+                }
             });
         });
 

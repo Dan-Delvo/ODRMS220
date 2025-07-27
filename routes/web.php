@@ -36,7 +36,7 @@ Route::post('/student/store', [RegistrationController::class, 'store'])->name('s
 
 Route::get('/account/otp', [AccountController::class, 'create'])->name('account.create');
 Route::post('/account/otp', [AccountController::class, 'viewOtp'])->name('account.otp');
-// Route::get('/account/verify', [AccountController::class, 'verifyEmail'])->name('account.verify');
+Route::match(['get', 'post'], '/account/resend', [AccountController::class, 'SendAgainOTP'])->name('account.resend');
 Route::post('/account/store', [AccountController::class, 'store'])->name('account.store');
 
 
@@ -63,6 +63,7 @@ Route::group(['middleware' => 'useradmin'], function(){
     Route::resource('tables', DocumentRequestController::class);
     Route::resource('pending', PendingController::class);
     Route::resource('ongoing', OngoingController::class);
+    Route::delete('pending/decline/{id}', [PendingController::class, 'decline'])->name('pending.decline');
     Route::put('/pending/completeRequest/{id}', [PendingController::class, 'completeRequest'])->name('document-request.complete');
     Route::put('/ongoing/completeRequest/{id}', [OngoingController::class, 'completeRequest'])->name('document-request2.complete');
     Route::put('/tables/completeRequest/{id}', [DocumentRequestController::class, 'completeRequest'])->name('document-request3.complete');

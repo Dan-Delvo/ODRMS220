@@ -86,22 +86,16 @@
                     </div>
                 </div>
 
-                <div class="card-footer py-3 d-flex justify-content-between align-items-center" style="background-color: #1f2937;">
-                    <div>
+                    <div class="card-footer py-3 d-flex justify-content-between align-items-center" style="background-color: #1f2937;">
                         <button class="btn btn-block" type="submit" style="background-color: #1dd3b0; color: white; ">
                             Next
                         </button>
+                        <div class="small" style="color: #1dd3b0;">
+                            <a href="{{ route('login') }}" style="color: #1dd3b0;">Have an account? Go to login</a>
+                        </div>
                     </div>
-                </form>
-            </div>
-
-            <!-- Footer -->
-            <div class="card-footer text-center py-3 bg-dark">
-                <div class="small">
-                    <a href="{{ route('login') }}" class="text-light">Have an account? Go to login</a>
-                </div>
-            </form>
-
+            </form>      
+                 
         </div>
     </div>
 </div>

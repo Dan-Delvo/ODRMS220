@@ -263,8 +263,10 @@
                                                 <span class="badge bg-success">Completed</span>
                                             @elseif($item->status == 'Ongoing')
                                                 <span class="badge bg-warning">Ongoing</span>
-                                            @else
+                                            @elseif($item->status == 'Pending')
                                                 <span class="badge bg-secondary">Pending</span>
+                                            @else
+                                                <span class="badge bg-danger">Declined</span>
                                             @endif
                                         </td>
                                     </tr>

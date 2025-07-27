@@ -289,8 +289,8 @@ private function checkUserHasRequests($userId)
 
         if (!$otpCode || !$expiry || now()->greaterThan($expiry)) {
             session()->flash('error', 'OTP Expired. Please request a new one');
-            session()->forget(['otp', 'countdown_start', 'durationInSeconds', 'expiresAt']);
-            return view('common.verifyEmail');
+            session()->forget(['otp', 'countdown_start', 'durationInSeconds', 'expiresAt', 'email']);
+            return view('common.verifyEmail')->with('error', 'Invalid or Expired Code.');
         }
 
         if ($otp == $otpCode) {
@@ -325,53 +325,6 @@ private function checkUserHasRequests($userId)
         }
         session()->flash('error', 'Invalid or expired OTP');
         return view('common.verifyEmail');
-
-        // $email = session('email_address');
-        // $username = session('username');
-        // $password = session('password');
-
-        // $validator = Validator::make([
-        //     'email_address' => $email,
-        //     'username' => $username,
-        //     'password' => $password,
-        // ], [
-        //     'email_address' => 'required|email|unique:acc_users,email_address',
-        //     'username' => 'required|string|max:255',
-        //     'password' => 'required|string|min:8',
-        // ]);
-
-        // if ($validator->fails()) {
-        //     // Session::forget('email_address');
-        //     // Session::forget('username');
-        //     // Session::forget('password');
-        //     return redirect()->route('account.create')
-        //         ->withErrors($validator)
-        //         ->withInput();
-        // }
-
-        // $request->validate([
-        //     'email_address' => 'required|email|unique:acc_users,email_address',
-        //     'username' => 'required|string|max:255',
-        //     'password' => 'required|string|min:8|confirmed',
-        // ]);
-
-        // $data = [
-        //     'email_address' => session('email_address'),
-        //     'username' => session('username'),
-        //     'password' => session('password'),
-        // ];
-
-        // $validator = Validator::make($data, [
-        //     'email_address' => 'required|email|unique:acc_users,email_address',
-        //     'username' => 'required|string|max:255',
-        //     'password' => 'required|string|min:8|confirmed',
-        // ]);
-
-        // if ($validator->fails()) {
-        //     dd("Hello");
-        //     return redirect()->route('account.create')->withErrors($validator)->withInput();
-
-        // }
     }
 
     public function viewOtp(Request $request) {
@@ -380,12 +333,13 @@ private function checkUserHasRequests($userId)
         $password = $request->input('password');
 
         $otpCode = rand(100000, 999999);
-        $duration = 300;
+        $duration = 180;
         if (!session()->has('countdown_start')) {
             session([
                 'countdown_start' => now(),
                 'durationInSeconds' => $duration,
-                'expiresAt' => now()->addSeconds($duration)
+                'expiresAt' => now()->addSeconds($duration),
+                'email' => $email
             ]);
         }
         session(['otp' => $otpCode]);
@@ -393,27 +347,73 @@ private function checkUserHasRequests($userId)
         return view('common.verifyEmail', compact('email', 'username', 'password'));
     }
 
-    public function verifyEmail(Request $request) {
-        // $otp = "{$request->first}{$request->second}{$request->third}{$request->fourth}{$request->fifth}{$request->sixth}";
-        // $otpCode = session('otp');
-        // $expiry = session('expiresAt');
+    public function SendAgainOTP(Request $request) {
 
-        // $data = $request->only('email_address', 'username', 'password');
+        try {
+        // Get values from request (works for both GET and POST)
+        $email = $request->input('email') ?? $request->query('email');
+        $username = $request->input('username') ?? $request->query('username');
+        $password = $request->input('password') ?? $request->query('password');
 
-        // if (!$otpCode || now()->greaterThan($expiry)) {
-        //         session()->flash('error', 'OTP Expired. Please request a new one');
-        //         session()->forget('expiresAt');
-        //         return view('common.verifyEmail');
-        // }
+        $lastRequest = session('last_otp_request');
+        if ($lastRequest && now()->diffInSeconds($lastRequest) < 60) {
+            if ($request->ajax() || $request->wantsJson()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Please wait before requesting another code.'
+                ], 429);
+            }
+            return view('common.verifyEmail', compact('email', 'username', 'password'))
+                   ->with('error', 'Please wait before requesting another code.');
+        }
 
-        // if ($otp == $otpCode) {
-        //         session()->forget(['otp', 'expiry']);
-        //         // dd(session('std_students_id'));
-        //         // dd($data);
-        //         return redirect()->route('account.store')->with($data);
-        // }
-        // session()->flash('error', 'Invalid or expired OTP');
-        // return view('common.verifyEmail');
+        session()->forget(['otp', 'countdown_start', 'durationInSeconds', 'expiresAt']);
+        
+        // Generate new OTP
+        $otpCode = rand(100000, 999999);
+        $duration = 180; // 5 minutes
+        $startTime = now();
+        
+        // Set new session data
+        session([
+            'otp' => $otpCode,
+            'countdown_start' => $startTime,
+            'durationInSeconds' => $duration,
+            'expiresAt' => $startTime->copy()->addSeconds($duration),
+            'last_otp_request' => now()
+        ]);
+        
+        // Send email
+        Mail::to($email)->send(new VerifyMail($otpCode));
+        
+        // Return JSON response for AJAX requests
+        if ($request->ajax() || $request->wantsJson()) {
+            return response()->json([
+                'success' => true,
+                'message' => 'New verification code sent to your email!',
+                'countdown_start' => $startTime->toIso8601String(),
+                'durationInSeconds' => $duration,
+                'expiresAt' => $startTime->copy()->addSeconds($duration)->toIso8601String()
+            ]);
+        }
+        
+        // Return view for regular requests (fallback)
+        return view('common.verifyEmail', compact('email', 'username', 'password'))
+               ->with('success', 'New verification code sent to your email!');
+               
+        } catch (\Exception $e) {
+            // Log the error
+            Log::error('OTP resend failed: ' . $e->getMessage());
+        
+            if ($request->ajax() || $request->wantsJson()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Failed to send verification code. Please try again.'
+                ], 500);
+            }
+        return view('common.verifyEmail', compact('email', 'username', 'password'))
+               ->with('error', 'Failed to send verification code. Please try again.');
+        }
     }
 
     public function addUserStud()
