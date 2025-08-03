@@ -33,7 +33,7 @@ class forgotpassword extends Controller
 
             Mail::to($request->variable)->send(new ResetPasswordMail($otpCode));
             session(['password_reset_step' => 'otp']);
-            return view('redirect/redirectVerifyOtp')->with('status', 'OTP Sent successfully!');
+            return view('redirect/redirectVerifyOtp')->with('success', 'OTP Sent successfully!');
         } else {
             return redirect()->back()->with('error', 'Invalid email address!');
         }

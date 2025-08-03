@@ -328,9 +328,20 @@ private function checkUserHasRequests($userId)
     }
 
     public function viewOtp(Request $request) {
+        $request->validate([
+            'email_address' => 'email|required|unique:acc_users,email_address',
+            'username' => 'required|string|unique:acc_users,username'
+        ], [
+            'email_address.unique' => 'This email already exists',
+            'username.unique' => 'This username already exists',
+        ]);
+
+
         $email = $request->input('email_address');
         $username = $request->input('username');
         $password = $request->input('password');
+
+        
 
         $otpCode = rand(100000, 999999);
         $duration = 180;

@@ -38,10 +38,7 @@
             </div>
             
             <div class="text-center mt-3 d-flex justify-content-between align-items-start">
-                <!-- Left: Verify Button -->
-                <button type="submit" class="btn text-white" style="background-color: #1dd3b0;">Verify</button>
 
-                <!-- Right: Send again + Countdown -->
                 <div class="d-flex flex-column align-items-center">
                     <button type="button" id="send-again" class="btn btn-primary disabled" onclick="sendAgainAjax()"
                     style="
@@ -62,6 +59,9 @@
                     </button>
                     <span id="countdown" class="text-white mt-1">Loading...</span>
                 </div>
+                
+                <button type="submit" class="btn text-white" style="background-color: #1dd3b0;">Verify</button>
+
             </div>
         </form>
     </div>
