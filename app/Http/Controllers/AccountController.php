@@ -50,8 +50,9 @@ $pdo->exec("SET @current_user = " . $pdo->quote(Auth::check() ? Auth::user()->us
 
     public function edit($id)
     {
-$pdo = DB::connection()->getPdo();
-$pdo->exec("SET @current_user = " . $pdo->quote(Auth::check() ? Auth::user()->username : 'guest'));
+    $pdo = DB::connection()->getPdo();
+    $pdo->exec("SET @current_user = " . $pdo->quote(Auth::check() ? Auth::user()->username : 'guest'));
+
         try {
             if (!is_numeric($id) || $id <= 0) {
                 return redirect()->route('user')->with('Danger', 'Invalid user ID provided.');
@@ -68,6 +69,7 @@ $pdo->exec("SET @current_user = " . $pdo->quote(Auth::check() ? Auth::user()->us
             }
 
             return view('maintenance.editUsers', compact('user', 'roles'));
+
         } catch (Exception $e) {
             Log::error('Error in edit method: ' . $e->getMessage());
             return redirect()->route('user')->with('Danger', 'An error occurred while loading the edit form.');
@@ -76,8 +78,9 @@ $pdo->exec("SET @current_user = " . $pdo->quote(Auth::check() ? Auth::user()->us
 
     public function update(Request $request, $id)
     {
-$pdo = DB::connection()->getPdo();
-$pdo->exec("SET @current_user = " . $pdo->quote(Auth::check() ? Auth::user()->username : 'guest'));
+    $pdo = DB::connection()->getPdo();
+    $pdo->exec("SET @current_user = " . $pdo->quote(Auth::check() ? Auth::user()->username : 'guest'));
+
         try {
             if (!is_numeric($id) || $id <= 0) {
                 return redirect()->route('user')->with('Danger', 'Invalid user ID provided.');
@@ -87,7 +90,7 @@ $pdo->exec("SET @current_user = " . $pdo->quote(Auth::check() ? Auth::user()->us
             $validatedData = $request->validate([
                 'std_students_id' => 'required|string|max:255',
                 'email_address' => 'required|email|max:255',
-                'role' => 'required|integer|exists:roles,id',
+                'role' => 'required|integer',
                 'username' => 'required|string|max:255',
             ]);
 
@@ -99,21 +102,8 @@ $pdo->exec("SET @current_user = " . $pdo->quote(Auth::check() ? Auth::user()->us
                 return redirect()->route('user')->with('Danger', 'User not found!');
             }
 
-            // Check if email is unique (excluding current user)
-            $emailExists = Account::where('email_address', $validatedData['email_address'])
-                                 ->where('id', '!=', $id)
-                                 ->exists();
-            if ($emailExists) {
-                return redirect()->back()->with('Danger', 'Email address is already in use by another user.');
-            }
 
-            // Check if username is unique (excluding current user)
-            $usernameExists = Account::where('username', $validatedData['username'])
-                                    ->where('id', '!=', $id)
-                                    ->exists();
-            if ($usernameExists) {
-                return redirect()->back()->with('Danger', 'Username is already in use by another user.');
-            }
+
 
             // Update user data
             $user->std_students_id = $validatedData['std_students_id'];
@@ -133,8 +123,8 @@ $pdo->exec("SET @current_user = " . $pdo->quote(Auth::check() ? Auth::user()->us
 
 public function delete($id)
 {
-$pdo = DB::connection()->getPdo();
-$pdo->exec("SET @current_user = " . $pdo->quote(Auth::check() ? Auth::user()->username : 'guest'));
+    $pdo = DB::connection()->getPdo();
+    $pdo->exec("SET @current_user = " . $pdo->quote(Auth::check() ? Auth::user()->username : 'guest'));
     try {
         if (!is_numeric($id) || $id <= 0) {
             return redirect('panel/user')->with('Danger', 'Invalid user ID provided.');

@@ -5,16 +5,16 @@
 <div class="row">
     <div class="col-md-6">
         <h1 class="mt-4">
-            <span class="badge" style="background-color: #1dd3b0; font-size: 2rem;">Pending Requests</span>
+            <span class="badge" style="background-color: #1dd3b0; font-size: 2rem;">Declined Requests</span>
         </h1>
         <ol class="breadcrumb mb-4">
             <li class="breadcrumb-item"><a href="{{ route('dashboard') }}" class="text-dark">Dashboard</a></li>
-            <li class="breadcrumb-item active">Pending Requests</li>
+            <li class="breadcrumb-item active">Declined Requests</li>
         </ol>
     </div>
     <div class="col-md-6 text-end">
         <h1 class="mt-4 text-dark">
-            <span class="badge" style="background-color:#1f2937; font-size: 2rem;">Total Pending: {{ $totalCount }}</span>
+            <span class="badge" style="background-color:#1f2937; font-size: 2rem;">Total Declined: {{ $totalCount }}</span>
         </h1>
     </div>
 </div>
@@ -36,7 +36,7 @@
 
         <div class="card shadow-lg border-0 rounded-lg mt-3">
             <div class="card-header text-white d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center" style="background-color: #1f2937;">
-                <h5 class="mb-2 mb-md-0">Pending Document Requests</h5>
+                <h5 class="mb-2 mb-md-0">Declined Document Requests</h5>
 
                 <!-- Search Bar -->
                 <div class="search-container d-flex gap-2 mt-2 mt-md-0">
@@ -84,7 +84,7 @@
                 <div class="table-responsive" id="requestTable">
                     @if($DocRequests->isEmpty())
                         <div class="alert alert-warning text-center my-3">
-                            No pending document requests found.
+                            No declined document requests found.
                         </div>
                     @else
                     <table class="table table-sm table-bordered table-hover align-middle text-nowrap" style="font-size: 0.85rem;">
@@ -134,36 +134,12 @@
                                 <td>{{ $item->claimed_date }}</td>
                                 <td class="text-nowrap">
                                     <!-- Accept and Decline buttons moved here -->
-                                    @if(!empty($approvePending))
                                     <form action="{{ route('pending.decline', $item->id) }}" method="POST" class="d-inline decline-form">
                                         @csrf
                                         @method('DELETE')
                                         <input type="hidden" name="remarks" class="decline-reason">
-                                        <button type="button" class="btn btn-sm btn-danger mb-1 decline-btn">Decline</button>
+                                        <button type="button" class="btn btn-sm btn-danger mb-1 decline-btn">Delete</button>
                                     </form>
-
-                                    <form action="{{ route('document-request.complete', $item->id) }}" method="POST" class="d-inline accept-form">
-                                        @csrf
-                                        @method('PUT')
-                                        <button type="submit" class="btn btn-sm btn-success mb-1 accept-btn" data-original-text="Accept">Accept</button>
-                                    </form>
-                                    @endif
-
-                                    @if(!empty($PermissionEdit))
-                                    <a href="{{ route('pending.edit', $item->id) }}" class="btn btn-sm btn-warning mb-1">Edit</a>
-                                    @endif
-
-                                    <button class="btn btn-sm btn-info mb-1" data-bs-toggle="modal" data-bs-target="#receiptModal{{ $item->id }}">
-                                        Receipt
-                                    </button>
-
-                                    <!-- Image Button -->
-                                    @if($item->supporting_document)
-                                    <button type="button" class="btn btn-sm btn-primary mb-1" data-bs-toggle="modal" data-bs-target="#documentModal{{ $item->id }}">
-                                        <i class="fas fa-file-alt me-1"></i>
-                                        View Document
-                                    </button>
-                                    @endif
                                 </td>
                             </tr>
                             @endforeach

@@ -19,6 +19,7 @@ class StudentPageController extends Controller
         ->with('studentInformation')
         ->paginate(9);;
 
+
         return view('common.studentDashboard', compact('studInfo', 'DocRequests'));
     }
 }

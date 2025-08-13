@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\DocumentRequestModel;
+use App\Models\Account;
 use App\Models\StudentInformationModel;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Http\Request;
@@ -14,6 +15,8 @@ use App\Models\DocumentsModel;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
+
 
 class DocumentRequestController extends Controller
 {
@@ -218,6 +221,7 @@ class DocumentRequestController extends Controller
             'grade_level' => 'required|string|max:50',
             'student_status' => 'required|string|max:20',
             'last_sy_attended' => 'required|string|max:50',
+            'email_address' => 'required|string|max:100',
         ]);
 
         $claimer = ClaimerModel::updateOrCreate(
@@ -225,7 +229,29 @@ class DocumentRequestController extends Controller
             ['contact_no' => '000000']
         );
 
-        $student = StudentInformationModel::updateOrCreate(
+        // Check if email address is unique
+        if (Account::where('email_address', $request->email_address)->exists()) {
+
+            $idAcc = Account::where('email_address', $request->email_address)->value('user_account_id');
+            DocumentRequestModel::create([
+            'id' => random_int(10000, 99999),
+            'clm_claimers_id' => $claimer->id,
+            'std_students_id' => $idAcc,
+            'doc_categories_id' => $validated['document_id'],
+            'request_time' => now()->format('H:i:s'),
+            'request_date' => now()->toDateString(),
+            'request_schl_entity' => $validated['request_schl_entity'],
+            'release_mode' => $validated['release_mode'],
+            'remarks' => 'Pending',
+            'status' => 'Pending',
+            'request_mode' => 'Online',
+            ]);
+
+            return redirect()->route('walkin.form')->with('Success', 'Document request submitted successfully!');
+        }
+
+
+        $student = StudentInformationModel::create(
             [
                 'FirstName' => $validated['student_first_name'],
                 'LastName' => $validated['student_last_name'],
@@ -237,6 +263,25 @@ class DocumentRequestController extends Controller
                 'Last_sy_attended' => $validated['last_sy_attended'],
             ]
         );
+            $tempPassword = Str::random(10);
+
+            Account::create([
+                'user_account_id' => $student->id,
+                'std_students_id' => $student->id,
+                'role_id' => 1,
+                'email_address' => $validated['email_address'],
+                'username' => $validated['student_first_name'] . $validated['student_last_name'],
+                'password' => bcrypt($tempPassword),
+            ]);
+
+        $subject = 'Your Temporary Password';
+        $name = $validated['student_first_name'] . ' ' . $validated['student_last_name'];
+        $email = $validated['email_address'];
+
+        // Send email
+        Mail::send('emails.tempPassword', compact('subject', 'name', 'tempPassword'), function ($message) use ($email, $subject) {
+            $message->to($email)->subject($subject);
+        });
 
         DocumentRequestModel::create([
             'id' => random_int(10000, 99999),
@@ -249,9 +294,11 @@ class DocumentRequestController extends Controller
             'release_mode' => $validated['release_mode'],
             'remarks' => 'Pending',
             'status' => 'Pending',
+            'request_mode' => 'Online',
         ]);
 
-        return redirect()->route('walkin.form')->with('success', 'Document request submitted successfully!');
+
+        return redirect()->route('walkin.form')->with('Success', 'Document request submitted successfully!');
     }
 
     // ============================
