@@ -33,6 +33,7 @@ class DocumentRequestModel extends Model
         'approve_date',
         'forRelease_date',
         'claimed_date',
+        'claimed_time',
         'req_no',
         'image',
         'supporting_document'

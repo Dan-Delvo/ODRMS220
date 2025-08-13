@@ -1,12 +1,14 @@
 @extends('layout.loginpage')
 
+
 @section('content')
 <!-- Login Start -->
-@if(session('error'))
+ @include('layout.partials.message')
+<!-- @if(session('error'))
     <div id="floatingAlert" class="floating-attempt">
         <i class="fas fa-exclamation-circle me-2"></i> {{ session('error') }}
     </div>
-@endif
+@endif -->
 
 <div class="container-fluid g-0">
   <div class="row g-0 min-vh-100">
@@ -77,6 +79,7 @@
   </div>
 </div>
 <!-- Login End -->
+<<<<<<< HEAD
 
 <style>
 
@@ -145,26 +148,13 @@
     box-shadow: 0 0 0 0.2rem rgba(29, 211, 176, 0.25);
   }
 </style>
+=======
+>>>>>>> b8dc7111 (Audit Changes)
 @endsection
 
 @push('scripts')
 <script>
 document.addEventListener('DOMContentLoaded', function () {
-     const alert = document.getElementById('floatingAlert');
-    if (alert) {
-        // Auto-dismiss after 4 seconds
-        setTimeout(() => {
-            alert.classList.add('hide');
-            setTimeout(() => alert.remove(), 500);
-        }, 4000);
-
-        // Dismiss on click
-        alert.addEventListener('click', () => {
-            alert.classList.add('hide');
-            setTimeout(() => alert.remove(), 500);
-        });
-    }
-
 
     // Toggle password
     const toggleBtn = document.getElementById('togglePassword');

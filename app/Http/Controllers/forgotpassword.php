@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Mail\ResetPasswordMail;
+use App\Models\Account;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -11,68 +12,90 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Session;
+
 class forgotpassword extends Controller
 {
-    public function index() {
+    public function index()
+    {
         return view('common/forgetpass');
     }
 
-    public function forgotpost (Request $request){
+    public function forgotpost(Request $request)
+    {
         $email = DB::table('acc_users')->where('email_address', $request->variable)->first();
-  
+
 
         if ($email) {
             $otpCode = rand(100000, 999999);
             $expiresAt = Carbon::now()->addMinutes(5);
 
-            session(['email' => $request->variable,
-                    'otp' => $otpCode,
-                    'expiry' => $expiresAt,
-                    'email_entered' => true
-                    ]);
+            session([
+                'email' => $request->variable,
+                'otp' => $otpCode,
+                'expiry' => $expiresAt,
+                'email_entered' => true
+            ]);
 
             Mail::to($request->variable)->send(new ResetPasswordMail($otpCode));
             session(['password_reset_step' => 'otp']);
-            return view('redirect/redirectVerifyOtp')->with('success', 'OTP Sent successfully!');
+            session()->flash('success', 'OTP Sent successfully!');
+            return view('redirect/redirectVerifyOtp');
         } else {
             return redirect()->back()->with('error', 'Invalid email address!');
         }
     }
 
-    public function showVerifyOTP(){
-        return view('common/OTP/otp'); 
+    public function showVerifyOTP()
+    {
+        return view('common/OTP/otp');
     }
 
-    public function verifyOTP (Request $request) {
-            Log::info("Nakapasok");
+    public function verifyOTP(Request $request)
+    {
+        Log::info("Nakapasok");
 
-            $otp = "{$request->first}{$request->second}{$request->third}{$request->fourth}{$request->fifth}{$request->sixth}";
-            $email = session('email');
-            $otpCode = session('otp');
-            $expiry = session('expiry');
+        $otp = "{$request->first}{$request->second}{$request->third}{$request->fourth}{$request->fifth}{$request->sixth}";
+        $email = session('email');
+        $otpCode = session('otp');
+        $expiry = session('expiry');
 
-            if (!$otpCode || now()->greaterThan($expiry)) {
-                session()->flash('error', 'OTP Expired. Please request a new one');
-                return view('common/OTP/otp');
-            }
-
-            if ($otp == $otpCode) {
-                session()->forget(['otp', 'expiry']);
-                session(['otp_verified' => true]);
-
-                session(['password_reset_step' => 'newpassword']);
-                return view('redirect/redirectNewPassword')->with('status', 'OTP Verified successfully!');
-            }
-
-            session()->flash('error', 'Invalid or expired OTP');
+        if (!$otpCode || now()->greaterThan($expiry)) {
+            session()->flash('error', 'OTP Expired. Please request a new one');
             return view('common/OTP/otp');
+        }
+
+        if ($otp == $otpCode) {
+            session()->forget(['otp', 'expiry']);
+            session(['otp_verified' => true]);
+
+            session(['password_reset_step' => 'newpassword']);
+            session()->flash('status', 'OTP Verified successfully!');
+            return view('redirect/redirectNewPassword');
+            // return view('redirect/redirectNewPassword')->with('status', 'OTP Verified successfully!');
+        }
+
+        session()->flash('error', 'Invalid or expired OTP');
+        return view('common/OTP/otp');
     }
 
-    public function showNewPassword(){
-        return view('common/OTP/newpassword'); 
+    public function showNewPassword()
+    {
+        return view('common/OTP/newpassword');
     }
 
-    public function newpassword (Request $request) {
+    public function newpassword(Request $request)
+    {
+        $oldPass = Account::where('email_address', session('email'))->value('password');
+        $request->validate([
+            'password' => [
+                'required',
+                function ($attribute, $value, $fail) use ($oldPass) {
+                    if (Hash::check($value, $oldPass)) {
+                        $fail('The new password must be different from the old password.');
+                    }
+                }
+            ]
+        ]);
 
         $password = Hash::make($request->password);
         $email = session('email');
