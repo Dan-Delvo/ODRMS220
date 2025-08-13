@@ -181,27 +181,27 @@ class OngoingController extends Controller
                     ->subject($subject);
         });
 
-        // Retrieve the push ID (FCM token) for the user
-        $pushId = $account->fcm_token;
+        // // Retrieve the push ID (FCM token) for the user
+        // $pushId = $account->fcm_token;
 
-        // Send push notification via OneSignal
-        try {
-            $response = Http::withHeaders([
-                'Authorization' => 'Basic os_v2_app_if32gbsxsffszlc2vzvuxojxx5v5u3kriweuqn4s2luqs6vfjt5gaoxdhoqhd6vi5w33ake2swiwgpvwudxdidn35dzpgubfyjeszsq',
-                'accept' => 'application/json',
-                'content-type' => 'application/json',
-            ])->post('https://onesignal.com/api/v1/notifications', [
-                'app_id' => '4177a306-5791-4b2c-ac5a-ae6b4bb937bf',
-                'include_player_ids' => [$pushId], // Send notification to the user based on their push subscription ID
-                'contents' => ['en' => $name . ', Your document request has been approved and now Processing.'], // Updated message content for completed status
-            ]);
+        // // Send push notification via OneSignal
+        // try {
+        //     $response = Http::withHeaders([
+        //         'Authorization' => 'Basic os_v2_app_if32gbsxsffszlc2vzvuxojxx5v5u3kriweuqn4s2luqs6vfjt5gaoxdhoqhd6vi5w33ake2swiwgpvwudxdidn35dzpgubfyjeszsq',
+        //         'accept' => 'application/json',
+        //         'content-type' => 'application/json',
+        //     ])->post('https://onesignal.com/api/v1/notifications', [
+        //         'app_id' => '4177a306-5791-4b2c-ac5a-ae6b4bb937bf',
+        //         'include_player_ids' => [$pushId], // Send notification to the user based on their push subscription ID
+        //         'contents' => ['en' => $name . ', Your document request has been approved and now Processing.'], // Updated message content for completed status
+        //     ]);
 
-            Log::info('Notification sent: ' . $response->body());
+        //     Log::info('Notification sent: ' . $response->body());
 
-        } catch (\Exception $e) {
-            report($e);
-            return response()->json(['error' => $e->getMessage()], 500);
-        }
+        // } catch (\Exception $e) {
+        //     report($e);
+        //     return response()->json(['error' => $e->getMessage()], 500);
+        // }
 
         // Update the document request status to 'Completed'
         $documentRequest->update([

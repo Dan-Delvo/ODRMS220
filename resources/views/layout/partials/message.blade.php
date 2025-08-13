@@ -1,11 +1,36 @@
-@if(!empty(session('success')))
-<div class="alert alert-success" role="alert">
-    {{session('success')}}
+@if(session('success') || session('error') || session('status') || session('danger') || $errors->has('password'))
+<div id="floatingAlert" class="floating-attempt
+        @if(session('error') || session('danger') || $errors->has('password')) bg-danger
+        @elseif(session('success') || session('status')) bg-success
+        @endif">
+    <i class="fas 
+            @if(session('error') || session('danger') || $errors->has('password')) fa-exclamation-circle
+            @else fa-check-circle
+            @endif me-2"></i>
+
+    {{-- Priority: success → status → error → Danger → error bag --}}
+    {{ session('success') ?? session('status') ?? session('error') ?? session('danger') ?? $errors->first('password') }}
 </div>
 @endif
 
-@if(!empty(session('error')))
-<div class="alert alert-danger" role="alert">
-    {{session('error')}}
-</div>
-@endif
+
+@push('scripts')
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const alert = document.getElementById('floatingAlert');
+        if (alert) {
+            // Auto-dismiss after 4 seconds
+            setTimeout(() => {
+                alert.classList.add('hide');
+                setTimeout(() => alert.remove(), 500);
+            }, 4000);
+
+            // Dismiss on click
+            alert.addEventListener('click', () => {
+                alert.classList.add('hide');
+                setTimeout(() => alert.remove(), 500);
+            });
+        }
+    });
+</script>
+@endpush

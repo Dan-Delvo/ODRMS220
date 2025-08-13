@@ -6,7 +6,7 @@
     <div class="col-md-6">
         <h1 class="mt-4"><span class="badge text-bg-dark">Analytics Dashboard</span></h1>
         <ol class="breadcrumb mb-4">
-            <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">Dashboard</a></li>
+            <li class="breadcrumb-item active"><a href="{{ route('dashboard') }}" class="text-dark">Dashboard</a></li>
             <li class="breadcrumb-item active">Analytics</li>
         </ol>
     </div>
@@ -17,14 +17,30 @@
         <!-- Monthly Document Requests -->
         <div class="card shadow-lg border-0 rounded-lg mb-4">
             <div class="card-header bg-dark text-white">
-                <h5 class="mb-0">Monthly Document Requests</h5>
+                <div class="d-flex justify-content-between align-items-center flex-wrap">
+                    <h5 class="mb-2 mb-md-0">Monthly Document Requests</h5>
+                    <form method="GET" class="d-flex align-items-center gap-2">
+                        <input type="date" name="start_date" value="{{ $startDate }}" class="form-control form-control-sm">
+                        <input type="date" name="end_date" value="{{ $endDate }}" class="form-control form-control-sm">
+                        <button type="submit" class="btn btn-outline-light btn-sm">Filter</button>
+                    </form>
+                </div>
             </div>
             <div class="card-body bg-light">
                 <canvas id="monthlyRequestsChart" style="max-height: 300px;"></canvas>
+                <p class="mt-3 text-center mb-0">
+                    <strong>Total Requests:</strong> {{ $totalRequestsInInterval }}<br>
+                    <small>
+                        From <strong>{{ \Carbon\Carbon::parse($startDate)->format('F j, Y') }}</strong>
+                        to <strong>{{ \Carbon\Carbon::parse($endDate)->format('F j, Y') }}</strong>
+                    </small>
+                </p>
             </div>
         </div>
     </div>
 </div>
+
+
 
 <div class="row justify-content-center g-3">
     <!-- Request Distribution by Document Type -->
@@ -66,6 +82,21 @@
     </div>
 </div>
 
+<div class="row justify-content-center">
+    <div class="col-12 col-lg-8">
+        <!-- Number of Unclaimed Documents -->
+        <div class="card shadow-lg border-0 rounded-lg mb-4">
+            <div class="card-header bg-dark text-white">
+                <h5 class="mb-0">Unclaimed Documents</h5>
+            </div>
+            <div class="card-body bg-light">
+                <canvas id="unclaimedChart" style="max-height: 300px;"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <script>
@@ -73,6 +104,7 @@
     const docTypeData = @json($docTypeData);
     const modeData = @json($modeData);
     const revenueData = @json($revenueData);
+    const unclaimedData = @json($unclaimedData);
 
     const allMonths = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
 
@@ -101,12 +133,21 @@
             scales: {
                 y: {
                     beginAtZero: true,
-                    stepSize: 1
+                    ticks: {
+                        callback: function(value) {
+                            return Number.isInteger(value) ? value : null;
+                        }
+                    }
                 }
             },
             plugins: {
-                legend: { display: false },
-                title: { display: true, text: 'Requests Per Month' }
+                legend: {
+                    display: false
+                },
+                title: {
+                    display: true,
+                    text: 'Requests Per Month'
+                }
             }
         }
     });
@@ -130,8 +171,13 @@
             responsive: true,
             maintainAspectRatio: false,
             plugins: {
-                legend: { position: 'bottom' },
-                title: { display: true, text: 'Document Type Distribution' }
+                legend: {
+                    position: 'bottom'
+                },
+                title: {
+                    display: true,
+                    text: 'Document Type Distribution'
+                }
             }
         }
     });
@@ -155,8 +201,13 @@
             responsive: true,
             maintainAspectRatio: false,
             plugins: {
-                legend: { position: 'bottom' },
-                title: { display: true, text: 'Request Mode' }
+                legend: {
+                    position: 'bottom'
+                },
+                title: {
+                    display: true,
+                    text: 'Request Mode'
+                }
             }
         }
     });
@@ -188,8 +239,53 @@
                 }
             },
             plugins: {
-                legend: { display: true },
-                title: { display: true, text: 'Monthly Revenue' }
+                legend: {
+                    display: true
+                },
+                title: {
+                    display: true,
+                    text: 'Monthly Revenue'
+                }
+            }
+        }
+    });
+
+    // Request Mode Chart (Pie)
+    // Unclaimed Documents Per Month (Bar Chart)
+    const unclaimedValues = mapDataToAllMonths(unclaimedData);
+
+    new Chart(document.getElementById('unclaimedChart'), {
+        type: 'bar',
+        data: {
+            labels: allMonths,
+            datasets: [{
+                label: 'Unclaimed Documents',
+                data: unclaimedValues,
+                backgroundColor: 'rgba(255, 99, 132, 0.7)',
+                borderColor: 'rgba(255, 99, 132, 1)',
+                borderWidth: 1,
+                borderRadius: 4
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        stepSize: 50 // jumps 0, 50, 100, 150...
+                    }
+                }
+            },
+            plugins: {
+                legend: {
+                    display: false
+                },
+                title: {
+                    display: true,
+                    text: 'Unclaimed Documents Per Month'
+                }
             }
         }
     });

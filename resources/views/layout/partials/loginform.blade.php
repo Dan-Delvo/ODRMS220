@@ -1,12 +1,14 @@
 @extends('layout.loginpage')
 
+
 @section('content')
 <!-- Login Start -->
-@if(session('error'))
+ @include('layout.partials.message')
+<!-- @if(session('error'))
     <div id="floatingAlert" class="floating-attempt">
         <i class="fas fa-exclamation-circle me-2"></i> {{ session('error') }}
     </div>
-@endif
+@endif -->
 
 <div class="container-fluid g-0">
   <div class="row g-0 min-vh-100">
@@ -78,94 +80,11 @@
   </div>
 </div>
 <!-- Login End -->
-
-<style>
-  
-  
-
-  @media (max-width: 991.98px) {
-    .col-lg-3 {
-      max-width: 100% !important;
-      box-shadow: none !important;
-      padding: 2rem 1.5rem;
-    }
-    .btn.btn-warning {
-      width: 100%;
-    }
-    h2.font-weight-bold {
-      font-size: 1.75rem;
-    }
-  }
-
-  @media (max-width: 576px) {
-    .col-lg-3 {
-      padding: 1.5rem 1rem;
-    }
-    .form-floating label {
-      font-size: 0.85rem;
-    }
-    .custom-teal-link {
-      font-size: 0.85rem;
-    }
-  }
-
-  .text-warning {
-    color: #1dd3b0 !important;
-  }
-
-  .btn-warning {
-    background-color: #1dd3b0 !important;
-    border-color: #1dd3b0 !important;
-  }
-
-  .btn-warning:hover,
-  .btn-warning:focus {
-    background-color: #14b59c !important;
-    border-color: #14b59c !important;
-  }
-
-  .custom-teal-link {
-    color: #1dd3b0;
-  }
-
-  .custom-teal-link:hover {
-    color: #14b1a2;
-    text-decoration: underline;
-  }
-
-  #installButton:hover {
-    background-color: #1dd3b0 !important;
-    color: #1f2937 !important;
-    border-color: #1dd3b0 !important;
-    transform: translateY(-1px);
-    box-shadow: 0 4px 12px rgb(29 211 176 / 0.4);
-  }
-
-  #installButton:focus {
-    outline: none;
-    box-shadow: 0 0 0 0.2rem rgba(29, 211, 176, 0.25);
-  }
-</style>
 @endsection
 
 @push('scripts')
 <script>
 document.addEventListener('DOMContentLoaded', function () {
-     const alert = document.getElementById('floatingAlert');
-    if (alert) {
-        // Auto-dismiss after 4 seconds
-        setTimeout(() => {
-            alert.classList.add('hide');
-            setTimeout(() => alert.remove(), 500);
-        }, 4000);
-
-        // Dismiss on click
-        alert.addEventListener('click', () => {
-            alert.classList.add('hide');
-            setTimeout(() => alert.remove(), 500);
-        });
-    }
-
 
     // Toggle password
     const toggleBtn = document.getElementById('togglePassword');

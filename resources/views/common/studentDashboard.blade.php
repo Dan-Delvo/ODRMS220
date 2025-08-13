@@ -259,12 +259,14 @@
                                         <td>{{ $item->release_mode }}</td>
                                         <td>{{ $item->remarks }}</td>
                                         <td>
-                                            @if($item->status == 'Completed')
-                                                <span class="badge bg-success">Completed</span>
-                                            @elseif($item->status == 'Ongoing')
-                                                <span class="badge bg-warning">Ongoing</span>
+                                            @if($item->status == 'Claimed')
+                                                <span class="badge bg-success">Claimed</span>
+                                            @elseif($item->status == 'Processing')
+                                                <span class="badge bg-warning">Processing</span>
                                             @elseif($item->status == 'Pending')
                                                 <span class="badge bg-secondary">Pending</span>
+                                            @elseif($item->status == 'For Release')
+                                                <span class="badge bg-info">For Release</span>
                                             @else
                                                 <span class="badge bg-danger">Declined</span>
                                             @endif

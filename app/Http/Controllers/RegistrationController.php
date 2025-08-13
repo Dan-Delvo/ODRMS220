@@ -34,7 +34,7 @@ class RegistrationController extends Controller
                 'LastName.required' => 'Please enter your last name.',
                 'LRN.digits' => 'LRN must be exactly 12 digits.',
                 'LRN.unique' => 'LRN must be unique',
-                'Last_sy_attended.digits' => 'Last school year must be 4 digits (e.g. 2024).',
+                'Last_sy_attended.digits' => 'Last school year must be 4 digits (e.g. 2024).'
             ]);
 
             Log::info($request);

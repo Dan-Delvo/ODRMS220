@@ -24,8 +24,7 @@ class AccountController extends Controller
     {
         try {
             $PermissionAcc = PermissionRoleModel::getPermission('user', Auth::user()->role_id);
-            if(empty($PermissionAcc))
-            {
+            if (empty($PermissionAcc)) {
                 abort(404);
             }
 
@@ -35,11 +34,11 @@ class AccountController extends Controller
             $user = Account::with('roles')->paginate(10);
 
             return view('maintenance.users', compact('user'))
-            ->with([
-                'PermissionEdit' => $data,
-                'PermissionDelete' => $data1,
-                'PermissionInfo' => $data2,
-            ]);
+                ->with([
+                    'PermissionEdit' => $data,
+                    'PermissionDelete' => $data1,
+                    'PermissionInfo' => $data2,
+                ]);
         } catch (Exception $e) {
             Log::error('Error in display method: ' . $e->getMessage());
             return redirect()->back()->with('Danger', 'An error occurred while loading users.');
@@ -95,16 +94,16 @@ class AccountController extends Controller
 
             // Check if email is unique (excluding current user)
             $emailExists = Account::where('email_address', $validatedData['email_address'])
-                                 ->where('id', '!=', $id)
-                                 ->exists();
+                ->where('id', '!=', $id)
+                ->exists();
             if ($emailExists) {
                 return redirect()->back()->with('Danger', 'Email address is already in use by another user.');
             }
 
             // Check if username is unique (excluding current user)
             $usernameExists = Account::where('username', $validatedData['username'])
-                                    ->where('id', '!=', $id)
-                                    ->exists();
+                ->where('id', '!=', $id)
+                ->exists();
             if ($usernameExists) {
                 return redirect()->back()->with('Danger', 'Username is already in use by another user.');
             }
@@ -125,125 +124,124 @@ class AccountController extends Controller
         }
     }
 
-public function delete($id)
-{
-    try {
-        if (!is_numeric($id) || $id <= 0) {
-            return redirect('panel/user')->with('Danger', 'Invalid user ID provided.');
+    public function delete($id)
+    {
+        try {
+            if (!is_numeric($id) || $id <= 0) {
+                return redirect('panel/user')->with('Danger', 'Invalid user ID provided.');
+            }
+
+            // Find the user by ID
+            $user = Account::find($id);
+            if (!$user) {
+                return redirect('panel/user')->with('Danger', 'User not found!');
+            }
+
+            // Prevent deletion of currently logged-in user
+            if (Auth::id() == $id) {
+                return redirect('panel/user')->with('Danger', 'You cannot delete your own account.');
+            }
+
+            // Check if user has existing requests with detailed information
+            $requestCheck = $this->checkUserHasRequests($id);
+            if ($requestCheck['hasRequests']) {
+                $errorMessage = 'Cannot delete user with existing requests. ';
+                $errorMessage .= 'Please resolve the following first: ';
+                $errorMessage .= implode(', ', $requestCheck['requestTypes']);
+
+                return redirect('panel/user')->with('Danger', $errorMessage);
+            }
+
+            DB::beginTransaction();
+
+            // Delete related student information
+            $stud = StudentInformationModel::where('id', $user->std_students_id)->first();
+            if ($stud) {
+                $stud->delete();
+            }
+
+            // Delete the user
+            $user->delete();
+
+            DB::commit();
+
+            // Redirect back with success message
+            return redirect('panel/user')->with('Status', 'User "' . $user->username . '" has been successfully deleted.');
+        } catch (Exception $e) {
+            DB::rollback();
+            Log::error('Error in delete method: ' . $e->getMessage());
+            return redirect('panel/user')->with('Danger', 'An error occurred while deleting the user. Please try again or contact administrator.');
         }
-
-        // Find the user by ID
-        $user = Account::find($id);
-        if (!$user) {
-            return redirect('panel/user')->with('Danger', 'User not found!');
-        }
-
-        // Prevent deletion of currently logged-in user
-        if (Auth::id() == $id) {
-            return redirect('panel/user')->with('Danger', 'You cannot delete your own account.');
-        }
-
-        // Check if user has existing requests with detailed information
-        $requestCheck = $this->checkUserHasRequests($id);
-        if ($requestCheck['hasRequests']) {
-            $errorMessage = 'Cannot delete user with existing requests. ';
-            $errorMessage .= 'Please resolve the following first: ';
-            $errorMessage .= implode(', ', $requestCheck['requestTypes']);
-
-            return redirect('panel/user')->with('Danger', $errorMessage);
-        }
-
-        DB::beginTransaction();
-
-        // Delete related student information
-        $stud = StudentInformationModel::where('id', $user->std_students_id)->first();
-        if ($stud) {
-            $stud->delete();
-        }
-
-        // Delete the user
-        $user->delete();
-
-        DB::commit();
-
-        // Redirect back with success message
-        return redirect('panel/user')->with('Status', 'User "' . $user->username . '" has been successfully deleted.');
-    } catch (Exception $e) {
-        DB::rollback();
-        Log::error('Error in delete method: ' . $e->getMessage());
-        return redirect('panel/user')->with('Danger', 'An error occurred while deleting the user. Please try again or contact administrator.');
     }
-}
 
-/**
- * Check if user has existing requests with detailed information
- * Returns array with hasRequests boolean and requestTypes array
- */
-private function checkUserHasRequests($userId)
-{
-    try {
-        $requestTypes = [];
-        $hasRequests = false;
+    /**
+     * Check if user has existing requests with detailed information
+     * Returns array with hasRequests boolean and requestTypes array
+     */
+    private function checkUserHasRequests($userId)
+    {
+        try {
+            $requestTypes = [];
+            $hasRequests = false;
 
-        // Check for document requests
-        $documentRequests = DB::table('document_requests')
-                            ->where('user_id', $userId)
-                            ->whereNotIn('status', ['completed', 'cancelled', 'rejected'])
-                            ->count();
+            // Check for document requests
+            $documentRequests = DB::table('document_requests')
+                ->where('user_id', $userId)
+                ->whereNotIn('status', ['completed', 'cancelled', 'rejected'])
+                ->count();
 
-        if ($documentRequests > 0) {
-            $hasRequests = true;
-            $requestTypes[] = $documentRequests . ' pending document request(s)';
+            if ($documentRequests > 0) {
+                $hasRequests = true;
+                $requestTypes[] = $documentRequests . ' pending document request(s)';
+            }
+
+            // Check for service requests
+            $serviceRequests = DB::table('service_requests')
+                ->where('user_id', $userId)
+                ->whereNotIn('status', ['completed', 'cancelled', 'rejected'])
+                ->count();
+
+            if ($serviceRequests > 0) {
+                $hasRequests = true;
+                $requestTypes[] = $serviceRequests . ' pending service request(s)';
+            }
+
+            // Check for other types of requests (add more as needed)
+            // Example: Certificate requests
+            // $certificateRequests = DB::table('certificate_requests')
+            //                         ->where('user_id', $userId)
+            //                         ->whereNotIn('status', ['completed', 'cancelled', 'rejected'])
+            //                         ->count();
+
+            // if ($certificateRequests > 0) {
+            //     $hasRequests = true;
+            //     $requestTypes[] = $certificateRequests . ' pending certificate request(s)';
+            // }
+
+            // Check for any transactions or pending payments
+            $pendingTransactions = DB::table('transactions')
+                ->where('user_id', $userId)
+                ->whereIn('status', ['pending', 'processing', 'in_progress'])
+                ->count();
+
+            if ($pendingTransactions > 0) {
+                $hasRequests = true;
+                $requestTypes[] = $pendingTransactions . ' pending transaction(s)';
+            }
+
+            return [
+                'hasRequests' => $hasRequests,
+                'requestTypes' => $requestTypes
+            ];
+        } catch (Exception $e) {
+            Log::error('Error checking user requests: ' . $e->getMessage());
+            // Return true to prevent deletion if we can't check properly
+            return [
+                'hasRequests' => true,
+                'requestTypes' => ['Unable to verify request status - deletion blocked for safety']
+            ];
         }
-
-        // Check for service requests
-        $serviceRequests = DB::table('service_requests')
-                          ->where('user_id', $userId)
-                          ->whereNotIn('status', ['completed', 'cancelled', 'rejected'])
-                          ->count();
-
-        if ($serviceRequests > 0) {
-            $hasRequests = true;
-            $requestTypes[] = $serviceRequests . ' pending service request(s)';
-        }
-
-        // Check for other types of requests (add more as needed)
-        // Example: Certificate requests
-        // $certificateRequests = DB::table('certificate_requests')
-        //                         ->where('user_id', $userId)
-        //                         ->whereNotIn('status', ['completed', 'cancelled', 'rejected'])
-        //                         ->count();
-
-        // if ($certificateRequests > 0) {
-        //     $hasRequests = true;
-        //     $requestTypes[] = $certificateRequests . ' pending certificate request(s)';
-        // }
-
-        // Check for any transactions or pending payments
-        $pendingTransactions = DB::table('transactions')
-                              ->where('user_id', $userId)
-                              ->whereIn('status', ['pending', 'processing', 'in_progress'])
-                              ->count();
-
-        if ($pendingTransactions > 0) {
-            $hasRequests = true;
-            $requestTypes[] = $pendingTransactions . ' pending transaction(s)';
-        }
-
-        return [
-            'hasRequests' => $hasRequests,
-            'requestTypes' => $requestTypes
-        ];
-
-    } catch (Exception $e) {
-        Log::error('Error checking user requests: ' . $e->getMessage());
-        // Return true to prevent deletion if we can't check properly
-        return [
-            'hasRequests' => true,
-            'requestTypes' => ['Unable to verify request status - deletion blocked for safety']
-        ];
     }
-}
 
     /**
      * Check if user has existing requests
@@ -294,40 +292,41 @@ private function checkUserHasRequests($userId)
         }
 
         if ($otp == $otpCode) {
-                session()->forget(['otp', 'countdown_start', 'durationInSeconds', 'expiresAt']);
-                // dd(session('std_students_id'));
-                // dd($data);
-                // return redirect()->route('account.store')->with($data);
-                $id = Session::get('std_students_id'); // Get the student ID from session
-                if (!$id) {
-                    dd($id);
-                    return redirect()->route('student.create')->with('error', 'No student information found.');
-                }
-                $request->validate([
-                    'email_address' => 'required|email|unique:acc_users,email_address',
-                    'username' => 'required|string|max:255',
-                    'password' => 'required|string|min:8',
-                ]);
-                // Create the account and associate it with the student information
-                Account::create([
-                    'user_account_id' => $id,
-                    'std_students_id' => $id,
-                    'role_id' => 1,  // Adjust the role as necessary (here it's set to 1)
-                    'email_address' => $request->email_address,
-                    'username' => $request->username,
-                    'password' => bcrypt($request->password),  // Hash the password
-                ]);
+            session()->forget(['otp', 'countdown_start', 'durationInSeconds', 'expiresAt']);
+            // dd(session('std_students_id'));
+            // dd($data);
+            // return redirect()->route('account.store')->with($data);
+            $id = Session::get('std_students_id'); // Get the student ID from session
+            if (!$id) {
+                dd($id);
+                return redirect()->route('student.create')->with('error', 'No student information found.');
+            }
+            $request->validate([
+                'email_address' => 'required|email|unique:acc_users,email_address',
+                'username' => 'required|string|max:255',
+                'password' => 'required|string|min:8',
+            ]);
+            // Create the account and associate it with the student information
+            Account::create([
+                'user_account_id' => $id,
+                'std_students_id' => $id,
+                'role_id' => 1,  // Adjust the role as necessary (here it's set to 1)
+                'email_address' => $request->email_address,
+                'username' => $request->username,
+                'password' => bcrypt($request->password),  // Hash the password
+            ]);
 
-                // Optionally, clear the session
-                Session::forget('std_students_id');
+            // Optionally, clear the session
+            Session::forget('std_students_id');
 
-                return redirect()->route('login');  // Redirect to dashboard or another page
+            return redirect()->route('login');  // Redirect to dashboard or another page
         }
         session()->flash('error', 'Invalid or expired OTP');
         return view('common.verifyEmail');
     }
 
-    public function viewOtp(Request $request) {
+    public function viewOtp(Request $request)
+    {
         $request->validate([
             'email_address' => 'email|required|unique:acc_users,email_address',
             'username' => 'required|string|unique:acc_users,username'
@@ -341,7 +340,7 @@ private function checkUserHasRequests($userId)
         $username = $request->input('username');
         $password = $request->input('password');
 
-        
+
 
         $otpCode = rand(100000, 999999);
         $duration = 180;
@@ -358,72 +357,72 @@ private function checkUserHasRequests($userId)
         return view('common.verifyEmail', compact('email', 'username', 'password'));
     }
 
-    public function SendAgainOTP(Request $request) {
+    public function SendAgainOTP(Request $request)
+    {
 
         try {
-        // Get values from request (works for both GET and POST)
-        $email = $request->input('email') ?? $request->query('email');
-        $username = $request->input('username') ?? $request->query('username');
-        $password = $request->input('password') ?? $request->query('password');
+            // Get values from request (works for both GET and POST)
+            $email = $request->input('email') ?? $request->query('email');
+            $username = $request->input('username') ?? $request->query('username');
+            $password = $request->input('password') ?? $request->query('password');
 
-        $lastRequest = session('last_otp_request');
-        if ($lastRequest && now()->diffInSeconds($lastRequest) < 60) {
+            $lastRequest = session('last_otp_request');
+            if ($lastRequest && now()->diffInSeconds($lastRequest) < 60) {
+                if ($request->ajax() || $request->wantsJson()) {
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'Please wait before requesting another code.'
+                    ], 429);
+                }
+                return view('common.verifyEmail', compact('email', 'username', 'password'))
+                    ->with('error', 'Please wait before requesting another code.');
+            }
+
+            session()->forget(['otp', 'countdown_start', 'durationInSeconds', 'expiresAt']);
+
+            // Generate new OTP
+            $otpCode = rand(100000, 999999);
+            $duration = 180; // 5 minutes
+            $startTime = now();
+
+            // Set new session data
+            session([
+                'otp' => $otpCode,
+                'countdown_start' => $startTime,
+                'durationInSeconds' => $duration,
+                'expiresAt' => $startTime->copy()->addSeconds($duration),
+                'last_otp_request' => now()
+            ]);
+
+            // Send email
+            Mail::to($email)->send(new VerifyMail($otpCode));
+
+            // Return JSON response for AJAX requests
             if ($request->ajax() || $request->wantsJson()) {
                 return response()->json([
-                    'success' => false,
-                    'message' => 'Please wait before requesting another code.'
-                ], 429);
+                    'success' => true,
+                    'message' => 'New verification code sent to your email!',
+                    'countdown_start' => $startTime->toIso8601String(),
+                    'durationInSeconds' => $duration,
+                    'expiresAt' => $startTime->copy()->addSeconds($duration)->toIso8601String()
+                ]);
             }
-            return view('common.verifyEmail', compact('email', 'username', 'password'))
-                   ->with('error', 'Please wait before requesting another code.');
-        }
 
-        session()->forget(['otp', 'countdown_start', 'durationInSeconds', 'expiresAt']);
-        
-        // Generate new OTP
-        $otpCode = rand(100000, 999999);
-        $duration = 180; // 5 minutes
-        $startTime = now();
-        
-        // Set new session data
-        session([
-            'otp' => $otpCode,
-            'countdown_start' => $startTime,
-            'durationInSeconds' => $duration,
-            'expiresAt' => $startTime->copy()->addSeconds($duration),
-            'last_otp_request' => now()
-        ]);
-        
-        // Send email
-        Mail::to($email)->send(new VerifyMail($otpCode));
-        
-        // Return JSON response for AJAX requests
-        if ($request->ajax() || $request->wantsJson()) {
-            return response()->json([
-                'success' => true,
-                'message' => 'New verification code sent to your email!',
-                'countdown_start' => $startTime->toIso8601String(),
-                'durationInSeconds' => $duration,
-                'expiresAt' => $startTime->copy()->addSeconds($duration)->toIso8601String()
-            ]);
-        }
-        
-        // Return view for regular requests (fallback)
-        return view('common.verifyEmail', compact('email', 'username', 'password'))
-               ->with('success', 'New verification code sent to your email!');
-               
+            // Return view for regular requests (fallback)
+            return view('common.verifyEmail', compact('email', 'username', 'password'))
+                ->with('success', 'New verification code sent to your email!');
         } catch (\Exception $e) {
             // Log the error
             Log::error('OTP resend failed: ' . $e->getMessage());
-        
+
             if ($request->ajax() || $request->wantsJson()) {
                 return response()->json([
                     'success' => false,
                     'message' => 'Failed to send verification code. Please try again.'
                 ], 500);
             }
-        return view('common.verifyEmail', compact('email', 'username', 'password'))
-               ->with('error', 'Failed to send verification code. Please try again.');
+            return view('common.verifyEmail', compact('email', 'username', 'password'))
+                ->with('error', 'Failed to send verification code. Please try again.');
         }
     }
 
@@ -434,7 +433,6 @@ private function checkUserHasRequests($userId)
         $role = RolesModel::all();
 
         return view('maintenance.addUserStudent', compact('grade', 'stat', 'role'));
-
     }
 
     public function storeUserStud(Request $request)
@@ -443,15 +441,25 @@ private function checkUserHasRequests($userId)
             // Validation for personal information
             'FirstName' => 'required|string|max:255',
             'LastName' => 'required|string|max:255',
-            'LRN' => 'string|max:20',
+            'LRN' => 'required|digits:12|unique:std_students,LRN',
             'Grade_level' => 'string|max:50',
             'Std_status' => 'string|max:50',
+            'Last_sy_attended' => 'required|digits:4',
             'role' => 'required',
 
             // Validation for account information
             'email_address' => 'required|email|unique:acc_users,email_address',
             'username' => 'required|string|max:255|unique:acc_users,username',
-            'password' => 'required|string|min:8|confirmed',
+
+        ], [
+            'FirstName.required' => 'Please enter your first name.',
+            'LastName.required' => 'Please enter your last name.',
+            'LRN.digits' => 'LRN must be exactly 12 digits.',
+            'LRN.unique' => 'LRN must be unique',
+            'role.required' => 'Please select a role.',
+            'Last_sy_attended.digits' => 'Last school year must be 4 digits (e.g. 2024).',
+            'email_address.unique' => 'This email already exists',
+            'username.unique' => 'This username already exists',
         ]);
 
         // Store personal information
@@ -477,8 +485,6 @@ private function checkUserHasRequests($userId)
         ]);
 
         return redirect('panel/user')->with('Status', 'Account created successfully!');
-
-
     }
 
     public function saveFcmToken(Request $request)

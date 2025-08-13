@@ -1,13 +1,13 @@
 @extends('layout.loginpage')
 @section('content')
-
-@if (session('success'))
+@include('layout.partials.message')
+<!-- @if (session('success'))
 <div id="successAlert" class="alert alert-success alert-dismissible fade show position-fixed top-0 start-50 translate-middle-x mt-5 shadow-lg" role="alert" style="z-index: 1050; width: 20%;">
         {{ session('success') }}
         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
     </div>
 @endif
-<!-- 
+
 @if (session('error'))
 <div id="errorAlert" class="alert alert-danger alert-dismissible fade show position-fixed top-0 start-50 translate-middle-x mt-5 shadow-lg" role="alert" style="z-index: 1050; width: 20%;">
         {{ session('error') }}

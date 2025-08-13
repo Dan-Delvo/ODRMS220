@@ -2,6 +2,7 @@
 
 @section ('content')
 
+@include('layout.partials.message')
 <div class="row mb-4">
     <div class="col-md-6">
         <h1 class="mt-4 text-dark">
@@ -18,7 +19,7 @@
 </div>
 
 <!-- Status Alerts -->
-<div class="row mb-4">
+<!-- <div class="row mb-4">
     <div class="col-md-12">
         @if(session('Status'))
         <div class="alert alert-success">
@@ -32,7 +33,7 @@
         </div>
         @endif
     </div>
-</div>
+</div> -->
 
 <!-- Roles Table -->
 <div class="row">
@@ -68,7 +69,7 @@
                                     <form action="{{ route('role.delete', ['id' => $item->id]) }}" method="POST" class="d-inline">
                                         @csrf
                                         @method('DELETE')
-                                        <button type="submit" class="btn btn-danger">Delete</button>
+                                        <button type="button" class="btn btn-danger btn-delete">Delete</button>
                                     </form>
                                     @endif
                                 </td>
@@ -84,5 +85,43 @@
         </div>
     </div>
 </div>
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        document.querySelectorAll(".btn-delete").forEach(button => {
+            button.addEventListener("click", function(e) {
+                let form = this.closest("form");
 
+                // First confirmation
+                Swal.fire({
+                    title: "Are you sure?",
+                    text: "The user accounts connected to this role will also be deleted",
+                    icon: "warning",
+                    showCancelButton: true,
+                    confirmButtonColor: "#1dd3b0",
+                    cancelButtonColor: "#1f2937",
+                    confirmButtonText: "Yes, delete it!",
+                    cancelButtonText: "Cancel"
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        // Second confirmation
+                        Swal.fire({
+                            title: "Final Confirmation",
+                            text: "This action cannot be undone!",
+                            icon: "error",
+                            showCancelButton: true,
+                            confirmButtonColor: "#d33",
+                            cancelButtonColor: "#1f2937",
+                            confirmButtonText: "Yes, I understand",
+                            cancelButtonText: "Cancel"
+                        }).then((finalResult) => {
+                            if (finalResult.isConfirmed) {
+                                form.submit();
+                            }
+                        });
+                    }
+                });
+            });
+        });
+    });
+</script>
 @endsection
