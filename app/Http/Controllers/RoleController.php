@@ -6,11 +6,11 @@ use App\Models\RolesModel;
 use App\Models\PermissionModel;
 use App\Models\PermissionRoleModel;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class RoleController extends Controller
 {
-    //
-
     public function list()
     {
         $roles = RolesModel::paginate(10);
@@ -21,11 +21,13 @@ class RoleController extends Controller
     {
         $getPermission = PermissionModel::getRecord();
         $data = $getPermission;
-        return view('maintenance.addRole', compact('data') );
+        return view('maintenance.addRole', compact('data'));
     }
 
     public function insert(Request $request)
     {
+        // Set current_user before DB write
+        DB::connection()->getPdo()->exec("SET @current_user = " . DB::connection()->getPdo()->quote(Auth::check() ? Auth::user()->username : 'guest'));
 
         $save = new RolesModel();
         $save->name = $request->role;
@@ -46,6 +48,9 @@ class RoleController extends Controller
 
     public function update(Request $request, $id)
     {
+        // Set current_user before DB update
+        DB::connection()->getPdo()->exec("SET @current_user = " . DB::connection()->getPdo()->quote(Auth::check() ? Auth::user()->username : 'guest'));
+
         $save = RolesModel::getSingle($id);
         $save->name = $request->role;
         $save->save();
@@ -57,8 +62,11 @@ class RoleController extends Controller
 
     public function delete($id)
     {
+        // Set current_user before DB delete
+        DB::connection()->getPdo()->exec("SET @current_user = " . DB::connection()->getPdo()->quote(Auth::check() ? Auth::user()->username : 'guest'));
+
         $save = RolesModel::getSingle($id);
-        $save -> delete();
+        $save->delete();
 
         return redirect('panel/role')->with('Danger', "Role Successfully deleted");
     }

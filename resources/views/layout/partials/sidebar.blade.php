@@ -73,6 +73,12 @@
                     Document Management
                 </a>
                 @endif
+
+                <a class="nav-link text-light sidebar-item" href="{{ route('audit.index') }}">
+                    <div class="sb-nav-link-icon"><i class="fas fa-file-alt"></i></div>
+                    Audit Trail
+                </a>
+
             @endif
 
             {{-- Requests Group --}}

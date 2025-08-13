@@ -4,30 +4,28 @@ namespace App\Http\Controllers;
 
 use App\Models\DocumentRequestModel;
 use App\Models\StudentInformationModel;
-use App\Notifications\RequestStatus;
-use Illuminate\Support\Facades\Log;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Mail;
+use App\Models\DocumentsModel;
 use App\Models\PermissionRoleModel;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Http\Request;
 use Carbon\Carbon;
-use Illuminate\Notifications\Messages\MailMessage;
-use App\Models\DocumentsModel;
 
 class PendingController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
+    private function setCurrentUserVariable()
+    {
+        $username = Auth::check() ? Auth::user()->username : 'guest';
+        DB::connection()->getPdo()->exec("SET @current_user = " . DB::connection()->getPdo()->quote($username));
+    }
+
     public function index()
     {
-        //
-        //dd("asdasd");
-
         $PermissionPending = PermissionRoleModel::getPermission('pending', Auth::user()->role_id);
-        if(empty($PermissionPending))
-        {
+        if (empty($PermissionPending)) {
             abort(404);
         }
 
@@ -38,9 +36,8 @@ class PendingController extends Controller
         $DocRequests = DocumentRequestModel::where('status', 'pending')
             ->with('claimer')
             ->with('studentInformation')
-            ->orderBy('req_no', 'asc') // ascending order
+            ->orderBy('req_no', 'asc')
             ->paginate(9);
-
 
         return view('requestTables.pending.pending', [
             'DocRequests' => $DocRequests,
@@ -50,39 +47,24 @@ class PendingController extends Controller
         ]);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
     public function create()
     {
-        //
         return view('requestTables.pending.createTable');
-
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
-        //
-        $request = $this->validateDocumentRequest($request);
+        $this->setCurrentUserVariable();
 
+        $request = $this->validateDocumentRequest($request);
         DocumentRequestModel::createDocumentRequest($request);
 
-        return redirect('/pending')->with('Status', 'Created Succesfully');
-
+        return redirect('/pending')->with('Status', 'Created Successfully');
     }
 
-    /**
-     * Display the specified resource.
-     */
     public function show($id)
     {
-        // Log the incoming ID
         Log::info('Requested ID: ' . $id);
-
-        // Try to fetch the record with relationships
         $table = DocumentRequestModel::with(['claimer', 'studentInformation'])->find($id);
 
         if (!$table) {
@@ -90,21 +72,11 @@ class PendingController extends Controller
             return response()->json(['error' => 'Record not found'], 404);
         }
 
-        // Return the table data
         return view('requestTables.pending.showTable', compact('table'));
     }
 
-
-
-
-
-
-    /**
-     * Show the form for editing the specified resource.
-     */
     public function edit(DocumentRequestModel $pending)
     {
-        //
         if (!$pending) {
             abort(404, 'Document Request not found.');
         }
@@ -114,26 +86,101 @@ class PendingController extends Controller
         return view('requestTables.pending.editTable', compact('pending', 'DocType'));
     }
 
-
-
-
-
-
-    /**
-     * Update the specified resource in storage.
-     */
     public function update(Request $request, DocumentRequestModel $documentRequestModel)
     {
+        $this->setCurrentUserVariable();
 
         $validated = $this->validateDocumentRequest($request);
         DocumentRequestModel::updateOrCreateRequest($validated);
 
-        $studentId = $documentRequestModel->student_information_id;
-        $student = StudentInformationModel::find($studentId);
+        return redirect('/pending')->with('Status', 'Updated Successfully');
+    }
 
-        return redirect('/pending' )->with('Status', 'Updated Succesfully');
+    public function destroy($id)
+    {
+        $this->setCurrentUserVariable();
 
+        $table = DocumentRequestModel::find($id);
 
+        if ($table) {
+            $table->delete();
+            return redirect('/pending')->with('Danger', 'Deleted Successfully');
+        }
+
+        return redirect('/pending')->with('error', 'Record not found');
+    }
+
+    public function decline(Request $request, $id)
+    {
+        $this->setCurrentUserVariable();
+
+        $documentRequest = DocumentRequestModel::findOrFail($id);
+        $account = $documentRequest->account;
+        $stud = $documentRequest->studentInformation;
+
+        $email = $account->email_address;
+        $name = $stud->full_name;
+        $subject = 'Your Request is Declined!';
+        $reason = $request->remarks;
+
+        Log::info("Sending email to: " . $account->email_address);
+
+        Mail::send('emails.Decline', compact('subject', 'name', 'reason'), function ($message) use ($email, $subject) {
+            $message->to($email)->subject($subject);
+        });
+
+        $documentRequest->update([
+            'status' => 'Declined',
+            'remarks' => $reason
+        ]);
+
+        return redirect('/pending')->with('Danger', 'Declined Successfully');
+    }
+
+    public function completeRequest(Request $request, $id)
+    {
+        $this->setCurrentUserVariable();
+
+        $documentRequest = DocumentRequestModel::findOrFail($id);
+        $account = $documentRequest->account;
+        $stud = $documentRequest->studentInformation;
+
+        $email = $account->email_address;
+        $name = $stud->full_name;
+        $subject = 'Your Request is Approved!';
+
+        Log::info("Sending email to: " . $account->email_address);
+
+        Mail::send('emails.toOngoing', compact('subject', 'name'), function ($message) use ($email, $subject) {
+            $message->to($email)->subject($subject);
+        });
+
+        $pushId = $account->fcm_token;
+
+        try {
+            $response = Http::withHeaders([
+                'Authorization' => 'Basic os_v2_app_if32gbsxsffszlc2vzvuxojxx5v5u3kriweuqn4s2luqs6vfjt5gaoxdhoqhd6vi5w33ake2swiwgpvwudxdidn35dzpgubfyjeszsq',
+                'accept' => 'application/json',
+                'content-type' => 'application/json',
+            ])->post('https://onesignal.com/api/v1/notifications', [
+                'app_id' => '4177a306-5791-4b2c-ac5a-ae6b4bb937bf',
+                'include_player_ids' => [$pushId],
+                'contents' => ['en' => $name . ', Your document request has been approved and is now ongoing.'],
+            ]);
+
+            Log::info('Notification sent: ' . $response->body());
+
+        } catch (\Exception $e) {
+            report($e);
+            return response()->json(['error' => $e->getMessage()], 500);
+        }
+
+        $documentRequest->update([
+            'status' => 'Processing',
+            'approve_date' => Carbon::now(),
+        ]);
+
+        return redirect('/pending')->with('Status', 'Updated Successfully');
     }
 
     public function validateDocumentRequest(Request $request)
@@ -149,138 +196,4 @@ class PendingController extends Controller
             'status' => 'required|string',
         ]);
     }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy($id)
-    {
-        // Find the record by ID
-        $table = DocumentRequestModel::find($id);
-
-        if ($table) {
-            // Delete the record
-            $table->delete();
-
-            // Redirect with a success message
-            return redirect('/pending')->with('Danger', 'Deleted Successfully');
-        }
-
-        // Redirect with an error message if the record was not found
-        return redirect('/pending')->with('error', 'Record not found');
-    }
-
-    public function decline(Request $request, $id){
-        $documentRequest = DocumentRequestModel::findOrFail($id);
-
-        $account = $documentRequest->account;
-        $stud = $documentRequest->studentInformation;
-
-        $email = $account->email_address;
-        $name = $stud->full_name;
-
-        $subject = 'Your Request is Declined!';
-        Log::info("Sending email to: " . $account->email_address);
-
-        $reason = $request->remarks;
-        Mail::send('emails.Decline', compact('subject', 'name', 'reason'), function ($message) use ($email, $subject) {
-            $message->to($email)
-                    ->subject($subject);
-        });
-
-        // // Retrieve the push ID (FCM token) for the user
-        // $pushId = $account->fcm_token;
-
-        // // Send push notification via OneSignal
-        // try {
-        //     $response = Http::withHeaders([
-        //         'Authorization' => 'Basic os_v2_app_if32gbsxsffszlc2vzvuxojxx5v5u3kriweuqn4s2luqs6vfjt5gaoxdhoqhd6vi5w33ake2swiwgpvwudxdidn35dzpgubfyjeszsq',
-        //         'accept' => 'application/json',
-        //         'content-type' => 'application/json',
-        //     ])->post('https://onesignal.com/api/v1/notifications', [
-        //         'app_id' => '4177a306-5791-4b2c-ac5a-ae6b4bb937bf',
-        //         'include_player_ids' => [$pushId], // Send notification to the user based on their push subscription ID
-        //         'contents' => ['en' => $name . ', Your document request has been approved and is now ongoing.'], // Message content
-        //     ]);
-
-        //     Log::info('Notification sent: ' . $response->body());
-
-        // } catch (\Exception $e) {
-        //     report($e);
-        //     return response()->json(['error' => $e->getMessage()], 500);
-        // }
-
-        $documentRequest->update([
-            'status' => 'Declined',
-            'remarks' =>  $reason
-        ]);
-
-        return redirect('/pending')->with('Danger', 'Declined Successfully');
-    }
-
-
-    public function completeRequest(Request $request, $id)
-    {
-        // Find the document request by ID
-        $documentRequest = DocumentRequestModel::findOrFail($id);
-
-        $account = $documentRequest->account;
-        $stud = $documentRequest->studentInformation;
-
-
-        $email = $account->email_address;
-        $name = $stud->full_name;
-        $subject = 'Your Request is Approved!';
-        Log::info("Sending email to: " . $account->email_address);
-
-        // Send email notification
-        Mail::send('emails.Decline', compact('subject', 'name'), function ($message) use ($email, $subject) {
-            $message->to($email)
-                    ->subject($subject);
-        });
-
-        // Retrieve the push ID (FCM token) for the user
-        $pushId = $account->fcm_token;
-
-        // Send push notification via OneSignal
-        try {
-            $response = Http::withHeaders([
-                'Authorization' => 'Basic os_v2_app_if32gbsxsffszlc2vzvuxojxx5v5u3kriweuqn4s2luqs6vfjt5gaoxdhoqhd6vi5w33ake2swiwgpvwudxdidn35dzpgubfyjeszsq',
-                'accept' => 'application/json',
-                'content-type' => 'application/json',
-            ])->post('https://onesignal.com/api/v1/notifications', [
-                'app_id' => '4177a306-5791-4b2c-ac5a-ae6b4bb937bf',
-                'include_player_ids' => [$pushId], // Send notification to the user based on their push subscription ID
-                'contents' => ['en' => $name . ', Your document request has been approved and is now ongoing.'], // Message content
-            ]);
-
-            Log::info('Notification sent: ' . $response->body());
-
-        } catch (\Exception $e) {
-            report($e);
-            return response()->json(['error' => $e->getMessage()], 500);
-        }
-
-        // Update the document request status to 'Ongoing'
-            $documentRequest->update([
-                'status' => 'Processing',
-                'approve_date' => Carbon::now(),
-            ]);
-
-
-        return redirect('/pending')->with('Status', 'Updated Successfully');
-    }
-
-
-
-
-
-
-
-        // if (!$inserted) {
-        //     Log::error('Update failed', ['data' => $request->all()]);
-        //     dd('Validation asdsc');
-        // }
 }
-
-

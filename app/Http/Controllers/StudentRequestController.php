@@ -7,28 +7,32 @@ use App\Models\DocumentRequestModel;
 use App\Models\DocuPaymentFee;
 use App\Models\DocumentsModel;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
 
 class StudentRequestController extends Controller
 {
-    public function viewRequest(){
-
+    public function viewRequest()
+    {
         $totalCount = DocumentRequestModel::where('std_students_id', Auth::user()->std_students_id)->count();
         $DocRequests = DocumentRequestModel::where('std_students_id', Auth::user()->std_students_id)
-        ->with('claimer')
-        ->with('studentInformation')
-        ->paginate(9);
-
+            ->with('claimer')
+            ->with('studentInformation')
+            ->paginate(9);
 
         return view('common.viewRequest', [
             'DocRequests' => $DocRequests,
             'totalCount' => $totalCount
         ]);
-
     }
 
-    public function create(){
+    public function create()
+    {
+        // Set current user in SQL session
+        $pdo = DB::connection()->getPdo();
+        $pdo->exec("SET @current_user = " . $pdo->quote(Auth::check() ? Auth::user()->username : 'guest'));
+
         $DocType = DocumentsModel::all();
         $ReleaseMode = ['Pickup', 'Online'];
         return view('common.studentrequest', compact('DocType', 'ReleaseMode'));
@@ -36,6 +40,10 @@ class StudentRequestController extends Controller
 
     public function store(Request $request)
     {
+        // Set current user in SQL session
+        $pdo = DB::connection()->getPdo();
+        $pdo->exec("SET @current_user = " . $pdo->quote(Auth::check() ? Auth::user()->username : 'guest'));
+
         // Step 1: Validate the request data
         $validatedData = $request->validate([
             'document_id' => 'required|integer',
@@ -69,17 +77,17 @@ class StudentRequestController extends Controller
             $supportingDocumentPath = 'uploads/supporting_documents/' . $filename;
         }
 
-        // Step 4: Insert a new Claimer (your existing code)
+        // Step 4: Insert a new Claimer
         $claimer = ClaimerModel::create([
             'Fname' => 'Blank',
             'Lname' => 'Blank',
             'contact_no' => '000000',
         ]);
 
-        // Step 5: Get document details (your existing code)
+        // Step 5: Get document details
         $document = DocumentsModel::find($validatedData['document_id']);
 
-        // Step 6: Create payment receipt (your existing code)
+        // Step 6: Create payment receipt
         $receipt = DocuPaymentFee::create([
             "receipt_no" => random_int(10000, 99999),
             'docu_categories_id' => $validatedData['document_id'],
@@ -88,7 +96,7 @@ class StudentRequestController extends Controller
             'time_request' => Carbon::now()
         ]);
 
-        // Step 7: Create document request with file path
+        // Step 7: Create document request
         DocumentRequestModel::create([
             'id' => random_int(10000, 99999),
             'clm_claimers_id' => $claimer->id,
@@ -99,7 +107,7 @@ class StudentRequestController extends Controller
             'request_schl_entity' => $validatedData['request_schl_entity'],
             'request_mode' => "Online",
             'release_mode' => $validatedData['release_mode'],
-            'supporting_document' => $supportingDocumentPath, // This is the important line
+            'supporting_document' => $supportingDocumentPath,
             'remarks' => "N/A",
             'status' => "Pending",
             'receipt_no' => $receipt->receipt_no
@@ -108,5 +116,4 @@ class StudentRequestController extends Controller
         // Step 8: Redirect with success message
         return redirect()->route('st.page')->with('success', 'Document request submitted successfully!');
     }
-
 }

@@ -16,6 +16,7 @@ use App\Http\Controllers\RoleController;
 use App\Http\Controllers\StudentInformationModelController;
 use App\Http\Controllers\StudentRequestController;
 use App\Http\Controllers\ClaimedDocumentController;
+use App\Http\Controllers\AuditTableController;
 use App\Models\Account;
 use Illuminate\Support\Facades\Mail;
 use App\Models\DocumentRequestModel;
@@ -151,6 +152,7 @@ Route::group(['middleware' => 'useradmin'], function(){
         ->name('generateReports.excel');
     //Report Generation         ================================================================================
 
+    Route::get('/auditTrail', [AuditTableController::class, 'index'])->name('audit.index');
 
 });
 
