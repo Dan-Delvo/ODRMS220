@@ -35,7 +35,7 @@
           </h2>
         </div>
 
-        
+
 
         <form action="/" method="post" id="loginForm" novalidate>
           @csrf
@@ -70,8 +70,7 @@
         </form>
 
         <div class="text-center mt-4 small">
-          <span style="color: #94a3b8;">Don't have an account? </span>
-          <a href="{{ route('student.create') }}" class="custom-teal-link fw-semibold">Sign up</a>
+
         </div>
       </div>
     </div>
@@ -80,8 +79,8 @@
 <!-- Login End -->
 
 <style>
-  
-  
+
+
 
   @media (max-width: 991.98px) {
     .col-lg-3 {
