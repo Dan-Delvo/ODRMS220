@@ -1,6 +1,7 @@
 @extends('layout.blankpage')
 
 @section('content')
+@include('layout.partials.message')
 
 <div class="row">
     <div class="col-md-6">
@@ -22,7 +23,7 @@
 <div class="row">
     <div class="col-md-12">
 
-        @if(session('Status'))
+        <!-- @if(session('Status'))
         <div class="alert alert-success">
             {{ session('Status') }}
         </div>
@@ -32,7 +33,7 @@
         <div class="alert alert-danger">
             {{ session('Danger') }}
         </div>
-        @endif
+        @endif -->
 
         <div class="card shadow-lg border-0 rounded-lg mt-3">
             <div class="card-header text-white d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center" style="background-color: #1f2937;">
@@ -418,14 +419,14 @@
 
 {{-- Enhanced JavaScript with loading spinners and search functionality --}}
 <script>
-    document.addEventListener('DOMContentLoaded', function () {
+    document.addEventListener('DOMContentLoaded', function() {
         let targetForm;
 
         const reasonModal = new bootstrap.Modal(document.getElementById('reasonModal'));
 
         // Step 1: Click decline → open reason modal
-        document.querySelectorAll('.decline-btn').forEach(function (btn) {
-            btn.addEventListener('click', function () {
+        document.querySelectorAll('.decline-btn').forEach(function(btn) {
+            btn.addEventListener('click', function() {
                 targetForm = btn.closest('form');
                 document.getElementById('reasonInput').value = ''; // clear previous
                 reasonModal.show();
@@ -433,7 +434,7 @@
         });
 
         // Step 2: After entering reason → show SweetAlert confirmation
-        document.getElementById('proceedToConfirmBtn').addEventListener('click', function () {
+        document.getElementById('proceedToConfirmBtn').addEventListener('click', function() {
             const reason = document.getElementById('reasonInput').value.trim();
 
             if (!reason) {
@@ -460,6 +461,26 @@
                 cancelButtonText: 'Cancel'
             }).then((result) => {
                 if (result.isConfirmed) {
+                    Swal.fire({
+                        title: 'Declining...',
+                        text: 'Please wait while we process your request.',
+                        allowOutsideClick: false,
+                        didOpen: () => {
+                            Swal.showLoading(); // <- Spinner starts here
+                            setTimeout(() => {
+                                Swal.close(); // stop loading
+                                Swal.fire({
+                                    icon: 'success',
+                                    title: 'Request Declined',
+                                    text: 'Your declined has been processed.',
+                                    confirmButtonColor: '#1dd3b0', // Match button color
+                                    customClass: {
+                                        icon: 'swal-icon-green' // Custom class for icon
+                                    }
+                                });
+                            }, 3000);
+                        }
+                    });
                     targetForm.submit();
                 }
             });

@@ -44,7 +44,7 @@
 
 <div class="row justify-content-center g-3">
     <!-- Request Distribution by Document Type -->
-    <div class="col-12 col-md-6 col-lg-4 d-flex justify-content-center">
+    <div class="col-12 col-md-6 d-flex justify-content-center">
         <div class="card shadow-lg border-0 rounded-lg w-100">
             <div class="card-header bg-dark text-white">
                 <h5 class="mb-0">Request Distribution by Document Type</h5>
@@ -56,13 +56,30 @@
     </div>
 
     <!-- Request Mode (Walk-in vs Online) -->
-    <div class="col-12 col-md-6 col-lg-4 d-flex justify-content-center">
+    <div class="col-12 col-md-6 d-flex justify-content-center">
         <div class="card shadow-lg border-0 rounded-lg w-100">
             <div class="card-header bg-dark text-white">
                 <h5 class="mb-0">Request Mode (Walk-in vs Online)</h5>
             </div>
             <div class="card-body bg-light">
                 <canvas id="modeChart" style="max-height: 300px;"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row justify-content-center">
+    <div class="col-12 col-lg-8">
+        <!-- Request Distribution by Grade Level -->
+        <div class="card shadow-lg border-0 rounded-lg mb-4">
+            <div class="card-header bg-dark text-white">
+                <h5 class="mb-0">Request Distribution by Grade Level</h5>
+            </div>
+            <div class="card-body bg-light">
+                <canvas id="gradeLevelChart" style="max-height: 300px;"></canvas>
+                <p class="mt-3 text-center mb-0">
+                    <strong>Total Requests (All Grade Levels):</strong> <span id="gradeLevelTotal"></span>
+                </p>
             </div>
         </div>
     </div>
@@ -105,6 +122,7 @@
     const modeData = @json($modeData);
     const revenueData = @json($revenueData);
     const unclaimedData = @json($unclaimedData);
+    const gradeLevelData = @json($gradeLevelData);
 
     const allMonths = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
 
@@ -212,6 +230,65 @@
         }
     });
 
+    // Grade Level Chart (Bar)
+    const gradeLevelLabels = Object.keys(gradeLevelData).map(level => `Grade ${level}`);
+    const gradeLevelValues = Object.values(gradeLevelData);
+    const gradeLevelTotal = gradeLevelValues.reduce((sum, value) => sum + value, 0);
+    const gradeLevelColors = ['#8E44AD', '#3498DB', '#1ABC9C', '#F39C12', '#E74C3C', '#2ECC71', '#9B59B6', '#34495E', '#E67E22', '#95A5A6', '#F1C40F', '#E91E63'];
+    
+    // Display total in the HTML
+    document.getElementById('gradeLevelTotal').textContent = gradeLevelTotal;
+    
+    new Chart(document.getElementById('gradeLevelChart'), {
+        type: 'bar',
+        data: {
+            labels: gradeLevelLabels,
+            datasets: [{
+                label: 'Total Requests',
+                data: gradeLevelValues,
+                backgroundColor: gradeLevelColors.slice(0, gradeLevelLabels.length),
+                borderColor: gradeLevelColors.slice(0, gradeLevelLabels.length),
+                borderWidth: 1,
+                borderRadius: 4
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    title: {
+                        display: true,
+                    },
+                    ticks: {
+                        callback: function(value) {
+                            return Number.isInteger(value) ? value : null;
+                        }
+                    }
+                },
+                x: {
+                    title: {
+                        display: true,
+                    },
+                    ticks: {
+                        maxRotation: 45,
+                        minRotation: 0
+                    }
+                }
+            },
+            plugins: {
+                legend: {
+                    display: false
+                },
+                title: {
+                    display: true,
+                    text: 'Document Requests by Grade Level'
+                }
+            }
+        }
+    });
+
     // Monthly Revenue Chart (Line)
     const revenueLabels = allMonths;
     const revenueValues = mapDataToAllMonths(revenueData);
@@ -250,7 +327,6 @@
         }
     });
 
-    // Request Mode Chart (Pie)
     // Unclaimed Documents Per Month (Bar Chart)
     const unclaimedValues = mapDataToAllMonths(unclaimedData);
 

@@ -1,6 +1,7 @@
 @extends('layout.blankpage')
 
 @section('content')
+@include('layout.partials.message')
 
 <div class="row">
     <div class="col-md-6">

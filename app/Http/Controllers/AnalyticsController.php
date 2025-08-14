@@ -72,15 +72,25 @@ class AnalyticsController extends Controller
                 return [Carbon::create()->month($item->month)->format('F') => $item->count];
             });
 
+        $gradeLevelData = DocumentRequestModel::join('std_students', 'doc_requests.std_students_id', '=', 'std_students.id')
+            ->select('std_students.Grade_level', DB::raw('COUNT(*) as count'))
+            ->whereNotNull('std_students.Grade_level')
+            ->groupBy('std_students.Grade_level')
+            ->orderBy('std_students.Grade_level')
+            ->get()
+            ->pluck('count', 'Grade_level');
+
         return view('common.analyticsDashboard', [
             'monthlyRequestsData' => $monthlyRequestsData,
             'docTypeData' => $docTypeData,
             'modeData' => $modeData,
             'revenueData' => $revenueData,
             'unclaimedData' => $unclaimedData,
+            'gradeLevelData' => $gradeLevelData,
             'totalRequestsInInterval' => $totalRequestsInInterval,
             'startDate' => $startDate,
             'endDate' => $endDate
+
         ]);
     }
 }
