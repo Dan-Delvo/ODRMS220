@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -11,6 +12,7 @@
             margin: 0;
             padding: 0;
         }
+
         .email-container {
             max-width: 600px;
             margin: 30px auto;
@@ -20,21 +22,25 @@
             overflow: hidden;
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
         }
+
         .email-header {
             background-color: #28a745;
             color: #ffffff;
             text-align: center;
             padding: 20px;
         }
+
         .email-header h1 {
             margin: 0;
             font-size: 24px;
         }
+
         .email-body {
             padding: 20px;
             color: #333333;
             line-height: 1.6;
         }
+
         .email-footer {
             background-color: #f9f9f9;
             text-align: center;
@@ -44,6 +50,7 @@
         }
     </style>
 </head>
+
 <body>
     <div class="email-container">
         <div class="email-header">
@@ -60,4 +67,5 @@
         </div>
     </div>
 </body>
+
 </html>

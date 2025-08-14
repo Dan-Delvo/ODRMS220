@@ -196,133 +196,14 @@ class PendingController extends Controller
             'status' => 'required|string',
         ]);
     }
-<<<<<<< HEAD
-=======
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy($id)
-    {
-        // Find the record by ID
-        $table = DocumentRequestModel::find($id);
 
-        if ($table) {
-            // Delete the record
-            $table->delete();
-
-            // Redirect with a success message
-            return redirect('/pending')->with('Danger', 'Deleted Successfully');
-        }
-
-        // Redirect with an error message if the record was not found
-        return redirect('/pending')->with('error', 'Record not found');
-    }
-
-    public function decline(Request $request, $id){
-        $documentRequest = DocumentRequestModel::findOrFail($id);
-
-        $account = $documentRequest->account;
-        $stud = $documentRequest->studentInformation;
-
-        $email = $account->email_address;
-        $name = $stud->full_name;
-
-        $subject = 'Your Request is Declined!';
-        Log::info("Sending email to: " . $account->email_address);
-
-        $reason = $request->remarks;
-        Mail::send('emails.Decline', compact('subject', 'name', 'reason'), function ($message) use ($email, $subject) {
-            $message->to($email)
-                    ->subject($subject);
-        });
-
-        // // Retrieve the push ID (FCM token) for the user
-        // $pushId = $account->fcm_token;
-
-        // // Send push notification via OneSignal
-        // try {
-        //     $response = Http::withHeaders([
-        //         'Authorization' => 'Basic os_v2_app_if32gbsxsffszlc2vzvuxojxx5v5u3kriweuqn4s2luqs6vfjt5gaoxdhoqhd6vi5w33ake2swiwgpvwudxdidn35dzpgubfyjeszsq',
-        //         'accept' => 'application/json',
-        //         'content-type' => 'application/json',
-        //     ])->post('https://onesignal.com/api/v1/notifications', [
-        //         'app_id' => '4177a306-5791-4b2c-ac5a-ae6b4bb937bf',
-        //         'include_player_ids' => [$pushId], // Send notification to the user based on their push subscription ID
-        //         'contents' => ['en' => $name . ', Your document request has been approved and is now ongoing.'], // Message content
-        //     ]);
-
-        //     Log::info('Notification sent: ' . $response->body());
-
-        // } catch (\Exception $e) {
-        //     report($e);
-        //     return response()->json(['error' => $e->getMessage()], 500);
-        // }
-
-        $documentRequest->update([
-            'status' => 'Declined',
-            'remarks' =>  $reason
-        ]);
-
-        return redirect('/pending')->with('Danger', 'Declined Successfully');
-    }
-
-
-    public function completeRequest(Request $request, $id)
-    {
-        // Find the document request by ID
-        $documentRequest = DocumentRequestModel::findOrFail($id);
-
-        $account = $documentRequest->account;
-        $stud = $documentRequest->studentInformation;
-
-
-        $email = $account->email_address;
-        $name = $stud->full_name;
-        $subject = 'Your Request is Approved!';
-        Log::info("Sending email to: " . $account->email_address);
-
-        // Send email notification
-        Mail::send('emails.toOngoing', compact('subject', 'name'), function ($message) use ($email, $subject) {
-            $message->to($email)
-                    ->subject($subject);
-        });
-
-        // // Retrieve the push ID (FCM token) for the user
-        // $pushId = $account->fcm_token;
-
-        // // Send push notification via OneSignal
-        // try {
-        //     $response = Http::withHeaders([
-        //         'Authorization' => 'Basic os_v2_app_if32gbsxsffszlc2vzvuxojxx5v5u3kriweuqn4s2luqs6vfjt5gaoxdhoqhd6vi5w33ake2swiwgpvwudxdidn35dzpgubfyjeszsq',
-        //         'accept' => 'application/json',
-        //         'content-type' => 'application/json',
-        //     ])->post('https://onesignal.com/api/v1/notifications', [
-        //         'app_id' => '4177a306-5791-4b2c-ac5a-ae6b4bb937bf',
-        //         'include_player_ids' => [$pushId], // Send notification to the user based on their push subscription ID
-        //         'contents' => ['en' => $name . ', Your document request has been approved and is now ongoing.'], // Message content
-        //     ]);
-
-        //     Log::info('Notification sent: ' . $response->body());
-
-        // } catch (\Exception $e) {
-        //     report($e);
-        //     return response()->json(['error' => $e->getMessage()], 500);
-        // }
-
-        // Update the document request status to 'Ongoing'
-            $documentRequest->update([
-                'status' => 'Processing',
-                'approve_date' => Carbon::now(),
-            ]);
-
-
-        return redirect('/pending')->with('Status', 'Updated Successfully');
-    }
 
         // if (!$inserted) {
         //     Log::error('Update failed', ['data' => $request->all()]);
         //     dd('Validation asdsc');
         // }
->>>>>>> b8dc7111 (Audit Changes)
 }

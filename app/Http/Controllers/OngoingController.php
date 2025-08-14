@@ -152,7 +152,6 @@ class OngoingController extends Controller
             $message->to($email)->subject($subject);
         });
 
-<<<<<<< HEAD
         $pushId = $account->fcm_token;
 
         try {
@@ -165,29 +164,12 @@ class OngoingController extends Controller
                 'include_player_ids' => [$pushId],
                 'contents' => ['en' => $name . ', Your document request has been approved and now Processing.'],
             ]);
-=======
-        // // Retrieve the push ID (FCM token) for the user
-        // $pushId = $account->fcm_token;
 
-        // // Send push notification via OneSignal
-        // try {
-        //     $response = Http::withHeaders([
-        //         'Authorization' => 'Basic os_v2_app_if32gbsxsffszlc2vzvuxojxx5v5u3kriweuqn4s2luqs6vfjt5gaoxdhoqhd6vi5w33ake2swiwgpvwudxdidn35dzpgubfyjeszsq',
-        //         'accept' => 'application/json',
-        //         'content-type' => 'application/json',
-        //     ])->post('https://onesignal.com/api/v1/notifications', [
-        //         'app_id' => '4177a306-5791-4b2c-ac5a-ae6b4bb937bf',
-        //         'include_player_ids' => [$pushId], // Send notification to the user based on their push subscription ID
-        //         'contents' => ['en' => $name . ', Your document request has been approved and now Processing.'], // Updated message content for completed status
-        //     ]);
->>>>>>> b8dc7111 (Audit Changes)
-
-        //     Log::info('Notification sent: ' . $response->body());
-
-        // } catch (\Exception $e) {
-        //     report($e);
-        //     return response()->json(['error' => $e->getMessage()], 500);
-        // }
+            Log::info('Notification sent: ' . $response->body());
+        } catch (\Exception $e) {
+            report($e);
+            return response()->json(['error' => $e->getMessage()], 500);
+        }
 
         $documentRequest->update([
             'status' => 'For Release',

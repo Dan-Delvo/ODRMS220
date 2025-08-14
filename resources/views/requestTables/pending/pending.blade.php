@@ -239,23 +239,6 @@
                             </div>
                         </div>
                     </div>
-<<<<<<< HEAD
-                    @endif
-
-                    <!-- Supporting Document Modal -->
-                    @if($item->supporting_document)
-                    <div class="modal fade" id="documentModal{{ $item->id }}" tabindex="-1" aria-labelledby="documentModalLabel{{ $item->id }}" aria-hidden="true">
-                        <div class="modal-dialog modal-dialog-centered modal-lg">
-                            <div class="modal-content border-0 shadow-sm">
-                                <div class="modal-header text-white justify-content-between align-items-center" style="background-color: #1f2937;">
-                                    <h5 class="modal-title" id="documentModalLabel{{ $item->id }}" style = "color: #1dd3b0;">
-                                        <i class="fas fa-file-alt me-2"></i>
-                                        Supporting Document - Request No. {{ $item->req_no }}
-                                    </h5>
-
-                                    <!-- Removed buttons from here - they are now in the action column -->
-                                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
-=======
                 </div>
                 @endif
 
@@ -284,7 +267,6 @@
                                         <button type="submit" class="btn btn-sm btn-success mb-1 accept-btn" data-original-text="Accept">Accept</button>
                                     </form>
                                     @endif
->>>>>>> b8dc7111 (Audit Changes)
                                 </div>
 
                                 <!-- <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button> -->
@@ -436,23 +418,14 @@
 
 {{-- Enhanced JavaScript with loading spinners and search functionality --}}
 <script>
-<<<<<<< HEAD
     document.addEventListener('DOMContentLoaded', function () {
-=======
-    document.addEventListener('DOMContentLoaded', function() {
->>>>>>> b8dc7111 (Audit Changes)
         let targetForm;
 
         const reasonModal = new bootstrap.Modal(document.getElementById('reasonModal'));
 
         // Step 1: Click decline → open reason modal
-<<<<<<< HEAD
         document.querySelectorAll('.decline-btn').forEach(function (btn) {
             btn.addEventListener('click', function () {
-=======
-        document.querySelectorAll('.decline-btn').forEach(function(btn) {
-            btn.addEventListener('click', function() {
->>>>>>> b8dc7111 (Audit Changes)
                 targetForm = btn.closest('form');
                 document.getElementById('reasonInput').value = ''; // clear previous
                 reasonModal.show();
@@ -460,11 +433,7 @@
         });
 
         // Step 2: After entering reason → show SweetAlert confirmation
-<<<<<<< HEAD
         document.getElementById('proceedToConfirmBtn').addEventListener('click', function () {
-=======
-        document.getElementById('proceedToConfirmBtn').addEventListener('click', function() {
->>>>>>> b8dc7111 (Audit Changes)
             const reason = document.getElementById('reasonInput').value.trim();
 
             if (!reason) {
