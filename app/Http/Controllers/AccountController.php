@@ -22,6 +22,8 @@ class AccountController extends Controller
     // Show the account creation form
     public function display()
     {
+$pdo = DB::connection()->getPdo();
+$pdo->exec("SET @current_user = " . $pdo->quote(Auth::check() ? Auth::user()->username : 'guest'));
         try {
             $PermissionAcc = PermissionRoleModel::getPermission('user', Auth::user()->role_id);
             if (empty($PermissionAcc)) {
@@ -47,6 +49,9 @@ class AccountController extends Controller
 
     public function edit($id)
     {
+    $pdo = DB::connection()->getPdo();
+    $pdo->exec("SET @current_user = " . $pdo->quote(Auth::check() ? Auth::user()->username : 'guest'));
+
         try {
             if (!is_numeric($id) || $id <= 0) {
                 return redirect()->route('user')->with('Danger', 'Invalid user ID provided.');
@@ -63,6 +68,7 @@ class AccountController extends Controller
             }
 
             return view('maintenance.editUsers', compact('user', 'roles'));
+
         } catch (Exception $e) {
             Log::error('Error in edit method: ' . $e->getMessage());
             return redirect()->route('user')->with('Danger', 'An error occurred while loading the edit form.');
@@ -71,6 +77,9 @@ class AccountController extends Controller
 
     public function update(Request $request, $id)
     {
+    $pdo = DB::connection()->getPdo();
+    $pdo->exec("SET @current_user = " . $pdo->quote(Auth::check() ? Auth::user()->username : 'guest'));
+
         try {
             if (!is_numeric($id) || $id <= 0) {
                 return redirect()->route('user')->with('Danger', 'Invalid user ID provided.');
@@ -80,7 +89,7 @@ class AccountController extends Controller
             $validatedData = $request->validate([
                 'std_students_id' => 'required|string|max:255',
                 'email_address' => 'required|email|max:255',
-                'role' => 'required|integer|exists:roles,id',
+                'role' => 'required|integer',
                 'username' => 'required|string|max:255',
             ]);
 
@@ -92,6 +101,7 @@ class AccountController extends Controller
                 return redirect()->route('user')->with('Danger', 'User not found!');
             }
 
+<<<<<<< HEAD
             // Check if email is unique (excluding current user)
             $emailExists = Account::where('email_address', $validatedData['email_address'])
                 ->where('id', '!=', $id)
@@ -107,6 +117,10 @@ class AccountController extends Controller
             if ($usernameExists) {
                 return redirect()->back()->with('Danger', 'Username is already in use by another user.');
             }
+=======
+
+
+>>>>>>> origin/Dan
 
             // Update user data
             $user->std_students_id = $validatedData['std_students_id'];
@@ -124,6 +138,7 @@ class AccountController extends Controller
         }
     }
 
+<<<<<<< HEAD
     public function delete($id)
     {
         try {
@@ -171,6 +186,15 @@ class AccountController extends Controller
             DB::rollback();
             Log::error('Error in delete method: ' . $e->getMessage());
             return redirect('panel/user')->with('Danger', 'An error occurred while deleting the user. Please try again or contact administrator.');
+=======
+public function delete($id)
+{
+    $pdo = DB::connection()->getPdo();
+    $pdo->exec("SET @current_user = " . $pdo->quote(Auth::check() ? Auth::user()->username : 'guest'));
+    try {
+        if (!is_numeric($id) || $id <= 0) {
+            return redirect('panel/user')->with('Danger', 'Invalid user ID provided.');
+>>>>>>> origin/Dan
         }
     }
 
@@ -270,6 +294,8 @@ class AccountController extends Controller
 
     public function create()
     {
+$pdo = DB::connection()->getPdo();
+$pdo->exec("SET @current_user = " . $pdo->quote(Auth::check() ? Auth::user()->username : 'guest'));
         try {
             return view('common.studentregister2');
         } catch (Exception $e) {
@@ -281,6 +307,8 @@ class AccountController extends Controller
     // Store the account information and link it with the student information
     public function store(Request $request)
     {
+$pdo = DB::connection()->getPdo();
+$pdo->exec("SET @current_user = " . $pdo->quote(Auth::check() ? Auth::user()->username : 'guest'));
         $otp = "{$request->first}{$request->second}{$request->third}{$request->fourth}{$request->fifth}{$request->sixth}";
         $otpCode = session('otp');
         $expiry = session('expiresAt') ? \Carbon\Carbon::parse(session('expiresAt')) : null;
@@ -408,9 +436,46 @@ class AccountController extends Controller
                 ]);
             }
 
+<<<<<<< HEAD
             // Return view for regular requests (fallback)
             return view('common.verifyEmail', compact('email', 'username', 'password'))
                 ->with('success', 'New verification code sent to your email!');
+=======
+        session()->forget(['otp', 'countdown_start', 'durationInSeconds', 'expiresAt']);
+
+        // Generate new OTP
+        $otpCode = rand(100000, 999999);
+        $duration = 180; // 5 minutes
+        $startTime = now();
+
+        // Set new session data
+        session([
+            'otp' => $otpCode,
+            'countdown_start' => $startTime,
+            'durationInSeconds' => $duration,
+            'expiresAt' => $startTime->copy()->addSeconds($duration),
+            'last_otp_request' => now()
+        ]);
+
+        // Send email
+        Mail::to($email)->send(new VerifyMail($otpCode));
+
+        // Return JSON response for AJAX requests
+        if ($request->ajax() || $request->wantsJson()) {
+            return response()->json([
+                'success' => true,
+                'message' => 'New verification code sent to your email!',
+                'countdown_start' => $startTime->toIso8601String(),
+                'durationInSeconds' => $duration,
+                'expiresAt' => $startTime->copy()->addSeconds($duration)->toIso8601String()
+            ]);
+        }
+
+        // Return view for regular requests (fallback)
+        return view('common.verifyEmail', compact('email', 'username', 'password'))
+               ->with('success', 'New verification code sent to your email!');
+
+>>>>>>> origin/Dan
         } catch (\Exception $e) {
             // Log the error
             Log::error('OTP resend failed: ' . $e->getMessage());

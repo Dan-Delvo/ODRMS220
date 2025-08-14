@@ -14,11 +14,6 @@ use Illuminate\Support\Str;
 
 class AuthController extends Controller
 {
-    // Method to generate a hashed password for testing/debugging purposes
-    public function dumpy()
-    {
-        dd(Hash::make(123));
-    }
 
     // Login method to redirect authenticated users based on their role
     public function login()
@@ -33,7 +28,7 @@ class AuthController extends Controller
             $PermissionDashboard = PermissionRoleModel::getPermission('dashboard', Auth::user()->role_id);
             if(empty($PermissionDashboard))
             {
-                return redirect ('/tables');
+                return redirect ('/walkin/form');
             }
             else{
                 return redirect('/dashboard');
@@ -78,7 +73,7 @@ class AuthController extends Controller
 
             if ($user->roles->id > 1) {
                 $PermissionDashboard = PermissionRoleModel::getPermission('dashboard', $user->role_id);
-                return empty($PermissionDashboard) ? redirect('/tables') : redirect('/dashboard');
+                return empty($PermissionDashboard) ? redirect('/walkin/form') : redirect('/dashboard');
             } elseif ($user->roles->name === 'student') {
                 return redirect('/stpage');
             }
@@ -89,7 +84,7 @@ class AuthController extends Controller
 
         // Check remaining attempts AFTER hitting the rate limiter
         $remainingAttempts = RateLimiter::remaining($key, $maxAttempts);
-        
+
         // If no attempts remaining, show lockout message
         if ($remainingAttempts <= 0) {
             $seconds = RateLimiter::availableIn($key);

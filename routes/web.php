@@ -7,6 +7,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DocumentRequestController;
 use App\Http\Controllers\OngoingController;
 use App\Http\Controllers\PendingController;
+use App\Http\Controllers\declinedController;
 use App\Http\Controllers\RegistrationController;
 use App\Http\Controllers\StudentPageController;
 use App\Http\Controllers\AccountController;
@@ -16,6 +17,7 @@ use App\Http\Controllers\RoleController;
 use App\Http\Controllers\StudentInformationModelController;
 use App\Http\Controllers\StudentRequestController;
 use App\Http\Controllers\ClaimedDocumentController;
+use App\Http\Controllers\AuditTableController;
 use App\Models\Account;
 use Illuminate\Support\Facades\Mail;
 use App\Models\DocumentRequestModel;
@@ -71,6 +73,7 @@ Route::group(['middleware' => 'useradmin'], function(){
     Route::post('/walkin/store', [DocumentRequestController::class, 'storeWalkIn'])->name('walkin.store');
     Route::get('/pending/ajax', [PendingController::class, 'ajaxPending'])->name('pending.ajax');
     Route::resource('claimed-documents', ClaimedDocumentController::class);
+    Route::get('/declined-documents', [declinedController::class, 'index'])->name('declined-documents.index');
 
     // Additional custom routes for specific functionality
     Route::prefix('claimed-documents')->group(function () {
@@ -151,6 +154,7 @@ Route::group(['middleware' => 'useradmin'], function(){
         ->name('generateReports.excel');
     //Report Generation         ================================================================================
 
+    Route::get('/auditTrail', [AuditTableController::class, 'index'])->name('audit.index');
 
 });
 

@@ -55,5 +55,10 @@ class Account extends Authenticatable
     {
         return $this->belongsTo(RolesModel::class, 'role_id', 'id');
     }
+
+    public function studentInformation()
+    {
+        return $this->belongsTo(StudentInformationModel::class, 'std_students_id', 'id');
+    }
 }
 

@@ -3,6 +3,14 @@
 @section('content')
 
 <div class="row justify-content-center">
+
+        @if(session('Success'))
+        <div class="alert alert-success">
+            {{ session('Success') }}
+        </div>
+        @endif
+
+
     <div class="col-lg-7">
         <div class="card shadow-lg border-0 rounded-lg mt-5" style="min-height: 600px;">
             <div class="card-header text-white" style="background-color: #1f2937;">
@@ -57,7 +65,7 @@
 
                     <div class="form-floating mb-3">
                         <input class="form-control" id="inputLRN" type="text" name="lrn" placeholder="Enter LRN" />
-                        <label for="inputLRN">LRN</label>
+                        <label for="inputLRN">LRN (OPTIONAL)</label>
                     </div>
 
                     <div class="form-floating mb-3">
@@ -85,11 +93,13 @@
                         <label for="inputLastSYAttended">Last SY Attended *</label>
                     </div>
 
+                    <div class="form-floating mb-3">
+                        <input class="form-control" id="email_address" type="email" name="email_address" placeholder="Enter Email Address" required />
+                        <label for="inputEmailAddress">Email Address*</label>
+                    </div>
+
                     <div class="mt-2 d-flex align-items-center justify-content-between">
                         <div class="d-grid"><button class="btn text-black fw-semibold" style="background-color: #1dd3b0; box-shadow: 0 4px 10px rgba(29, 211, 176, 0.5);" type="submit">Submit Request</button></div>
-                        <a href="{{ route('dashboard') }}" class="btn text-white fw-semibold" style="background-color: #1f2937; box-shadow: 0 4px 10px #1f2937 ;">
-                            Back to dashboard
-                        </a>
                     </div>
                 </form>
             </div>

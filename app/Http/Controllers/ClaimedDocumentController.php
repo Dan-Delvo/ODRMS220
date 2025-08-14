@@ -8,61 +8,47 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Http\Request;
 use App\Models\PermissionRoleModel;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
 use App\Models\ClaimerModel;
 use App\Models\DocumentsModel;
 
 class ClaimedDocumentController extends Controller
 {
-    /**
-     * Display a listing of claimed document requests.
-     */
     public function index()
     {
-
-
         $totalCount = DocumentRequestModel::where('status', 'Claimed')->count();
         $DocRequests = DocumentRequestModel::where('status', 'Claimed')
             ->with('claimer')
             ->with('studentInformation')
             ->with('documents')
-            ->orderBy('claimed_date', 'desc') // Most recent claims first
+            ->orderBy('claimed_date', 'desc')
             ->paginate(9);
 
         return view('requestTables.claimed.claimed', [
             'DocRequests' => $DocRequests,
             'totalCount' => $totalCount,
-
         ]);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
     public function create()
     {
         return view('requestTables.claimed.createTable');
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
+        $pdo = DB::connection()->getPdo();
+        $pdo->exec("SET @current_user = " . $pdo->quote(Auth::check() ? Auth::user()->username : 'guest'));
+
         $request = $this->validateDocumentRequest($request);
         DocumentRequestModel::createDocumentRequest($request);
         return redirect('/claimed-documents')->with('Status', 'Created Successfully');
     }
 
-    /**
-     * Display the specified resource.
-     */
     public function show($id)
     {
-        // Log the incoming ID
         Log::info('Requested ID: ' . $id);
-
-        // Try to fetch the record with relationships
         $table = DocumentRequestModel::with(['claimer', 'studentInformation', 'documents'])->find($id);
 
         if (!$table) {
@@ -70,13 +56,9 @@ class ClaimedDocumentController extends Controller
             return response()->json(['error' => 'Record not found'], 404);
         }
 
-        // Return the table data
         return view('requestTables.claimed.showTable', compact('table'));
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
     public function edit(DocumentRequestModel $table)
     {
         if (!$table) {
@@ -84,15 +66,14 @@ class ClaimedDocumentController extends Controller
         }
 
         $DocType = DocumentsModel::all();
-
         return view('requestTables.claimed.editTable', compact('table','DocType'));
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
     public function update(Request $request, DocumentRequestModel $documentRequestModel)
     {
+        $pdo = DB::connection()->getPdo();
+        $pdo->exec("SET @current_user = " . $pdo->quote(Auth::check() ? Auth::user()->username : 'guest'));
+
         $validated = $this->validateDocumentRequest($request);
         DocumentRequestModel::updateOrCreateRequest($validated);
 
@@ -102,9 +83,6 @@ class ClaimedDocumentController extends Controller
         return redirect('/claimed-documents')->with('Status', 'Updated Successfully');
     }
 
-    /**
-     * Validate document request data
-     */
     public function validateDocumentRequest(Request $request)
     {
         return $request->validate([
@@ -119,41 +97,33 @@ class ClaimedDocumentController extends Controller
         ]);
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
     public function destroy($id)
     {
-        // Find the record by ID
+        $pdo = DB::connection()->getPdo();
+        $pdo->exec("SET @current_user = " . $pdo->quote(Auth::check() ? Auth::user()->username : 'guest'));
+
         $table = DocumentRequestModel::find($id);
 
         if ($table) {
-            // Delete the record
             $table->delete();
-
-            // Redirect with a success message
             return redirect('/claimed-documents')->with('Danger', 'Deleted Successfully');
         }
 
-        // Redirect with an error message if the record was not found
         return redirect('/claimed-documents')->with('error', 'Record not found');
     }
 
-    /**
-     * Revert a claimed document back to "For Release" status
-     */
     public function revertToForRelease(Request $request, $id)
     {
+        $pdo = DB::connection()->getPdo();
+        $pdo->exec("SET @current_user = " . $pdo->quote(Auth::check() ? Auth::user()->username : 'guest'));
+
         try {
-            // Validate the request
             $request->validate([
                 'revert_reason' => 'required|string|max:500',
             ]);
 
-            // Find the document request by ID
             $documentRequest = DocumentRequestModel::findOrFail($id);
 
-            // Check if the request is actually claimed
             if ($documentRequest->status !== 'Claimed') {
                 return response()->json([
                     'success' => false,
@@ -161,14 +131,12 @@ class ClaimedDocumentController extends Controller
                 ], 400);
             }
 
-            // Update the document request status back to 'For Release'
             $documentRequest->update([
                 'status' => 'For Release',
                 'claimed_date' => null,
                 'remarks' => $request->revert_reason,
             ]);
 
-            // Handle both AJAX and regular requests
             if ($request->expectsJson()) {
                 return response()->json([
                     'success' => true,
@@ -222,9 +190,6 @@ class ClaimedDocumentController extends Controller
         }
     }
 
-    /**
-     * Generate report for claimed documents
-     */
     public function generateReport(Request $request)
     {
         $request->validate([
@@ -244,9 +209,6 @@ class ClaimedDocumentController extends Controller
         return view('requestTables.claimed.report', compact('claimedDocuments', 'startDate', 'endDate'));
     }
 
-    /**
-     * Export claimed documents to CSV
-     */
     public function exportToCsv(Request $request)
     {
         $request->validate([
@@ -273,7 +235,6 @@ class ClaimedDocumentController extends Controller
         $callback = function() use ($claimedDocuments) {
             $file = fopen('php://output', 'w');
 
-            // CSV headers
             fputcsv($file, [
                 'Request No',
                 'Student Name',
@@ -290,7 +251,6 @@ class ClaimedDocumentController extends Controller
                 'Remarks'
             ]);
 
-            // CSV data
             foreach ($claimedDocuments as $document) {
                 fputcsv($file, [
                     $document->req_no,

@@ -5,16 +5,16 @@
 <div class="row">
     <div class="col-md-6">
         <h1 class="mt-4">
-            <span class="badge" style="background-color: #1dd3b0; font-size: 2rem;">Pending Requests</span>
+            <span class="badge" style="background-color: #1dd3b0; font-size: 2rem;">Declined Requests</span>
         </h1>
         <ol class="breadcrumb mb-4">
             <li class="breadcrumb-item"><a href="{{ route('dashboard') }}" class="text-dark">Dashboard</a></li>
-            <li class="breadcrumb-item active">Pending Requests</li>
+            <li class="breadcrumb-item active">Declined Requests</li>
         </ol>
     </div>
     <div class="col-md-6 text-end">
         <h1 class="mt-4 text-dark">
-            <span class="badge" style="background-color:#1f2937; font-size: 2rem;">Total Pending: {{ $totalCount }}</span>
+            <span class="badge" style="background-color:#1f2937; font-size: 2rem;">Total Declined: {{ $totalCount }}</span>
         </h1>
     </div>
 </div>
@@ -36,7 +36,7 @@
 
         <div class="card shadow-lg border-0 rounded-lg mt-3">
             <div class="card-header text-white d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center" style="background-color: #1f2937;">
-                <h5 class="mb-2 mb-md-0">Pending Document Requests</h5>
+                <h5 class="mb-2 mb-md-0">Declined Document Requests</h5>
 
                 <!-- Search Bar -->
                 <div class="search-container d-flex gap-2 mt-2 mt-md-0">
@@ -52,9 +52,7 @@
                         </button>
                         <ul class="dropdown-menu" aria-labelledby="filterDropdown">
                             <li><a class="dropdown-item filter-option" href="#" data-filter="all">All Records</a></li>
-                            <li>
-                                <hr class="dropdown-divider">
-                            </li>
+                            <li><hr class="dropdown-divider"></li>
                             <li><a class="dropdown-item filter-option" href="#" data-filter="student">Student Name</a></li>
                             <li><a class="dropdown-item filter-option" href="#" data-filter="document">Document Type</a></li>
                             <li><a class="dropdown-item filter-option" href="#" data-filter="school">School/Entity</a></li>
@@ -85,9 +83,9 @@
 
                 <div class="table-responsive" id="requestTable">
                     @if($DocRequests->isEmpty())
-                    <div class="alert alert-warning text-center my-3">
-                        No pending document requests found.
-                    </div>
+                        <div class="alert alert-warning text-center my-3">
+                            No declined document requests found.
+                        </div>
                     @else
                     <table class="table table-sm table-bordered table-hover align-middle text-nowrap" style="font-size: 0.85rem;">
                         <thead class="table-dark">
@@ -136,36 +134,12 @@
                                 <td>{{ $item->claimed_date }}</td>
                                 <td class="text-nowrap">
                                     <!-- Accept and Decline buttons moved here -->
-                                    @if(!empty($approvePending))
                                     <form action="{{ route('pending.decline', $item->id) }}" method="POST" class="d-inline decline-form">
                                         @csrf
                                         @method('DELETE')
                                         <input type="hidden" name="remarks" class="decline-reason">
-                                        <button type="button" class="btn btn-sm btn-danger mb-1 decline-btn">Decline</button>
+                                        <button type="button" class="btn btn-sm btn-danger mb-1 decline-btn">Delete</button>
                                     </form>
-
-                                    <form action="{{ route('document-request.complete', $item->id) }}" method="POST" class="d-inline accept-form">
-                                        @csrf
-                                        @method('PUT')
-                                        <button type="submit" class="btn btn-sm btn-success mb-1 accept-btn" data-original-text="Accept">Accept</button>
-                                    </form>
-                                    @endif
-
-                                    @if(!empty($PermissionEdit))
-                                    <a href="{{ route('pending.edit', $item->id) }}" class="btn btn-sm btn-warning mb-1">Edit</a>
-                                    @endif
-
-                                    <button class="btn btn-sm btn-info mb-1" data-bs-toggle="modal" data-bs-target="#receiptModal{{ $item->id }}">
-                                        Receipt
-                                    </button>
-
-                                    <!-- Image Button -->
-                                    @if($item->supporting_document)
-                                    <button type="button" class="btn btn-sm btn-primary mb-1" data-bs-toggle="modal" data-bs-target="#documentModal{{ $item->id }}">
-                                        <i class="fas fa-file-alt me-1"></i>
-                                        View Document
-                                    </button>
-                                    @endif
                                 </td>
                             </tr>
                             @endforeach
@@ -187,88 +161,59 @@
 
                 <!-- Receipt Modals -->
                 @foreach ($DocRequests as $item)
-                @if ($item->receipt)
-                <div class="modal fade" id="receiptModal{{ $item->id }}" tabindex="-1" aria-labelledby="receiptModalLabel{{ $item->id }}" aria-hidden="true">
-                    <div class="modal-dialog modal-dialog-centered modal-md">
-                        <div class="modal-content border-0 shadow-sm">
-                            <div class="modal-header bg-dark text-white">
-                                <h5 class="modal-title mx-auto" id="receiptModalLabel{{ $item->id }}">
-                                    Receipt #{{ $item->receipt->receipt_no }}
-                                </h5>
-                                <button type="button" class="btn-close btn-close-white position-absolute end-0 me-3" data-bs-dismiss="modal" aria-label="Close"></button>
-                            </div>
-
-                            <div class="modal-body bg-white text-dark px-4 py-3" style="font-family: 'Courier New', Courier, monospace;">
-                                <div class="text-center mb-3">
-                                    <img src="{{ asset('images/UBLOGO.png') }}" alt="UB Logo" class="mb-2" style="max-height: 80px;">
-                                    <h5 class="fw-bold mb-1">Upper Bicutan National High School</h5>
-                                    <div class="text-muted small">Official Receipt</div>
+                    @if ($item->receipt)
+                    <div class="modal fade" id="receiptModal{{ $item->id }}" tabindex="-1" aria-labelledby="receiptModalLabel{{ $item->id }}" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered modal-md">
+                            <div class="modal-content border-0 shadow-sm">
+                                <div class="modal-header bg-dark text-white">
+                                    <h5 class="modal-title mx-auto" id="receiptModalLabel{{ $item->id }}">
+                                        Receipt #{{ $item->receipt->receipt_no }}
+                                    </h5>
+                                    <button type="button" class="btn-close btn-close-white position-absolute end-0 me-3" data-bs-dismiss="modal" aria-label="Close"></button>
                                 </div>
 
-                                <hr>
+                                <div class="modal-body bg-white text-dark px-4 py-3" style="font-family: 'Courier New', Courier, monospace;">
+                                    <div class="text-center mb-3">
+                                        <img src="{{ asset('images/UBLOGO.png') }}" alt="UB Logo" class="mb-2" style="max-height: 80px;">
+                                        <h5 class="fw-bold mb-1">Upper Bicutan National High School</h5>
+                                        <div class="text-muted small">Official Receipt</div>
+                                    </div>
 
-                                <div class="mb-2 d-flex justify-content-between">
-                                    <strong>Document:</strong>
-                                    <span>{{ $item->documents->DocType }}</span>
+                                    <hr>
+
+                                    <div class="mb-2 d-flex justify-content-between">
+                                        <strong>Document:</strong>
+                                        <span>{{ $item->documents->DocType }}</span>
+                                    </div>
+
+                                    <div class="mb-2 d-flex justify-content-between">
+                                        <strong>Amount Paid:</strong>
+                                        <span>₱{{ number_format($item->receipt->doc_amount, 2) }}</span>
+                                    </div>
+
+                                    <div class="mb-2 d-flex justify-content-between">
+                                        <strong>Student ID:</strong>
+                                        <span>{{ $item->receipt->name_request }}</span>
+                                    </div>
+
+                                    <div class="mb-2 d-flex justify-content-between">
+                                        <strong>Date:</strong>
+                                        <span>{{ \Carbon\Carbon::parse($item->receipt->time_request)->format('F d, Y - h:i A') }}</span>
+                                    </div>
+
+                                    <hr>
+
+                                    <div class="text-center mt-3">
+                                        <div class="text-muted small">Thank you for your request!</div>
+                                    </div>
                                 </div>
 
-                                <div class="mb-2 d-flex justify-content-between">
-                                    <strong>Amount Paid:</strong>
-                                    <span>₱{{ number_format($item->receipt->doc_amount, 2) }}</span>
+                                <div class="modal-footer bg-light border-top-0">
+                                    <button type="button" class="btn btn-secondary w-100" data-bs-dismiss="modal">Close Receipt</button>
                                 </div>
-
-                                <div class="mb-2 d-flex justify-content-between">
-                                    <strong>Student ID:</strong>
-                                    <span>{{ $item->receipt->name_request }}</span>
-                                </div>
-
-                                <div class="mb-2 d-flex justify-content-between">
-                                    <strong>Date:</strong>
-                                    <span>{{ \Carbon\Carbon::parse($item->receipt->time_request)->format('F d, Y - h:i A') }}</span>
-                                </div>
-
-                                <hr>
-
-                                <div class="text-center mt-3">
-                                    <div class="text-muted small">Thank you for your request!</div>
-                                </div>
-                            </div>
-
-                            <div class="modal-footer bg-light border-top-0">
-                                <button type="button" class="btn btn-secondary w-100" data-bs-dismiss="modal">Close Receipt</button>
                             </div>
                         </div>
                     </div>
-<<<<<<< HEAD
-                </div>
-                @endif
-
-                <!-- Supporting Document Modal -->
-                @if($item->supporting_document)
-                <div class="modal fade" id="documentModal{{ $item->id }}" tabindex="-1" aria-labelledby="documentModalLabel{{ $item->id }}" aria-hidden="true">
-                    <div class="modal-dialog modal-dialog-centered modal-lg">
-                        <div class="modal-content border-0 shadow-sm">
-                            <div class="modal-header text-white justify-content-between align-items-center" style="background-color: #1f2937;">
-                                <h5 class="modal-title" id="documentModalLabel{{ $item->id }}" style="color: #1dd3b0;">
-                                    <i class="fas fa-file-alt me-2"></i>
-                                    Supporting Document - Request No. {{ $item->req_no }}
-                                </h5>
-
-                                <div>
-                                    @if(!empty($approvePending))
-                                    <form action="{{ route('pending.decline', $item->id) }}" method="POST" class="d-inline decline-form">
-                                        @csrf
-                                        @method('DELETE')
-                                        <input type="hidden" name="remarks" class="decline-reason">
-                                        <button type="button" class="btn btn-sm btn-danger mb-1 decline-btn">Decline</button>
-                                    </form>
-                                    <form action="{{ route('document-request.complete', $item->id) }}" method="POST" class="d-inline accept-form">
-                                        @csrf
-                                        @method('PUT')
-                                        <button type="submit" class="btn btn-sm btn-success mb-1 accept-btn" data-original-text="Accept">Accept</button>
-                                    </form>
-                                    @endif
-=======
                     @endif
 
                     <!-- Supporting Document Modal -->
@@ -284,128 +229,124 @@
 
                                     <!-- Removed buttons from here - they are now in the action column -->
                                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
->>>>>>> origin/Dan
                                 </div>
 
-                                <!-- <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button> -->
-                            </div>
+                                <div class="modal-body p-0 text-center bg-light">
+                                    <div class="position-relative">
+                                        @php
+                                            $fileExtension = strtolower(pathinfo($item->supporting_document, PATHINFO_EXTENSION));
+                                            // Since database already stores full path, use it directly
+                                            $documentPath = $item->supporting_document;
+                                        @endphp
 
-                            <div class="modal-body p-0 text-center bg-light">
-                                <div class="position-relative">
-                                    @php
-                                    $fileExtension = strtolower(pathinfo($item->supporting_document, PATHINFO_EXTENSION));
-                                    // Since database already stores full path, use it directly
-                                    $documentPath = $item->supporting_document;
-                                    @endphp
+                                        @if(in_array($fileExtension, ['jpg', 'jpeg', 'png', 'gif', 'webp']))
+                                            <!-- Display image if it's an image file -->
+                                            <img src="{{ asset($documentPath) }}"
+                                                alt="Supporting Document for {{ $item->req_no }}"
+                                                class="img-fluid w-100"
+                                                style="max-height: 70vh; object-fit: contain;"
+                                                loading="lazy"
+                                                onerror="this.onerror=null; this.src='{{ asset('images/no-image-placeholder.png') }}'; this.alt='Document not available';">
 
-                                    @if(in_array($fileExtension, ['jpg', 'jpeg', 'png', 'gif', 'webp']))
-                                    <!-- Display image if it's an image file -->
-                                    <img src="{{ asset($documentPath) }}"
-                                        alt="Supporting Document for {{ $item->req_no }}"
-                                        class="img-fluid w-100"
-                                        style="max-height: 70vh; object-fit: contain;"
-                                        loading="lazy"
-                                        onerror="this.onerror=null; this.src='{{ asset('images/no-image-placeholder.png') }}'; this.alt='Document not available';">
+                                        @elseif($fileExtension === 'pdf')
+                                            <!-- Display PDF preview -->
+                                            <div class="p-4">
+                                                <div class="text-center mb-3">
+                                                    <i class="fas fa-file-pdf text-danger" style="font-size: 4rem;"></i>
+                                                    <h5 class="mt-2">PDF Document</h5>
+                                                    <p class="text-muted">{{ basename($item->supporting_document) }}</p>
+                                                </div>
+                                                <iframe src="{{ asset($documentPath) }}"
+                                                        width="100%"
+                                                        height="400px"
+                                                        style="border: 1px solid #ddd;">
+                                                    <p>Your browser does not support PDFs.
+                                                    <a href="{{ asset($documentPath) }}" target="_blank">Download the PDF</a>
+                                                    </p>
+                                                </iframe>
+                                            </div>
 
-                                    @elseif($fileExtension === 'pdf')
-                                    <!-- Display PDF preview -->
-                                    <div class="p-4">
-                                        <div class="text-center mb-3">
-                                            <i class="fas fa-file-pdf text-danger" style="font-size: 4rem;"></i>
-                                            <h5 class="mt-2">PDF Document</h5>
-                                            <p class="text-muted">{{ basename($item->supporting_document) }}</p>
-                                        </div>
-                                        <iframe src="{{ asset($documentPath) }}"
-                                            width="100%"
-                                            height="400px"
-                                            style="border: 1px solid #ddd;">
-                                            <p>Your browser does not support PDFs.
-                                                <a href="{{ asset($documentPath) }}" target="_blank">Download the PDF</a>
-                                            </p>
-                                        </iframe>
-                                    </div>
+                                        @else
+                                            <!-- Display file icon for other file types -->
+                                            <div class="p-5 text-center">
+                                                @switch($fileExtension)
+                                                    @case('doc')
+                                                    @case('docx')
+                                                        <i class="fas fa-file-word text-primary" style="font-size: 4rem;"></i>
+                                                        @break
+                                                    @case('xls')
+                                                    @case('xlsx')
+                                                        <i class="fas fa-file-excel text-success" style="font-size: 4rem;"></i>
+                                                        @break
+                                                    @case('ppt')
+                                                    @case('pptx')
+                                                        <i class="fas fa-file-powerpoint text-warning" style="font-size: 4rem;"></i>
+                                                        @break
+                                                    @case('txt')
+                                                        <i class="fas fa-file-alt text-secondary" style="font-size: 4rem;"></i>
+                                                        @break
+                                                    @default
+                                                        <i class="fas fa-file text-muted" style="font-size: 4rem;"></i>
+                                                @endswitch
 
-                                    @else
-                                    <!-- Display file icon for other file types -->
-                                    <div class="p-5 text-center">
-                                        @switch($fileExtension)
-                                        @case('doc')
-                                        @case('docx')
-                                        <i class="fas fa-file-word text-primary" style="font-size: 4rem;"></i>
-                                        @break
-                                        @case('xls')
-                                        @case('xlsx')
-                                        <i class="fas fa-file-excel text-success" style="font-size: 4rem;"></i>
-                                        @break
-                                        @case('ppt')
-                                        @case('pptx')
-                                        <i class="fas fa-file-powerpoint text-warning" style="font-size: 4rem;"></i>
-                                        @break
-                                        @case('txt')
-                                        <i class="fas fa-file-alt text-secondary" style="font-size: 4rem;"></i>
-                                        @break
-                                        @default
-                                        <i class="fas fa-file text-muted" style="font-size: 4rem;"></i>
-                                        @endswitch
+                                                <h5 class="mt-3">{{ strtoupper($fileExtension) }} Document</h5>
+                                                <p class="text-muted">{{ basename($item->supporting_document) }}</p>
+                                                <p class="small text-info">
+                                                    <i class="fas fa-info-circle me-1"></i>
+                                                    Click "Download" or "Open in New Tab" to view this document
+                                                </p>
+                                            </div>
+                                        @endif
 
-                                        <h5 class="mt-3">{{ strtoupper($fileExtension) }} Document</h5>
-                                        <p class="text-muted">{{ basename($item->supporting_document) }}</p>
-                                        <p class="small text-info">
-                                            <i class="fas fa-info-circle me-1"></i>
-                                            Click "Download" or "Open in New Tab" to view this document
-                                        </p>
-                                    </div>
-                                    @endif
-
-                                    <!-- Loading overlay -->
-                                    <div class="position-absolute top-50 start-50 translate-middle" id="documentLoader{{ $item->id }}" style="display: none;">
-                                        <div class="spinner-border text-primary" role="status">
-                                            <span class="visually-hidden">Loading document...</span>
+                                        <!-- Loading overlay -->
+                                        <div class="position-absolute top-50 start-50 translate-middle" id="documentLoader{{ $item->id }}" style="display: none;">
+                                            <div class="spinner-border text-primary" role="status">
+                                                <span class="visually-hidden">Loading document...</span>
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
 
-                                <!-- Document details -->
-                                <div class="p-3 bg-white border-top">
-                                    <div class="row text-start">
-                                        <div class="col-md-4">
-                                            <small class="text-muted">Student:</small><br>
-                                            <strong>{{ $item->studentInformation->full_name }}</strong>
+                                    <!-- Document details -->
+                                    <div class="p-3 bg-white border-top">
+                                        <div class="row text-start">
+                                            <div class="col-md-4">
+                                                <small class="text-muted">Student:</small><br>
+                                                <strong>{{ $item->studentInformation->full_name }}</strong>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <small class="text-muted">Document Type:</small><br>
+                                                <strong>{{ $item->documents->DocType }}</strong>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <small class="text-muted">File Type:</small><br>
+                                                <strong>{{ strtoupper($fileExtension) }}</strong>
+                                            </div>
                                         </div>
-                                        <div class="col-md-4">
-                                            <small class="text-muted">Document Type:</small><br>
-                                            <strong>{{ $item->documents->DocType }}</strong>
-                                        </div>
-                                        <div class="col-md-4">
-                                            <small class="text-muted">File Type:</small><br>
-                                            <strong>{{ strtoupper($fileExtension) }}</strong>
-                                        </div>
-                                    </div>
-                                    <div class="row mt-2">
-                                        <div class="col-12">
-                                            <small class="text-muted">File Name:</small><br>
-                                            <strong>{{ basename($item->supporting_document) }}</strong>
+                                        <div class="row mt-2">
+                                            <div class="col-12">
+                                                <small class="text-muted">File Name:</small><br>
+                                                <strong>{{ basename($item->supporting_document) }}</strong>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
-                            </div>
 
-                            <div class="modal-footer" style="background-color: #1f2937;">
-                                <a href="{{ asset($documentPath) }}"
+                                <div class="modal-footer" style="background-color: #1f2937;">
+                                    <a href="{{ asset($documentPath) }}"
                                     target="_blank"
                                     class="btn btn-outline-primary btn-sm">
-                                    <i class="fas fa-external-link-alt me-1"></i>
-                                    Open in New Tab
-                                </a>
-                                <button type="button" class="btn btn-outline-light btn-sm" data-bs-dismiss="modal" style="border-color: #1dd3b0; color: #1dd3b0;">
-                                    <i class="fas fa-times me-1"></i>
-                                    Close
-                                </button>
+                                        <i class="fas fa-external-link-alt me-1"></i>
+                                        Open in New Tab
+                                    </a>
+                                    <button type="button" class="btn btn-outline-light btn-sm" data-bs-dismiss="modal" style="border-color: #1dd3b0; color: #1dd3b0;">
+                                        <i class="fas fa-times me-1"></i>
+                                        Close
+                                    </button>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
-                @endif
+                    @endif
                 @endforeach
             </div>
         </div>
@@ -417,42 +358,33 @@
 
 <!-- Reason Modal -->
 <div class="modal fade" id="reasonModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-            <div class="modal-header d-flex justify-content-start" style="background-color: #1f2937;">>
-                <h5 class="modal-title" style="color: #1dd3b0;">Decline Reason</h5>
-            </div>
-            <div class="modal-body">
-                <textarea class="form-control" id="reasonInput" rows="3" placeholder="Enter reason for declining"></textarea>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn text-white" style="background-color: #1f2937;" data-bs-dismiss="modal">Cancel</button>
-                <button type="button" class="btn text-white" id="proceedToConfirmBtn" style="background-color: #1dd3b0;">Proceed</button>
-            </div>
-        </div>
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header d-flex justify-content-start" style="background-color: #1f2937;">>
+        <h5 class="modal-title" style="color: #1dd3b0;">Decline Reason</h5>
+      </div>
+      <div class="modal-body">
+        <textarea class="form-control" id="reasonInput" rows="3" placeholder="Enter reason for declining"></textarea>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn text-white" style="background-color: #1f2937;" data-bs-dismiss="modal">Cancel</button>
+        <button type="button" class="btn text-white" id="proceedToConfirmBtn" style="background-color: #1dd3b0;">Proceed</button>
+      </div>
     </div>
+  </div>
 </div>
 
 
 {{-- Enhanced JavaScript with loading spinners and search functionality --}}
 <script>
-<<<<<<< HEAD
-    document.addEventListener('DOMContentLoaded', function() {
-=======
     document.addEventListener('DOMContentLoaded', function () {
->>>>>>> origin/Dan
         let targetForm;
 
         const reasonModal = new bootstrap.Modal(document.getElementById('reasonModal'));
 
         // Step 1: Click decline → open reason modal
-<<<<<<< HEAD
-        document.querySelectorAll('.decline-btn').forEach(function(btn) {
-            btn.addEventListener('click', function() {
-=======
         document.querySelectorAll('.decline-btn').forEach(function (btn) {
             btn.addEventListener('click', function () {
->>>>>>> origin/Dan
                 targetForm = btn.closest('form');
                 document.getElementById('reasonInput').value = ''; // clear previous
                 reasonModal.show();
@@ -460,11 +392,7 @@
         });
 
         // Step 2: After entering reason → show SweetAlert confirmation
-<<<<<<< HEAD
-        document.getElementById('proceedToConfirmBtn').addEventListener('click', function() {
-=======
         document.getElementById('proceedToConfirmBtn').addEventListener('click', function () {
->>>>>>> origin/Dan
             const reason = document.getElementById('reasonInput').value.trim();
 
             if (!reason) {
@@ -578,7 +506,7 @@
                     shouldShow = true;
                 } else {
                     // Search based on current filter
-                    switch (currentFilter) {
+                    switch(currentFilter) {
                         case 'all':
                             shouldShow = searchAllColumns(row, query);
                             break;
@@ -667,7 +595,7 @@
         acceptForms.forEach(form => {
             let manualSubmit = false;
 
-            form.addEventListener('submit', function(e) {
+            form.addEventListener('submit', function (e) {
                 if (!manualSubmit) {
                     e.preventDefault();
 
@@ -703,7 +631,7 @@
         // Handle Decline button clicks with loading spinner
         const declineForms = document.querySelectorAll(".decline-form");
         declineForms.forEach(form => {
-            form.addEventListener("submit", function(e) {
+            form.addEventListener("submit", function (e) {
                 e.preventDefault();
 
                 const declineBtn = form.querySelector(".decline-btn");
@@ -783,8 +711,7 @@
     }
 
     /* Ensure buttons maintain their size during loading */
-    .accept-btn,
-    .decline-btn {
+    .accept-btn, .decline-btn {
         min-width: 70px;
     }
 

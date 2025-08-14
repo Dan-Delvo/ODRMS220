@@ -15,6 +15,12 @@
 </div>
 
 <div class="row">
+@if(session('error'))
+    <div class="alert alert-danger">
+        {{ session('error') }}
+    </div>
+@endif
+
     <div class="col-md-12">
         <div class="card shadow-lg border-0 rounded-lg mt-5">
             <div class="card-header text-white d-flex align-items-center justify-content-between" style="background-color: #1f2937; height: 70px;">

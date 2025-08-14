@@ -14,11 +14,15 @@
                 $PermissionStud = App\Models\PermissionRoleModel::getPermission('student', $roleId);
                 $PermissionDoc = App\Models\PermissionRoleModel::getPermission('doc', $roleId);
                 $PermissionWalk = App\Models\PermissionRoleModel::getPermission('walkinRequest', $roleId);
-                $PermissionGen = App\Models\PermissionRoleModel::getPermission('generateReports', $roleId);
+                $PermissionGen= App\Models\PermissionRoleModel::getPermission('generateReports', $roleId);
+                $PermissionAnalytics = App\Models\PermissionRoleModel::getPermission('analytics', $roleId);
+                $PermissionClaimed = App\Models\PermissionRoleModel::getPermission('claimed', $roleId);
+                $PermissionAudit = App\Models\PermissionRoleModel::getPermission('auditTrail', $roleId);
+                $PermissionDeclined = App\Models\PermissionRoleModel::getPermission('declined', $roleId);
             @endphp
 
             {{-- Admin Group --}}
-            @if(!empty($PermissionDashboard) || !empty($PermissionGen) || true) {{-- true = always show Analytics --}}
+            @if(!empty($PermissionDashboard) || !empty($PermissionGen) || !empty($PermissionAnalytics)) {{-- true = always show Analytics --}}
                 <div class="sb-sidenav-menu-heading text-uppercase text-light fw-bold mt-3">Admin</div>
 
                 @if(!empty($PermissionDashboard))
@@ -35,15 +39,17 @@
                 </a>
                 @endif
 
-                {{-- Analytics is always visible --}}
+                @if(!empty($PermissionAnalytics))
                 <a class="nav-link text-light sidebar-item" href="{{ route('analytics') }}">
                     <div class="sb-nav-link-icon"><i class="fas fa-chart-line"></i></div>
                     Analytics
                 </a>
+                @endif
             @endif
 
             {{-- Maintenance Group --}}
-            @if(!empty($PermissionRole) || !empty($PermissionAcc) || !empty($PermissionStud) || !empty($PermissionDoc))
+            @if(!empty($PermissionRole) || !empty($PermissionAcc) || !empty($PermissionStud) || !empty($PermissionDoc || !empty($PermissionAudit)))
+                {{-- true = always show Audit Trail --}}
                 <div class="sb-sidenav-menu-heading text-uppercase text-light fw-bold mt-3">Maintenance</div>
 
                 @if(!empty($PermissionRole))
@@ -73,10 +79,18 @@
                     Document Management
                 </a>
                 @endif
+
+                @if(!empty($PermissionAudit))
+                <a class="nav-link text-light sidebar-item" href="{{ route('audit.index') }}">
+                    <div class="sb-nav-link-icon"><i class="fas fa-file-alt"></i></div>
+                    Audit Trail
+                </a>
+                @endif
+
             @endif
 
             {{-- Requests Group --}}
-            @if(!empty($PermissionPending) || !empty($PermissionOngoing) || !empty($PermissionCompleted) || !empty($PermissionWalk))
+            @if(!empty($PermissionPending) || !empty($PermissionOngoing) || !empty($PermissionCompleted) || !empty($PermissionClaimed) || !empty($PermissionDeclined) || !empty($PermissionWalk))
                 <div class="sb-sidenav-menu-heading text-uppercase text-light fw-bold mt-3">Requests</div>
 
                 @if(!empty($PermissionPending))
@@ -100,10 +114,19 @@
                 </a>
                 @endif
 
+                @if(!empty($PermissionClaimed))
                 <a class="nav-link text-light sidebar-item" href="{{ route('claimed-documents.index') }}">
                     <div class="sb-nav-link-icon"><i class="fas fa-check-circle"></i></div>
                     Claimed Requests
                 </a>
+                @endif
+
+                @if(!empty($PermissionDeclined))
+                <a class="nav-link text-light sidebar-item" href="{{ route('declined-documents.index') }}">
+                    <div class="sb-nav-link-icon"><i class="fas fa-check-circle"></i></div>
+                    Declined Requests
+                </a>
+                @endif
 
                 @if(!empty($PermissionWalk))
                 <a class="nav-link text-light sidebar-item" href="{{ route('walkin.form') }}">
