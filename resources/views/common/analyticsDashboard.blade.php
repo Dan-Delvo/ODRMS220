@@ -7,7 +7,6 @@
         <h1 class="mt-4"><span class="badge text-bg-dark">Analytics Dashboard</span></h1>
         <ol class="breadcrumb mb-4">
             <li class="breadcrumb-item active"><a href="{{ route('dashboard') }}" class="text-dark">Dashboard</a></li>
-            <li class="breadcrumb-item active"><a href="{{ route('dashboard') }}" class="text-dark">Dashboard</a></li>
             <li class="breadcrumb-item active">Analytics</li>
         </ol>
     </div>
@@ -26,24 +25,9 @@
                         <button type="submit" class="btn btn-outline-light btn-sm">Filter</button>
                     </form>
                 </div>
-                <div class="d-flex justify-content-between align-items-center flex-wrap">
-                    <h5 class="mb-2 mb-md-0">Monthly Document Requests</h5>
-                    <form method="GET" class="d-flex align-items-center gap-2">
-                        <input type="date" name="start_date" value="{{ $startDate }}" class="form-control form-control-sm">
-                        <input type="date" name="end_date" value="{{ $endDate }}" class="form-control form-control-sm">
-                        <button type="submit" class="btn btn-outline-light btn-sm">Filter</button>
-                    </form>
-                </div>
             </div>
             <div class="card-body bg-light">
                 <canvas id="monthlyRequestsChart" style="max-height: 300px;"></canvas>
-                <p class="mt-3 text-center mb-0">
-                    <strong>Total Requests:</strong> {{ $totalRequestsInInterval }}<br>
-                    <small>
-                        From <strong>{{ \Carbon\Carbon::parse($startDate)->format('F j, Y') }}</strong>
-                        to <strong>{{ \Carbon\Carbon::parse($endDate)->format('F j, Y') }}</strong>
-                    </small>
-                </p>
                 <p class="mt-3 text-center mb-0">
                     <strong>Total Requests:</strong> {{ $totalRequestsInInterval }}<br>
                     <small>
@@ -55,8 +39,6 @@
         </div>
     </div>
 </div>
-
-
 
 
 
@@ -132,21 +114,6 @@
 </div>
 
 
-<div class="row justify-content-center">
-    <div class="col-12 col-lg-8">
-        <!-- Number of Unclaimed Documents -->
-        <div class="card shadow-lg border-0 rounded-lg mb-4">
-            <div class="card-header bg-dark text-white">
-                <h5 class="mb-0">Unclaimed Documents</h5>
-            </div>
-            <div class="card-body bg-light">
-                <canvas id="unclaimedChart" style="max-height: 300px;"></canvas>
-            </div>
-        </div>
-    </div>
-</div>
-
-
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <script>
@@ -189,21 +156,9 @@
                             return Number.isInteger(value) ? value : null;
                         }
                     }
-                    ticks: {
-                        callback: function(value) {
-                            return Number.isInteger(value) ? value : null;
-                        }
-                    }
                 }
             },
             plugins: {
-                legend: {
-                    display: false
-                },
-                title: {
-                    display: true,
-                    text: 'Requests Per Month'
-                }
                 legend: {
                     display: false
                 },
@@ -234,13 +189,6 @@
             responsive: true,
             maintainAspectRatio: false,
             plugins: {
-                legend: {
-                    position: 'bottom'
-                },
-                title: {
-                    display: true,
-                    text: 'Document Type Distribution'
-                }
                 legend: {
                     position: 'bottom'
                 },
@@ -283,7 +231,7 @@
     });
 
     // Grade Level Chart (Bar)
-    const gradeLevelLabels = Object.keys(gradeLevelData).map(level => `Grade ${level}`);
+    const gradeLevelLabels = Object.keys(gradeLevelData).map(level => `Grade Level ${level}`);
     const gradeLevelValues = Object.values(gradeLevelData);
     const gradeLevelTotal = gradeLevelValues.reduce((sum, value) => sum + value, 0);
     const gradeLevelColors = ['#8E44AD', '#3498DB', '#1ABC9C', '#F39C12', '#E74C3C', '#2ECC71', '#9B59B6', '#34495E', '#E67E22', '#95A5A6', '#F1C40F', '#E91E63'];
@@ -312,6 +260,7 @@
                     beginAtZero: true,
                     title: {
                         display: true,
+                        text: 'Total Requests'
                     },
                     ticks: {
                         callback: function(value) {
@@ -322,6 +271,7 @@
                 x: {
                     title: {
                         display: true,
+                        text: 'Grade Level'
                     },
                     ticks: {
                         maxRotation: 45,
