@@ -334,7 +334,7 @@ class AccountController extends Controller
             // Optionally, clear the session
             Session::forget('std_students_id');
 
-            return redirect()->route('login');  // Redirect to dashboard or another page
+            return redirect()->route('login')->with('success', 'Account Created Successfully');  // Redirect to dashboard or another page
         }
         session()->flash('error', 'Invalid or expired OTP');
         return view('common.verifyEmail');
