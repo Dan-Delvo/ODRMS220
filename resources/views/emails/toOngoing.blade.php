@@ -21,7 +21,7 @@
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
         }
         .email-header {
-            background-color: #007bff;
+            background-color: #ffc107;
             color: #ffffff;
             text-align: center;
             padding: 20px;
@@ -52,25 +52,24 @@
 <body>
     <div class="email-container">
         <div class="email-header">
-            <h1>Document Ready for Release</h1>
+            <h1>Document Now Processing</h1>
         </div>
         <div class="email-body">
-            <p>Good news!</p>
             <p>Hello <strong>{{ $name }}</strong>,</p>
-            <p>Your requested document is now ready for release. You may now proceed to the releasing area or follow the next instructions provided by the office.</p>
-            <p>Be sure to bring any required identification or proof of request when claiming your document.</p>
+            <p>We're currently processing your requested document. Our team is working to ensure everything is completed promptly and accurately.</p>
+            <p>Please stay tuned for further updates. You will receive another notification once your document is ready for release.</p>
             <p style="text-align: center; margin-top: 20px;">
                 <a href="{{ url('http://127.0.0.1:8000/') }}" style="
                     display: inline-block;
                     padding: 10px 20px;
-                    background-color: #007bff;
+                    background-color: #ffc107;
                     color: #ffffff;
                     border-radius: 4px;
                     text-decoration: none;
                     font-size: 16px;
-                ">View Status</a>
+                ">Check Status</a>
             </p>
-            <p>If you have any questions or need assistance, please contact us anytime.</p>
+            <p>If you have any questions, feel free to contact our support team.</p>
         </div>
         <div class="email-footer">
             <p>&copy; {{ date('Y') }} ODRMS. All rights reserved.</p>
