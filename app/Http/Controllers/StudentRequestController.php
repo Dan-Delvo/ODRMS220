@@ -108,7 +108,7 @@ class StudentRequestController extends Controller
             'request_mode' => "Online",
             'release_mode' => $validatedData['release_mode'],
             'supporting_document' => $supportingDocumentPath,
-            'remarks' => "N/A",
+            'remarks' => "Pending",
             'status' => "Pending",
             'receipt_no' => $receipt->receipt_no
         ]);

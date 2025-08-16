@@ -467,18 +467,6 @@
                         allowOutsideClick: false,
                         didOpen: () => {
                             Swal.showLoading(); // <- Spinner starts here
-                            setTimeout(() => {
-                                Swal.close(); // stop loading
-                                Swal.fire({
-                                    icon: 'success',
-                                    title: 'Request Declined',
-                                    text: 'Your declined has been processed.',
-                                    confirmButtonColor: '#1dd3b0', // Match button color
-                                    customClass: {
-                                        icon: 'swal-icon-green' // Custom class for icon
-                                    }
-                                });
-                            }, 3000);
                         }
                     });
                     targetForm.submit();

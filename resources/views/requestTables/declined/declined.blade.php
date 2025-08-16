@@ -127,7 +127,7 @@
                                 <td>{{ $item->request_mode }}</td>
                                 <td>{{ $item->release_mode }}</td>
                                 <td>{{ $item->remarks }}</td>
-                                <td><span class="badge bg-warning text-dark px-2 py-1">{{ $item->status }}</span></td>
+                                <td><span class="badge bg-danger text-white px-2 py-1">{{ $item->status }}</span></td>
                                 <td>{{ $item->request_date }}</td>
                                 <td>{{ $item->approve_date }}</td>
                                 <td>{{ $item->forRelease_date }}</td>
@@ -139,6 +139,11 @@
                                         @method('DELETE')
                                         <input type="hidden" name="remarks" class="decline-reason">
                                         <button type="button" class="btn btn-sm btn-danger mb-1 decline-btn">Delete</button>
+                                    </form>
+                                    <form action="{{ route('document-request.complete', $item->id) }}" method="POST" class="d-inline accept-form">
+                                        @csrf
+                                        @method('PUT')
+                                        <button type="submit" class="btn btn-sm btn-success mb-1 accept-btn" data-original-text="Accept">Accept</button>
                                     </form>
                                 </td>
                             </tr>
