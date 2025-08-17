@@ -8,7 +8,7 @@ navbar.blade.php
             <i class="fas fa-bars fa-lg"></i>
         </button>
 
-        <a class="navbar-brand d-flex align-items-center ps-3" href="#">
+        <a class="navbar-brand d-flex align-items-center ps-3" href="{{ route('dashboard') }}">
             <img src="/images/UBLOGO.png" alt="Logo" width="40" height="40" class="me-2">
             <span class="fw-bold text-uppercase" style="color: #1dd3b0;">ODRMS</span>
         </a>
@@ -37,7 +37,7 @@ navbar.blade.php
                 </a>
                 <ul class="dropdown-menu dropdown-menu-end shadow" aria-labelledby="navbarDropdown">
                     <li><a class="dropdown-item" href="#!"><i class="fas fa-cog me-2"></i> Settings</a></li>
-                    <li><a class="dropdown-item" href="#!"><i class="fas fa-list-alt me-2"></i> Activity Log</a></li>
+                    <li><a class="dropdown-item" href="{{ url('activityLog') }}"><i class="fas fa-list-alt me-2"></i> Activity Log</a></li>
                     <li><hr class="dropdown-divider" /></li>
                     <li><a class="dropdown-item text-danger" href="{{ url('logout') }}"><i class="fas fa-sign-out-alt me-2"></i> Logout</a></li>
                 </ul>

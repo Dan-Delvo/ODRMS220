@@ -155,6 +155,7 @@ Route::group(['middleware' => 'useradmin'], function(){
     //Report Generation         ================================================================================
 
     Route::get('/auditTrail', [AuditTableController::class, 'index'])->name('audit.index');
+    Route::get('/activityLog',[AuditTableController::class, 'activityLog']);
 
 });
 
