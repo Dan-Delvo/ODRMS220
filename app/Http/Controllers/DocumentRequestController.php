@@ -279,7 +279,7 @@ class DocumentRequestController extends Controller
         $email = $validated['email_address'];
 
         // Send email
-        Mail::send('emails.tempPassword', compact('subject', 'name', 'tempPassword'), function ($message) use ($email, $subject) {
+        Mail::send('emails.tempPassword', compact('subject', 'name', 'tempPassword', 'email'), function ($message) use ($email, $subject) {
             $message->to($email)->subject($subject);
         });
 
