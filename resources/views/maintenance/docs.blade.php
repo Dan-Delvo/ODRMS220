@@ -60,7 +60,7 @@
                         <tbody>
                             @foreach ($Doc as $item)
                             <tr>
-                                <td>{{ $item->id }}</td>
+                                <td>{{ $loop->iteration + $Doc->firstItem() - 1 }}</td>
                                 <td>{{ $item->DocType }}</td>
                                 <td>{{ $item->DocPrice }}</td>
                                 <td class="d-flex justify-content-start">
