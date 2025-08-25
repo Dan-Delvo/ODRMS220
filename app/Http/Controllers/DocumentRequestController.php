@@ -166,6 +166,7 @@ class DocumentRequestController extends Controller
             $documentRequest->update([
                 'status' => 'Claimed',
                 'claimed_date' => Carbon::now(),
+                'claimed_time' => Carbon::now()->format('H:i:s')
             ]);
 
             if ($claimer) {
@@ -256,11 +257,9 @@ class DocumentRequestController extends Controller
                 'FirstName' => $validated['student_first_name'],
                 'LastName' => $validated['student_last_name'],
                 'LRN' => $validated['lrn'] ?? 0000,
-            ],
-            [
                 'Grade_level' => $validated['grade_level'],
                 'Std_status' => $validated['student_status'],
-                'Last_sy_attended' => $validated['last_sy_attended'],
+                'Last_sy_attended' => $validated['last_sy_attended']
             ]
         );
             $tempPassword = Str::random(10);

@@ -111,7 +111,7 @@ class OngoingController extends Controller
         $studentId = $documentRequestModel->student_information_id;
         $student = StudentInformationModel::find($studentId);
 
-        return redirect('/ongoing')->with('Status', 'Updated Successfully');
+        return redirect('/ongoing')->with('status', 'Updated Successfully');
     }
 
     public function destroy($id)
@@ -122,7 +122,7 @@ class OngoingController extends Controller
 
         if ($table) {
             $table->delete();
-            return redirect('/ongoing')->with('Danger', 'Deleted Successfully');
+            return redirect('/ongoing')->with('danger', 'Deleted Successfully');
         }
 
         return redirect('/ongoing')->with('error', 'Record not found');
@@ -152,31 +152,30 @@ class OngoingController extends Controller
             $message->to($email)->subject($subject);
         });
 
-        $pushId = $account->fcm_token;
+        // $pushId = $account->fcm_token;
 
-        try {
-            $response = Http::withHeaders([
-                'Authorization' => 'Basic os_v2_app_if32gbsxsffszlc2vzvuxojxx5v5u3kriweuqn4s2luqs6vfjt5gaoxdhoqhd6vi5w33ake2swiwgpvwudxdidn35dzpgubfyjeszsq',
-                'accept' => 'application/json',
-                'content-type' => 'application/json',
-            ])->post('https://onesignal.com/api/v1/notifications', [
-                'app_id' => '4177a306-5791-4b2c-ac5a-ae6b4bb937bf',
-                'include_player_ids' => [$pushId],
-                'contents' => ['en' => $name . ', Your document request has been approved and now Processing.'],
-            ]);
+        // try {
+        //     $response = Http::withHeaders([
+        //         'Authorization' => 'Basic os_v2_app_if32gbsxsffszlc2vzvuxojxx5v5u3kriweuqn4s2luqs6vfjt5gaoxdhoqhd6vi5w33ake2swiwgpvwudxdidn35dzpgubfyjeszsq',
+        //         'accept' => 'application/json',
+        //         'content-type' => 'application/json',
+        //     ])->post('https://onesignal.com/api/v1/notifications', [
+        //         'app_id' => '4177a306-5791-4b2c-ac5a-ae6b4bb937bf',
+        //         'include_player_ids' => [$pushId],
+        //         'contents' => ['en' => $name . ', Your document request has been approved and now Processing.'],
+        //     ]);
 
-            Log::info('Notification sent: ' . $response->body());
-
-        } catch (\Exception $e) {
-            report($e);
-            return response()->json(['error' => $e->getMessage()], 500);
-        }
+        //     Log::info('Notification sent: ' . $response->body());
+        // } catch (\Exception $e) {
+        //     report($e);
+        //     return response()->json(['error' => $e->getMessage()], 500);
+        // }
 
         $documentRequest->update([
             'status' => 'For Release',
             'forRelease_date' => Carbon::now(),
         ]);
 
-        return redirect('/ongoing')->with('Status', 'Completed Successfully');
+        return redirect('/ongoing')->with('status', 'Completed Successfully');
     }
 }

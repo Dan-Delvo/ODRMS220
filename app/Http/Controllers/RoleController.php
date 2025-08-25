@@ -35,7 +35,7 @@ class RoleController extends Controller
 
         PermissionRoleModel::insertUpdateRecord($request->permission_id, $save->id);
 
-        return redirect('panel/role')->with('Status', "Role Successfully created");
+        return redirect('panel/role')->with('status', "Role Successfully created");
     }
 
     public function edit($id)
@@ -57,7 +57,7 @@ class RoleController extends Controller
 
         PermissionRoleModel::insertUpdateRecord($request->permission_id, $save->id);
 
-        return redirect('panel/role')->with('Status', "Role Successfully updated");
+        return redirect('panel/role')->with('status', "Role Successfully updated");
     }
 
     public function delete($id)
@@ -68,6 +68,6 @@ class RoleController extends Controller
         $save = RolesModel::getSingle($id);
         $save->delete();
 
-        return redirect('panel/role')->with('Danger', "Role Successfully deleted");
+        return redirect('panel/role')->with('danger', "Role Successfully deleted");
     }
 }

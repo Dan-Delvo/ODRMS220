@@ -134,7 +134,7 @@ class PendingController extends Controller
             'remarks' => $reason
         ]);
 
-        return redirect('/pending')->with('Danger', 'Declined Successfully');
+        return redirect('/pending')->with('danger', 'Declined Successfully');
     }
 
     public function completeRequest(Request $request, $id)
@@ -155,32 +155,32 @@ class PendingController extends Controller
             $message->to($email)->subject($subject);
         });
 
-        $pushId = $account->fcm_token;
+        // $pushId = $account->fcm_token;
 
-        try {
-            $response = Http::withHeaders([
-                'Authorization' => 'Basic os_v2_app_if32gbsxsffszlc2vzvuxojxx5v5u3kriweuqn4s2luqs6vfjt5gaoxdhoqhd6vi5w33ake2swiwgpvwudxdidn35dzpgubfyjeszsq',
-                'accept' => 'application/json',
-                'content-type' => 'application/json',
-            ])->post('https://onesignal.com/api/v1/notifications', [
-                'app_id' => '4177a306-5791-4b2c-ac5a-ae6b4bb937bf',
-                'include_player_ids' => [$pushId],
-                'contents' => ['en' => $name . ', Your document request has been approved and is now ongoing.'],
-            ]);
+        // try {
+        //     $response = Http::withHeaders([
+        //         'Authorization' => 'Basic os_v2_app_if32gbsxsffszlc2vzvuxojxx5v5u3kriweuqn4s2luqs6vfjt5gaoxdhoqhd6vi5w33ake2swiwgpvwudxdidn35dzpgubfyjeszsq',
+        //         'accept' => 'application/json',
+        //         'content-type' => 'application/json',
+        //     ])->post('https://onesignal.com/api/v1/notifications', [
+        //         'app_id' => '4177a306-5791-4b2c-ac5a-ae6b4bb937bf',
+        //         'include_player_ids' => [$pushId],
+        //         'contents' => ['en' => $name . ', Your document request has been approved and is now ongoing.'],
+        //     ]);
 
-            Log::info('Notification sent: ' . $response->body());
+        //     Log::info('Notification sent: ' . $response->body());
 
-        } catch (\Exception $e) {
-            report($e);
-            return response()->json(['error' => $e->getMessage()], 500);
-        }
+        // } catch (\Exception $e) {
+        //     report($e);
+        //     return response()->json(['error' => $e->getMessage()], 500);
+        // }
 
         $documentRequest->update([
             'status' => 'Processing',
             'approve_date' => Carbon::now(),
         ]);
 
-        return redirect('/pending')->with('Status', 'Updated Successfully');
+        return redirect('/pending')->with('status', 'Updated Successfully');
     }
 
     public function validateDocumentRequest(Request $request)
@@ -196,4 +196,14 @@ class PendingController extends Controller
             'status' => 'required|string',
         ]);
     }
+
+    /**
+     * Remove the specified resource from storage.
+     */
+
+
+        // if (!$inserted) {
+        //     Log::error('Update failed', ['data' => $request->all()]);
+        //     dd('Validation asdsc');
+        // }
 }

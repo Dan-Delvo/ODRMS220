@@ -2,6 +2,37 @@
 
 @section('content')
 
+<style>
+.tooltip {
+  position: relative;
+  display: inline-block;
+}
+
+.tooltip .tooltip-text {
+  visibility: hidden;
+  width: 160px;
+  background-color: black;
+  color: #fff;
+  text-align: center;
+  padding: 6px;
+  border-radius: 4px;
+  
+  position: absolute;
+  z-index: 1;
+  bottom: 125%; /* Position above */
+  left: 50%;
+  transform: translateX(-50%);
+  
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.tooltip:hover .tooltip-text {
+  visibility: visible;
+  opacity: 1;
+}
+</style>
+
 <div class="row justify-content-center">
 
         @if(session('Success'))
@@ -32,7 +63,11 @@
                     <!-- Document Request Information -->
                     <h5>Document Request Information</h5>
                     <div class="form-floating mb-3">
-                        <input class="form-control" id="inputRequestSchlEntity" type="text" name="request_schl_entity" placeholder="Enter Requesting School/Entity" required />
+                        <input class="form-control" id="inputRequestSchlEntity" type="text" name="request_schl_entity" placeholder="Enter Requesting School/Entity" 
+                        data-bs-toggle="tooltip" 
+                        data-bs-placement="top" 
+                        title="Enter the name of the school requesting the document."
+                        required />
                         <label for="inputRequestSchlEntity">Requesting School/Entity *</label>
                     </div>
 
@@ -47,7 +82,7 @@
                     </div>
 
                     <div class="form-floating mb-3">
-                        <input class="form-control" id="inputReleaseMode" type="text" name="release_mode" placeholder="Enter Release Mode" required />
+                        <input class="form-control" id="inputReleaseMode" type="text" value = "Pickup" name="release_mode" placeholder="Enter Release Mode" readonly/>
                         <label for="inputReleaseMode">Release Mode *</label>
                     </div>
 
@@ -107,4 +142,12 @@
     </div>
 </div>
 
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+        tooltipTriggerList.forEach(function (tooltipTriggerEl) {
+            new bootstrap.Tooltip(tooltipTriggerEl);
+        });
+    });
+</script>
 @endsection

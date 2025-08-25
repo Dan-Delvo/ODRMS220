@@ -9,7 +9,7 @@
             <span class="badge" style="background-color: #1dd3b0; font-size: 2rem;">Edit Roles</span>
         </h1>
         <ol class="breadcrumb mb-4">
-            <li class="breadcrumb-item"><a href="#" class="text-dark">Dashboard</a></li>
+            <li class="breadcrumb-item"><a href="{{ url('/dashboard')}}" class="text-dark">Dashboard</a></li>
             <li class="breadcrumb-item active text-dark">Edit Role</li>
         </ol>
     </div>

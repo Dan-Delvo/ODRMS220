@@ -1,6 +1,7 @@
 @extends('layout.blankpage')
 
 @section('content')
+@include('layout.partials.message')
 
 <div class="row">
     <div class="col-md-6">
@@ -127,7 +128,7 @@
                                 <td>{{ $item->request_mode }}</td>
                                 <td>{{ $item->release_mode }}</td>
                                 <td>{{ $item->remarks }}</td>
-                                <td><span class="badge bg-success text-white px-2 py-1">{{ $item->status }}</span></td>
+                                <td><span class="badge bg-warning text-muted px-2 py-1">{{ $item->status }}</span></td>
                                 <td>{{ $item->request_date }}</td>
                                 <td>{{ $item->approve_date }}</td>
                                 <td>{{ $item->forRelease_date }}</td>
