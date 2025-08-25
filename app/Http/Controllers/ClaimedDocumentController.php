@@ -23,7 +23,7 @@ class ClaimedDocumentController extends Controller
             ->with('studentInformation')
             ->with('documents')
             ->orderBy('claimed_date', 'desc')
-            ->paginate(9);
+            ->paginate(10);
 
         return view('requestTables.claimed.claimed', [
             'DocRequests' => $DocRequests,

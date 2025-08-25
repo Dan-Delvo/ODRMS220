@@ -1,4 +1,3 @@
-
 @extends('layout.blankpage')
 
 @section ('content')
@@ -13,7 +12,7 @@
         </ol>
     </div>
     <div class="col-md-6 text-end">
-        <h1 class="mt-4 text-dark"><span class="badge" style="background-color:#1f2937; font-size: 2rem;">Students Total: {{ $user->count() }}</span></h1>
+        <h1 class="mt-4 text-dark"><span class="badge" style="background-color:#1f2937; font-size: 2rem;">Students Total: {{ $user->total() }}</span></h1>
     </div>
 </div>
 
@@ -95,9 +94,13 @@
                         </tbody>
                     </table>
                 </div>
-                <div class="d-flex justify-content-center mt-3">
+                <div class="d-flex flex-column justify-content-center align-items-center mt-3">
                     {{ $user->links() }}
+                    <small class="text-muted">
+                        Showing {{ $user->firstItem() }} - {{ $user->lastItem() }} of {{ $user->total() }}
+                    </small>
                 </div>
+                
             </div>
         </div>
     </div>

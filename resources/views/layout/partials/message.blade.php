@@ -13,22 +13,24 @@
 </div>
 @endif
 
-@if(session('Success') || session('Status') || session('Error') || session('Danger') || $errors->has('Password') || session('Declined'))
+@if(session('Success') || session('Warning') || session('Status') || session('Error') || session('Danger') || $errors->has('Password') || session('Declined'))
 <script>
     Swal.fire({
-        icon: `
-            @if(session('Error') || session('Danger') || $errors->has('Password'))
-                error
-            @else
-                success
-            @endif
-        `,
-        title: `
-            Notice!!!
-        `,
-        text: "{{ ucfirst(session('Success') ?? session('Status') ?? session('Error') ?? session('Danger') ?? $errors->first('Password')) ?? session('Declined') }}",
-        confirmButtonColor: '#1dd3b0'
-    });
+    icon: '{{ 
+        session('Warning') ? 'warning' : 
+        ((session('Error') || session('Danger') || $errors->has('Password')) ? 'error' : 'success') 
+    }}',
+    title: 'Notice!!!',
+    text: "{{ ucfirst(session('Success') 
+            ?? session('Status') 
+            ?? session('Error') 
+            ?? session('Danger') 
+            ?? session('Warning') 
+            ?? $errors->first('Password')) 
+            ?? session('Declined') }}",
+    confirmButtonColor: '#1dd3b0'
+});
+
 </script>
 @endif
 

@@ -196,8 +196,11 @@
                     @endif
                 </div>
 
-                <div class="mt-3" id="paginationContainer">
+                <div class="d-flex flex-column justify-content-center align-items-center mt-3" id="paginationContainer">
                     {{ $DocRequests->links() }}
+                    <small class="text-muted">
+                        Showing {{ $DocRequests->firstItem() }} - {{ $DocRequests->lastItem() }} of {{ $DocRequests->total() }}
+                    </small>
                 </div>
             </div>
         </div>

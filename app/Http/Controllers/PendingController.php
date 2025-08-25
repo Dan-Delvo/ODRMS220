@@ -37,7 +37,7 @@ class PendingController extends Controller
             ->with('claimer')
             ->with('studentInformation')
             ->orderBy('req_no', 'asc')
-            ->paginate(9);
+            ->paginate(10);
 
         return view('requestTables.pending.pending', [
             'DocRequests' => $DocRequests,

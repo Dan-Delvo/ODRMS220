@@ -2,6 +2,7 @@
 
 @section ('content')
 
+@include('layout.partials.message') 
 <!-- Consolidated Notification System -->
 <div class="row mb-4">
     <div class="col-md-12">
@@ -77,7 +78,7 @@
         </ol>
     </div>
     <div class="col-md-6 text-end">
-        <h1 class="mt-4 text-dark"><span class="badge" style="background-color:#1f2937; font-size: 2rem;">Users Total: {{ $user->count() }}</span></h1>
+        <h1 class="mt-4 text-dark"><span class="badge" style="background-color:#1f2937; font-size: 2rem;">Users Total: {{ $user->total() }}</span></h1>
     </div>
 </div>
 
@@ -125,7 +126,7 @@
                                     <form action="{{ route('user.delete', $item->user_account_id) }}" method="POST" class="d-inline" onsubmit="return confirm('Are you sure you want to delete this user?')">
                                         @csrf
                                         @method('DELETE')
-                                        <button type="submit" class="btn btn-danger me-2">Delete</button>
+                                        <button type="button" class="btn btn-danger btn-delete me-2">Delete</button>
                                     </form>
                                     @endif
 
@@ -140,12 +141,54 @@
                 </div>
 
                 <!-- Pagination Links -->
-                <div class="d-flex justify-content-center mt-3">
+                <div class="d-flex flex-column justify-content-center align-items-center mt-3">
                     {{ $user->links() }}
+                    <small class="text-muted">
+                        Showing {{ $user->firstItem() }} - {{ $user->lastItem() }} of {{ $user->total() }}
+                    </small>
                 </div>
             </div>
         </div>
     </div>
 </div>
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        document.querySelectorAll(".btn-delete").forEach(button => {
+            button.addEventListener("click", function(e) {
+                let form = this.closest("form");
+
+                // First confirmation
+                Swal.fire({
+                    title: "Are you sure?",
+                    text: "The user accounts connected to this role will also be deleted",
+                    icon: "warning",
+                    showCancelButton: true,
+                    confirmButtonColor: "#1dd3b0",
+                    cancelButtonColor: "#1f2937",
+                    confirmButtonText: "Yes, delete it!",
+                    cancelButtonText: "Cancel"
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        // Second confirmation
+                        Swal.fire({
+                            title: "Final Confirmation",
+                            text: "This action cannot be undone!",
+                            icon: "error",
+                            showCancelButton: true,
+                            confirmButtonColor: "#d33",
+                            cancelButtonColor: "#1f2937",
+                            confirmButtonText: "Yes, I understand",
+                            cancelButtonText: "Cancel"
+                        }).then((finalResult) => {
+                            if (finalResult.isConfirmed) {
+                                form.submit();
+                            }
+                        });
+                    }
+                });
+            });
+        });
+    });
+</script>
 
 @endsection

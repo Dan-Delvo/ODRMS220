@@ -159,7 +159,7 @@ class AccountController extends Controller
                 $errorMessage .= 'Please resolve the following first: ';
                 $errorMessage .= implode(', ', $requestCheck['requestTypes']);
 
-                return redirect('panel/user')->with('Danger', $errorMessage);
+                return redirect('panel/user')->with('Warning', $errorMessage);
             }
 
             DB::beginTransaction();
