@@ -94,16 +94,17 @@
 <!-- Status Filter for Table Display -->
 <div class="row mb-3">
     <div class="col-md-12">
-        <form action="{{ route('generateReports.display') }}" method="GET" class="d-flex align-items-center">
+        <form action="{{ route('generateReports.display') }}" method="GET" class="d-flex align-items-center" id="statusFilterForm">
             <label for="table_status_filter" class="me-2 text-dark">Filter Table by Status:</label>
-            <select id="table_status_filter" name="status" class="form-select me-3" style="width: auto;">
+            <select id="table_status_filter" name="status" class="form-select me-3" style="width: auto;" onchange="this.form.submit()">
                 <option value="all" {{ request('status') == 'all' ? 'selected' : '' }}>All Status</option>
                 <option value="Pending" {{ request('status') == 'Pending' ? 'selected' : '' }}>Pending</option>
                 <option value="Processing" {{ request('status') == 'Processing' ? 'selected' : '' }}>Processing</option>
                 <option value="For Release" {{ request('status') == 'For Release' ? 'selected' : '' }}>For Release</option>
                 <option value="Claimed" {{ request('status') == 'Claimed' ? 'selected' : '' }}>Claimed</option>
             </select>
-            <button type="submit" class="btn text-white" style="background-color: #1dd3b0;">Filter</button>
+            <!-- Keep the button but make it optional/hidden -->
+            <button type="submit" class="btn text-white d-none" style="background-color: #1dd3b0;">Filter</button>
         </form>
     </div>
 </div>
@@ -113,16 +114,33 @@
     <div class="col-md-12">
         <div class="card shadow-sm">
             <div class="card-header text-white d-flex align-items-center justify-content-between" style="background-color: #1f2937; height: 60px;">
+
                 <h4 class="mb-0">
                     Requests
                     @if(request('status') && request('status') != 'all')
                     <span class="badge bg-light text-dark ms-2">{{ request('status') }}</span>
                     @endif
+
                 </h4>
+
                 <div class="text-end">
                     <small>Showing {{ $DocRequests->count() }} of {{ $totalCount }} total requests</small>
                 </div>
+
+                <div class="dropdown ms-3 text-start">
+                    <button class="btn btn-outline-light btn-sm dropdown-toggle" type="button" id="sortDropdown" data-bs-toggle="dropdown" aria-expanded="false" title="Sort by Request Number">
+                        <i class="fas fa-sort me-1"></i>Sort
+                    </button>
+                    <ul class="dropdown-menu" aria-labelledby="sortDropdown">
+                        <li><a class="dropdown-item sort-option" href="#" data-sort="default">Default Order</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item sort-option" href="#" data-sort="req-asc"><i class="fas fa-sort-numeric-down me-2"></i>Req No. (A-Z)</a></li>
+                        <li><a class="dropdown-item sort-option" href="#" data-sort="req-desc"><i class="fas fa-sort-numeric-up me-2"></i>Req No. (Z-A)</a></li>
+                    </ul>
+                </div>
             </div>
+
+
 
             <div class="card-body">
                 @if($DocRequests->count() > 0)
@@ -245,5 +263,44 @@
             document.getElementById('start_date').setAttribute('max', this.value);
         });
     });
+
+    document.addEventListener('DOMContentLoaded', function() {
+    // Existing code for alerts and date filters...
+
+    // Sorting functionality for Req #
+    const sortOptions = document.querySelectorAll('.sort-option');
+    const tableBody = document.getElementById('tableBody');
+    const originalRows = Array.from(tableBody.querySelectorAll('.table-row')); // Preserve initial order
+
+    sortOptions.forEach(option => {
+            option.addEventListener('click', function(e) {
+                e.preventDefault();
+                const sortType = this.getAttribute('data-sort');
+
+                let rows = Array.from(tableBody.querySelectorAll('.table-row'));
+
+                if (sortType === 'req-asc') {
+                    rows.sort((a, b) => {
+                        const reqA = a.getAttribute('data-req-no');
+                        const reqB = b.getAttribute('data-req-no');
+                        return reqA.localeCompare(reqB, undefined, { numeric: true });
+                    });
+                } else if (sortType === 'req-desc') {
+                    rows.sort((a, b) => {
+                        const reqA = a.getAttribute('data-req-no');
+                        const reqB = b.getAttribute('data-req-no');
+                        return reqB.localeCompare(reqA, undefined, { numeric: true });
+                    });
+                } else if (sortType === 'default') {
+                    rows = [...originalRows];
+                }
+
+                // Update table with sorted rows
+                tableBody.innerHTML = '';
+                rows.forEach(row => tableBody.appendChild(row));
+            });
+        });
+    });
+
 </script>
 @endpush

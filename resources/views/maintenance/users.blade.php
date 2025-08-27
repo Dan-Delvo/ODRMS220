@@ -2,7 +2,7 @@
 
 @section ('content')
 
-@include('layout.partials.message') 
+@include('layout.partials.message')
 <!-- Consolidated Notification System -->
 <div class="row mb-4">
     <div class="col-md-12">
@@ -101,7 +101,7 @@
                         <thead class="bg-dark text-white">
                             <tr>
                                 <th>Account id</th>
-                                <th>Student id</th>
+                                <th>Name</th>
                                 <th>Role</th>
                                 <th>Email</th>
                                 <th>Username</th>
@@ -112,7 +112,13 @@
                             @foreach ($user as $item)
                             <tr>
                                 <td>{{ $item->user_account_id }}</td>
-                                <td>{{ $item->std_students_id }}</td>
+
+                                @if(!$item->studentInformation)
+                                    <td class="text-danger">No Student Info</td>
+                                @else
+                                    <td>{{ $item->studentInformation->full_name }}</td>
+                                @endif
+
                                 <td>{{ $item->roles->name }}</td>
                                 <td>{{ $item->email_address }}</td>
                                 <td>{{ $item->username }}</td>
