@@ -2,6 +2,7 @@
 
 @section ('content')
 
+
 <style>
     input::placeholder {
         color: #D3D3D3 !important;

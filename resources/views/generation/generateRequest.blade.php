@@ -103,7 +103,7 @@
                 <option value="For Release" {{ request('status') == 'For Release' ? 'selected' : '' }}>For Release</option>
                 <option value="Claimed" {{ request('status') == 'Claimed' ? 'selected' : '' }}>Claimed</option>
             </select>
-            <button type="submit" class="btn btn-primary">Filter</button>
+            <button type="submit" class="btn text-white" style="background-color: #1dd3b0;">Filter</button>
         </form>
     </div>
 </div>
@@ -116,7 +116,7 @@
                 <h4 class="mb-0">
                     Requests
                     @if(request('status') && request('status') != 'all')
-                        <span class="badge bg-light text-dark ms-2">{{ request('status') }}</span>
+                    <span class="badge bg-light text-dark ms-2">{{ request('status') }}</span>
                     @endif
                 </h4>
                 <div class="text-end">
@@ -168,20 +168,20 @@
                                 <td>{{ $item->remarks ?? 'N/A' }}</td>
                                 <td>
                                     @switch($item->status)
-                                        @case('Pending')
-                                            <span class="badge bg-warning text-dark">{{ $item->status }}</span>
-                                            @break
-                                        @case('Processing')
-                                            <span class="badge bg-info">{{ $item->status }}</span>
-                                            @break
-                                        @case('For Release')
-                                            <span class="badge bg-primary">{{ $item->status }}</span>
-                                            @break
-                                        @case('Claimed')
-                                            <span class="badge bg-success">{{ $item->status }}</span>
-                                            @break
-                                        @default
-                                            <span class="badge bg-secondary">{{ $item->status ?? 'Unknown' }}</span>
+                                    @case('Pending')
+                                    <span class="badge bg-warning text-dark">{{ $item->status }}</span>
+                                    @break
+                                    @case('Processing')
+                                    <span class="badge bg-info">{{ $item->status }}</span>
+                                    @break
+                                    @case('For Release')
+                                    <span class="badge bg-primary">{{ $item->status }}</span>
+                                    @break
+                                    @case('Claimed')
+                                    <span class="badge bg-success">{{ $item->status }}</span>
+                                    @break
+                                    @default
+                                    <span class="badge bg-danger">{{ $item->status ?? 'Unknown' }}</span>
                                     @endswitch
                                 </td>
                                 <td>{{ $item->request_date ? \Carbon\Carbon::parse($item->request_date)->format('M d, Y') : 'N/A' }}</td>
@@ -193,8 +193,11 @@
                         </tbody>
                     </table>
                 </div>
-                <div class="d-flex justify-content-center mt-3">
+                <div class="d-flex flex-column justify-content-center align-items-center mt-3">
                     {{ $DocRequests->appends(request()->query())->links() }}
+                    <small class="text-muted">
+                        Showing {{ $DocRequests->firstItem() }} - {{ $DocRequests->lastItem() }} of {{ $DocRequests->total() }}
+                    </small>
                 </div>
                 @else
                 <div class="text-center py-5">
@@ -202,9 +205,9 @@
                     <h5 class="text-muted">No requests found</h5>
                     <p class="text-muted">
                         @if(request('status') && request('status') != 'all')
-                            No requests with status "{{ request('status') }}" found.
+                        No requests with status "{{ request('status') }}" found.
                         @else
-                            No requests available at the moment.
+                        No requests available at the moment.
                         @endif
                     </p>
                 </div>
@@ -218,29 +221,29 @@
 
 @push('scripts')
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-    // Auto-dismiss alerts after 5 seconds
-    const alerts = document.querySelectorAll('.alert');
-    alerts.forEach(function(alert) {
-        setTimeout(function() {
-            const bsAlert = new bootstrap.Alert(alert);
-            bsAlert.close();
-        }, 5000);
-    });
+    document.addEventListener('DOMContentLoaded', function() {
+        // Auto-dismiss alerts after 5 seconds
+        const alerts = document.querySelectorAll('.alert');
+        alerts.forEach(function(alert) {
+            setTimeout(function() {
+                const bsAlert = new bootstrap.Alert(alert);
+                bsAlert.close();
+            }, 5000);
+        });
 
-    // Set max date to today for date inputs
-    const today = new Date().toISOString().split('T')[0];
-    document.getElementById('start_date').setAttribute('max', today);
-    document.getElementById('end_date').setAttribute('max', today);
+        // Set max date to today for date inputs
+        const today = new Date().toISOString().split('T')[0];
+        document.getElementById('start_date').setAttribute('max', today);
+        document.getElementById('end_date').setAttribute('max', today);
 
-    // Validate date range
-    document.getElementById('start_date').addEventListener('change', function() {
-        document.getElementById('end_date').setAttribute('min', this.value);
-    });
+        // Validate date range
+        document.getElementById('start_date').addEventListener('change', function() {
+            document.getElementById('end_date').setAttribute('min', this.value);
+        });
 
-    document.getElementById('end_date').addEventListener('change', function() {
-        document.getElementById('start_date').setAttribute('max', this.value);
+        document.getElementById('end_date').addEventListener('change', function() {
+            document.getElementById('start_date').setAttribute('max', this.value);
+        });
     });
-});
 </script>
 @endpush

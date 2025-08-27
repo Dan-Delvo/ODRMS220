@@ -60,5 +60,9 @@ class Account extends Authenticatable
     {
         return $this->belongsTo(StudentInformationModel::class, 'std_students_id', 'id');
     }
+    public function activityLogs()
+    {
+        return $this->hasMany(ActivityLog::class, 'user_account_id', 'user_account_id');
+    }
 }
 

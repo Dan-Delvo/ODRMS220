@@ -16,7 +16,8 @@ class DocumentsModelController extends Controller
     public function display()
     {
         $Doc = DocumentsModel::paginate(9);
-        return view('maintenance.docs', compact('Doc'));
+        $count = DocumentsModel::count();
+        return view('maintenance.docs', compact('Doc', 'count'));
     }
 
     public function edit($id)
@@ -46,7 +47,9 @@ class DocumentsModelController extends Controller
 
         // Validate the request data
         $request->validate([
-            'DocType' => 'required|string|max:255',
+            'DocType' => 'required|string|max:255|unique:doc_categories,DocType',
+        ],[
+            'DocType.unique' => 'This document type already exists.',
         ]);
 
         DocumentsModel::create([

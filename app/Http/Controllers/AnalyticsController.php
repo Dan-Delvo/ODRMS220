@@ -27,6 +27,7 @@ class AnalyticsController extends Controller
             ->mapWithKeys(function ($item) {
                 return [Carbon::create()->month($item->month)->format('F') => $item->count];
             });
+
         // Total for label
         $totalRequestsInInterval = array_sum($monthlyRequestsData->values()->toArray());
         // Monthly Document Requests (FILTERED)
@@ -41,6 +42,16 @@ class AnalyticsController extends Controller
             });
         // Total for label
         $totalRequestsInInterval = array_sum($monthlyRequestsData->values()->toArray());
+
+        // Yearly Document Requests
+        $yearlyRequestsData = DB::table('doc_requests')
+            ->select(DB::raw("YEAR(request_date) as year"), DB::raw("COUNT(*) as count"))
+            ->groupBy(DB::raw("YEAR(request_date)"))
+            ->orderBy('year')
+            ->get()
+            ->mapWithKeys(function ($item) {
+                return [$item->year => $item->count];
+            });
 
 
         // Document Type Distribution
@@ -105,6 +116,7 @@ class AnalyticsController extends Controller
 
         return view('common.analyticsDashboard', [
             'monthlyRequestsData' => $monthlyRequestsData,
+            'yearlyRequestsData' => $yearlyRequestsData,
             'docTypeData' => $docTypeData,
             'modeData' => $modeData,
             'revenueData' => $revenueData,

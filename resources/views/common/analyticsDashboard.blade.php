@@ -7,7 +7,6 @@
         <h1 class="mt-4"><span class="badge text-bg-dark">Analytics Dashboard</span></h1>
         <ol class="breadcrumb mb-4">
             <li class="breadcrumb-item active"><a href="{{ route('dashboard') }}" class="text-dark">Dashboard</a></li>
-            <li class="breadcrumb-item active"><a href="{{ route('dashboard') }}" class="text-dark">Dashboard</a></li>
             <li class="breadcrumb-item active">Analytics</li>
         </ol>
     </div>
@@ -18,23 +17,33 @@
         <!-- Monthly Document Requests -->
         <div class="card shadow-lg border-0 rounded-lg mb-4">
             <div class="card-header bg-dark text-white">
-                <div class="d-flex justify-content-between align-items-center flex-wrap">
-                    <h5 class="mb-2 mb-md-0">Monthly Document Requests</h5>
-                    <form method="GET" class="d-flex align-items-center gap-2">
-                        <input type="date" name="start_date" value="{{ $startDate }}" class="form-control form-control-sm">
-                        <input type="date" name="end_date" value="{{ $endDate }}" class="form-control form-control-sm">
-                        <button type="submit" class="btn btn-outline-light btn-sm">Filter</button>
-                    </form>
-                </div>
-                <div class="d-flex justify-content-between align-items-center flex-wrap">
-                    <h5 class="mb-2 mb-md-0">Monthly Document Requests</h5>
-                    <form method="GET" class="d-flex align-items-center gap-2">
-                        <input type="date" name="start_date" value="{{ $startDate }}" class="form-control form-control-sm">
-                        <input type="date" name="end_date" value="{{ $endDate }}" class="form-control form-control-sm">
-                        <button type="submit" class="btn btn-outline-light btn-sm">Filter</button>
-                    </form>
+                <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
+                    
+                    <!-- Title -->
+                    <h5 class="mb-0">Monthly Document Requests</h5>
+
+                    <!-- Filters + Toggle -->
+                    <div class="d-flex align-items-center gap-3">
+                        <!-- Date Filter -->
+                        <form method="GET" class="d-flex align-items-center gap-2">
+                            <input type="date" name="start_date" value="{{ $startDate }}" class="form-control form-control-sm" style="width: 140px;">
+                            <input type="date" name="end_date" value="{{ $endDate }}" class="form-control form-control-sm" style="width: 140px;">
+                            <button type="submit" class="btn btn-outline-light btn-sm">Filter</button>
+                        </form>
+
+                        <!-- Yearly Toggle -->
+                        <div class="d-flex align-items-center">
+                            <span class="me-2 small text-white">Monthly</span>
+                            <label class="switch mb-0">
+                                <input type="checkbox" id="toggleYearly">
+                                <span class="slider round"></span>
+                            </label>
+                            <span class="ms-2 small text-white">Yearly</span>
+                        </div>
+                    </div>
                 </div>
             </div>
+
             <div class="card-body bg-light">
                 <canvas id="monthlyRequestsChart" style="max-height: 300px;"></canvas>
                 <p class="mt-3 text-center mb-0">
@@ -44,60 +53,41 @@
                         to <strong>{{ \Carbon\Carbon::parse($endDate)->format('F j, Y') }}</strong>
                     </small>
                 </p>
-                <p class="mt-3 text-center mb-0">
-                    <strong>Total Requests:</strong> {{ $totalRequestsInInterval }}<br>
-                    <small>
-                        From <strong>{{ \Carbon\Carbon::parse($startDate)->format('F j, Y') }}</strong>
-                        to <strong>{{ \Carbon\Carbon::parse($endDate)->format('F j, Y') }}</strong>
-                    </small>
-                </p>
             </div>
         </div>
     </div>
 </div>
 
 
-
-
-
-<div class="row justify-content-center g-3">
-    <!-- Request Distribution by Document Type -->
+<!-- Other charts remain unchanged -->
+<div class="row justify-content-center g-3 mb-4">
     <div class="col-12 col-md-6 d-flex justify-content-center">
         <div class="card shadow-lg border-0 rounded-lg w-100">
             <div class="card-header bg-dark text-white">
                 <h5 class="mb-0">Request Distribution by Document Type</h5>
             </div>
-            <div class="card-body bg-light">
-                <canvas id="docTypeChart" style="max-height: 300px;"></canvas>
-            </div>
+            <div class="card-body bg-light"><canvas id="docTypeChart" style="max-height: 300px;"></canvas></div>
         </div>
     </div>
-
-    <!-- Request Mode (Walk-in vs Online) -->
     <div class="col-12 col-md-6 d-flex justify-content-center">
         <div class="card shadow-lg border-0 rounded-lg w-100">
             <div class="card-header bg-dark text-white">
                 <h5 class="mb-0">Request Mode (Walk-in vs Online)</h5>
             </div>
-            <div class="card-body bg-light">
-                <canvas id="modeChart" style="max-height: 300px;"></canvas>
-            </div>
+            <div class="card-body bg-light"><canvas id="modeChart" style="max-height: 300px;"></canvas></div>
         </div>
     </div>
 </div>
 
 <div class="row justify-content-center">
     <div class="col-12 col-lg-8">
-        <!-- Request Distribution by Grade Level -->
         <div class="card shadow-lg border-0 rounded-lg mb-4">
             <div class="card-header bg-dark text-white">
                 <h5 class="mb-0">Request Distribution by Grade Level</h5>
             </div>
             <div class="card-body bg-light">
                 <canvas id="gradeLevelChart" style="max-height: 300px;"></canvas>
-                <p class="mt-3 text-center mb-0">
-                    <strong>Total Requests (All Grade Levels):</strong> <span id="gradeLevelTotal"></span>
-                </p>
+                <p class="mt-3 text-center mb-0"><strong>Total Requests (All Grade Levels):</strong> <span id="gradeLevelTotal"></span></p>
             </div>
         </div>
     </div>
@@ -105,67 +95,51 @@
 
 <div class="row justify-content-center">
     <div class="col-12 col-lg-8">
-        <!-- Monthly Revenue -->
         <div class="card shadow-lg border-0 rounded-lg mb-4">
             <div class="card-header bg-dark text-white">
                 <h5 class="mb-0">Monthly Revenue</h5>
             </div>
-            <div class="card-body bg-light">
-                <canvas id="revenueChart" style="max-height: 300px;"></canvas>
-            </div>
+            <div class="card-body bg-light"><canvas id="revenueChart" style="max-height: 300px;"></canvas></div>
         </div>
     </div>
 </div>
 
 <div class="row justify-content-center">
     <div class="col-12 col-lg-8">
-        <!-- Number of Unclaimed Documents -->
         <div class="card shadow-lg border-0 rounded-lg mb-4">
             <div class="card-header bg-dark text-white">
                 <h5 class="mb-0">Unclaimed Documents</h5>
             </div>
-            <div class="card-body bg-light">
-                <canvas id="unclaimedChart" style="max-height: 300px;"></canvas>
-            </div>
+            <div class="card-body bg-light"><canvas id="unclaimedChart" style="max-height: 300px;"></canvas></div>
         </div>
     </div>
 </div>
-
-
-<div class="row justify-content-center">
-    <div class="col-12 col-lg-8">
-        <!-- Number of Unclaimed Documents -->
-        <div class="card shadow-lg border-0 rounded-lg mb-4">
-            <div class="card-header bg-dark text-white">
-                <h5 class="mb-0">Unclaimed Documents</h5>
-            </div>
-            <div class="card-body bg-light">
-                <canvas id="unclaimedChart" style="max-height: 300px;"></canvas>
-            </div>
-        </div>
-    </div>
-</div>
-
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
 <script>
     const monthlyRequests = @json($monthlyRequestsData);
+    const yearlyRequests = @json($yearlyRequestsData);
     const docTypeData = @json($docTypeData);
     const modeData = @json($modeData);
     const revenueData = @json($revenueData);
     const unclaimedData = @json($unclaimedData);
     const gradeLevelData = @json($gradeLevelData);
 
-    const allMonths = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+    const allMonths = ['January', 'February', 'March', 'April', 'May', 'June',
+        'July', 'August', 'September', 'October', 'November', 'December'
+    ];
 
     function mapDataToAllMonths(data) {
         return allMonths.map(month => data[month] ?? 0);
     }
 
-    // Monthly Document Requests Chart
+    // Monthly & Yearly toggle chart
     const monthlyValues = mapDataToAllMonths(monthlyRequests);
-    new Chart(document.getElementById('monthlyRequestsChart'), {
+    const yearlyLabels = Object.keys(yearlyRequests);
+    const yearlyValues = Object.values(yearlyRequests);
+
+    const ctx = document.getElementById('monthlyRequestsChart').getContext('2d');
+    const monthlyRequestsChart = new Chart(ctx, {
         type: 'bar',
         data: {
             labels: allMonths,
@@ -181,116 +155,89 @@
         options: {
             responsive: true,
             maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    display: false
+                },
+                title: {
+                    display: true,
+                    text: 'Requests Per Month'
+                }
+            },
             scales: {
                 y: {
                     beginAtZero: true,
                     ticks: {
-                        callback: function(value) {
-                            return Number.isInteger(value) ? value : null;
-                        }
+                        callback: value => Number.isInteger(value) ? value : null
                     }
-                    ticks: {
-                        callback: function(value) {
-                            return Number.isInteger(value) ? value : null;
-                        }
-                    }
-                }
-            },
-            plugins: {
-                legend: {
-                    display: false
-                },
-                title: {
-                    display: true,
-                    text: 'Requests Per Month'
-                }
-                legend: {
-                    display: false
-                },
-                title: {
-                    display: true,
-                    text: 'Requests Per Month'
                 }
             }
         }
     });
 
-    // Document Type Chart (Doughnut)
-    const docTypeLabels = Object.keys(docTypeData);
-    const docTypeValues = Object.values(docTypeData);
-    const docTypeColors = ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF', '#FF9F40'];
+    document.getElementById('toggleYearly').addEventListener('change', function() {
+        if (this.checked) {
+            monthlyRequestsChart.data.labels = yearlyLabels;
+            monthlyRequestsChart.data.datasets[0].data = yearlyValues;
+            monthlyRequestsChart.data.datasets[0].label = 'Requests Per Year';
+            monthlyRequestsChart.options.plugins.title.text = 'Requests Per Year';
+        } else {
+            monthlyRequestsChart.data.labels = allMonths;
+            monthlyRequestsChart.data.datasets[0].data = monthlyValues;
+            monthlyRequestsChart.data.datasets[0].label = 'Requests Per Month';
+            monthlyRequestsChart.options.plugins.title.text = 'Requests Per Month';
+        }
+        monthlyRequestsChart.update();
+    });
+
+    // Document Type Chart
     new Chart(document.getElementById('docTypeChart'), {
         type: 'doughnut',
         data: {
-            labels: docTypeLabels,
+            labels: Object.keys(docTypeData),
             datasets: [{
                 label: 'Document Types',
-                data: docTypeValues,
-                backgroundColor: docTypeColors.slice(0, docTypeLabels.length),
-                borderWidth: 1,
+                data: Object.values(docTypeData),
+                backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF', '#FF9F40']
             }]
         },
         options: {
             responsive: true,
-            maintainAspectRatio: false,
             plugins: {
                 legend: {
                     position: 'bottom'
-                },
-                title: {
-                    display: true,
-                    text: 'Document Type Distribution'
-                }
-                legend: {
-                    position: 'bottom'
-                },
-                title: {
-                    display: true,
-                    text: 'Document Type Distribution'
                 }
             }
         }
     });
 
-    // Request Mode Chart (Pie)
-    const modeLabels = Object.keys(modeData);
-    const modeValues = Object.values(modeData);
-    const modeColors = ['#36A2EB', '#FF6384'];
+    // Request Mode Chart
     new Chart(document.getElementById('modeChart'), {
         type: 'pie',
         data: {
-            labels: modeLabels,
+            labels: Object.keys(modeData),
             datasets: [{
                 label: 'Request Mode',
-                data: modeValues,
-                backgroundColor: modeColors.slice(0, modeLabels.length),
-                borderWidth: 1,
+                data: Object.values(modeData),
+                backgroundColor: ['#36A2EB', '#FF6384']
             }]
         },
         options: {
             responsive: true,
-            maintainAspectRatio: false,
             plugins: {
                 legend: {
                     position: 'bottom'
-                },
-                title: {
-                    display: true,
-                    text: 'Request Mode'
                 }
             }
         }
     });
 
-    // Grade Level Chart (Bar)
-    const gradeLevelLabels = Object.keys(gradeLevelData).map(level => `Grade ${level}`);
+    // Grade Level Chart
+    const gradeLevelLabels = Object.keys(gradeLevelData).map(level => `Grade Level ${level}`);
     const gradeLevelValues = Object.values(gradeLevelData);
-    const gradeLevelTotal = gradeLevelValues.reduce((sum, value) => sum + value, 0);
-    const gradeLevelColors = ['#8E44AD', '#3498DB', '#1ABC9C', '#F39C12', '#E74C3C', '#2ECC71', '#9B59B6', '#34495E', '#E67E22', '#95A5A6', '#F1C40F', '#E91E63'];
-    
-    // Display total in the HTML
+    const gradeLevelTotal = gradeLevelValues.reduce((sum, v) => sum + v, 0);
     document.getElementById('gradeLevelTotal').textContent = gradeLevelTotal;
-    
+
     new Chart(document.getElementById('gradeLevelChart'), {
         type: 'bar',
         data: {
@@ -298,125 +245,55 @@
             datasets: [{
                 label: 'Total Requests',
                 data: gradeLevelValues,
-                backgroundColor: gradeLevelColors.slice(0, gradeLevelLabels.length),
-                borderColor: gradeLevelColors.slice(0, gradeLevelLabels.length),
-                borderWidth: 1,
-                borderRadius: 4
+                backgroundColor: '#1dd3b0'
             }]
         },
         options: {
             responsive: true,
-            maintainAspectRatio: false,
-            scales: {
-                y: {
-                    beginAtZero: true,
-                    title: {
-                        display: true,
-                    },
-                    ticks: {
-                        callback: function(value) {
-                            return Number.isInteger(value) ? value : null;
-                        }
-                    }
-                },
-                x: {
-                    title: {
-                        display: true,
-                    },
-                    ticks: {
-                        maxRotation: 45,
-                        minRotation: 0
-                    }
-                }
-            },
             plugins: {
                 legend: {
                     display: false
-                },
-                title: {
-                    display: true,
-                    text: 'Document Requests by Grade Level'
                 }
             }
         }
     });
 
-    // Monthly Revenue Chart (Line)
-    const revenueLabels = allMonths;
-    const revenueValues = mapDataToAllMonths(revenueData);
+    // Revenue Chart
     new Chart(document.getElementById('revenueChart'), {
         type: 'line',
         data: {
-            labels: revenueLabels,
+            labels: allMonths,
             datasets: [{
                 label: 'Revenue (₱)',
-                data: revenueValues,
-                fill: false,
+                data: mapDataToAllMonths(revenueData),
                 borderColor: 'rgba(75, 192, 192, 1)',
-                tension: 0.1,
-                borderWidth: 2,
-                pointRadius: 3,
-                pointBackgroundColor: 'rgba(75, 192, 192, 1)',
+                tension: 0.1
             }]
         },
         options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            scales: {
-                y: {
-                    beginAtZero: true
-                }
-            },
-            plugins: {
-                legend: {
-                    display: true
-                },
-                title: {
-                    display: true,
-                    text: 'Monthly Revenue'
-                }
-            }
+            responsive: true
         }
     });
 
-    // Unclaimed Documents Per Month (Bar Chart)
-    const unclaimedValues = mapDataToAllMonths(unclaimedData);
-
+    // Unclaimed Documents Chart
     new Chart(document.getElementById('unclaimedChart'), {
         type: 'bar',
         data: {
             labels: allMonths,
             datasets: [{
                 label: 'Unclaimed Documents',
-                data: unclaimedValues,
-                backgroundColor: 'rgba(255, 99, 132, 0.7)',
-                borderColor: 'rgba(255, 99, 132, 1)',
-                borderWidth: 1,
-                borderRadius: 4
+                data: mapDataToAllMonths(unclaimedData),
+                backgroundColor: 'rgba(255, 99, 132, 0.7)'
             }]
         },
         options: {
             responsive: true,
-            maintainAspectRatio: false,
-            scales: {
-                y: {
-                    beginAtZero: true,
-                    ticks: {
-                        stepSize: 50 // jumps 0, 50, 100, 150...
-                    }
-                }
-            },
             plugins: {
                 legend: {
                     display: false
-                },
-                title: {
-                    display: true,
-                    text: 'Unclaimed Documents Per Month'
                 }
             }
         }
     });
 </script>
-
 @endsection

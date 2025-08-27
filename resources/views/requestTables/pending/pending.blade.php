@@ -182,8 +182,11 @@
                     @endif
                 </div>
 
-                <div class="mt-3" id="paginationContainer">
+                <div class="d-flex flex-column justify-content-center align-items-center mt-3" id="paginationContainer">
                     {{ $DocRequests->links() }}
+                    <small class="text-muted">
+                        Showing {{ $DocRequests->firstItem() }} - {{ $DocRequests->lastItem() }} of {{ $DocRequests->total() }}
+                    </small>
                 </div>
 
                 <!-- Receipt Modals -->
@@ -467,18 +470,6 @@
                         allowOutsideClick: false,
                         didOpen: () => {
                             Swal.showLoading(); // <- Spinner starts here
-                            setTimeout(() => {
-                                Swal.close(); // stop loading
-                                Swal.fire({
-                                    icon: 'success',
-                                    title: 'Request Declined',
-                                    text: 'Your declined has been processed.',
-                                    confirmButtonColor: '#1dd3b0', // Match button color
-                                    customClass: {
-                                        icon: 'swal-icon-green' // Custom class for icon
-                                    }
-                                });
-                            }, 3000);
                         }
                     });
                     targetForm.submit();

@@ -29,6 +29,12 @@ class RoleController extends Controller
         // Set current_user before DB write
         DB::connection()->getPdo()->exec("SET @current_user = " . DB::connection()->getPdo()->quote(Auth::check() ? Auth::user()->username : 'guest'));
 
+        request()->validate([
+            'role' => 'required|unique:role,name',
+        ],[
+            'role.required' => 'The role field is required.',
+            'role.unique' => 'The role name has already been taken.',
+        ]);
         $save = new RolesModel();
         $save->name = $request->role;
         $save->save();
