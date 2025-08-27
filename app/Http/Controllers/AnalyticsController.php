@@ -8,8 +8,6 @@ use App\Models\DocumentRequestModel;
 use App\Models\DocumentsModel;
 use App\Models\DocuPaymentFee;
 use Illuminate\Http\Request;
-use Illuminate\Http\Request;
-
 
 class AnalyticsController extends Controller
 {
@@ -18,10 +16,6 @@ class AnalyticsController extends Controller
     {
         $startDate = $request->input('start_date') ?? Carbon::now()->startOfYear()->toDateString();
         $endDate = $request->input('end_date') ?? Carbon::now()->endOfYear()->toDateString();
-    public function index(Request $request)
-    {
-        $startDate = $request->input('start_date') ?? Carbon::now()->startOfYear()->toDateString();
-        $endDate = $request->input('end_date') ?? Carbon::now()->endOfYear()->toDateString();
 
         // Monthly Document Requests (FILTERED)
         $monthlyRequestsData = DB::table('doc_requests')
@@ -78,20 +72,11 @@ class AnalyticsController extends Controller
             ->get()
             ->pluck('count', 'request_mode');
 
-
-        // Monthly Revenue
-        $revenueData = DocuPaymentFee::select(
         // Monthly Revenue
         $revenueData = DocuPaymentFee::select(
             DB::raw("MONTH(time_request) as month"),
             DB::raw("SUM(doc_amount) as total")
         )
-            ->groupBy(DB::raw("MONTH(time_request)"))
-            ->orderBy('month')
-            ->get()
-            ->mapWithKeys(function ($item) {
-                return [Carbon::create()->month($item->month)->format('F') => $item->total];
-            });
             ->groupBy(DB::raw("MONTH(time_request)"))
             ->orderBy('month')
             ->get()
