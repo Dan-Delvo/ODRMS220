@@ -73,6 +73,20 @@
                                 <li><a class="dropdown-item filter-option" href="#" data-filter="claimer">Claimer</a></li>
                             </ul>
                         </div>
+
+                        <!-- Sort Dropdown -->
+                        <div class="dropdown ms-2">
+                            <button class="btn btn-outline-light btn-sm dropdown-toggle" type="button" id="sortDropdown" data-bs-toggle="dropdown" aria-expanded="false" title="Sort by Request Number">
+                                <i class="fas fa-sort me-1"></i>Sort
+                            </button>
+                            <ul class="dropdown-menu" aria-labelledby="sortDropdown">
+                                <li><a class="dropdown-item sort-option" href="#" data-sort="default">Default Order</a></li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li><a class="dropdown-item sort-option" href="#" data-sort="req-asc"><i class="fas fa-sort-numeric-down me-2"></i>Req No. (A-Z)</a></li>
+                                <li><a class="dropdown-item sort-option" href="#" data-sort="req-desc"><i class="fas fa-sort-numeric-up me-2"></i>Req No. (Z-A)</a></li>
+                            </ul>
+                        </div>
+
                     </div>
                 </div>
             </div>
@@ -358,6 +372,8 @@
             });
         });
 
+
+
         // Perform search function
         function performSearch() {
             const query = searchInput.value.toLowerCase().trim();
@@ -579,6 +595,41 @@
                     setRevertLoadingState(false);
                 });
         });
+
+        // Sorting functionality
+        const sortOptions = document.querySelectorAll('.sort-option');
+        const tableBody = document.getElementById('tableBody');
+        const originalRows = Array.from(tableBody.querySelectorAll('.table-row')); // Original order
+
+        sortOptions.forEach(option => {
+            option.addEventListener('click', function(e) {
+                e.preventDefault();
+                const sortType = this.getAttribute('data-sort');
+
+                let rows = Array.from(tableBody.querySelectorAll('.table-row'));
+
+                if (sortType === 'req-asc') {
+                    rows.sort((a, b) => {
+                        const reqA = a.getAttribute('data-req-no');
+                        const reqB = b.getAttribute('data-req-no');
+                        return reqA.localeCompare(reqB, undefined, { numeric: true });
+                    });
+                } else if (sortType === 'req-desc') {
+                    rows.sort((a, b) => {
+                        const reqA = a.getAttribute('data-req-no');
+                        const reqB = b.getAttribute('data-req-no');
+                        return reqB.localeCompare(reqA, undefined, { numeric: true });
+                    });
+                } else if (sortType === 'default') {
+                    rows = [...originalRows];
+                }
+
+                // Update table with sorted rows
+                tableBody.innerHTML = '';
+                rows.forEach(row => tableBody.appendChild(row));
+            });
+        });
+
 
         // Helper function to set revert loading state
         function setRevertLoadingState(isLoading) {

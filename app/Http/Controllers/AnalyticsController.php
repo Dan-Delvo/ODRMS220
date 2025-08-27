@@ -9,7 +9,6 @@ use App\Models\DocumentsModel;
 use App\Models\DocuPaymentFee;
 use Illuminate\Http\Request;
 
-
 class AnalyticsController extends Controller
 {
 
@@ -83,8 +82,6 @@ class AnalyticsController extends Controller
             ->groupBy('request_mode')
             ->get()
             ->pluck('count', 'request_mode');
-
-
 
         // Monthly Revenue
         $revenueData = DocuPaymentFee::select(

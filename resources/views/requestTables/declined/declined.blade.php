@@ -62,6 +62,23 @@
                             <li><a class="dropdown-item filter-option" href="#" data-filter="status">Status</a></li>
                         </ul>
                     </div>
+                    <div class="dropdown">
+                        <button class="btn btn-outline-light btn-sm dropdown-toggle" type="button" id="sortDropdown" data-bs-toggle="dropdown" aria-expanded="false" title="Sort by Request Number">
+                            <i class="fas fa-sort me-1"></i>Sort
+                        </button>
+                        <ul class="dropdown-menu" aria-labelledby="sortDropdown">
+                            <li><a class="dropdown-item sort-option" href="#" data-sort="default">Default Order</a></li>
+                            <li>
+                                <hr class="dropdown-divider">
+                            </li>
+                            <li><a class="dropdown-item sort-option" href="#" data-sort="req-asc">
+                                <i class="fas fa-sort-numeric-down me-2"></i>Req No. (A-Z)
+                            </a></li>
+                            <li><a class="dropdown-item sort-option" href="#" data-sort="req-desc">
+                                <i class="fas fa-sort-numeric-up me-2"></i>Req No. (Z-A)
+                            </a></li>
+                        </ul>
+                    </div>
                 </div>
             </div>
 
@@ -389,8 +406,12 @@
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         let targetForm;
+        let currentSort = 'default';
 
         const reasonModal = new bootstrap.Modal(document.getElementById('reasonModal'));
+        const tableBody = document.getElementById('tableBody');
+        const originalOrder = Array.from(document.querySelectorAll('.table-row'));
+
 
         // Step 1: Click decline → open reason modal
         document.querySelectorAll('.decline-btn').forEach(function(btn) {
@@ -400,6 +421,8 @@
                 reasonModal.show();
             });
         });
+
+
 
         // Step 2: After entering reason → show SweetAlert confirmation
         document.getElementById('proceedToConfirmBtn').addEventListener('click', function() {
@@ -504,6 +527,50 @@
             });
         });
 
+        document.querySelectorAll('.sort-option').forEach(option => {
+            option.addEventListener('click', function(e) {
+                e.preventDefault();
+                currentSort = this.getAttribute('data-sort');
+                document.getElementById('sortDropdown').innerHTML = `<i class="fas fa-sort me-1"></i>${this.textContent}`;
+                performSort();
+                performSearch(); // Re-apply search after sorting
+            });
+        });
+
+
+        function performSort() {
+        const rows = Array.from(tableBody.querySelectorAll('.table-row'));
+
+        let sortedRows;
+
+        switch (currentSort) {
+            case 'req-asc':
+                sortedRows = rows.sort((a, b) => {
+                    const reqA = a.getAttribute('data-req-no').toLowerCase();
+                    const reqB = b.getAttribute('data-req-no').toLowerCase();
+                    return reqA.localeCompare(reqB);
+                });
+                break;
+
+            case 'req-desc':
+                sortedRows = rows.sort((a, b) => {
+                    const reqA = a.getAttribute('data-req-no').toLowerCase();
+                    const reqB = b.getAttribute('data-req-no').toLowerCase();
+                    return reqB.localeCompare(reqA);
+                });
+                break;
+
+            case 'default':
+            default:
+                // Restore original order
+                sortedRows = originalOrder.slice();
+                break;
+        }
+
+        // Clear table body and re-append sorted rows
+        tableBody.innerHTML = '';
+        sortedRows.forEach(row => tableBody.appendChild(row));
+}
         // Perform search function
         function performSearch() {
             const query = searchInput.value.toLowerCase().trim();
@@ -594,7 +661,10 @@
         window.clearSearch = function() {
             searchInput.value = '';
             currentFilter = 'all';
+            currentSort = 'default'; // Add this line
             document.getElementById('filterDropdown').textContent = 'Filter';
+            document.getElementById('sortDropdown').innerHTML = '<i class="fas fa-sort me-1"></i>Sort'; // Add this line
+            performSort(); // Add this line to reset to original order
             performSearch();
             searchInput.focus();
         }

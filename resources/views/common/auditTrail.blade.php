@@ -34,6 +34,7 @@
         </div>
         @endif
 
+
         <div class="card shadow-lg border-0 rounded-lg mt-3">
             <div class="card-header text-white d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center" style="background-color: #1f2937;">
                 <h5 class="mb-2 mb-md-0">System Audit Log</h5>
@@ -177,6 +178,13 @@
                             @endforeach
                         </tbody>
                     </table>
+
+                    <div class="d-flex flex-column justify-content-center align-items-center mt-3">
+                        {{ $auditTrail->links() }}
+                            <small class="text-muted">
+                                Showing {{ $auditTrail->firstItem() }} - {{ $auditTrail->lastItem() }} of {{ $auditTrail->total() }}
+                            </small>
+                    </div>
 
                     <!-- No Results Message -->
                     <div id="noResults" class="alert alert-warning text-center my-3" style="display: none;">
@@ -386,6 +394,41 @@
         </div>
     </div>
 </div>
+
+
+
+        <div class="row mb-3 mt-5">
+            <div class="col-12">
+                <h4 class="fw-bold text-dark mb-3">
+                    <i class="fas fa-database me-2" style="color:#1dd3b0;"></i> Backup & Restore
+                </h4>
+            </div>
+        </div>
+
+        <div class="row">
+            <!-- Backup Button -->
+            <div class="col-md-6 mb-3">
+                <button class="btn btn-lg w-100"
+                    style="background-color: #1f2937; border-color: #1f2937; color: white;"
+                    onclick="window.location.href='{{ route('backup.download') }}'">
+                    <i class="fas fa-download me-2"></i> Backup Database
+                </button>
+            </div>
+
+            <!-- Restore Form -->
+            <div class="col-md-6 mb-3">
+                <form action="{{ route('backup.restore') }}" method="POST" enctype="multipart/form-data">
+                    @csrf
+                    <div class="input-group">
+                        <input type="file" name="backup_file" class="form-control" accept=".sql,.txt" required>
+                        <button type="submit" class="btn btn-lg" style="background-color: #1f2937; border-color: #1f2937; color: white;">
+                            <i class="fas fa-upload me-2"></i> Restore
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
 
 {{-- Enhanced JavaScript with loading spinners and search functionality --}}
 <script>

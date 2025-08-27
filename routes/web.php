@@ -18,6 +18,7 @@ use App\Http\Controllers\StudentInformationModelController;
 use App\Http\Controllers\StudentRequestController;
 use App\Http\Controllers\ClaimedDocumentController;
 use App\Http\Controllers\AuditTableController;
+use App\Http\Controllers\BackupController;
 use App\Models\Account;
 use Illuminate\Support\Facades\Mail;
 use App\Models\DocumentRequestModel;
@@ -101,7 +102,8 @@ Route::group(['middleware' => 'useradmin'], function () {
     Route::post('panel/role/edit/{id}', [RoleController::class, 'update'])->name('role.update');
     Route::delete('panel/role/delete/{id}', [RoleController::class, 'delete'])->name('role.delete');
     //Role Maintenance          ================================================================================
-
+    Route::get('/backup/download', [BackupController::class, 'downloadBackup'])->name('backup.download');
+    Route::post('/backup/restore', [BackupController::class, 'restoreBackup'])->name('backup.restore');
     //User Maintenance          ================================================================================
     Route::get('panel/user', [AccountController::class, 'display'])->name('user');
     Route::get('panel/user/edit/{id}', [AccountController::class, 'edit'])->name('user.edit');

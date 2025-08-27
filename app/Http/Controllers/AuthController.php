@@ -8,8 +8,10 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
 use App\Models\PermissionRoleModel;
+use App\Models\AuditTable;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Str;
+use GeoIP;
 
 
 class AuthController extends Controller
@@ -22,6 +24,7 @@ class AuthController extends Controller
         // Check if a user is already logged in and redirect accordingly
         if (Auth::check()) {
             if (Auth::user()->roles->name === 'student') {
+                dd("hello world");
                 return redirect('stpage');
             }
 
@@ -31,6 +34,7 @@ class AuthController extends Controller
                 return redirect ('/walkin/form');
             }
             else{
+
                 return redirect('/dashboard');
             }
         }
@@ -64,17 +68,48 @@ class AuthController extends Controller
         $credentials = ['email_address' => $email, 'password' => $request->password];
         $remember = $request->has('remember');
 
+
         // Attempt login regardless of whether email exists
         if (Auth::attempt($credentials, $remember)) {
             // ✅ Success — reset limiter
             RateLimiter::clear($key);
 
             $user = Auth::user();
+            $browser = request()->header('User-Agent');
+            $ipAddress = request()->ip(); // or request()->getClientIp();
 
             if ($user->roles->id > 1) {
+
+                AuditTable::create([
+                    'type'          => 'User Logged In',       // action becomes type
+                    'old_data'      => null,                   // No previous data for login
+                    'new_data'      => json_encode([
+                        'ip_address' => $ipAddress,
+                        'session_id' => $sessionId,
+                        'browser'    => $browser,
+                    ]),
+                    'time'          => now(),                  // Current datetime
+                    'changedBy'     => $user->studentInformation->full_name, // The user who logged in
+                    'fromTableName' => 'Log In'                 // Assuming the related table
+                ]);
+
+
                 $PermissionDashboard = PermissionRoleModel::getPermission('dashboard', $user->role_id);
                 return empty($PermissionDashboard) ? redirect('/walkin/form') : redirect('/dashboard');
             } elseif ($user->roles->name === 'student') {
+
+                AuditTable::create([
+                    'type'          => 'User Logged In',       // action becomes type
+                    'old_data'      => null,                   // No previous data for login
+                    'new_data'      => json_encode([
+                        'ip_address' => $ipAddress,
+                        'session_id' => $sessionId,
+                        'browser'    => $browser,
+                    ]),
+                    'time'          => now(),                  // Current datetime
+                    'changedBy'     => $user->studentInformation->full_name, // The user who logged in
+                    'fromTableName' => 'Log In'                 // Assuming the related table
+                ]);
                 return redirect('/stpage');
             }
         }
