@@ -61,6 +61,24 @@
                             <li><a class="dropdown-item filter-option" href="#" data-filter="status">Status</a></li>
                         </ul>
                     </div>
+                    <!-- NEW Sort Dropdown -->
+                    <div class="dropdown">
+                        <button class="btn btn-outline-light btn-sm dropdown-toggle" type="button" id="sortDropdown" data-bs-toggle="dropdown" aria-expanded="false" title="Sort by Request Number">
+                            <i class="fas fa-sort me-1"></i>Sort
+                        </button>
+                        <ul class="dropdown-menu" aria-labelledby="sortDropdown">
+                            <li><a class="dropdown-item sort-option" href="#" data-sort="default">Default Order</a></li>
+                            <li>
+                                <hr class="dropdown-divider">
+                            </li>
+                            <li><a class="dropdown-item sort-option" href="#" data-sort="req-asc">
+                                <i class="fas fa-sort-numeric-down me-2"></i>Req No. (A-Z)
+                            </a></li>
+                            <li><a class="dropdown-item sort-option" href="#" data-sort="req-desc">
+                                <i class="fas fa-sort-numeric-up me-2"></i>Req No. (Z-A)
+                            </a></li>
+                        </ul>
+                    </div>
                 </div>
             </div>
 
@@ -78,6 +96,7 @@
                             <i class="fas fa-search me-1"></i>
                             <span id="searchResultText">Showing all records</span>
                             <span id="searchQuery" class="fw-bold"></span>
+                            <span id="sortInfo" class="ms-2 text-muted"></span>
                         </small>
                     </div>
                 </div>
@@ -91,7 +110,9 @@
                     <table class="table table-sm table-bordered table-hover align-middle text-nowrap" style="font-size: 0.85rem;">
                         <thead class="table-dark">
                             <tr>
-                                <th title="Request Number">Req #</th>
+                                <th title="Request Number" class="sortable-header" data-column="req-no">
+                                    Req # <i class="fas fa-sort sort-icon ms-1" id="req-no-icon"></i>
+                                </th>
                                 <th>Student</th>
                                 <th>Doc</th>
                                 <th title="School/Entity">School</th>
@@ -110,6 +131,7 @@
                             @foreach ($DocRequests as $item)
                             <tr class="table-row"
                                 data-req-no="{{ strtolower($item->req_no) }}"
+                                data-req-no-raw="{{ $item->req_no }}"
                                 data-student="{{ strtolower($item->studentInformation->full_name) }}"
                                 data-document="{{ strtolower($item->documents->DocType) }}"
                                 data-school="{{ strtolower($item->request_schl_entity) }}"
@@ -262,6 +284,14 @@
         // Initial page load spinner
         const spinner = document.getElementById("spinner");
         const table = document.getElementById("requestTable");
+        let currentSortOrder = 'default'; // default, req-asc, req-desc
+        let originalRowOrder = []; // Store original order
+
+        const tableBody = document.getElementById('tableBody');
+        const tableRows = document.querySelectorAll('.table-row');
+
+        // Store original order
+        originalRowOrder = Array.from(tableRows);
 
         spinner.style.display = "block";
         table.style.display = "none";
@@ -308,6 +338,7 @@
         function performSearch() {
             const query = searchInput.value.toLowerCase().trim();
             let visibleCount = 0;
+            const currentRows = Array.from(document.querySelectorAll('.table-row'));
 
             tableRows.forEach(row => {
                 let shouldShow = false;
@@ -470,6 +501,125 @@
             });
         });
 
+        const sortInfo = document.getElementById('sortInfo');
+
+
+        // Sort functionality
+        function sortTable(order) {
+            const rows = Array.from(document.querySelectorAll('.table-row'));
+
+            let sortedRows;
+
+            switch(order) {
+                case 'req-asc':
+                    sortedRows = rows.sort((a, b) => {
+                        const aVal = a.getAttribute('data-req-no-raw');
+                        const bVal = b.getAttribute('data-req-no-raw');
+                        return aVal.localeCompare(bVal, undefined, {numeric: true, sensitivity: 'base'});
+                    });
+                    break;
+                case 'req-desc':
+                    sortedRows = rows.sort((a, b) => {
+                        const aVal = a.getAttribute('data-req-no-raw');
+                        const bVal = b.getAttribute('data-req-no-raw');
+                        return bVal.localeCompare(aVal, undefined, {numeric: true, sensitivity: 'base'});
+                    });
+                    break;
+                default: // 'default'
+                    sortedRows = [...originalRowOrder];
+                    break;
+            }
+
+            // Clear and repopulate table body
+            tableBody.innerHTML = '';
+            sortedRows.forEach(row => {
+                tableBody.appendChild(row);
+            });
+
+            // Update sort icon
+            updateSortIcon(order);
+
+            // Update sort info
+            updateSortInfo(order);
+
+            currentSortOrder = order;
+        }
+
+        function updateSortIcon(order) {
+            const icon = document.getElementById('req-no-icon');
+
+            switch(order) {
+                case 'req-asc':
+                    icon.className = 'fas fa-sort-up sort-icon ms-1';
+                    break;
+                case 'req-desc':
+                    icon.className = 'fas fa-sort-down sort-icon ms-1';
+                    break;
+                default:
+                    icon.className = 'fas fa-sort sort-icon ms-1';
+                    break;
+            }
+        }
+
+        function updateSortInfo(order) {
+            let sortText = '';
+
+            switch(order) {
+                case 'req-asc':
+                    sortText = '(sorted by Req No. A-Z)';
+                    break;
+                case 'req-desc':
+                    sortText = '(sorted by Req No. Z-A)';
+                    break;
+                default:
+                    sortText = '';
+                    break;
+            }
+
+            sortInfo.textContent = sortText;
+        }
+
+        // Sort dropdown options
+        document.querySelectorAll('.sort-option').forEach(option => {
+            option.addEventListener('click', function(e) {
+                e.preventDefault();
+                const sortOrder = this.getAttribute('data-sort');
+                document.getElementById('sortDropdown').innerHTML = `<i class="fas fa-sort me-1"></i>${this.textContent.trim()}`;
+
+                sortTable(sortOrder);
+
+                // Re-apply search if there's a search query
+                const currentQuery = searchInput.value.toLowerCase().trim();
+                if (currentQuery !== '') {
+                    performSearch();
+                }
+            });
+        });
+
+        // Table header click sorting (alternative method)
+        document.querySelector('.sortable-header[data-column="req-no"]').addEventListener('click', function() {
+            let newOrder;
+
+            if (currentSortOrder === 'default' || currentSortOrder === 'req-desc') {
+                newOrder = 'req-asc';
+            } else {
+                newOrder = 'req-desc';
+            }
+
+            sortTable(newOrder);
+
+            // Update dropdown to reflect current sort
+            const sortDropdown = document.getElementById('sortDropdown');
+            const sortText = newOrder === 'req-asc' ? 'Req No. (A-Z)' : 'Req No. (Z-A)';
+            sortDropdown.innerHTML = `<i class="fas fa-sort me-1"></i>${sortText}`;
+
+            // Re-apply search if there's a search query
+            const currentQuery = searchInput.value.toLowerCase().trim();
+            if (currentQuery !== '') {
+                performSearch();
+            }
+        });
+
         // Handle Print button clicks with loading spinner
         const printForms = document.querySelectorAll(".print-form");
         printForms.forEach(form => {
@@ -579,6 +729,38 @@
     .table-row.highlight {
         background-color: #fff3cd !important;
         transition: background-color 0.3s ease;
+    }
+
+
+    /* Sortable header styling */
+    .sortable-header {
+        cursor: pointer;
+        user-select: none;
+        position: relative;
+    }
+
+    .sortable-header:hover {
+        background-color: rgba(255, 255, 255, 0.1);
+    }
+
+    .sort-icon {
+        opacity: 0.7;
+        transition: opacity 0.2s ease;
+    }
+
+    .sortable-header:hover .sort-icon {
+        opacity: 1;
+    }
+
+    /* Sort dropdown styling */
+    .dropdown-menu .dropdown-item {
+        padding: 0.5rem 1rem;
+        font-size: 0.875rem;
+    }
+
+    .dropdown-menu .dropdown-item i {
+        width: 16px;
+        text-align: center;
     }
 
     /* Search input focus styling */

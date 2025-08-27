@@ -23,18 +23,6 @@
 <div class="row">
     <div class="col-md-12">
 
-        <!-- @if(session('Status'))
-        <div class="alert alert-success">
-            {{ session('Status') }}
-        </div>
-        @endif
-
-        @if(session('Danger'))
-        <div class="alert alert-danger">
-            {{ session('Danger') }}
-        </div>
-        @endif -->
-
         <div class="card shadow-lg border-0 rounded-lg mt-3">
             <div class="card-header text-white d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center" style="background-color: #1f2937;">
                 <h5 class="mb-2 mb-md-0">Pending Document Requests</h5>
@@ -63,6 +51,24 @@
                             <li><a class="dropdown-item filter-option" href="#" data-filter="status">Status</a></li>
                         </ul>
                     </div>
+                    <!-- NEW Sort Dropdown -->
+                    <div class="dropdown">
+                        <button class="btn btn-outline-light btn-sm dropdown-toggle" type="button" id="sortDropdown" data-bs-toggle="dropdown" aria-expanded="false" title="Sort by Request Number">
+                            <i class="fas fa-sort me-1"></i>Sort
+                        </button>
+                        <ul class="dropdown-menu" aria-labelledby="sortDropdown">
+                            <li><a class="dropdown-item sort-option" href="#" data-sort="default">Default Order</a></li>
+                            <li>
+                                <hr class="dropdown-divider">
+                            </li>
+                            <li><a class="dropdown-item sort-option" href="#" data-sort="req-asc">
+                                <i class="fas fa-sort-numeric-down me-2"></i>Req No. (A-Z)
+                            </a></li>
+                            <li><a class="dropdown-item sort-option" href="#" data-sort="req-desc">
+                                <i class="fas fa-sort-numeric-up me-2"></i>Req No. (Z-A)
+                            </a></li>
+                        </ul>
+                    </div>
                 </div>
             </div>
 
@@ -80,6 +86,7 @@
                             <i class="fas fa-search me-1"></i>
                             <span id="searchResultText">Showing all records</span>
                             <span id="searchQuery" class="fw-bold"></span>
+                            <span id="sortInfo" class="ms-2 text-muted"></span>
                         </small>
                     </div>
                 </div>
@@ -93,7 +100,9 @@
                     <table class="table table-sm table-bordered table-hover align-middle text-nowrap" style="font-size: 0.85rem;">
                         <thead class="table-dark">
                             <tr>
-                                <th title="Request Number">Req #</th>
+                                <th title="Request Number" class="sortable-header" data-column="req-no">
+                                    Req # <i class="fas fa-sort sort-icon ms-1" id="req-no-icon"></i>
+                                </th>
                                 <th>Student</th>
                                 <th>Doc</th>
                                 <th title="School/Entity">School</th>
@@ -112,6 +121,7 @@
                             @foreach ($DocRequests as $item)
                             <tr class="table-row"
                                 data-req-no="{{ strtolower($item->req_no) }}"
+                                data-req-no-raw="{{ $item->req_no }}"
                                 data-student="{{ strtolower($item->studentInformation->full_name) }}"
                                 data-document="{{ strtolower($item->documents->DocType) }}"
                                 data-school="{{ strtolower($item->request_schl_entity) }}"
@@ -272,8 +282,6 @@
                                     </form>
                                     @endif
                                 </div>
-
-                                <!-- <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button> -->
                             </div>
 
                             <div class="modal-body p-0 text-center bg-light">
@@ -398,14 +406,11 @@
     </div>
 </div>
 
-<!-- Confirmation Modal -->
-
-
 <!-- Reason Modal -->
 <div class="modal fade" id="reasonModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
-            <div class="modal-header d-flex justify-content-start" style="background-color: #1f2937;">>
+            <div class="modal-header d-flex justify-content-start" style="background-color: #1f2937;">
                 <h5 class="modal-title" style="color: #1dd3b0;">Decline Reason</h5>
             </div>
             <div class="modal-body">
@@ -419,13 +424,19 @@
     </div>
 </div>
 
-
-{{-- Enhanced JavaScript with loading spinners and search functionality --}}
+{{-- Enhanced JavaScript with sorting functionality --}}
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         let targetForm;
+        let currentSortOrder = 'default'; // default, req-asc, req-desc
+        let originalRowOrder = []; // Store original order
 
         const reasonModal = new bootstrap.Modal(document.getElementById('reasonModal'));
+        const tableBody = document.getElementById('tableBody');
+        const tableRows = document.querySelectorAll('.table-row');
+
+        // Store original order
+        originalRowOrder = Array.from(tableRows);
 
         // Step 1: Click decline → open reason modal
         document.querySelectorAll('.decline-btn').forEach(function(btn) {
@@ -450,7 +461,6 @@
             }
 
             targetForm.querySelector('.decline-reason').value = reason;
-
             reasonModal.hide();
 
             Swal.fire({
@@ -469,16 +479,14 @@
                         text: 'Please wait while we process your request.',
                         allowOutsideClick: false,
                         didOpen: () => {
-                            Swal.showLoading(); // <- Spinner starts here
+                            Swal.showLoading();
                         }
                     });
                     targetForm.submit();
                 }
             });
         });
-    });
 
-    document.addEventListener("DOMContentLoaded", function() {
         // Initial page load spinner
         const spinner = document.getElementById("spinner");
         const table = document.getElementById("requestTable");
@@ -501,12 +509,10 @@
                 if (loader && img) {
                     loader.style.display = 'block';
 
-                    // Hide loader when image loads
                     img.addEventListener('load', function() {
                         loader.style.display = 'none';
                     });
 
-                    // Hide loader on error too
                     img.addEventListener('error', function() {
                         loader.style.display = 'none';
                     });
@@ -514,18 +520,134 @@
             });
         });
 
-        // Search functionality
+        // Search and sort functionality
         const searchInput = document.getElementById('searchInput');
         const clearSearchBtn = document.getElementById('clearSearch');
         const searchInfo = document.getElementById('searchInfo');
         const searchResultText = document.getElementById('searchResultText');
         const searchQuery = document.getElementById('searchQuery');
+        const sortInfo = document.getElementById('sortInfo');
         const noResults = document.getElementById('noResults');
-        const tableRows = document.querySelectorAll('.table-row');
         const paginationContainer = document.getElementById('paginationContainer');
 
         let currentFilter = 'all';
         let totalRows = tableRows.length;
+
+        // Sort functionality
+        function sortTable(order) {
+            const rows = Array.from(document.querySelectorAll('.table-row'));
+
+            let sortedRows;
+
+            switch(order) {
+                case 'req-asc':
+                    sortedRows = rows.sort((a, b) => {
+                        const aVal = a.getAttribute('data-req-no-raw');
+                        const bVal = b.getAttribute('data-req-no-raw');
+                        return aVal.localeCompare(bVal, undefined, {numeric: true, sensitivity: 'base'});
+                    });
+                    break;
+                case 'req-desc':
+                    sortedRows = rows.sort((a, b) => {
+                        const aVal = a.getAttribute('data-req-no-raw');
+                        const bVal = b.getAttribute('data-req-no-raw');
+                        return bVal.localeCompare(aVal, undefined, {numeric: true, sensitivity: 'base'});
+                    });
+                    break;
+                default: // 'default'
+                    sortedRows = [...originalRowOrder];
+                    break;
+            }
+
+            // Clear and repopulate table body
+            tableBody.innerHTML = '';
+            sortedRows.forEach(row => {
+                tableBody.appendChild(row);
+            });
+
+            // Update sort icon
+            updateSortIcon(order);
+
+            // Update sort info
+            updateSortInfo(order);
+
+            currentSortOrder = order;
+        }
+
+        function updateSortIcon(order) {
+            const icon = document.getElementById('req-no-icon');
+
+            switch(order) {
+                case 'req-asc':
+                    icon.className = 'fas fa-sort-up sort-icon ms-1';
+                    break;
+                case 'req-desc':
+                    icon.className = 'fas fa-sort-down sort-icon ms-1';
+                    break;
+                default:
+                    icon.className = 'fas fa-sort sort-icon ms-1';
+                    break;
+            }
+        }
+
+        function updateSortInfo(order) {
+            let sortText = '';
+
+            switch(order) {
+                case 'req-asc':
+                    sortText = '(sorted by Req No. A-Z)';
+                    break;
+                case 'req-desc':
+                    sortText = '(sorted by Req No. Z-A)';
+                    break;
+                default:
+                    sortText = '';
+                    break;
+            }
+
+            sortInfo.textContent = sortText;
+        }
+
+        // Sort dropdown options
+        document.querySelectorAll('.sort-option').forEach(option => {
+            option.addEventListener('click', function(e) {
+                e.preventDefault();
+                const sortOrder = this.getAttribute('data-sort');
+                document.getElementById('sortDropdown').innerHTML = `<i class="fas fa-sort me-1"></i>${this.textContent.trim()}`;
+
+                sortTable(sortOrder);
+
+                // Re-apply search if there's a search query
+                const currentQuery = searchInput.value.toLowerCase().trim();
+                if (currentQuery !== '') {
+                    performSearch();
+                }
+            });
+        });
+
+        // Table header click sorting (alternative method)
+        document.querySelector('.sortable-header[data-column="req-no"]').addEventListener('click', function() {
+            let newOrder;
+
+            if (currentSortOrder === 'default' || currentSortOrder === 'req-desc') {
+                newOrder = 'req-asc';
+            } else {
+                newOrder = 'req-desc';
+            }
+
+            sortTable(newOrder);
+
+            // Update dropdown to reflect current sort
+            const sortDropdown = document.getElementById('sortDropdown');
+            const sortText = newOrder === 'req-asc' ? 'Req No. (A-Z)' : 'Req No. (Z-A)';
+            sortDropdown.innerHTML = `<i class="fas fa-sort me-1"></i>${sortText}`;
+
+            // Re-apply search if there's a search query
+            const currentQuery = searchInput.value.toLowerCase().trim();
+            if (currentQuery !== '') {
+                performSearch();
+            }
+        });
 
         // Search input event listener
         searchInput.addEventListener('input', function() {
@@ -551,8 +673,9 @@
         function performSearch() {
             const query = searchInput.value.toLowerCase().trim();
             let visibleCount = 0;
+            const currentRows = Array.from(document.querySelectorAll('.table-row'));
 
-            tableRows.forEach(row => {
+            currentRows.forEach(row => {
                 let shouldShow = false;
 
                 if (query === '') {
@@ -786,6 +909,37 @@
         }
     }
 
+    /* Sortable header styling */
+    .sortable-header {
+        cursor: pointer;
+        user-select: none;
+        position: relative;
+    }
+
+    .sortable-header:hover {
+        background-color: rgba(255, 255, 255, 0.1);
+    }
+
+    .sort-icon {
+        opacity: 0.7;
+        transition: opacity 0.2s ease;
+    }
+
+    .sortable-header:hover .sort-icon {
+        opacity: 1;
+    }
+
+    /* Sort dropdown styling */
+    .dropdown-menu .dropdown-item {
+        padding: 0.5rem 1rem;
+        font-size: 0.875rem;
+    }
+
+    .dropdown-menu .dropdown-item i {
+        width: 16px;
+        text-align: center;
+    }
+
     /* Highlight search results */
     .table-row.highlight {
         background-color: #fff3cd !important;
@@ -804,11 +958,13 @@
         overflow-y: auto;
     }
 
-    .filter-option:hover {
+    .filter-option:hover,
+    .sort-option:hover {
         background-color: #f8f9fa;
     }
 
-    .filter-option.active {
+    .filter-option.active,
+    .sort-option.active {
         background-color: #1dd3b0;
         color: white;
     }
@@ -879,6 +1035,20 @@
             display: block !important;
             width: 100%;
         }
+
+        .search-container .dropdown {
+            width: 100%;
+            margin-top: 0.5rem;
+        }
+
+        .search-container .dropdown .btn {
+            width: 100%;
+        }
+    }
+
+    /* Sort info styling */
+    #sortInfo {
+        font-style: italic;
     }
 </style>
 
