@@ -86,11 +86,11 @@
                 Reason: {{ $reason }}
             </p>
 
-            <p>If you believe this decision was made in error or you would like to discuss the reason further, please contact our office for clarification or assistance.  
+            <p>If you believe this decision was made in error or you would like to discuss the reason further, please contact our office for clarification or assistance.
             We’re here to help you with any questions regarding your request.</p>
 
             <p style="text-align: center; margin-top: 20px;">
-                <a href="{{ url('http://127.0.0.1:8000/') }}" class="view-status-btn">View Status</a>
+                <a href="{{ url('https://odrms-ubnhs.bagsik-eis.site/') }}" class="view-status-btn">View Status</a>
             </p>
 
             <p>If you have any questions or need assistance, please contact us anytime.</p>
