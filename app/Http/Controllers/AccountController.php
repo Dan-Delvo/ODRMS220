@@ -340,105 +340,327 @@ class AccountController extends Controller
         return view('common.verifyEmail');
     }
 
+    const MAX_OTP_ATTEMPTS = 3;
+    const LOCKOUT_DURATION_MINUTES = 15;
+    const OTP_EXPIRY_SECONDS = 180; // 3 minutes
+
     public function viewOtp(Request $request)
     {
+        // dd($request->username);
         $request->validate([
-            'email_address' => 'email|required|unique:acc_users,email_address',
-            'username' => 'required|string|unique:acc_users,username'
+            // Validation for personal information
+            'FirstName' => 'required|string|max:255',
+            'LastName' => 'required|string|max:255',
+            'LRN' => 'required|digits:12|unique:std_students,LRN',
+            'Grade_level' => 'string|max:50',
+            'Std_status' => 'string|max:50',
+            'Last_sy_attended' => 'required|digits:4',
+            'role' => 'required',
+
+            // Validation for account information
+            'email_address' => 'required|email|unique:acc_users,email_address',
+            'username' => 'required|string|max:255|unique:acc_users,username',
+
         ], [
+            'FirstName.required' => 'Please enter your first name.',
+            'LastName.required' => 'Please enter your last name.',
+            'LRN.digits' => 'LRN must be exactly 12 digits.',
+            'LRN.unique' => 'LRN must be unique',
+            'role.required' => 'Please select a role.',
+            'Last_sy_attended.digits' => 'Last school year must be 4 digits (e.g. 2024).',
             'email_address.unique' => 'This email already exists',
             'username.unique' => 'This username already exists',
         ]);
 
+        session([
+            'FirstName' => $request->FirstName,
+            'LastName' => $request->LastName,
+            'MiddleName' => $request->MiddleName,
+            'Suffix' => $request->Suffix,
+            'LRN' => $request->LRN,
+            'Grade_level' => $request->Grade_level,
+            'Std_status' => $request->Std_status,
+            'Last_sy_attended' => $request->Last_sy_attended,
+            'role' => $request->role,
+            'email_address' => $request->email_address,
+            'username' => $request->username,
+            'password' => $request->password,
+        ]);
 
-        $email = $request->input('email_address');
-        $username = $request->input('username');
-        $password = $request->input('password');
+        // $request->validate([
+        //     'email_address' => 'email|required|unique:acc_users,email_address',
+        //     'username' => 'required|string|unique:acc_users,username'
+        // ], [
+        //     'email_address.unique' => 'This email already exists',
+        //     'username.unique' => 'This username already exists',
+        // ]);
 
+        $email = $request->email_address;
+        $username = $request->username;
+        $password = $request->password;
 
+        // Check if user is currently locked out
+        if ($this->isLockedOut($email)) {
+            $lockoutEnd = session("lockout_until_{$email}");
+            $remainingTime = now()->diffInMinutes($lockoutEnd, false);
 
-        $otpCode = rand(100000, 999999);
-        $duration = 180;
-        if (!session()->has('countdown_start')) {
-            session([
-                'countdown_start' => now(),
-                'durationInSeconds' => $duration,
-                'expiresAt' => now()->addSeconds($duration),
-                'email' => $email
-            ]);
+            return view('common.OTP.adminOtp', compact('email', 'username', 'password'))
+                ->with('error', "Account temporarily locked. Try again in {$remainingTime} minutes.");
         }
-        session(['otp' => $otpCode]);
-        Mail::to($email)->send(new VerifyMail($otpCode));
-        return view('common.verifyEmail', compact('email', 'username', 'password'));
+
+        // Generate and send new OTP
+        $this->generateAndSendOTP($email, $username, $password);
+
+        return view('common.OTP.adminOtp', compact('email', 'username', 'password'));
+    }
+
+    public function verifyOtp(Request $request)
+    {
+        $request->validate([
+            'first' => 'required|digits:1',
+            'second' => 'required|digits:1',
+            'third' => 'required|digits:1',
+            'fourth' => 'required|digits:1',
+            'fifth' => 'required|digits:1',
+            'sixth' => 'required|digits:1',
+        ]);
+
+        $email = session('email');
+        $enteredOtp = $request->first . $request->second . $request->third .
+            $request->fourth . $request->fifth . $request->sixth;
+
+        // Check if user is locked out
+        if ($this->isLockedOut($email)) {
+            return back()->with('error', 'Account is temporarily locked due to too many failed attempts.');
+        }
+
+        // Check if OTP has expired
+        if ($this->isOtpExpired()) {
+            $this->handleExpiredOtp($email);
+            return back()->with('error', 'OTP has expired. Account temporarily locked.');
+        }
+
+        // Verify OTP
+        if (session('otp') != $enteredOtp) {
+            return $this->handleFailedAttempt($email);
+        }
+
+        // OTP is correct - clear all session data and proceed
+
+        // dd([
+        //     'request_username' => $request->username,
+        //     'session_username' => session('username'),
+        //     'all_session' => session()->all(),
+        // ]);
+        // Create the user account here
+        $studentId = StudentInformationModel::create([
+            'FirstName' => session('FirstName'),
+            'LastName' => session('LastName'),
+            'MiddleName' => session('MiddleName'),
+            'Suffix' => session('Suffix'),
+            'LRN' => session('LRN') ?? '0000',
+            'Grade_level' => session('Grade_level') ?? '0',
+            'Std_status' => session('Std_status') ?? 'NA',
+            'Last_sy_attended' => session('Last_sy_attended') ?? '0000',
+        ])->id;
+
+        Account::create([
+            'user_account_id' => $studentId,
+            'std_students_id' => $studentId,
+            'role_id' => session('role'),
+            'email_address' => session('email_address'),
+            'username' => session('username'),
+            'password' => bcrypt(session('password')),
+        ]);
+
+        $this->clearOtpSession($email);
+        return redirect('userStud/add')->with('Status', 'Account created successfully!');
     }
 
     public function SendAgainOTP(Request $request)
     {
-
         try {
-            // Get values from request (works for both GET and POST)
             $email = $request->input('email') ?? $request->query('email');
             $username = $request->input('username') ?? $request->query('username');
             $password = $request->input('password') ?? $request->query('password');
 
-            $lastRequest = session('last_otp_request');
-            if ($lastRequest && now()->diffInSeconds($lastRequest) < 60) {
+            // Check if user is locked out
+            if ($this->isLockedOut($email)) {
+                $message = 'Account is temporarily locked. Please wait before requesting a new code.';
+
                 if ($request->ajax() || $request->wantsJson()) {
                     return response()->json([
                         'success' => false,
-                        'message' => 'Please wait before requesting another code.'
-                    ], 429);
+                        'message' => $message
+                    ], 423); // 423 Locked
                 }
-                return view('common.verifyEmail', compact('email', 'username', 'password'))
-                    ->with('error', 'Please wait before requesting another code.');
+                return back()->with('error', $message);
             }
 
-            session()->forget(['otp', 'countdown_start', 'durationInSeconds', 'expiresAt']);
+            // Check rate limiting (1 minute between requests)
+            $lastRequest = session('last_otp_request');
+            if ($lastRequest && now()->diffInSeconds($lastRequest) < 60) {
+                $message = 'Please wait before requesting another code.';
 
-            // Generate new OTP
-            $otpCode = rand(100000, 999999);
-            $duration = 180; // 5 minutes
-            $startTime = now();
+                if ($request->ajax() || $request->wantsJson()) {
+                    return response()->json([
+                        'success' => false,
+                        'message' => $message
+                    ], 429);
+                }
+                return back()->with('error', $message);
+            }
 
-            // Set new session data
-            session([
-                'otp' => $otpCode,
-                'countdown_start' => $startTime,
-                'durationInSeconds' => $duration,
-                'expiresAt' => $startTime->copy()->addSeconds($duration),
-                'last_otp_request' => now()
-            ]);
+            // Reset attempt counter when resending (give user fresh chances)
+            session()->forget("otp_attempts_{$email}");
 
-            // Send email
-            Mail::to($email)->send(new VerifyMail($otpCode));
+            // Generate and send new OTP
+            $this->generateAndSendOTP($email, $username, $password);
 
-            // Return JSON response for AJAX requests
+            $message = 'New verification code sent to your email!';
+
             if ($request->ajax() || $request->wantsJson()) {
                 return response()->json([
                     'success' => true,
-                    'message' => 'New verification code sent to your email!',
-                    'countdown_start' => $startTime->toIso8601String(),
-                    'durationInSeconds' => $duration,
-                    'expiresAt' => $startTime->copy()->addSeconds($duration)->toIso8601String()
+                    'message' => $message,
+                    'expiry' => session('expiresAt')->toISOString()
                 ]);
             }
 
-            // Return view for regular requests (fallback)
-            return view('common.verifyEmail', compact('email', 'username', 'password'))
-                ->with('success', 'New verification code sent to your email!');
+            return back()->with('success', $message);
         } catch (\Exception $e) {
-            // Log the error
             Log::error('OTP resend failed: ' . $e->getMessage());
+
+            $message = 'Failed to send verification code. Please try again.';
 
             if ($request->ajax() || $request->wantsJson()) {
                 return response()->json([
                     'success' => false,
-                    'message' => 'Failed to send verification code. Please try again.'
+                    'message' => $message
                 ], 500);
             }
-            return view('common.verifyEmail', compact('email', 'username', 'password'))
-                ->with('error', 'Failed to send verification code. Please try again.');
+            return back()->with('error', $message);
         }
+    }
+
+    private function generateAndSendOTP($email, $username = null, $password = null)
+    {
+        // Clear previous OTP session data
+        session()->forget(['otp', 'countdown_start', 'durationInSeconds', 'expiresAt']);
+
+        $otpCode = rand(100000, 999999);
+        $startTime = now();
+        $expiresAt = $startTime->copy()->addSeconds(self::OTP_EXPIRY_SECONDS);
+
+        session([
+            'otp' => $otpCode,
+            'email' => $email,
+            'username' => $username,
+            'password' => $password,
+            'countdown_start' => $startTime,
+            'durationInSeconds' => self::OTP_EXPIRY_SECONDS,
+            'expiresAt' => $expiresAt,
+            'last_otp_request' => now()
+        ]);
+
+        // Send email
+        Mail::to($email)->send(new VerifyMail($otpCode));
+    }
+
+    private function handleFailedAttempt($email)
+    {
+        $attemptKey = "otp_attempts_{$email}";
+        $attempts = session($attemptKey, 0) + 1;
+        session([$attemptKey => $attempts]);
+
+        if ($attempts >= self::MAX_OTP_ATTEMPTS) {
+            $this->lockoutUser($email);
+            return back()->with('error', 'Too many failed attempts. Account temporarily locked for ' . self::LOCKOUT_DURATION_MINUTES . ' minutes.');
+        }
+
+        $remaining = self::MAX_OTP_ATTEMPTS - $attempts;
+        return redirect('account/otp')->with('error', "Invalid OTP. {$remaining} attempt(s) remaining.");
+    }
+
+    private function handleExpiredOtp($email)
+    {
+        // When OTP expires, lock the user out
+        $this->lockoutUser($email);
+        $this->clearOtpSession($email);
+    }
+
+    private function lockoutUser($email)
+    {
+        $lockoutUntil = now()->addMinutes(self::LOCKOUT_DURATION_MINUTES);
+        session([
+            "lockout_until_{$email}" => $lockoutUntil,
+            "otp_attempts_{$email}" => self::MAX_OTP_ATTEMPTS
+        ]);
+    }
+
+    private function isLockedOut($email)
+    {
+        $lockoutUntil = session("lockout_until_{$email}");
+
+        if (!$lockoutUntil) {
+            return false;
+        }
+
+        if (now()->greaterThan($lockoutUntil)) {
+            // Lockout has expired, clear it
+            session()->forget([
+                "lockout_until_{$email}",
+                "otp_attempts_{$email}"
+            ]);
+            return false;
+        }
+
+        return true;
+    }
+
+    private function isOtpExpired()
+    {
+        $expiresAt = session('expiresAt');
+        return $expiresAt && now()->greaterThan($expiresAt);
+    }
+
+    private function clearOtpSession($email)
+    {
+        session()->forget([
+            'otp',
+            'email',
+            'username',
+            'password',
+            'countdown_start',
+            'durationInSeconds',
+            'expiresAt',
+            'last_otp_request',
+            "otp_attempts_{$email}",
+            "lockout_until_{$email}"
+        ]);
+    }
+
+    // Method to check lockout status (for frontend)
+    public function checkLockoutStatus(Request $request)
+    {
+        $email = $request->input('email');
+
+        if ($this->isLockedOut($email)) {
+            $lockoutEnd = session("lockout_until_{$email}");
+            $remainingMinutes = now()->diffInMinutes($lockoutEnd, false);
+
+            return response()->json([
+                'locked' => true,
+                'remaining_minutes' => $remainingMinutes,
+                'message' => "Account locked for {$remainingMinutes} more minutes."
+            ]);
+        }
+
+        return response()->json([
+            'locked' => false,
+            'attempts' => session("otp_attempts_{$email}", 0),
+            'max_attempts' => self::MAX_OTP_ATTEMPTS
+        ]);
     }
 
     public function addUserStud()

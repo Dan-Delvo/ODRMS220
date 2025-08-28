@@ -38,7 +38,13 @@ Route::post('/student/store', [RegistrationController::class, 'store'])->name('s
 
 Route::get('/account/otp', [AccountController::class, 'create'])->name('account.create');
 Route::post('/account/otp', [AccountController::class, 'viewOtp'])->name('account.otp');
+Route::post('/account/verify', [AccountController::class, 'verifyOtp'])->name('account.verify');
 Route::match(['get', 'post'], '/account/resend', [AccountController::class, 'SendAgainOTP'])->name('account.resend');
+
+// New route for checking lockout status
+Route::post('/account/lockout-status', [AccountController::class, 'checkLockoutStatus'])->name('account.lockout.status');
+
+
 Route::post('/account/store', [AccountController::class, 'store'])->name('account.store');
 
 
