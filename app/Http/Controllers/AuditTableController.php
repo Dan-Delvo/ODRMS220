@@ -11,7 +11,7 @@ class AuditTableController extends Controller
     //
     public function index()
     {
-        $auditTrail = AuditTable::orderBy('time', 'desc')->paginate(50);
+        $auditTrail = AuditTable::orderBy('time', 'desc')->paginate(10);
         $totalCount = AuditTable::count();
 
         return view('common.auditTrail', [

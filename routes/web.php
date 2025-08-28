@@ -18,6 +18,7 @@ use App\Http\Controllers\StudentInformationModelController;
 use App\Http\Controllers\StudentRequestController;
 use App\Http\Controllers\ClaimedDocumentController;
 use App\Http\Controllers\AuditTableController;
+use App\Http\Controllers\BackupController;
 use App\Models\Account;
 use Illuminate\Support\Facades\Mail;
 use App\Models\DocumentRequestModel;
@@ -60,9 +61,9 @@ Route::post('send-fcm-notification', [FcmController::class, 'sendFcmNotification
 //     return view('layout.blankpage');
 // });
 
-Route::group(['middleware' => 'useradmin'], function(){
+Route::group(['middleware' => 'useradmin'], function () {
 
-// in routes/web.php
+    // in routes/web.php
     Route::get('/analytics', [AnalyticsController::class, 'index'])->name('analytics');
 
     Route::get('dashboard', [DashboardController::class, 'dashboard'])->name('dashboard');
@@ -107,7 +108,8 @@ Route::group(['middleware' => 'useradmin'], function(){
     Route::post('panel/role/edit/{id}', [RoleController::class, 'update'])->name('role.update');
     Route::delete('panel/role/delete/{id}', [RoleController::class, 'delete'])->name('role.delete');
     //Role Maintenance          ================================================================================
-
+    Route::get('/backup/download', [BackupController::class, 'downloadBackup'])->name('backup.download');
+    Route::post('/backup/restore', [BackupController::class, 'restoreBackup'])->name('backup.restore');
     //User Maintenance          ================================================================================
     Route::get('panel/user', [AccountController::class, 'display'])->name('user');
     Route::get('panel/user/edit/{id}', [AccountController::class, 'edit'])->name('user.edit');
@@ -161,20 +163,20 @@ Route::group(['middleware' => 'useradmin'], function(){
     //Report Generation         ================================================================================
 
     Route::get('/auditTrail', [AuditTableController::class, 'index'])->name('audit.index');
-    Route::get('/activityLog',[AuditTableController::class, 'activityLog']);
-
+    Route::get('/activityLog', [AuditTableController::class, 'activityLog']);
 });
 
-route::group(['middleware' => 'forgotpassword'],function(){
+route::group(['middleware' => 'forgotpassword'], function () {
     Route::get('/forgotpassword', [forgotpassword::class, 'index'])->name('forgot');
     Route::post('/forgotpassword', [forgotpassword::class, 'forgotpost'])->name('forgot.submit');
     Route::get('/verifyotp', [forgotpassword::class, 'showVerifyOTP'])->name('verifyotp');
     Route::post('/verifyotp', [forgotpassword::class, 'verifyOTP'])->name('verifyotp.submit');
+    Route::post('/resend-otp', [forgotpassword::class, 'resendOTP'])->name('resend.otp');
     Route::get('/newpassword', [forgotpassword::class, 'showNewPassword'])->name('newpassword');
     Route::post('/newpassword', [forgotpassword::class, 'newpassword'])->name('newpassword.submit');
 });
 
-Route::group(['middleware' => 'userstudent'], function(){
+Route::group(['middleware' => 'userstudent'], function () {
 
     Route::get('stpage', [StudentPageController::class, 'mainpage'])->name('st.page');
     // Display the document request form
@@ -185,33 +187,32 @@ Route::group(['middleware' => 'userstudent'], function(){
     Route::post('/save-fcm-token', [AccountController::class, 'saveFcmToken'])->name('save.fcm.token');
 
 
-    Route::get('/send-notification', function(\Illuminate\Http\Request $request){
+    Route::get('/send-notification', function (\Illuminate\Http\Request $request) {
         $contents = $request->query('contents');
         $subscriptionIds = [$request->query('subscription_ids')];
         $url = $request->query('url');
 
-    Route::get('hompage', function () {
+        Route::get('hompage', function () {
             return view('common.homepage');
         });
 
-    try {
-        $response = Http::withHeaders([
-            'Authorization' => 'Basic os_v2_app_if32gbsxsffszlc2vzvuxojxx5v5u3kriweuqn4s2luqs6vfjt5gaoxdhoqhd6vi5w33ake2swiwgpvwudxdidn35dzpgubfyjeszsq',
-            'accept' => 'application/json',
-            'content-type' => 'application/json',
-        ])->post('https://onesignal.com/api/v1/notifications', [
-            'app_id' => '4177a306-5791-4b2c-ac5a-ae6b4bb937bf',
-            'include_player_ids' => $subscriptionIds,
-            'contents' => ['en' => $contents],
-            'url' => $url,
-        ]);
+        try {
+            $response = Http::withHeaders([
+                'Authorization' => 'Basic os_v2_app_if32gbsxsffszlc2vzvuxojxx5v5u3kriweuqn4s2luqs6vfjt5gaoxdhoqhd6vi5w33ake2swiwgpvwudxdidn35dzpgubfyjeszsq',
+                'accept' => 'application/json',
+                'content-type' => 'application/json',
+            ])->post('https://onesignal.com/api/v1/notifications', [
+                'app_id' => '4177a306-5791-4b2c-ac5a-ae6b4bb937bf',
+                'include_player_ids' => $subscriptionIds,
+                'contents' => ['en' => $contents],
+                'url' => $url,
+            ]);
 
             return $response->body();
         } catch (\Exception $e) {
             report($e);
             return response()->json(['error' => $e->getMessage()], 500);
         }
-
     });
 });
 
@@ -252,4 +253,3 @@ Route::get('completed', function () {
 // Route::get('ongoing', function () {
 //     return view('common.ongoing');
 // });
-

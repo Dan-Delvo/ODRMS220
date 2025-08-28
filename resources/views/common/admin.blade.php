@@ -24,7 +24,7 @@
     </div>
 
     <!-- Dashboard Cards (Pending, Ongoing, Completed Requests) -->
-    <div class="row">
+    <div class="row align-middle justify-content-center mb-4">
         <!-- Pending Requests Card -->
         <div class="col-xl-4 col-md-6 mb-4">
             <div class="card text-white shadow" style="background-color: #1f2937; border-radius: 16px; transition: transform 0.3s ease, box-shadow 0.3s ease;">
@@ -67,17 +67,17 @@
             </div>
         </div>
 
-        <!-- Completed Requests Card -->
+        <!-- For Release Requests Card -->
         <div class="col-xl-4 col-md-6 mb-4">
             <div class="card text-white shadow" style="background-color: #1f2937; border-radius: 16px; transition: transform 0.3s ease, box-shadow 0.3s ease;">
                 <div class="card-body d-flex align-items-center">
                     <div class="me-3">
-                        <i class="fas fa-check-circle fa-3x text-success"></i>
+                        <i class="fas fa-circle-arrow-up fa-3x"></i>
                     </div>
                     <div>
                         <h3 class="mb-1" style="font-weight: bold;">For Release Requests</h3>
-                        <h2 class="mb-2" style="font-weight: bold;">{{ $totalCompleted }}</h2>
-                        <p class="mb-0 text-light small">Requests that have been fully completed.</p>
+                        <h2 class="mb-2" style="font-weight: bold;">{{ $totalRelease }}</h2>
+                        <p class="mb-0 text-light small">Requests that is For release.</p>
                     </div>
                 </div>
 
@@ -87,7 +87,51 @@
                 </div>
             </div>
         </div>
+
+        <!-- Claimed Requests Card -->
+        <div class="col-xl-4 col-md-6 mb-4" style="justify-content: center;">
+            <div class="card text-white shadow" style="background-color: #1f2937; border-radius: 16px; transition: transform 0.3s ease, box-shadow 0.3s ease;">
+                <div class="card-body d-flex align-items-center">
+                    <div class="me-3">
+                        <i class="fas fa-check-circle fa-3x text-success"></i>
+                    </div>
+                    <div>
+                        <h3 class="mb-1" style="font-weight: bold;">Claimed Requests</h3>
+                        <h2 class="mb-2" style="font-weight: bold;">{{ $totalClaimed }}</h2>
+                        <p class="mb-0 text-light small">Requests that have been fully completed.</p>
+                    </div>
+                </div>
+
+                <div class="card-footer d-flex align-items-center justify-content-between" style="background-color: rgba(255,255,255,0.05); border-top: 1px solid rgba(255,255,255,0.1);">
+                    <a class="small stretched-link" style="font-weight: bold; color: #1dd3b0" href="{{ route('claimed-documents.index') }}">View Details</a>
+                    <div class="small" style="color: #1dd3b0;"><i class="fas fa-angle-right"></i></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Declined Requests Card -->
+        <div class="col-xl-4 col-md-6 mb-4" style="justify-content: center;">
+            <div class="card text-white shadow" style="background-color: #1f2937; border-radius: 16px; transition: transform 0.3s ease, box-shadow 0.3s ease;">
+                <div class="card-body d-flex align-items-center">
+                    <div class="me-3">
+                        <i class="fas fa-circle-xmark fa-3x text-danger"></i>
+                    </div>
+                    <div>
+                        <h3 class="mb-1" style="font-weight: bold;">Declined Requests</h3>
+                        <h2 class="mb-2" style="font-weight: bold;">{{ $totalDeclined }}</h2>
+                        <p class="mb-0 text-light small">Requests that have been Declined.</p>
+                    </div>
+                </div>
+
+                <div class="card-footer d-flex align-items-center justify-content-between" style="background-color: rgba(255,255,255,0.05); border-top: 1px solid rgba(255,255,255,0.1);">
+                    <a class="small stretched-link" style="font-weight: bold; color: #1dd3b0" href="{{ route('declined-documents.index') }}">View Details</a>
+                    <div class="small" style="color: #1dd3b0;"><i class="fas fa-angle-right"></i></div>
+                </div>
+            </div>
+        </div>
+
     </div>
+
 
     <!-- Additional Quick Action Buttons -->
     <div class="row mb-4">
@@ -103,30 +147,6 @@
         </div>
     </div>
 
-        <!-- Analytic Reports -->
-    <!-- <div class="row mb-5">
-        <div class="col-md-6">
-            <div class="card shadow" style="border-radius: 16px;">
-                <div class="card-header bg-dark text-white">
-                    <h5 class="mb-0">Request Status Overview (Bar Chart)</h5>
-                </div>
-                <div class="card-body">
-                    <canvas id="statusBarChart"></canvas>
-                </div>
-            </div>
-        </div>
-
-        <div class="col-md-6">
-            <div class="card shadow" style="border-radius: 16px;">
-                <div class="card-header bg-dark text-white">
-                    <h5 class="mb-0">Request Status Distribution (Pie Chart)</h5>
-                </div>
-                <div class="card-body">
-                    <canvas id="statusPieChart"></canvas>
-                </div>
-            </div>
-        </div>
-    </div> -->
 
     <!-- Add Tooltips for Buttons -->
     <script>
@@ -140,90 +160,6 @@
         setInterval(updateTime, 1000);
         updateTime(); // Initial call to display time immediately
 
-        // const statusLabels = ['Pending', 'Ongoing', 'Completed'];
-        // const statusData = [
-        //     {{ $totalPending }},
-        //     {{ $totalOngoing }},
-        //     {{ $totalCompleted }}
-        // ];
-
-        // const chartColors = {
-        //     pending: '#ffc107',     // Bootstrap text-warning (Yellow)
-        //     ongoing: '#cbd5e1',     // Light Grey
-        //     completed: '#22c55e'    // Green (custom)
-        // };
-
-        // // Bar Chart
-        // new Chart(document.getElementById('statusBarChart'), {
-        //     type: 'bar',
-        //     data: {
-        //         labels: statusLabels,
-        //         datasets: [{
-        //             label: 'Requests',
-        //             data: statusData,
-        //             backgroundColor: [
-        //                 chartColors.pending,
-        //                 chartColors.ongoing,
-        //                 chartColors.completed
-        //             ],
-        //             borderColor: '#1f2937',
-        //             borderWidth: 1
-        //         }]
-        //     },
-        //     options: {
-        //         responsive: true,
-        //         plugins: {
-        //             legend: { display: false },
-        //         },
-        //         scales: {
-        //             y: {
-        //                 beginAtZero: true,
-        //                 ticks: {
-        //                     color: '#cbd5e1', // light grey text
-        //                     precision: 0
-        //                 },
-        //                 grid: {
-        //                     color: 'rgba(255, 255, 255, 0.05)' // subtle grid lines
-        //                 }
-        //             },
-        //             x: {
-        //                 ticks: { color: '#cbd5e1' },
-        //                 grid: {
-        //                     color: 'rgba(255, 255, 255, 0.05)'
-        //                 }
-        //             }
-        //         }
-        //     }
-        // });
-
-        // // Pie Chart
-        // new Chart(document.getElementById('statusPieChart'), {
-        //     type: 'pie',
-        //     data: {
-        //         labels: statusLabels,
-        //         datasets: [{
-        //             label: 'Requests',
-        //             data: statusData,
-        //             backgroundColor: [
-        //                 chartColors.pending,
-        //                 chartColors.ongoing,
-        //                 chartColors.completed
-        //             ],
-        //             borderColor: '#1f2937',
-        //             borderWidth: 2
-        //         }]
-        //     },
-        //     options: {
-        //         responsive: true,
-        //         plugins: {
-        //             legend: {
-        //                 labels: {
-        //                     color: '#cbd5e1' // legend text
-        //                 }
-        //             }
-        //         }
-        //     }
-        // });
     </script>
 
 </div>

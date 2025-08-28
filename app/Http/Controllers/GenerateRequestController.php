@@ -37,7 +37,7 @@ class GenerateRequestController extends Controller
         }
 
         // Get paginated results
-        $DocRequests = $query->orderBy('request_date', 'desc')->paginate(10);
+        $DocRequests = $query->orderBy('req_no', 'desc')->paginate(10);
 
         return view('generation.generateRequest', compact('DocRequests', 'totalCount', 'statusFilter'));
     }
