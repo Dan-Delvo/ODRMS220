@@ -340,6 +340,13 @@ class AccountController extends Controller
         return view('common.verifyEmail');
     }
 
+    public function showOtp(){
+        $email = session('email_address');
+        $username = session('username');
+        $password = session('password');
+        return view('common.OTP.adminOtp', compact('email', 'username', 'password'));
+    }
+
     const MAX_OTP_ATTEMPTS = 3;
     const LOCKOUT_DURATION_MINUTES = 15;
     const OTP_EXPIRY_SECONDS = 180; // 3 minutes
