@@ -17,10 +17,55 @@
     @vite(['resources/css/app.css', 'resources/sass/app.scss', 'resources/js/scripts.js', 'resources/js/datatables-simple-demo.js'])
 
     <style>
-        :root {
-            --sidebar-width: 240px;
-            --sidebar-collapsed-width: 80px;
+    :root {
+        --sidebar-width: 270px;      /* full size sidebar */
+        --sidebar-collapsed-width: 85px; /* collapsed sidebar */
+    }
+
+    /* Default desktop layout */
+    .sidebar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: var(--sidebar-width);
+        height: 100vh;
+        z-index: 1050; /* stays above content */
+        transition: width 0.3s ease;
+    }
+
+    body.sidebar-shrink .sidebar {
+        width: var(--sidebar-collapsed-width);
+    }
+
+    .main-content {
+        margin-left: var(--sidebar-width);
+        transition: margin-left 0.3s ease;
+        min-height: 100vh;
+        background: #0f172a;
+        padding: 6rem 2rem 2rem;
+    }
+
+    body.sidebar-shrink .main-content {
+        margin-left: var(--sidebar-collapsed-width);
+    }
+
+    /* Mobile behavior */
+    @media (max-width: 991.98px) {
+        .sidebar {
+            width: 100%;
+            height: auto;
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 1100; /* ensure it's always above cards */
         }
+
+        .main-content {
+            margin-left: 0 !important;  /* don’t push content */
+            padding: 5rem 1rem 1rem;    /* add top padding so cards don’t hide under nav */
+        }
+    }
+
 
         body,
         html {
