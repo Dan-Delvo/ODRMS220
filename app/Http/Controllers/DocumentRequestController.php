@@ -121,73 +121,85 @@ class DocumentRequestController extends Controller
     {
         $pdo = DB::connection()->getPdo();
         $pdo->exec("SET @current_user = " . $pdo->quote(Auth::check() ? Auth::user()->username : 'guest'));
-
         try {
             $request->validate([
-                'claimer_first_name' => 'max:255',
-                'claimer_last_name' => 'max:255',
-                'claimer_contact' => 'max:50',
+                'claimer_first_name' => 'nullable|string|max:255',
+                'claimer_last_name'  => 'nullable|string|max:255',
+                'claimer_date'       => 'required|date|before_or_equal:today',
+            ], [
+                'claimer_date.before_or_equal' => 'The claimed date cannot be in the future.',
             ]);
 
             $documentRequest = DocumentRequestModel::findOrFail($id);
             $claimer = $documentRequest->clm_claimers_id ? ClaimerModel::find($documentRequest->clm_claimers_id) : null;
 
             $account = $documentRequest->account;
-            $stud = $documentRequest->studentInformation;
+            $stud    = $documentRequest->studentInformation;
 
-            $email = $account->email_address;
-            $name = $stud->full_name;
+            $email   = $account->email_address;
+            $name    = $stud->full_name;
             $subject = 'Your Request is Approved and Completed!';
 
+            // Email
             try {
                 Mail::send('emails.toClaimed', compact('subject', 'name'), function ($message) use ($email, $subject) {
                     $message->to($email)->subject($subject);
                 });
             } catch (\Exception $e) {
-                Log::error('Email failed: ' . $e->getMessage());
+                Log::error("Email failed for account {$account->id} ({$email}): " . $e->getMessage());
             }
 
+            // Push Notification
             if ($account->fcm_token) {
                 try {
                     Http::withHeaders([
                         'Authorization' => 'Basic os_v2_app_if32gbsxsffszlc2vzvuxojxx5v5u3kriweuqn4s2luqs6vfjt5gaoxdhoqhd6vi5w33ake2swiwgpvwudxdidn35dzpgubfyjeszsq',
-                        'accept' => 'application/json',
-                        'content-type' => 'application/json',
+                        'accept'        => 'application/json',
+                        'content-type'  => 'application/json',
                     ])->post('https://onesignal.com/api/v1/notifications', [
-                        'app_id' => '4177a306-5791-4b2c-ac5a-ae6b4bb937bf',
+                        'app_id'             => '4177a306-5791-4b2c-ac5a-ae6b4bb937bf',
                         'include_player_ids' => [$account->fcm_token],
-                        'contents' => ['en' => $name . ', Your document request has been approved and Processed.'],
+                        'contents'           => ['en' => "{$name}, Your document request has been approved and processed."],
                     ]);
                 } catch (\Exception $e) {
-                    Log::error('Push notification failed: ' . $e->getMessage());
+                    Log::error("Push notification failed for account {$account->id}: " . $e->getMessage());
                 }
             }
 
+            // Handle claimed date + time
+            $selectedDate = $request->input('claimer_date');
+            $today        = now()->toDateString();
+            $claimedTime  = ($selectedDate === $today) ? now()->format('H:i:s') : null;
+
             $documentRequest->update([
-                'status' => 'Claimed',
-                'claimed_date' => Carbon::now(),
-                'claimed_time' => Carbon::now()->format('H:i:s')
+                'status'       => 'Claimed',
+                'claimed_date' => $selectedDate,
+                'claimed_time' => $claimedTime,
             ]);
 
             if ($claimer) {
                 $claimer->update([
-                    'Fname' => $request->claimer_first_name,
-                    'Lname' => $request->claimer_last_name,
-                    'contact_no' => $request->claimer_contact,
+                    'Fname'        => $request->claimer_first_name,
+                    'Lname'        => $request->claimer_last_name,
+                    'contact_no'   => "09xxxxxxxxxx",
+                    'claimed_date' => $selectedDate,
                 ]);
             }
 
             return $request->expectsJson()
                 ? response()->json(['success' => true, 'message' => 'Document marked as claimed.'])
                 : redirect('/tables')->with('Status', 'Completed Successfully');
-
         } catch (\Exception $e) {
-            Log::error('completeRequest Error: ' . $e->getMessage());
+            Log::error('completeRequest Error: ' . $e->getMessage(), [
+                'request_data' => $request->all(),
+            ]);
+
             return $request->expectsJson()
                 ? response()->json(['success' => false, 'message' => 'Error processing request.'], 500)
                 : redirect()->back()->with('Danger', 'An error occurred while processing the request.');
         }
     }
+
 
     public function destroy($id)
     {
@@ -235,17 +247,17 @@ class DocumentRequestController extends Controller
 
             $idAcc = Account::where('email_address', $request->email_address)->value('user_account_id');
             DocumentRequestModel::create([
-            'id' => random_int(10000, 99999),
-            'clm_claimers_id' => $claimer->id,
-            'std_students_id' => $idAcc,
-            'doc_categories_id' => $validated['document_id'],
-            'request_time' => now()->format('H:i:s'),
-            'request_date' => now()->toDateString(),
-            'request_schl_entity' => $validated['request_schl_entity'],
-            'release_mode' => $validated['release_mode'],
-            'remarks' => 'Pending',
-            'status' => 'Pending',
-            'request_mode' => 'Online',
+                'id' => random_int(10000, 99999),
+                'clm_claimers_id' => $claimer->id,
+                'std_students_id' => $idAcc,
+                'doc_categories_id' => $validated['document_id'],
+                'request_time' => now()->format('H:i:s'),
+                'request_date' => now()->toDateString(),
+                'request_schl_entity' => $validated['request_schl_entity'],
+                'release_mode' => $validated['release_mode'],
+                'remarks' => 'Pending',
+                'status' => 'Pending',
+                'request_mode' => 'Online',
             ]);
 
             return redirect()->route('walkin.form')->with('Success', 'Document request submitted successfully!');
@@ -262,16 +274,16 @@ class DocumentRequestController extends Controller
                 'Last_sy_attended' => $validated['last_sy_attended']
             ]
         );
-            $tempPassword = Str::random(10);
+        $tempPassword = Str::random(10);
 
-            Account::create([
-                'user_account_id' => $student->id,
-                'std_students_id' => $student->id,
-                'role_id' => 1,
-                'email_address' => $validated['email_address'],
-                'username' => $validated['student_first_name'] . $validated['student_last_name'],
-                'password' => bcrypt($tempPassword),
-            ]);
+        Account::create([
+            'user_account_id' => $student->id,
+            'std_students_id' => $student->id,
+            'role_id' => 1,
+            'email_address' => $validated['email_address'],
+            'username' => $validated['student_first_name'] . $validated['student_last_name'],
+            'password' => bcrypt($tempPassword),
+        ]);
 
         $subject = 'Your Temporary Password';
         $name = $validated['student_first_name'] . ' ' . $validated['student_last_name'];
