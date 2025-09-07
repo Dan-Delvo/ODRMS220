@@ -33,9 +33,15 @@ class StudentRequestController extends Controller
         $pdo = DB::connection()->getPdo();
         $pdo->exec("SET @current_user = " . $pdo->quote(Auth::check() ? Auth::user()->username : 'guest'));
 
+        $DocRequests = DocumentRequestModel::where('std_students_id', Auth::user()->std_students_id)
+            ->with('documents')
+            ->get()
+            ->pluck('documents')
+            ->flatten();
+
         $DocType = DocumentsModel::all();
         $ReleaseMode = ['Pickup', 'Online'];
-        return view('common.studentrequest', compact('DocType', 'ReleaseMode'));
+        return view('common.studentrequest', compact('DocType', 'ReleaseMode', 'DocRequests'));
     }
 
     public function store(Request $request)
