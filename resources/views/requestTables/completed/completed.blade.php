@@ -77,11 +77,11 @@
                                 <hr class="dropdown-divider">
                             </li>
                             <li><a class="dropdown-item sort-option" href="#" data-sort="req-asc">
-                                <i class="fas fa-sort-numeric-down me-2"></i>Req No. (A-Z)
-                            </a></li>
+                                    <i class="fas fa-sort-numeric-down me-2"></i>Req No. (A-Z)
+                                </a></li>
                             <li><a class="dropdown-item sort-option" href="#" data-sort="req-desc">
-                                <i class="fas fa-sort-numeric-up me-2"></i>Req No. (Z-A)
-                            </a></li>
+                                    <i class="fas fa-sort-numeric-up me-2"></i>Req No. (Z-A)
+                                </a></li>
                         </ul>
                     </div>
 
@@ -258,7 +258,7 @@
                         </div>
                     </div>
 
-                    <div class="mb-3">
+                    <!-- <div class="mb-3">
                         <label for="claimerContact" class="form-label">
                             <i class="fas fa-phone me-1"></i>Contact Number <span class="text-danger">*</span>
                         </label>
@@ -268,7 +268,19 @@
                             Please provide a valid contact number.
                         </div>
                         <small class="form-text text-muted">Include country code if applicable</small>
+                    </div> -->
+
+                    <div class="mb-3">
+                        <label for="claimerDate" class="form-label">
+                            <i class="fas fa-calendar-alt me-1"></i>Date <span class="text-danger">*</span>
+                        </label>
+                        <input type="date" class="form-control" id="claimerDate" name="claimer_date" required>
+                        <div class="invalid-feedback">
+                            Please provide a valid date.
+                        </div>
+                        <small class="form-text text-muted">Select the appropriate date</small>
                     </div>
+
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
@@ -291,40 +303,35 @@
         const sameAsStudentCheckbox = document.getElementById('sameAsStudent');
         const claimerFirstName = document.getElementById('claimerFirstName');
         const claimerLastName = document.getElementById('claimerLastName');
-        const claimerContact = document.getElementById('claimerContact');
+        const claimerDate = document.getElementById('claimerDate');
 
         function fillClaimerInfo() {
             if (sameAsStudentCheckbox.checked) {
                 const studentName = document.getElementById('modalStudentName').textContent.trim();
-                console.log('Student name:', studentName); // Debug log
+                console.log('Student name:', studentName);
 
-                if (studentName) { // Check if studentName exists
+                if (studentName) {
                     const nameParts = studentName.split(' ');
 
                     if (nameParts.length === 1) {
-                        // If only one word, assume it's first name
                         claimerFirstName.value = studentName;
                         claimerLastName.value = '';
                     } else {
-                        // First name = everything except last word
                         claimerFirstName.value = nameParts.slice(0, -1).join(' ');
                         claimerLastName.value = nameParts[nameParts.length - 1];
                     }
 
-                    // Lock fields so user can't accidentally edit
                     claimerFirstName.setAttribute('readonly', true);
                     claimerLastName.setAttribute('readonly', true);
-                    claimerContact.setAttribute('readonly', true);
                 }
             } else {
-                // Reset fields when unchecked
+                // Reset name fields but DON'T reset date
                 claimerFirstName.value = '';
                 claimerLastName.value = '';
-                claimerContact.value = '';
 
                 claimerFirstName.removeAttribute('readonly');
                 claimerLastName.removeAttribute('readonly');
-                claimerContact.removeAttribute('readonly');
+                // Don't touch claimerDate here
             }
         }
 
@@ -333,13 +340,11 @@
         // Handle Claimed button clicks - populate modal (MOVED BEFORE RESET LISTENER)
         document.querySelectorAll('.complete-btn').forEach(btn => {
             btn.addEventListener('click', function() {
-                console.log('Claimed button clicked'); // Debug log
+                console.log('Claimed button clicked');
 
                 const requestId = this.getAttribute('data-request-id');
                 const requestNo = this.getAttribute('data-request-no');
                 const studentName = this.getAttribute('data-student-name');
-
-                console.log('Request ID:', requestId, 'Request No:', requestNo, 'Student:', studentName); // Debug log
 
                 // Populate modal content FIRST
                 document.getElementById('modalRequestNo').textContent = requestNo;
@@ -358,12 +363,15 @@
                 // Clear claimer fields
                 claimerFirstName.value = '';
                 claimerLastName.value = '';
-                claimerContact.value = '';
+
+                // FIX: Set today's date as default instead of clearing
+                const today = new Date().toISOString().split('T')[0];
+                claimerDate.value = today;
 
                 // Remove readonly attributes
                 claimerFirstName.removeAttribute('readonly');
                 claimerLastName.removeAttribute('readonly');
-                claimerContact.removeAttribute('readonly');
+                claimerDate.removeAttribute('readonly');
             });
         });
 
@@ -383,13 +391,17 @@
                     rows.sort((a, b) => {
                         const reqA = a.getAttribute('data-req-no');
                         const reqB = b.getAttribute('data-req-no');
-                        return reqA.localeCompare(reqB, undefined, { numeric: true });
+                        return reqA.localeCompare(reqB, undefined, {
+                            numeric: true
+                        });
                     });
                 } else if (sortType === 'req-desc') {
                     rows.sort((a, b) => {
                         const reqA = a.getAttribute('data-req-no');
                         const reqB = b.getAttribute('data-req-no');
-                        return reqB.localeCompare(reqA, undefined, { numeric: true });
+                        return reqB.localeCompare(reqA, undefined, {
+                            numeric: true
+                        });
                     });
                 } else if (sortType === 'default') {
                     rows = [...originalRows];
@@ -405,29 +417,29 @@
         // Reset modal state when hidden (MOVED AFTER BUTTON LISTENERS)
         const claimerModal = document.getElementById('claimerModal');
         claimerModal.addEventListener('hidden.bs.modal', function() {
-            console.log('Modal hidden'); // Debug log
+            console.log('Modal hidden');
 
             setLoadingState(false);
             const claimerForm = document.getElementById('claimerForm');
             claimerForm.classList.remove('was-validated');
 
-            // Remove any error/success alerts
+            // Remove error/success alerts
             const alerts = claimerForm.querySelectorAll('.alert-danger, .alert-success');
             alerts.forEach(alert => {
-                if (!alert.classList.contains('alert-info')) { // Don't remove the info alert with request details
+                if (!alert.classList.contains('alert-info')) {
                     alert.remove();
                 }
             });
 
-            // Reset claimer fields & checkbox (but don't clear the modal info)
+            // Reset checkbox and name fields but preserve date
             sameAsStudentCheckbox.checked = false;
             claimerFirstName.value = '';
             claimerLastName.value = '';
-            claimerContact.value = '';
+            // Don't reset claimerDate.value here
 
             claimerFirstName.removeAttribute('readonly');
             claimerLastName.removeAttribute('readonly');
-            claimerContact.removeAttribute('readonly');
+            claimerDate.removeAttribute('readonly');
 
             // DON'T clear the modal info here - it should persist until new button is clicked
             // document.getElementById('modalRequestNo').textContent = '';
@@ -594,11 +606,30 @@
         claimerForm.addEventListener('submit', function(e) {
             e.preventDefault();
 
+            // Debug: Log form data before submission
+            const formData = new FormData(claimerForm);
+            console.log('Form data being submitted:');
+            for (let [key, value] of formData.entries()) {
+                console.log(key + ': ' + value);
+            }
+
+            // Specifically check claimerDate value
+            const claimerDateValue = document.getElementById('claimerDate').value;
+            console.log('Claimer Date field value:', claimerDateValue);
+
             // Validate form
             if (!claimerForm.checkValidity()) {
                 e.stopPropagation();
                 claimerForm.classList.add('was-validated');
+                console.log('Form validation failed');
                 return;
+            }
+
+            // If date is still empty, set it to today
+            if (!claimerDateValue) {
+                const today = new Date().toISOString().split('T')[0];
+                document.getElementById('claimerDate').value = today;
+                console.log('Set date to today:', today);
             }
 
             // Show loading state
@@ -616,7 +647,6 @@
             }
 
             // Prepare form data
-            const formData = new FormData(claimerForm);
             const actionUrl = claimerForm.action;
 
             console.log('Submitting to:', actionUrl); // Debug log
@@ -831,10 +861,10 @@
         });
 
         // Phone number formatting
-        const contactInput = document.getElementById('claimerContact');
-        contactInput.addEventListener('input', function(e) {
-            this.value = this.value.replace(/[^0-9+\-\s\(\)]/g, '');
-        });
+        // const contactInput = document.getElementById('claimerContact');
+        // contactInput.addEventListener('input', function(e) {
+        //     this.value = this.value.replace(/[^0-9+\-\s\(\)]/g, '');
+        // });
 
         // Auto-capitalize name fields
         const nameFields = ['claimerFirstName', 'claimerLastName'];

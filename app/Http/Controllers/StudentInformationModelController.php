@@ -152,4 +152,61 @@ class StudentInformationModelController extends Controller
                 : 'Student can be deleted.'
         ]);
     }
+
+    public function showProfile()
+    {
+        $studID = Auth::user()->std_students_id;
+        $studInfo = StudentInformationModel::where('id', $studID)
+            ->with('documentRequests', 'documentRequests.claimer', 'account')
+            ->first(); // Execute the query
+
+        if (!$studInfo) {
+            return redirect()->route('st.page')->with('error', 'Student information not found.');
+        }
+
+        return view('common.studentProfile', compact('studInfo'));
+    }
+
+    public function updateProfile(Request $request, $id)
+    {
+        $studInfo = StudentInformationModel::find($id);
+
+        if (!$studInfo) {
+            return redirect()->route('st.page')->with('error', 'Student information not found.');
+        }
+
+        $validatedData = $request->validate([
+            'FirstName' => 'required|string|max:255',
+            'MiddleName' => 'nullable|string|max:255',
+            'LastName' => 'required|string|max:255',
+            'LRN' => 'digits:12|nullable',
+            'Grade_level' => 'required|string|max:255',
+            'Suffix' => 'nullable|string|max:10',
+            'status' => 'required',
+            'Last_sy_attended' => 'nullable|string|max:255',
+            'Id_image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+        ]);
+
+        // Update text fields
+        $studInfo->FirstName = $validatedData['FirstName'];
+        $studInfo->LastName = $validatedData['LastName'];
+        $studInfo->LRN = $validatedData['LRN'];
+        $studInfo->Grade_level = $validatedData['Grade_level'];
+        $studInfo->Std_status = $validatedData['status'];
+        $studInfo->Last_sy_attended = $validatedData['Last_sy_attended'];
+        $studInfo->MiddleName = $validatedData['MiddleName'];
+        $studInfo->Suffix = $validatedData['Suffix'];
+
+        // Handle image upload
+        if ($request->hasFile('Id_image')) {
+            $image = $request->file('Id_image');
+            $imageName = time() . '_' . uniqid() . '.' . $image->getClientOriginalExtension();
+            $image->move(public_path('uploads/supporting_documents'), $imageName);
+            $studInfo->Id_image = 'uploads/supporting_documents/' . $imageName;
+        }
+
+        $studInfo->save();
+
+        return redirect()->route('student.profile')->with('Success', 'Profile updated successfully.');
+    }
 }

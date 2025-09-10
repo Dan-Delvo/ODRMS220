@@ -36,7 +36,8 @@ class Account extends Authenticatable implements MustVerifyEmail
         'account_created',
         'account_edited',
         'deleted_at',
-        'fcm_token'
+        'fcm_token',
+        'token'
     ];
 
     // Hide sensitive fields

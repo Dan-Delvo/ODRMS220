@@ -1,14 +1,15 @@
 @extends('layout.studentpage')
 
 @section('content')
-
+@include('layout.partials.message')
 <style>
     :root {
         --sidebar-width: 270px;
         --sidebar-collapsed-width: 85px;
     }
 
-    body, html {
+    body,
+    html {
         background-color: #0f172a;
         color: #e2e8f0;
         font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -29,13 +30,14 @@
         margin-left: var(--sidebar-collapsed-width);
     }
 
-    @media (min-width: 1200px){
+    @media (min-width: 1200px) {
         body.sidebar-shrink .form-container {
             max-width: 100%;
             transition: max-width 0.4s ease;
             padding: 3rem 4rem;
         }
     }
+
     @media (max-width: 1024px) {
         .main-content {
             margin-left: 0 !important;
@@ -223,10 +225,10 @@
 
 <!-- Sidebar Toggle Script -->
 <script>
-    document.addEventListener('DOMContentLoaded', function () {
+    document.addEventListener('DOMContentLoaded', function() {
         const toggle = document.getElementById('sidebarToggle');
         if (toggle) {
-            toggle.addEventListener('click', function () {
+            toggle.addEventListener('click', function() {
                 document.body.classList.toggle('sidebar-shrink');
             });
         }
@@ -308,11 +310,16 @@
                     <div class="form-floating mb-3">
                         <select class="form-select" id="document_id" name="document_id">
                             @foreach($DocType as $doc)
-                            <option value="{{ $doc->id }}">{{ $doc->DocType }}</option>
+                            <option value="{{ $doc->id }}" 
+                                @if($doc->DocType === "Form 137" && $DocRequests->contains('DocType', 'Form 137')) disabled @endif>
+                            <!-- @if($DocRequests->contains('id', $doc->id)) disabled @endif>  -->
+                                {{ $doc->DocType }}
+                            </option>
                             @endforeach
                         </select>
                         <label for="document_id">Requested Document</label>
                     </div>
+
 
                     <div class="form-floating mb-3">
                         <input type="text" class="form-control" id="release_mode" name="release_mode" placeholder="Release Mode" value="Pick Up" readonly>
@@ -325,10 +332,10 @@
 
                     <div class="file-upload-wrapper">
                         <input type="file"
-                               class="file-upload-input"
-                               id="supporting_document"
-                               name="supporting_document"
-                               accept="image/*,.pdf,.doc,.docx">
+                            class="file-upload-input"
+                            id="supporting_document"
+                            name="supporting_document"
+                            accept="image/*,.pdf,.doc,.docx">
 
                         <div class="file-upload-display">
                             <div class="upload-content" style="display: flex; flex-direction: column; justify-content: center; align-items: center;">

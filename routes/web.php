@@ -37,9 +37,15 @@ Route::post('/', [AuthController::class, 'auth_login']); //  Authentication sa d
 Route::get('/student/create', [RegistrationController::class, 'create'])->name('student.create');
 Route::post('/student/store', [RegistrationController::class, 'store'])->name('student.store');
 
-Route::get('/account/otp', [AccountController::class, 'create'])->name('account.create');
+Route::get('/account/otp', [AccountController::class, 'showOtp'])->name('account.create');
 Route::post('/account/otp', [AccountController::class, 'viewOtp'])->name('account.otp');
+Route::post('/account/verify', [AccountController::class, 'verifyOtp'])->name('account.verify');
 Route::match(['get', 'post'], '/account/resend', [AccountController::class, 'SendAgainOTP'])->name('account.resend');
+
+// New route for checking lockout status
+Route::post('/account/lockout-status', [AccountController::class, 'checkLockoutStatus'])->name('account.lockout.status');
+
+
 Route::post('/account/store', [AccountController::class, 'store'])->name('account.store');
 
 
@@ -125,7 +131,7 @@ Route::group(['middleware' => 'useradmin'], function () {
     Route::get('panel/doc', [DocumentsModelController::class, 'display'])->name('doc');
     Route::get('panel/doc/add', [DocumentsModelController::class, 'add'])->name('doc.add');
     Route::post('panel/doc/add', [DocumentsModelController::class, 'insert'])->name('doc.insert');
-    
+
     Route::get('panel/doc/edit/{id}', [DocumentsModelController::class, 'edit'])->name('doc.edit');
     Route::put('panel/doc/{id}', [DocumentsModelController::class, 'update'])->name('doc.update');
     Route::delete('panel/doc/{id}', [DocumentsModelController::class, 'destroy'])->name('doc.destroy');
@@ -180,6 +186,15 @@ Route::group(['middleware' => 'userstudent'], function () {
     // Handle the form submission
     Route::post('/student-request', [StudentRequestController::class, 'store'])->name('studentrequest.store');
     Route::post('/save-fcm-token', [AccountController::class, 'saveFcmToken'])->name('save.fcm.token');
+    Route::get('/student/profile', [StudentInformationModelController::class, 'showProfile'])->name('student.profile');
+    Route::put('/student/profile/{id}', [StudentInformationModelController::class, 'updateProfile'])->name('student.profile.update');
+    // Sends an Email Verification for updating profile
+    Route::put('/student/profile/verify/{id}', [AccountController::class, 'verifyUpdateProfile'])->name('student.profile.verifyUpdate');
+    // When clicking the Verify Email button
+    Route::get('/student/profile/confirmUpdate/{token}', [AccountController::class, 'confirmUpdate'])
+        ->name('student.profile.confirmUpdate');
+
+    Route::put('/document-request/{id}/replace-file', [StudentRequestController::class, 'replaceFile'])->name('document-request.replaceFile');
 
 
     Route::get('/send-notification', function (\Illuminate\Http\Request $request) {

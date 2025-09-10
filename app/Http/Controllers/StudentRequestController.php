@@ -33,9 +33,15 @@ class StudentRequestController extends Controller
         $pdo = DB::connection()->getPdo();
         $pdo->exec("SET @current_user = " . $pdo->quote(Auth::check() ? Auth::user()->username : 'guest'));
 
+        $DocRequests = DocumentRequestModel::where('std_students_id', Auth::user()->std_students_id)
+            ->with('documents')
+            ->get()
+            ->pluck('documents')
+            ->flatten();
+
         $DocType = DocumentsModel::all();
         $ReleaseMode = ['Pickup', 'Online'];
-        return view('common.studentrequest', compact('DocType', 'ReleaseMode'));
+        return view('common.studentrequest', compact('DocType', 'ReleaseMode', 'DocRequests'));
     }
 
     public function store(Request $request)
@@ -114,6 +120,59 @@ class StudentRequestController extends Controller
         ]);
 
         // Step 8: Redirect with success message
-        return redirect()->route('st.page')->with('success', 'Document request submitted successfully!');
+        return redirect()->route('st.page')->with('Success', 'Document request submitted successfully!');
+    }
+    public function replaceFile(Request $request, $id)
+    {
+        // Set current user in SQL session
+        $pdo = DB::connection()->getPdo();
+        $pdo->exec("SET @current_user = " . $pdo->quote(Auth::check() ? Auth::user()->username : 'guest'));
+
+        // Validate the incoming request
+        $request->validate([
+            'supporting_document' => 'required|file|mimes:jpeg,jpg,png,pdf,doc,docx|max:10240', // 10MB max
+        ]);
+
+        // Find the document request by ID
+        $docRequest = DocumentRequestModel::findOrFail($id);
+
+        // Handle file upload
+        if ($request->hasFile('supporting_document')) {
+            $file = $request->file('supporting_document');
+
+            // Generate a unique filename
+            $filename = time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
+
+            // Define upload path
+            $uploadPath = public_path('uploads/supporting_documents');
+
+            // Create directory if it doesn't exist
+            if (!file_exists($uploadPath)) {
+                mkdir($uploadPath, 0755, true);
+            }
+
+            // Move file to the upload directory
+            $file->move($uploadPath, $filename);
+
+            // Store relative path for database
+            $supportingDocumentPath = 'uploads/supporting_documents/' . $filename;
+
+            // ✅ Before replacing, move old supporting_document into "image"
+            if ($docRequest->supporting_document) {
+                $docRequest->image = $docRequest->supporting_document; // store old value in `image` column
+            }
+
+            // Optionally delete old file from disk (up to you)
+            // if ($docRequest->supporting_document && file_exists(public_path($docRequest->supporting_document))) {
+            //     unlink(public_path($docRequest->supporting_document));
+            // }
+
+            // Update the document request with the new file path
+            $docRequest->supporting_document = $supportingDocumentPath;
+            $docRequest->save();
+        }
+
+        // Redirect back with success message
+        return redirect()->back()->with('success', 'Supporting document replaced successfully!');
     }
 }

@@ -23,7 +23,8 @@ class StudentInformationModel extends Model
         'LRN',
         'Grade_level',
         'Std_status',
-        'Last_sy_attended'
+        'Last_sy_attended',
+        'Id_image'
     ];
 
     protected static function boot()
@@ -49,5 +50,8 @@ class StudentInformationModel extends Model
     {
         return "{$this->FirstName} {$this->LastName}";
     }
-
+    public function account()
+    {
+        return $this->hasOne(Account::class, 'std_students_id', 'id');
+    }
 }
