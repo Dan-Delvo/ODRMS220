@@ -125,7 +125,7 @@ Route::group(['middleware' => 'useradmin'], function () {
     Route::get('panel/doc', [DocumentsModelController::class, 'display'])->name('doc');
     Route::get('panel/doc/add', [DocumentsModelController::class, 'add'])->name('doc.add');
     Route::post('panel/doc/add', [DocumentsModelController::class, 'insert'])->name('doc.insert');
-    
+
     Route::get('panel/doc/edit/{id}', [DocumentsModelController::class, 'edit'])->name('doc.edit');
     Route::put('panel/doc/{id}', [DocumentsModelController::class, 'update'])->name('doc.update');
     Route::delete('panel/doc/{id}', [DocumentsModelController::class, 'destroy'])->name('doc.destroy');
@@ -160,7 +160,7 @@ Route::group(['middleware' => 'useradmin'], function () {
     Route::get('/auditTrail', [AuditTableController::class, 'index'])->name('audit.index');
     Route::get('/activityLog', [AuditTableController::class, 'activityLog']);
 });
-
+//test
 route::group(['middleware' => 'forgotpassword'], function () {
     Route::get('/forgotpassword', [forgotpassword::class, 'index'])->name('forgot');
     Route::post('/forgotpassword', [forgotpassword::class, 'forgotpost'])->name('forgot.submit');
