@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\VerifyAccountUpdateMail;
 use App\Mail\VerifyMail;
 use App\Models\Account;
 use App\Models\RolesModel;
@@ -16,7 +17,7 @@ use Illuminate\Support\Facades\Mail;
 
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Support\Facades\DB;
-
+use Illuminate\Support\Str;
 use Exception;
 
 class AccountController extends Controller
@@ -132,6 +133,59 @@ class AccountController extends Controller
             Log::error('Error in update method: ' . $e->getMessage());
             return redirect()->back()->with('Danger', 'An error occurred while updating the user.');
         }
+    }
+
+    public function verifyUpdateProfile(Request $request, $id)
+    {
+        $student = StudentInformationModel::where('id', $id)
+            ->with('account')
+            ->first();
+        $token = Str::random(40);
+        session([
+            'account_update' => [
+                'student_id' => $student->id,
+                'username' => $request->username,
+                'email' => $request->email,
+                'password' => $request->new_password ? bcrypt($request->new_password) : null,
+                'token' => $token,
+                'expires_at' => now()->addMinutes(3), // optional expiry
+            ],
+        ]);
+
+        $verifyUrl = route('student.profile.confirmUpdate', ['token' => $token]);
+
+        Mail::to($request->email)->send(new VerifyAccountUpdateMail($student, $verifyUrl));
+
+        return back()->with('Success', 'Verification email sent! Please check your inbox.');
+    }
+
+    public function confirmUpdate($token)
+    {
+        $pending = session('account_update');
+
+        if ($pending['token'] !== $token || now()->greaterThan($pending['expires_at'])) {
+            return redirect()->route('student.profile')->with('Danger', 'Invalid or expired verification link.');
+        }
+
+        // Apply changes
+        $student = StudentInformationModel::where('id', $pending['student_id'])
+            ->with('account')
+            ->first();
+        if ($pending['email']) {
+            $student->account->email_address = $pending['email'];
+        }
+        if ($pending['password']) {
+            $student->account->password = $pending['password'];
+        }
+        if ($pending['username']) {
+            $student->account->username = $pending['username'];
+        }
+        $student->account->save();
+
+        // Clear session
+        session()->forget('account_update');
+
+        return redirect()->route('student.profile')->with('Success', 'Your account has been updated successfully!');
     }
 
     public function checkEmail(Request $request)
@@ -319,7 +373,8 @@ class AccountController extends Controller
         return view('common.verifyEmail');
     }
 
-    public function showOtp(){
+    public function showOtp()
+    {
         $email = session('email_address');
         $username = session('username');
         $password = session('password');
@@ -660,96 +715,96 @@ class AccountController extends Controller
 
 
 
-public function storeUserStud(Request $request)
-{
-    // Get the role to determine validation rules
-    $roleId = $request->input('role');
+    public function storeUserStud(Request $request)
+    {
+        // Get the role to determine validation rules
+        $roleId = $request->input('role');
 
-    // Base validation rules
-    $rules = [
-        'FirstName' => 'required|string|max:255',
-        'LastName' => 'required|string|max:255',
-        'MiddleName' => 'required|string|max:255',
-        'Suffix' => 'nullable|string|max:50',
-        'role' => 'required|exists:role,id', // Assuming you have a roles table
-        'email_address' => 'required|email|unique:acc_users,email_address',
-        'username' => 'required|string|max:255|unique:acc_users,username',
-        'password' => 'required|min:8|confirmed'
-    ];
+        // Base validation rules
+        $rules = [
+            'FirstName' => 'required|string|max:255',
+            'LastName' => 'required|string|max:255',
+            'MiddleName' => 'required|string|max:255',
+            'Suffix' => 'nullable|string|max:50',
+            'role' => 'required|exists:role,id', // Assuming you have a roles table
+            'email_address' => 'required|email|unique:acc_users,email_address',
+            'username' => 'required|string|max:255|unique:acc_users,username',
+            'password' => 'required|min:8|confirmed'
+        ];
 
-    // Conditional validation for student fields based on role
-    if ($roleId == 1) {
-        // Role ID = 1: All student fields are required and must be actual values
-        $rules['LRN'] = 'required|digits:12|unique:std_students,LRN';
-        $rules['Grade_level'] = 'required|string|max:50';
-        $rules['Std_status'] = 'required|string|max:50';
-        $rules['Last_sy_attended'] = 'required|digits:4';
-    } else {
-        // Check if this role is a student role (but not role ID = 1)
-        $role = \App\Models\RolesModel::find($roleId); // Adjust model name as needed
-        if ($role && stripos($role->name, 'student') !== false) {
-            // Other student roles: fields are optional or have default values
-            $rules['LRN'] = 'nullable|digits:12';
-            $rules['Grade_level'] = 'nullable|string|max:50';
-            $rules['Std_status'] = 'nullable|string|max:50';
-            $rules['Last_sy_attended'] = 'nullable|digits:4';
+        // Conditional validation for student fields based on role
+        if ($roleId == 1) {
+            // Role ID = 1: All student fields are required and must be actual values
+            $rules['LRN'] = 'required|digits:12|unique:std_students,LRN';
+            $rules['Grade_level'] = 'required|string|max:50';
+            $rules['Std_status'] = 'required|string|max:50';
+            $rules['Last_sy_attended'] = 'required|digits:4';
+        } else {
+            // Check if this role is a student role (but not role ID = 1)
+            $role = \App\Models\RolesModel::find($roleId); // Adjust model name as needed
+            if ($role && stripos($role->name, 'student') !== false) {
+                // Other student roles: fields are optional or have default values
+                $rules['LRN'] = 'nullable|digits:12';
+                $rules['Grade_level'] = 'nullable|string|max:50';
+                $rules['Std_status'] = 'nullable|string|max:50';
+                $rules['Last_sy_attended'] = 'nullable|digits:4';
+            }
+            // For non-student roles, these fields will be ignored
         }
-        // For non-student roles, these fields will be ignored
+
+        $request->validate($rules);
+
+        // Prepare student data with conditional defaults
+        $studentData = [
+            'FirstName' => $request->FirstName,
+            'LastName' => $request->LastName,
+            'MiddleName' => $request->MiddleName,
+            'Suffix' => $request->Suffix,
+        ];
+
+        // Handle student-specific fields based on role
+        $role = \App\Models\RolesModel::find($roleId);
+        $isStudentRole = $role && stripos($role->name, 'student') !== false;
+
+        if ($roleId == 1) {
+            // Role ID = 1: Use actual user input
+            $studentData['LRN'] = $request->LRN;
+            $studentData['Grade_level'] = $request->Grade_level;
+            $studentData['Std_status'] = $request->Std_status;
+            $studentData['Last_sy_attended'] = $request->Last_sy_attended;
+        } elseif ($isStudentRole) {
+            // Other student roles: Use default values (not null)
+            $studentData['LRN'] = '000000000000';
+            $studentData['Grade_level'] = 'N/A'; // Use string instead of null
+            $studentData['Std_status'] = 'N/A';   // Use string instead of null
+            $studentData['Last_sy_attended'] = '0000';
+        } else {
+            // Non-student roles: Use default values (since LRN cannot be null)
+            $studentData['LRN'] = '000000000000'; // Default value instead of null
+            $studentData['Grade_level'] = 'N/A';
+            $studentData['Std_status'] = 'N/A';
+            $studentData['Last_sy_attended'] = '0000';
+        }
+
+        // Store student
+        $studentId = StudentInformationModel::create($studentData)->id;
+
+        // Create account
+        $account = Account::create([
+            'user_account_id' => $studentId,
+            'std_students_id' => $studentId,
+            'role_id' => $request->role,
+            'email_address' => $request->email_address,
+            'username' => $request->username,
+            'password' => bcrypt($request->password),
+        ]);
+
+        // 🔑 Fire Laravel's Registered event → sends verification email
+        event(new Registered($account));
+
+        return redirect()->route('verification.notice')
+            ->with('Status', 'Account created! Please verify your email.');
     }
-
-    $request->validate($rules);
-
-    // Prepare student data with conditional defaults
-    $studentData = [
-        'FirstName' => $request->FirstName,
-        'LastName' => $request->LastName,
-        'MiddleName' => $request->MiddleName,
-        'Suffix' => $request->Suffix,
-    ];
-
-    // Handle student-specific fields based on role
-    $role = \App\Models\RolesModel::find($roleId);
-    $isStudentRole = $role && stripos($role->name, 'student') !== false;
-
-    if ($roleId == 1) {
-        // Role ID = 1: Use actual user input
-        $studentData['LRN'] = $request->LRN;
-        $studentData['Grade_level'] = $request->Grade_level;
-        $studentData['Std_status'] = $request->Std_status;
-        $studentData['Last_sy_attended'] = $request->Last_sy_attended;
-    } elseif ($isStudentRole) {
-        // Other student roles: Use default values (not null)
-        $studentData['LRN'] = '000000000000';
-        $studentData['Grade_level'] = 'N/A'; // Use string instead of null
-        $studentData['Std_status'] = 'N/A';   // Use string instead of null
-        $studentData['Last_sy_attended'] = '0000';
-    } else {
-        // Non-student roles: Use default values (since LRN cannot be null)
-        $studentData['LRN'] = '000000000000'; // Default value instead of null
-        $studentData['Grade_level'] = 'N/A';
-        $studentData['Std_status'] = 'N/A';
-        $studentData['Last_sy_attended'] = '0000';
-    }
-
-    // Store student
-    $studentId = StudentInformationModel::create($studentData)->id;
-
-    // Create account
-    $account = Account::create([
-        'user_account_id' => $studentId,
-        'std_students_id' => $studentId,
-        'role_id' => $request->role,
-        'email_address' => $request->email_address,
-        'username' => $request->username,
-        'password' => bcrypt($request->password),
-    ]);
-
-    // 🔑 Fire Laravel's Registered event → sends verification email
-    event(new Registered($account));
-
-    return redirect()->route('verification.notice')
-        ->with('Status', 'Account created! Please verify your email.');
-}
 
     public function saveFcmToken(Request $request)
     {

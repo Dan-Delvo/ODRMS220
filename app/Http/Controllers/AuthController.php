@@ -24,7 +24,7 @@ class AuthController extends Controller
         // Check if a user is already logged in and redirect accordingly
         if (Auth::check()) {
             if (Auth::user()->roles->name === 'student') {
-                dd("hello world");
+                // dd("hello world");
                 return redirect('stpage');
             }
 

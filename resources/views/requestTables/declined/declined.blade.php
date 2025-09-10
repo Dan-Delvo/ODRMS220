@@ -72,11 +72,11 @@
                                 <hr class="dropdown-divider">
                             </li>
                             <li><a class="dropdown-item sort-option" href="#" data-sort="req-asc">
-                                <i class="fas fa-sort-numeric-down me-2"></i>Req No. (A-Z)
-                            </a></li>
+                                    <i class="fas fa-sort-numeric-down me-2"></i>Req No. (A-Z)
+                                </a></li>
                             <li><a class="dropdown-item sort-option" href="#" data-sort="req-desc">
-                                <i class="fas fa-sort-numeric-up me-2"></i>Req No. (Z-A)
-                            </a></li>
+                                    <i class="fas fa-sort-numeric-up me-2"></i>Req No. (Z-A)
+                                </a></li>
                         </ul>
                     </div>
                 </div>
@@ -153,17 +153,23 @@
                                 <td>{{ $item->claimed_date }}</td>
                                 <td class="text-nowrap">
                                     <!-- Accept and Decline buttons moved here -->
-                                <form action="{{ route('tables.destroy', $item->id) }}" method="POST" class="d-inline decline-form">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="submit" class="btn btn-sm btn-danger mb-1 decline-btn">Delete</button>
-                                </form>
+                                    <form action="{{ route('tables.destroy', $item->id) }}" method="POST" class="d-inline decline-form">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="btn btn-sm btn-danger mb-1 decline-btn">Delete</button>
+                                    </form>
 
-                                <form action="{{ route('document-request.complete', $item->id) }}" method="POST" class="d-inline accept-form">
-                                    @csrf
-                                    @method('PUT')
-                                    <button type="submit" class="btn btn-sm btn-success mb-1 accept-btn" data-original-text="Accept">Accept</button>
-                                </form>
+                                    <form action="{{ route('document-request.complete', $item->id) }}" method="POST" class="d-inline accept-form">
+                                        @csrf
+                                        @method('PUT')
+                                        <button type="submit" class="btn btn-sm btn-success mb-1 accept-btn" data-original-text="Accept">Accept</button>
+                                    </form>
+                                    @if($item->supporting_document)
+                                    <button type="button" class="btn btn-sm btn-primary mb-1" data-bs-toggle="modal" data-bs-target="#documentModal{{ $item->id }}">
+                                        <i class="fas fa-file-alt me-1"></i>
+                                        View Document
+                                    </button>
+                                    @endif
 
                                 </td>
                             </tr>
@@ -244,128 +250,70 @@
                 </div>
                 @endif
 
-                <!-- Supporting Document Modal -->
-                @if($item->supporting_document)
+                @if($item->image || $item->supporting_document)
                 <div class="modal fade" id="documentModal{{ $item->id }}" tabindex="-1" aria-labelledby="documentModalLabel{{ $item->id }}" aria-hidden="true">
-                    <div class="modal-dialog modal-dialog-centered modal-lg">
+                    <div class="modal-dialog modal-dialog-centered modal-xl">
                         <div class="modal-content border-0 shadow-sm">
                             <div class="modal-header text-white justify-content-between align-items-center" style="background-color: #1f2937;">
                                 <h5 class="modal-title" id="documentModalLabel{{ $item->id }}" style="color: #1dd3b0;">
                                     <i class="fas fa-file-alt me-2"></i>
-                                    Supporting Document - Request No. {{ $item->req_no }}
+                                    Supporting Document Comparison - Request No. {{ $item->req_no }}
                                 </h5>
-
-                                <!-- Removed buttons from here - they are now in the action column -->
                                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
                             </div>
 
-                            <div class="modal-body p-0 text-center bg-light">
-                                <div class="position-relative">
-                                    @php
-                                    $fileExtension = strtolower(pathinfo($item->supporting_document, PATHINFO_EXTENSION));
-                                    // Since database already stores full path, use it directly
-                                    $documentPath = $item->supporting_document;
-                                    @endphp
+                            <div class="modal-body bg-light">
+                                <div class="row g-3">
 
-                                    @if(in_array($fileExtension, ['jpg', 'jpeg', 'png', 'gif', 'webp']))
-                                    <!-- Display image if it's an image file -->
-                                    <img src="{{ asset($documentPath) }}"
-                                        alt="Supporting Document for {{ $item->req_no }}"
-                                        class="img-fluid w-100"
-                                        style="max-height: 70vh; object-fit: contain;"
-                                        loading="lazy"
-                                        onerror="this.onerror=null; this.src='{{ asset('images/no-image-placeholder.png') }}'; this.alt='Document not available';">
+                                    <!-- Old File -->
+                                    <div class="col-md-6">
+                                        <div class="border rounded bg-white shadow-sm h-100 d-flex flex-column">
+                                            <div class="p-2 text-center border-bottom" style="background:#f8fafc;">
+                                                <strong class="text-muted"><i class="fas fa-history me-1"></i> Old Supporting Document File</strong>
+                                            </div>
+                                            <div class="flex-fill d-flex align-items-center justify-content-center p-2">
+                                                @php
+                                                $oldPath = $item->image;
+                                                $oldExt = $oldPath ? strtolower(pathinfo($oldPath, PATHINFO_EXTENSION)) : null;
+                                                @endphp
 
-                                    @elseif($fileExtension === 'pdf')
-                                    <!-- Display PDF preview -->
-                                    <div class="p-4">
-                                        <div class="text-center mb-3">
-                                            <i class="fas fa-file-pdf text-danger" style="font-size: 4rem;"></i>
-                                            <h5 class="mt-2">PDF Document</h5>
-                                            <p class="text-muted">{{ basename($item->supporting_document) }}</p>
-                                        </div>
-                                        <iframe src="{{ asset($documentPath) }}"
-                                            width="100%"
-                                            height="400px"
-                                            style="border: 1px solid #ddd;">
-                                            <p>Your browser does not support PDFs.
-                                                <a href="{{ asset($documentPath) }}" target="_blank">Download the PDF</a>
-                                            </p>
-                                        </iframe>
-                                    </div>
-
-                                    @else
-                                    <!-- Display file icon for other file types -->
-                                    <div class="p-5 text-center">
-                                        @switch($fileExtension)
-                                        @case('doc')
-                                        @case('docx')
-                                        <i class="fas fa-file-word text-primary" style="font-size: 4rem;"></i>
-                                        @break
-                                        @case('xls')
-                                        @case('xlsx')
-                                        <i class="fas fa-file-excel text-success" style="font-size: 4rem;"></i>
-                                        @break
-                                        @case('ppt')
-                                        @case('pptx')
-                                        <i class="fas fa-file-powerpoint text-warning" style="font-size: 4rem;"></i>
-                                        @break
-                                        @case('txt')
-                                        <i class="fas fa-file-alt text-secondary" style="font-size: 4rem;"></i>
-                                        @break
-                                        @default
-                                        <i class="fas fa-file text-muted" style="font-size: 4rem;"></i>
-                                        @endswitch
-
-                                        <h5 class="mt-3">{{ strtoupper($fileExtension) }} Document</h5>
-                                        <p class="text-muted">{{ basename($item->supporting_document) }}</p>
-                                        <p class="small text-info">
-                                            <i class="fas fa-info-circle me-1"></i>
-                                            Click "Download" or "Open in New Tab" to view this document
-                                        </p>
-                                    </div>
-                                    @endif
-
-                                    <!-- Loading overlay -->
-                                    <div class="position-absolute top-50 start-50 translate-middle" id="documentLoader{{ $item->id }}" style="display: none;">
-                                        <div class="spinner-border text-primary" role="status">
-                                            <span class="visually-hidden">Loading document...</span>
+                                                @if($oldPath)
+                                                @include('layout.partials.file-preview', ['filePath' => $oldPath, 'ext' => $oldExt, 'id' => 'old_'.$item->id])
+                                                @else
+                                                <p class="text-muted">No old file available</p>
+                                                @endif
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
 
-                                <!-- Document details -->
-                                <div class="p-3 bg-white border-top">
-                                    <div class="row text-start">
-                                        <div class="col-md-4">
-                                            <small class="text-muted">Student:</small><br>
-                                            <strong>{{ $item->studentInformation->full_name }}</strong>
-                                        </div>
-                                        <div class="col-md-4">
-                                            <small class="text-muted">Document Type:</small><br>
-                                            <strong>{{ $item->documents->DocType }}</strong>
-                                        </div>
-                                        <div class="col-md-4">
-                                            <small class="text-muted">File Type:</small><br>
-                                            <strong>{{ strtoupper($fileExtension) }}</strong>
+                                    <!-- New File -->
+                                    <div class="col-md-6">
+                                        <div class="border rounded bg-white shadow-sm h-100 d-flex flex-column">
+                                            <div class="p-2 text-center border-bottom" style="background:#f8fafc;">
+                                                <strong class="text-muted"><i class="fas fa-file-upload me-1"></i> New Supporting Document File</strong>
+                                            </div>
+                                            <div class="flex-fill d-flex align-items-center justify-content-center p-2">
+                                                @php
+                                                $newPath = $item->supporting_document;
+                                                $newExt = $newPath ? strtolower(pathinfo($newPath, PATHINFO_EXTENSION)) : null;
+                                                @endphp
+
+                                                @if($newPath)
+                                                @include('layout.partials.file-preview', ['filePath' => $newPath, 'ext' => $newExt, 'id' => 'new_'.$item->id])
+                                                @else
+                                                <div class="text-center text-muted">
+                                                    <i class="fas fa-file text-secondary" style="font-size:3rem;"></i>
+                                                    <p class="mt-2">No new file uploaded</p>
+                                                </div>
+                                                @endif
+                                            </div>
                                         </div>
                                     </div>
-                                    <div class="row mt-2">
-                                        <div class="col-12">
-                                            <small class="text-muted">File Name:</small><br>
-                                            <strong>{{ basename($item->supporting_document) }}</strong>
-                                        </div>
-                                    </div>
+
                                 </div>
                             </div>
 
                             <div class="modal-footer" style="background-color: #1f2937;">
-                                <a href="{{ asset($documentPath) }}"
-                                    target="_blank"
-                                    class="btn btn-outline-primary btn-sm">
-                                    <i class="fas fa-external-link-alt me-1"></i>
-                                    Open in New Tab
-                                </a>
                                 <button type="button" class="btn btn-outline-light btn-sm" data-bs-dismiss="modal" style="border-color: #1dd3b0; color: #1dd3b0;">
                                     <i class="fas fa-times me-1"></i>
                                     Close
@@ -375,6 +323,8 @@
                     </div>
                 </div>
                 @endif
+
+
                 @endforeach
             </div>
         </div>
@@ -533,38 +483,38 @@
 
 
         function performSort() {
-        const rows = Array.from(tableBody.querySelectorAll('.table-row'));
+            const rows = Array.from(tableBody.querySelectorAll('.table-row'));
 
-        let sortedRows;
+            let sortedRows;
 
-        switch (currentSort) {
-            case 'req-asc':
-                sortedRows = rows.sort((a, b) => {
-                    const reqA = a.getAttribute('data-req-no').toLowerCase();
-                    const reqB = b.getAttribute('data-req-no').toLowerCase();
-                    return reqA.localeCompare(reqB);
-                });
-                break;
+            switch (currentSort) {
+                case 'req-asc':
+                    sortedRows = rows.sort((a, b) => {
+                        const reqA = a.getAttribute('data-req-no').toLowerCase();
+                        const reqB = b.getAttribute('data-req-no').toLowerCase();
+                        return reqA.localeCompare(reqB);
+                    });
+                    break;
 
-            case 'req-desc':
-                sortedRows = rows.sort((a, b) => {
-                    const reqA = a.getAttribute('data-req-no').toLowerCase();
-                    const reqB = b.getAttribute('data-req-no').toLowerCase();
-                    return reqB.localeCompare(reqA);
-                });
-                break;
+                case 'req-desc':
+                    sortedRows = rows.sort((a, b) => {
+                        const reqA = a.getAttribute('data-req-no').toLowerCase();
+                        const reqB = b.getAttribute('data-req-no').toLowerCase();
+                        return reqB.localeCompare(reqA);
+                    });
+                    break;
 
-            case 'default':
-            default:
-                // Restore original order
-                sortedRows = originalOrder.slice();
-                break;
+                case 'default':
+                default:
+                    // Restore original order
+                    sortedRows = originalOrder.slice();
+                    break;
+            }
+
+            // Clear table body and re-append sorted rows
+            tableBody.innerHTML = '';
+            sortedRows.forEach(row => tableBody.appendChild(row));
         }
-
-        // Clear table body and re-append sorted rows
-        tableBody.innerHTML = '';
-        sortedRows.forEach(row => tableBody.appendChild(row));
-}
         // Perform search function
         function performSearch() {
             const query = searchInput.value.toLowerCase().trim();

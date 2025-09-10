@@ -1,7 +1,7 @@
 @extends('layout.studentpage')
 
 @section('content')
-
+@include('layout.partials.message')
 <style>
     :root {
         --sidebar-width: 270px;
@@ -311,10 +311,8 @@
                         <select class="form-select" id="document_id" name="document_id">
                             @foreach($DocType as $doc)
                             <option value="{{ $doc->id }}" 
-                            if($DocRequests->contains('id', $doc->id)) disabled @endif> 
-
-                                <!-- If want to disabled only Form 137 after requesting -->
-                                <!-- @if($doc->DocType === "Form 137" && $DocRequests->contains('DocType', 'Form 137')) disabled @endif -->
+                                @if($doc->DocType === "Form 137" && $DocRequests->contains('DocType', 'Form 137')) disabled @endif>
+                            <!-- @if($DocRequests->contains('id', $doc->id)) disabled @endif>  -->
                                 {{ $doc->DocType }}
                             </option>
                             @endforeach
