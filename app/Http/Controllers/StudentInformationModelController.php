@@ -204,7 +204,7 @@ class StudentInformationModelController extends Controller
             $image->move(public_path('uploads/supporting_documents'), $imageName);
             $studInfo->Id_image = 'uploads/supporting_documents/' . $imageName;
         }
-
+        // dd($studInfo->Id_image);
         $studInfo->save();
 
         return redirect()->route('student.profile')->with('Success', 'Profile updated successfully.');
