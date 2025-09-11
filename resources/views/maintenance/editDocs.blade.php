@@ -37,19 +37,11 @@
 
                     <!-- Document Price -->
                     <div class="mb-3">
-                        <label for="DocPrice" class="form-label">Document Price</label>
-                        <div class="input-group">
-                            <span class="input-group-text">₱</span>
-                            <input type="text"
-                                name="DocPrice"
-                                id="DocPrice"
-                                class="form-control"
-                                value="{{ old('DocPrice', $document->DocPrice) }}"
-                                placeholder="Enter price">
-                        </div>
-                        <small id="priceHelp" class="text-muted">❌ Only numbers allowed</small>
+                        <label for="DocType" class="form-label">Document Price</label>
+                        <input type="text" name="DocPrice" id="DocPrice" class="form-control" value="{{ old('DocPrice', $document->DocPrice) }}">
                         @error('DocPrice') <small class="text-danger">{{ $message }}</small> @enderror
                     </div>
+
 
                     <!-- Save Button -->
                     <div>
@@ -60,25 +52,5 @@
         </div>
     </div>
 </div>
-<script>
-document.addEventListener('DOMContentLoaded', function () {
-    const priceInput = document.getElementById('DocPrice');
-    const priceHelp = document.getElementById('priceHelp');
 
-    priceInput.addEventListener('input', function () {
-        // Remove any non-digit characters
-        this.value = this.value.replace(/\D/g, '');
-
-        if (/^\d+$/.test(this.value)) {
-            priceHelp.textContent = "✅ Only numbers allowed";
-            priceHelp.className = "text-success small";
-        } else {
-            priceHelp.textContent = "❌ Only numbers allowed";
-            priceHelp.className = "text-danger small";
-        }
-    });
-});
-
-
-</script>
 @endsection

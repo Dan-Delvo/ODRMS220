@@ -13,10 +13,8 @@ use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
-
-use Illuminate\Auth\Events\Registered;
+use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\DB;
-
 use Exception;
 
 class AccountController extends Controller
@@ -134,18 +132,6 @@ class AccountController extends Controller
         }
     }
 
-    public function checkEmail(Request $request)
-    {
-        $request->validate([
-            'email' => 'required|email',
-        ]);
-
-        $exists = Account::where('email_address', $request->email)->exists();
-
-        return response()->json(['exists' => $exists]);
-    }
-
-
     public function delete($id)
     {
         $pdo = DB::connection()->getPdo();
@@ -209,9 +195,10 @@ class AccountController extends Controller
             $requestTypes = [];
             $hasRequests = false;
 
-            // Check for document requests (corrected table name)
-            $documentRequests = DB::table('doc_requests')
-                ->where('std_students_id', $userId)
+            // Check for document requests
+            $documentRequests = DB::table('document_requests')
+                ->where('user_id', $userId)
+                ->whereNotIn('status', ['completed', 'cancelled', 'rejected'])
                 ->count();
 
             if ($documentRequests > 0) {
@@ -219,6 +206,39 @@ class AccountController extends Controller
                 $requestTypes[] = $documentRequests . ' pending document request(s)';
             }
 
+            // Check for service requests
+            $serviceRequests = DB::table('service_requests')
+                ->where('user_id', $userId)
+                ->whereNotIn('status', ['completed', 'cancelled', 'rejected'])
+                ->count();
+
+            if ($serviceRequests > 0) {
+                $hasRequests = true;
+                $requestTypes[] = $serviceRequests . ' pending service request(s)';
+            }
+
+            // Check for other types of requests (add more as needed)
+            // Example: Certificate requests
+            // $certificateRequests = DB::table('certificate_requests')
+            //                         ->where('user_id', $userId)
+            //                         ->whereNotIn('status', ['completed', 'cancelled', 'rejected'])
+            //                         ->count();
+
+            // if ($certificateRequests > 0) {
+            //     $hasRequests = true;
+            //     $requestTypes[] = $certificateRequests . ' pending certificate request(s)';
+            // }
+
+            // Check for any transactions or pending payments
+            $pendingTransactions = DB::table('transactions')
+                ->where('user_id', $userId)
+                ->whereIn('status', ['pending', 'processing', 'in_progress'])
+                ->count();
+
+            if ($pendingTransactions > 0) {
+                $hasRequests = true;
+                $requestTypes[] = $pendingTransactions . ' pending transaction(s)';
+            }
 
             return [
                 'hasRequests' => $hasRequests,
@@ -233,6 +253,7 @@ class AccountController extends Controller
             ];
         }
     }
+
     /**
      * Check if user has existing requests
      * Adjust this method based on your actual request tables
@@ -429,98 +450,57 @@ class AccountController extends Controller
         return view('maintenance.addUserStudent', compact('grade', 'stat', 'role'));
     }
 
+    public function storeUserStud(Request $request)
+    {
+        $request->validate([
+            // Validation for personal information
+            'FirstName' => 'required|string|max:255',
+            'LastName' => 'required|string|max:255',
+            'LRN' => 'required|digits:12|unique:std_students,LRN',
+            'Grade_level' => 'string|max:50',
+            'Std_status' => 'string|max:50',
+            'Last_sy_attended' => 'required|digits:4',
+            'role' => 'required',
 
+            // Validation for account information
+            'email_address' => 'required|email|unique:acc_users,email_address',
+            'username' => 'required|string|max:255|unique:acc_users,username',
 
-public function storeUserStud(Request $request)
-{
-    // Get the role to determine validation rules
-    $roleId = $request->input('role');
+        ], [
+            'FirstName.required' => 'Please enter your first name.',
+            'LastName.required' => 'Please enter your last name.',
+            'LRN.digits' => 'LRN must be exactly 12 digits.',
+            'LRN.unique' => 'LRN must be unique',
+            'role.required' => 'Please select a role.',
+            'Last_sy_attended.digits' => 'Last school year must be 4 digits (e.g. 2024).',
+            'email_address.unique' => 'This email already exists',
+            'username.unique' => 'This username already exists',
+        ]);
 
-    // Base validation rules
-    $rules = [
-        'FirstName' => 'required|string|max:255',
-        'LastName' => 'required|string|max:255',
-        'MiddleName' => 'required|string|max:255',
-        'Suffix' => 'nullable|string|max:50',
-        'role' => 'required|exists:role,id', // Assuming you have a roles table
-        'email_address' => 'required|email|unique:acc_users,email_address',
-        'username' => 'required|string|max:255|unique:acc_users,username',
-        'password' => 'required|min:8|confirmed'
-    ];
+        // Store personal information
+        $studentId = StudentInformationModel::create([
+            'FirstName' => $request->FirstName,
+            'LastName' => $request->LastName,
+            'MiddleName' => $request->MiddleName,
+            'Suffix' => $request->Suffix,
+            'LRN' => $request->LRN ?? '0000',
+            'Grade_level' => $request->Grade_level ?? '0',
+            'Std_status' => $request->Std_status ?? 'NA',
+            'Last_sy_attended' => $request->Last_sy_attended ?? '0000',
+        ])->id;
 
-    // Conditional validation for student fields based on role
-    if ($roleId == 1) {
-        // Role ID = 1: All student fields are required and must be actual values
-        $rules['LRN'] = 'required|digits:12|unique:std_students,LRN';
-        $rules['Grade_level'] = 'required|string|max:50';
-        $rules['Std_status'] = 'required|string|max:50';
-        $rules['Last_sy_attended'] = 'required|digits:4';
-    } else {
-        // Check if this role is a student role (but not role ID = 1)
-        $role = \App\Models\RolesModel::find($roleId); // Adjust model name as needed
-        if ($role && stripos($role->name, 'student') !== false) {
-            // Other student roles: fields are optional or have default values
-            $rules['LRN'] = 'nullable|digits:12';
-            $rules['Grade_level'] = 'nullable|string|max:50';
-            $rules['Std_status'] = 'nullable|string|max:50';
-            $rules['Last_sy_attended'] = 'nullable|digits:4';
-        }
-        // For non-student roles, these fields will be ignored
+        // Store account information
+        Account::create([
+            'user_account_id' => $studentId,
+            'std_students_id' => $studentId,
+            'role_id' => $request->role,
+            'email_address' => $request->email_address,
+            'username' => $request->username,
+            'password' => bcrypt($request->password),
+        ]);
+
+        return redirect('panel/user')->with('Status', 'Account created successfully!');
     }
-
-    $request->validate($rules);
-
-    // Prepare student data with conditional defaults
-    $studentData = [
-        'FirstName' => $request->FirstName,
-        'LastName' => $request->LastName,
-        'MiddleName' => $request->MiddleName,
-        'Suffix' => $request->Suffix,
-    ];
-
-    // Handle student-specific fields based on role
-    $role = \App\Models\RolesModel::find($roleId);
-    $isStudentRole = $role && stripos($role->name, 'student') !== false;
-
-    if ($roleId == 1) {
-        // Role ID = 1: Use actual user input
-        $studentData['LRN'] = $request->LRN;
-        $studentData['Grade_level'] = $request->Grade_level;
-        $studentData['Std_status'] = $request->Std_status;
-        $studentData['Last_sy_attended'] = $request->Last_sy_attended;
-    } elseif ($isStudentRole) {
-        // Other student roles: Use default values (not null)
-        $studentData['LRN'] = '000000000000';
-        $studentData['Grade_level'] = 'N/A'; // Use string instead of null
-        $studentData['Std_status'] = 'N/A';   // Use string instead of null
-        $studentData['Last_sy_attended'] = '0000';
-    } else {
-        // Non-student roles: Use default values (since LRN cannot be null)
-        $studentData['LRN'] = '000000000000'; // Default value instead of null
-        $studentData['Grade_level'] = 'N/A';
-        $studentData['Std_status'] = 'N/A';
-        $studentData['Last_sy_attended'] = '0000';
-    }
-
-    // Store student
-    $studentId = StudentInformationModel::create($studentData)->id;
-
-    // Create account
-    $account = Account::create([
-        'user_account_id' => $studentId,
-        'std_students_id' => $studentId,
-        'role_id' => $request->role,
-        'email_address' => $request->email_address,
-        'username' => $request->username,
-        'password' => bcrypt($request->password),
-    ]);
-
-    // 🔑 Fire Laravel's Registered event → sends verification email
-    event(new Registered($account));
-
-    return redirect()->route('verification.notice')
-        ->with('Status', 'Account created! Please verify your email.');
-}
 
     public function saveFcmToken(Request $request)
     {

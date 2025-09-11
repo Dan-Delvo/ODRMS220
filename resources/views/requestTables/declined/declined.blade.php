@@ -153,18 +153,17 @@
                                 <td>{{ $item->claimed_date }}</td>
                                 <td class="text-nowrap">
                                     <!-- Accept and Decline buttons moved here -->
-                                <form action="{{ route('tables.destroy', $item->id) }}" method="POST" class="d-inline decline-form">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="submit" class="btn btn-sm btn-danger mb-1 decline-btn">Delete</button>
-                                </form>
-
-                                <form action="{{ route('document-request.complete', $item->id) }}" method="POST" class="d-inline accept-form">
-                                    @csrf
-                                    @method('PUT')
-                                    <button type="submit" class="btn btn-sm btn-success mb-1 accept-btn" data-original-text="Accept">Accept</button>
-                                </form>
-
+                                    <form action="{{ route('pending.decline', $item->id) }}" method="POST" class="d-inline decline-form">
+                                        @csrf
+                                        @method('DELETE')
+                                        <input type="hidden" name="remarks" class="decline-reason">
+                                        <button type="button" class="btn btn-sm btn-danger mb-1 decline-btn">Delete</button>
+                                    </form>
+                                    <form action="{{ route('document-request.complete', $item->id) }}" method="POST" class="d-inline accept-form">
+                                        @csrf
+                                        @method('PUT')
+                                        <button type="submit" class="btn btn-sm btn-success mb-1 accept-btn" data-original-text="Accept">Accept</button>
+                                    </form>
                                 </td>
                             </tr>
                             @endforeach
@@ -384,6 +383,23 @@
 <!-- Confirmation Modal -->
 
 
+<!-- Reason Modal -->
+<div class="modal fade" id="reasonModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header d-flex justify-content-start" style="background-color: #1f2937;">>
+                <h5 class="modal-title" style="color: #1dd3b0;">Decline Reason</h5>
+            </div>
+            <div class="modal-body">
+                <textarea class="form-control" id="reasonInput" rows="3" placeholder="Enter reason for declining"></textarea>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn text-white" style="background-color: #1f2937;" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn text-white" id="proceedToConfirmBtn" style="background-color: #1dd3b0;">Proceed</button>
+            </div>
+        </div>
+    </div>
+</div>
 
 
 {{-- Enhanced JavaScript with loading spinners and search functionality --}}
@@ -456,37 +472,27 @@
         }, 600);
 
         // Document modal loading functionality
-        // Handle Decline/Delete button clicks with loading spinner (no modal)
-        document.querySelectorAll(".decline-form").forEach(form => {
-            form.addEventListener("submit", function(e) {
-                e.preventDefault();
+        document.querySelectorAll('[id^="documentModal"]').forEach(modal => {
+            modal.addEventListener('show.bs.modal', function() {
+                const modalId = this.id.replace('documentModal', '');
+                const loader = document.getElementById('documentLoader' + modalId);
+                const img = this.querySelector('img');
 
-                const declineBtn = form.querySelector(".decline-btn");
+                if (loader && img) {
+                    loader.style.display = 'block';
 
-                // Disable button + show spinner
-                declineBtn.disabled = true;
-                declineBtn.innerHTML = `
-                    <span class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"></span>
-                    Deleting...
-                `;
+                    // Hide loader when image loads
+                    img.addEventListener('load', function() {
+                        loader.style.display = 'none';
+                    });
 
-                // Disable other buttons in the same row
-                const row = form.closest("tr");
-                const allButtons = row.querySelectorAll("button, a.btn");
-                allButtons.forEach(btn => {
-                    if (btn !== declineBtn) {
-                        btn.disabled = true;
-                        btn.style.opacity = "0.5";
-                    }
-                });
-
-                // Submit form after a short delay
-                setTimeout(() => {
-                    form.submit();
-                }, 200);
+                    // Hide loader on error too
+                    img.addEventListener('error', function() {
+                        loader.style.display = 'none';
+                    });
+                }
             });
         });
-
 
         // Search functionality
         const searchInput = document.getElementById('searchInput');

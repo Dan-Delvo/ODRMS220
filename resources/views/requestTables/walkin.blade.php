@@ -131,20 +131,13 @@
                                 <input class="form-control @error('lrn') is-invalid @enderror"
                                     id="inputLRN" type="text" name="lrn"
                                     value="{{ old('lrn') }}"
-                                    placeholder="Enter LRN"
-                                    maxlength="12">
-                                <label for="inputLRN">LRN (12-digit)</label>
+                                    placeholder="Enter LRN">
+                                <label for="inputLRN">LRN (Optional)</label>
                                 @error('lrn')
                                 <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
                             </div>
-                            <!-- Real-time validation messages -->
-                            <div id="lrnValidation" class="mt-1 small">
-                                <div id="lrnRuleNumbers" class="text-muted">❌ Only numbers allowed</div>
-                                <div id="lrnRuleLength" class="text-muted">❌ Must be exactly 12 digits</div>
-                            </div>
                         </div>
-
 
                         <div class="col-md-6">
                             <div class="form-floating">
@@ -234,35 +227,6 @@
 </div>
 
 <script>
-        document.addEventListener('DOMContentLoaded', function () {
-        const lrnInput = document.getElementById('inputLRN');
-        const ruleNumbers = document.getElementById('lrnRuleNumbers');
-        const ruleLength = document.getElementById('lrnRuleLength');
-
-        lrnInput.addEventListener('input', function () {
-            // Remove non-numeric chars
-            this.value = this.value.replace(/\D/g, '');
-
-            // Check if only numbers
-            if (/^\d*$/.test(this.value)) {
-                ruleNumbers.textContent = "✅ Only numbers allowed";
-                ruleNumbers.className = "text-success";
-            } else {
-                ruleNumbers.textContent = "❌ Only numbers allowed";
-                ruleNumbers.className = "text-danger";
-            }
-
-            // Check length
-            if (this.value.length === 12) {
-                ruleLength.textContent = "✅ Exactly 12 digits";
-                ruleLength.className = "text-success";
-            } else {
-                ruleLength.textContent = "❌ Must be exactly 12 digits";
-                ruleLength.className = "text-danger";
-            }
-        });
-    });
-
     document.addEventListener('DOMContentLoaded', function() {
         var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
         tooltipTriggerList.forEach(function(tooltipTriggerEl) {
