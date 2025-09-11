@@ -14,7 +14,7 @@
     </div>
     <div class="col-md-6 text-end">
         <h1 class="mt-4 text-dark">
-            <span class="badge" style="background-color:#1f2937; font-size: 2rem;">Total Records: {{ $totalCount }}</span>
+            <span class="badge" style="background-color:#1f2937; font-size: 2rem;">Total Records: {{ $auditTrail->count() }}</span>
         </h1>
     </div>
 </div>
