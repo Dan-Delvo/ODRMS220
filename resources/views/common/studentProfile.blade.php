@@ -46,12 +46,14 @@
                                 <div style="padding: 8px; background:#334155; border-radius: 12px;">
                                     <img src="{{ asset($studInfo->Id_image) }}"
                                         alt="Student Image"
+                                        class="mobile-profile-img"
                                         style="width: 100%; height: auto; object-fit: cover; border-radius: 8px;">
+
                                 </div>
 
                                 <!-- Replace Image Button -->
-                                <input type="file" id="replaceImageInput" name="Id_image" accept="image/*" class="d-none">
-                                <button type="button" id="replaceImageBtn" class="btn btn-sm mt-2"
+                                <input type="file" id="mobileReplaceImageInput" name="Id_image" accept="image/*" class="d-none">
+                                <button type="button" id="mobileReplaceImageBtn" class="btn btn-sm mt-2"
                                     style="background:#1dd3b0; color:#0f172a;">
                                     Replace Image
                                 </button>
@@ -229,12 +231,13 @@
                                             <div style="padding: 8px; background:#334155; border-radius: 12px;">
                                                 <img src="{{ asset($studInfo->Id_image) }}"
                                                     alt="Student Image"
+                                                    class="desktop-profile-img"
                                                     style="width: 100%; height: auto; object-fit: cover; border-radius: 8px;">
                                             </div>
 
                                             <!-- Replace Image Button -->
-                                            <input type="file" id="replaceImageInput" name="Id_image" accept="image/*" class="d-none">
-                                            <button type="button" id="replaceImageBtn" class="btn btn-sm mt-2"
+                                            <input type="file" id="desktopReplaceImageInput" name="Id_image" accept="image/*" class="d-none">
+                                            <button type="button" id="desktopReplaceImageBtn" class="btn btn-sm mt-2"
                                                 style="background:#1dd3b0; color:#0f172a;">
                                                 Replace Image
                                             </button>
@@ -508,12 +511,13 @@
                 didOpen: () => {
                     Swal.showLoading();
                 },
-                background: '#0f172a', // match your card
-                color: '#f1f5f9', // light text
-                confirmButtonColor: '#1dd3b0', // teal button
+                background: '#0f172a',
+                color: '#f1f5f9',
+                confirmButtonColor: '#1dd3b0',
             });
         });
 
+        // Function to setup image upload for new images
         function setupImageUpload(addBtnId, inputId, previewId, imgId, placeholderId, otherPreviewImgId, otherPreviewContainerId, otherPlaceholderId, otherBtnId) {
             const addBtn = document.getElementById(addBtnId);
             const fileInput = document.getElementById(inputId);
@@ -554,18 +558,69 @@
             }
         }
 
-        // Desktop -> Mobile sync
+        // Function to setup replace image functionality for existing images
+        function setupReplaceImage(replaceBtnId, replaceInputId, replacePreviewId, replacePreviewImgId, originalImgSelector) {
+            const replaceBtn = document.getElementById(replaceBtnId);
+            const replaceInput = document.getElementById(replaceInputId);
+            const replacePreview = document.getElementById(replacePreviewId);
+            const replacePreviewImg = document.getElementById(replacePreviewImgId);
+            const originalImg = document.querySelector(originalImgSelector); // 👈 new
+
+            if (replaceBtn && replaceInput && originalImg) {
+                replaceBtn.addEventListener("click", () => {
+                    replaceInput.click();
+                });
+
+                replaceInput.addEventListener("change", (event) => {
+                    const file = event.target.files[0];
+                    if (file) {
+                        const reader = new FileReader();
+                        reader.onload = (e) => {
+                            replacePreviewImg.src = e.target.result;
+                            replacePreview.classList.remove("d-none");
+
+                            // 🔹 hide old image
+                            originalImg.style.display = "none";
+
+                            // update button style
+                            replaceBtn.textContent = "Change Again";
+                            replaceBtn.style.background = "#f87171";
+                            replaceBtn.style.color = "#0f172a";
+                        };
+                        reader.readAsDataURL(file);
+                    }
+                });
+            }
+        }
+
+        // Setup for new image upload (when no image exists)
         setupImageUpload(
             "desktopAddImageBtn", "desktopImageInput",
             "desktop-image-preview", "desktopPreviewImg", "desktop-placeholder",
             "mobilePreviewImg", "mobile-image-preview", "mobile-placeholder", "mobileAddImageBtn"
         );
 
-        // Mobile -> Desktop sync
         setupImageUpload(
             "mobileAddImageBtn", "mobileImageInput",
             "mobile-image-preview", "mobilePreviewImg", "mobile-placeholder",
             "desktopPreviewImg", "desktop-image-preview", "desktop-placeholder", "desktopAddImageBtn"
+        );
+
+        // Setup for replace image functionality (when image already exists)
+        setupReplaceImage(
+            "desktopReplaceImageBtn",
+            "desktopReplaceImageInput",
+            "desktop-replace-preview",
+            "desktopReplacePreviewImg",
+            ".desktop-profile-img" // 👈 add a class to desktop <img>
+        );
+
+        setupReplaceImage(
+            "mobileReplaceImageBtn",
+            "mobileReplaceImageInput",
+            "mobile-replace-preview",
+            "mobileReplacePreviewImg",
+            ".mobile-profile-img" // 👈 add a class to mobile <img>
         );
 
         // Password change functionality for mobile
@@ -584,7 +639,6 @@
                     mobileChangePasswordBtn.innerHTML = '<i class="fas fa-key me-1"></i>Change Password';
                     mobileChangePasswordBtn.classList.remove('btn-outline-danger');
                     mobileChangePasswordBtn.classList.add('btn-outline-secondary');
-                    // Clear password fields
                     mobilePasswordFields.querySelector('input[name="new_password"]').value = '';
                     mobilePasswordFields.querySelector('input[name="password_confirmation"]').value = '';
                 }
@@ -607,7 +661,6 @@
                     desktopChangePasswordBtn.innerHTML = '<i class="fas fa-key me-1"></i>Change Password';
                     desktopChangePasswordBtn.classList.remove('btn-outline-danger');
                     desktopChangePasswordBtn.classList.add('btn-outline-secondary');
-                    // Clear password fields
                     desktopPasswordFields.querySelector('input[name="new_password"]').value = '';
                     desktopPasswordFields.querySelector('input[name="password_confirmation"]').value = '';
                 }
