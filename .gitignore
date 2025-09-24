@@ -4,3 +4,4 @@ node_modules/
 !/public/uploads/.gitkeep
 .env.local.backup
 .env.backup
+readme.md/
