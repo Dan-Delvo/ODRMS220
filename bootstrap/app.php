@@ -6,6 +6,7 @@ use Illuminate\Foundation\Configuration\Middleware;
 use App\Http\Middleware\AdminUserMiddleware;
 use App\Http\Middleware\ForgotPasswordFlow;
 use App\Http\Middleware\StudentUserMiddleware;
+use App\Http\Middleware\EnsureSessionStarted;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
@@ -19,6 +20,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'useradmin' => AdminUserMiddleware::class,   // Alias for admin middleware
             'userstudent' => StudentUserMiddleware::class,  // Alias for student middleware
             'forgotpassword' => ForgotPasswordFlow::class, // Alias for forgot password middleware
+            'sessionStarter' => EnsureSessionStarted::class,
         ]));
     })
     ->withExceptions(function (Exceptions $exceptions) {

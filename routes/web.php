@@ -28,11 +28,11 @@ use App\Http\Controllers\FcmController;
 use App\Http\Controllers\forgotpassword;
 use Illuminate\Support\Facades\Http;
 
-Route::get('/', [AuthController::class, 'login'])->name('login'); // Para sa login
-
-Route::get('logout', [AuthController::class, 'logout']); // Para sa logout
-
-Route::post('/', [AuthController::class, 'auth_login']); //  Authentication sa database
+Route::middleware(['web', 'sessionStarter'])->group(function () {
+    Route::get('/', [AuthController::class, 'login'])->name('login');
+    Route::post('/', [AuthController::class, 'auth_login'])->name('login.post');
+    Route::get('logout', [AuthController::class, 'logout']);
+});
 
 Route::get('/student/create', [RegistrationController::class, 'create'])->name('student.create');
 Route::post('/student/store', [RegistrationController::class, 'store'])->name('student.store');

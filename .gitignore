@@ -1,5 +1,7 @@
 .env
+node_modules/
 /public/uploads/*
 !/public/uploads/.gitkeep
 .env.local.backup
 .env.backup
+readme.md/

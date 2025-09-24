@@ -3,7 +3,7 @@
 
 @section('content')
 <!-- Login Start -->
- @include('layout.partials.message')
+@include('layout.partials.message')
 <!-- @if(session('error'))
     <div id="floatingAlert" class="floating-attempt">
         <i class="fas fa-exclamation-circle me-2"></i> {{ session('error') }}
@@ -16,8 +16,7 @@
     <div class="col-lg-9 d-none d-lg-block">
       <div
         style="height: 100vh; background: url('{{ asset('images/BG_UBNHS.jpg') }}') center center / cover no-repeat; filter: brightness(0.7);"
-        aria-label="Background Image"
-      ></div>
+        aria-label="Background Image"></div>
     </div>
 
     <!-- Right Side (Login Form) -->
@@ -39,7 +38,7 @@
 
 
 
-        <form action="/" method="post" id="loginForm" novalidate>
+        <form action="{{ route('login.post') }}" method="post" id="loginForm" novalidate>
           @csrf
 
           <div class="form-floating mb-3">
@@ -83,14 +82,14 @@
 
 @push('scripts')
 <script>
-document.addEventListener('DOMContentLoaded', function () {
+  document.addEventListener('DOMContentLoaded', function() {
 
     // Toggle password
     const toggleBtn = document.getElementById('togglePassword');
     const passwordInput = document.getElementById('inputPassword');
     const eyeIcon = document.getElementById('eyeIcon');
 
-    toggleBtn.addEventListener('click', function () {
+    toggleBtn.addEventListener('click', function() {
       const type = passwordInput.type === 'password' ? 'text' : 'password';
       passwordInput.type = type;
       eyeIcon.classList.toggle('fa-eye');
@@ -110,7 +109,9 @@ document.addEventListener('DOMContentLoaded', function () {
     installButton.addEventListener('click', async () => {
       if (deferredPrompt) {
         deferredPrompt.prompt();
-        const { outcome } = await deferredPrompt.userChoice;
+        const {
+          outcome
+        } = await deferredPrompt.userChoice;
         deferredPrompt = null;
         installButton.style.display = 'none';
       }
@@ -123,6 +124,6 @@ document.addEventListener('DOMContentLoaded', function () {
     if (window.navigator.standalone === true || window.matchMedia('(display-mode: standalone)').matches) {
       installButton.style.display = 'none';
     }
-});
+  });
 </script>
 @endpush
