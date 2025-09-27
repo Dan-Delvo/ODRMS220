@@ -8,19 +8,11 @@ use Symfony\Component\HttpFoundation\Response;
 
 class EnsureSessionStarted
 {
-    /**
-     * Handle an incoming request.
-     *
-     * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
-     */
     public function handle(Request $request, Closure $next): Response
     {
-        // Force session to start
-        $request->session()->start();
-
-        // Ensure CSRF token exists
-        if (!$request->session()->has('_token')) {
-            $request->session()->regenerateToken();
+        // Only start session if it hasn't been started
+        if (!$request->hasSession() || !$request->session()->isStarted()) {
+            $request->session()->start();
         }
 
         return $next($request);
