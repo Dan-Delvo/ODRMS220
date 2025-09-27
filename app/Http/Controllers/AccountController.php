@@ -137,6 +137,14 @@ class AccountController extends Controller
 
     public function verifyUpdateProfile(Request $request, $id)
     {
+        $request->validate([
+            'email' => 'required|email}unique:acc_users,email_address',
+            'username' => 'required|string|max:255',
+            'new_password' => 'nullable|string|min:8|confirmed',
+        ], [
+            'email.unique' => 'This email already exists',
+            'username.unique' => 'This username already exists',
+        ]);
         $student = StudentInformationModel::where('id', $id)
             ->with('account')
             ->first();

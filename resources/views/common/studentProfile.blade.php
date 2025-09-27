@@ -46,23 +46,25 @@
                                 <div style="padding: 8px; background:#334155; border-radius: 12px;">
                                     <img src="{{ asset($studInfo->Id_image) }}"
                                         alt="Student Image"
+                                        class="mobile-profile-img"
                                         style="width: 100%; height: auto; object-fit: cover; border-radius: 8px;">
+
                                 </div>
 
                                 <!-- Replace Image Button -->
-                                <input type="file" id="replaceImageInput" name="Id_image" accept="image/*" class="d-none">
-                                <button type="button" id="replaceImageBtn" class="btn btn-sm mt-2"
+                                <input type="file" id="mobileReplaceImageInput" name="Id_image" accept="image/*" class="d-none">
+                                <button type="button" id="mobileReplaceImageBtn" class="btn btn-sm mt-2"
                                     style="background:#1dd3b0; color:#0f172a;">
                                     Replace Image
                                 </button>
 
-                                <!-- Preview (after choosing a new one) -->
-                                <div id="replace-image-preview" class="mt-3 d-none">
-                                    <div class="mx-auto" style="max-width: 220px; padding: 8px; background:#334155; border-radius: 12px;">
-                                        <img id="replacePreviewImg" src="" alt="Preview"
+                                <div id="mobile-replace-preview" class="mt-3 d-none">
+                                    <div class="mx-auto" style="max-width: 180px; padding: 8px; background:#334155; border-radius: 12px;">
+                                        <img id="mobileReplacePreviewImg" src="" alt="Preview"
                                             style="width: 100%; height: auto; object-fit: cover; border-radius: 8px;">
                                     </div>
                                 </div>
+
                             </div>
                             @else
                             <!-- Placeholder -->
@@ -183,17 +185,29 @@
                             </div>
                             <div class="mb-3 col-6">
                                 <label class="form-label fw-semibold" style="color:#e2e8f0;">New Password:</label>
-                                <input type="password" name="new_password" class="form-control" placeholder="Enter new password">
+                                <div class="position-relative">
+                                    <input type="password" name="new_password" class="form-control pe-5" placeholder="Enter new password">
+                                    <button type="button" class="btn position-absolute top-50 end-0 translate-middle-y border-0 bg-transparent text-white mobile-password-toggle" data-target="new_password" style="z-index: 10;">
+                                        <i class="fas fa-eye"></i>
+                                    </button>
+                                </div>
+                                <small id="passwordStrength" class="form-text"></small>
                             </div>
                             <div class="mb-3 col-6">
                                 <label class="form-label fw-semibold" style="color:#e2e8f0;">Confirm Password:</label>
-                                <input type="password" name="password_confirmation" class="form-control" placeholder="Confirm new password">
+                                <div class="position-relative">
+                                    <input type="password" name="password_confirmation" class="form-control pe-5" placeholder="Confirm new password">
+                                    <button type="button" class="btn position-absolute top-50 end-0 translate-middle-y border-0 bg-transparent text-white mobile-password-toggle" data-target="password_confirmation" style="z-index: 10;">
+                                        <i class="fas fa-eye"></i>
+                                    </button>
+                                </div>
+                                <small id="passwordMatch" class="form-text"></small>
                             </div>
                         </div>
 
                         <!-- Save Button for Account Info -->
                         <div class="mt-3 text-end">
-                            <button type="submit" class="btn" style="background:#1dd3b0; color:#0f172a;">
+                            <button id="saveAccountBtn" type="submit" class="btn" style="background:#1dd3b0; color:#0f172a;" disabled>
                                 <i class="fas fa-save me-2"></i>Save Account Details
                             </button>
                         </div>
@@ -226,26 +240,28 @@
                                         <!-- Avatar / Image -->
                                         @if(!empty($studInfo->Id_image))
                                         <div class="mx-auto text-center" style="max-width: 220px;">
-                                            <div style="padding: 8px; background:#334155; border-radius: 12px;">
+                                            <div style="background:#334155; border-radius: 12px;">
                                                 <img src="{{ asset($studInfo->Id_image) }}"
                                                     alt="Student Image"
+                                                    class="desktop-profile-img"
                                                     style="width: 100%; height: auto; object-fit: cover; border-radius: 8px;">
                                             </div>
 
                                             <!-- Replace Image Button -->
-                                            <input type="file" id="replaceImageInput" name="Id_image" accept="image/*" class="d-none">
-                                            <button type="button" id="replaceImageBtn" class="btn btn-sm mt-2"
+                                            <input type="file" id="desktopReplaceImageInput" name="Id_image" accept="image/*" class="d-none">
+                                            <button type="button" id="desktopReplaceImageBtn" class="btn btn-sm mt-2"
                                                 style="background:#1dd3b0; color:#0f172a;">
                                                 Replace Image
                                             </button>
 
                                             <!-- Preview (after choosing a new one) -->
-                                            <div id="replace-image-preview" class="mt-3 d-none">
+                                            <div id="desktop-replace-preview" class="mt-3 d-none">
                                                 <div class="mx-auto" style="max-width: 220px; padding: 8px; background:#334155; border-radius: 12px;">
-                                                    <img id="replacePreviewImg" src="" alt="Preview"
+                                                    <img id="desktopReplacePreviewImg" src="" alt="Preview"
                                                         style="width: 100%; height: auto; object-fit: cover; border-radius: 8px;">
                                                 </div>
                                             </div>
+
                                         </div>
                                         @else
                                         <!-- Placeholder -->
@@ -404,21 +420,33 @@
                                     <div class="col-6">
                                         <div class="mb-3">
                                             <label class="form-label fw-semibold" style="color:#e2e8f0;">New Password:</label>
-                                            <input type="password" name="new_password" class="form-control" placeholder="Enter new password">
+                                            <div class="position-relative">
+                                                <input type="password" name="new_password" class="form-control pe-5" placeholder="Enter new password">
+                                                <button type="button" class="btn position-absolute top-50 end-0 translate-middle-y border-0 bg-transparent text-white desktop-password-toggle" data-target="new_password" style="z-index: 10;">
+                                                    <i class="fas fa-eye"></i>
+                                                </button>
+                                            </div>
+                                            <small id="passwordStrength" class="form-text"></small>
                                         </div>
                                     </div>
 
                                     <div class="col-6">
                                         <div class="mb-3">
                                             <label class="form-label fw-semibold" style="color:#e2e8f0;">Confirm Password:</label>
-                                            <input type="password" name="password_confirmation" class="form-control" placeholder="Confirm new password">
+                                            <div class="position-relative">
+                                                <input type="password" name="password_confirmation" class="form-control pe-5" placeholder="Confirm new password">
+                                                <button type="button" class="btn position-absolute top-50 end-0 translate-middle-y border-0 bg-transparent text-white desktop-password-toggle" data-target="password_confirmation" style="z-index: 10;">
+                                                    <i class="fas fa-eye"></i>
+                                                </button>
+                                            </div>
+                                            <small id="passwordMatch" class="form-text"></small>
                                         </div>
                                     </div>
                                 </div>
 
                                 <!-- Save button for Account Info -->
                                 <div class="text-end">
-                                    <button type="submit" class="btn" style="background:#1dd3b0; color:#0f172a;">
+                                    <button id="saveAccountBtn" type="submit" class="btn" style="background:#1dd3b0; color:#0f172a;" disabled>
                                         <i class="fas fa-save me-2"></i>Save Account Details
                                     </button>
                                 </div>
@@ -508,12 +536,13 @@
                 didOpen: () => {
                     Swal.showLoading();
                 },
-                background: '#0f172a', // match your card
-                color: '#f1f5f9', // light text
-                confirmButtonColor: '#1dd3b0', // teal button
+                background: '#0f172a',
+                color: '#f1f5f9',
+                confirmButtonColor: '#1dd3b0',
             });
         });
 
+        // Function to setup image upload for new images
         function setupImageUpload(addBtnId, inputId, previewId, imgId, placeholderId, otherPreviewImgId, otherPreviewContainerId, otherPlaceholderId, otherBtnId) {
             const addBtn = document.getElementById(addBtnId);
             const fileInput = document.getElementById(inputId);
@@ -535,7 +564,7 @@
                         const reader = new FileReader();
                         reader.onload = (e) => {
                             // Update current view
-                            previewImg.src = e.target.result;
+                            originalImg.src = e.target.result; // just swap the image
                             previewContainer.classList.remove("d-none");
                             placeholder.classList.add("d-none");
                             addBtn.classList.add("d-none");
@@ -554,18 +583,71 @@
             }
         }
 
-        // Desktop -> Mobile sync
+        // Function to setup replace image functionality for existing images
+        function setupReplaceImage(replaceBtnId, replaceInputId, replacePreviewId, replacePreviewImgId, originalImgSelector) {
+            const replaceBtn = document.getElementById(replaceBtnId);
+            const replaceInput = document.getElementById(replaceInputId);
+            const replacePreview = document.getElementById(replacePreviewId);
+            const replacePreviewImg = document.getElementById(replacePreviewImgId);
+            const originalImg = document.querySelector(originalImgSelector);
+
+            if (!replaceBtn || !replaceInput || !originalImg) {
+                return; // missing required elements
+            }
+
+            replaceBtn.addEventListener("click", () => replaceInput.click());
+
+            replaceInput.addEventListener("change", (event) => {
+                const file = event.target.files && event.target.files[0];
+                if (!file) return;
+
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    // show preview if element exists
+                    if (replacePreviewImg) replacePreviewImg.src = e.target.result;
+                    if (replacePreview) replacePreview.classList.remove("d-none");
+
+                    // hide the original image element (so preview replaces it)
+                    originalImg.style.display = "none";
+
+                    // update button UI
+                    // replaceBtn.textContent = "Change Again";
+                    // replaceBtn.style.background = "#f87171";
+                    // replaceBtn.style.color = "#0f172a";
+                };
+                reader.readAsDataURL(file);
+            });
+        }
+
+
+        // Setup for new image upload (when no image exists)
         setupImageUpload(
             "desktopAddImageBtn", "desktopImageInput",
             "desktop-image-preview", "desktopPreviewImg", "desktop-placeholder",
             "mobilePreviewImg", "mobile-image-preview", "mobile-placeholder", "mobileAddImageBtn"
         );
 
-        // Mobile -> Desktop sync
         setupImageUpload(
             "mobileAddImageBtn", "mobileImageInput",
             "mobile-image-preview", "mobilePreviewImg", "mobile-placeholder",
             "desktopPreviewImg", "desktop-image-preview", "desktop-placeholder", "desktopAddImageBtn"
+        );
+
+        // Setup for replace image functionality (when image already exists)
+        setupReplaceImage(
+            "desktopReplaceImageBtn",
+            "desktopReplaceImageInput",
+            "desktop-replace-preview",
+            "desktopReplacePreviewImg",
+            ".desktop-profile-img"
+        );
+
+        setupReplaceImage(
+            "mobileReplaceImageBtn",
+            "mobileReplaceImageInput",
+            "mobile-replace-preview",
+            "mobileReplacePreviewImg",
+            ".mobile-profile-img"
         );
 
         // Password change functionality for mobile
@@ -584,7 +666,6 @@
                     mobileChangePasswordBtn.innerHTML = '<i class="fas fa-key me-1"></i>Change Password';
                     mobileChangePasswordBtn.classList.remove('btn-outline-danger');
                     mobileChangePasswordBtn.classList.add('btn-outline-secondary');
-                    // Clear password fields
                     mobilePasswordFields.querySelector('input[name="new_password"]').value = '';
                     mobilePasswordFields.querySelector('input[name="password_confirmation"]').value = '';
                 }
@@ -607,7 +688,6 @@
                     desktopChangePasswordBtn.innerHTML = '<i class="fas fa-key me-1"></i>Change Password';
                     desktopChangePasswordBtn.classList.remove('btn-outline-danger');
                     desktopChangePasswordBtn.classList.add('btn-outline-secondary');
-                    // Clear password fields
                     desktopPasswordFields.querySelector('input[name="new_password"]').value = '';
                     desktopPasswordFields.querySelector('input[name="password_confirmation"]').value = '';
                 }
@@ -621,6 +701,164 @@
                 document.body.classList.toggle('sidebar-shrink');
             });
         }
+        // Password strength checker
+        function checkPasswordStrength(password) {
+            let strength = 0;
+            if (/[a-z]/.test(password) && /[A-Z]/.test(password)) strength++; // lowercase
+            if (/[0-9]/.test(password) && password.length >= 8) strength++; // numbers
+            if (/[^A-Za-z0-9]/.test(password)) strength++; // special char
+
+            if (strength === 0) return {
+                text: "Password Strength: None",
+                staticText: "Password Strength: ",
+                dynamicText: "None",
+                color: "white",
+                level: 0
+            };
+            if (strength <= 1) return {
+                text: "Password Strength: Weak",
+                staticText: "Password Strength: ",
+                dynamicText: "Weak",
+                color: "#f87171",
+                level: 1
+            }; // light red
+            if (strength === 2) return {
+                text: "Password Strength: Medium",
+                staticText: "Password Strength: ",
+                dynamicText: "Medium",
+                color: "#facc15",
+                level: 2
+            }; // yellow
+            if (strength >= 3) return {
+                text: "Password Strength: Strong",
+                staticText: "Password Strength: ",
+                dynamicText: "Strong",
+                color: "#4ade80",
+                level: 3
+            }; // light green
+        }
+
+        // Validate all conditions and enable/disable Save button
+        function validateForm(form) {
+            const newPass = form.querySelector('input[name="new_password"]').value;
+            const confirmPass = form.querySelector('input[name="password_confirmation"]').value;
+            const saveBtn = form.querySelector('#saveAccountBtn'); // 👈 only this button
+            const strength = checkPasswordStrength(newPass);
+
+            if (saveBtn) {
+                if (strength.level >= 2 && confirmPass === newPass && newPass !== "") {
+                    saveBtn.disabled = false;
+                } else {
+                    saveBtn.disabled = true;
+                }
+            }
+        }
+
+        const newPasswordInputs = document.querySelectorAll('input[name="new_password"]');
+        const confirmPasswordInputs = document.querySelectorAll('input[name="password_confirmation"]');
+
+        newPasswordInputs.forEach((input) => {
+            input.addEventListener('input', function() {
+                // Updated selector: look in the parent container that holds both the input div and feedback
+                const feedback = this.closest('.mb-3').querySelector('#passwordStrength') ||
+                    this.parentElement.parentElement.querySelector('#passwordStrength');
+                if (feedback) {
+                    const result = checkPasswordStrength(this.value);
+
+                    if (result.level === 0) {
+                        if (result.level === 0) {
+                            // Show "None" instead of clearing
+                            feedback.innerHTML = `<span style="color: #e2e8f0;">${result.staticText}</span><span style="color: ${result.color};">${result.dynamicText}</span>`;
+                        } else {
+                            // Show Weak / Medium / Strong
+                            feedback.innerHTML = `<span style="color: #e2e8f0;">${result.staticText}</span><span style="color: ${result.color};">${result.dynamicText}</span>`;
+                        }
+                    } else {
+                        // Create the display with static white text and colored dynamic text
+                        feedback.innerHTML = `<span style="color: #e2e8f0;">${result.staticText}</span><span style="color: ${result.color};">${result.dynamicText}</span>`;
+                    }
+                }
+                validateForm(this.closest('form'));
+            });
+        });
+
+        // Confirm password matching
+        confirmPasswordInputs.forEach((input) => {
+            input.addEventListener('input', function() {
+                const newPass = this.closest('form').querySelector('input[name="new_password"]').value;
+                // Updated selector: look in the parent container that holds both the input div and feedback
+                const feedback = this.closest('.mb-3').querySelector('#passwordMatch') ||
+                    this.parentElement.parentElement.querySelector('#passwordMatch');
+                if (feedback) {
+                    if (this.value === "") {
+                        feedback.textContent = "";
+                    } else if (this.value !== newPass) {
+                        feedback.textContent = "Passwords do not match";
+                        feedback.style.color = "red";
+                    } else {
+                        feedback.textContent = "Passwords match";
+                        feedback.style.color = "#4ade80";
+                    }
+                }
+                validateForm(this.closest('form'));
+            });
+        });
+
+        function setupPasswordToggle() {
+            // Handle both mobile and desktop password toggles
+            const passwordToggles = document.querySelectorAll('.mobile-password-toggle, .desktop-password-toggle');
+
+            passwordToggles.forEach(toggle => {
+                // Set initial state based on input type
+                const targetName = toggle.getAttribute('data-target');
+                const form = toggle.closest('form');
+                const passwordInput = form.querySelector(`input[name="${targetName}"]`);
+                const icon = toggle.querySelector('i');
+
+                if (passwordInput && icon) {
+                    // Set initial icon state
+                    if (passwordInput.type === 'password') {
+                        icon.classList.remove('fa-eye-slash');
+                        icon.classList.add('fa-eye');
+                        toggle.setAttribute('title', 'Show password');
+                    } else {
+                        icon.classList.remove('fa-eye');
+                        icon.classList.add('fa-eye-slash');
+                        toggle.setAttribute('title', 'Hide password');
+                    }
+                }
+
+                toggle.addEventListener('click', function() {
+                    const targetName = this.getAttribute('data-target');
+                    const form = this.closest('form');
+                    const passwordInput = form.querySelector(`input[name="${targetName}"]`);
+                    const icon = this.querySelector('i');
+
+                    if (passwordInput) {
+                        if (passwordInput.type === 'password') {
+                            passwordInput.type = 'text';
+                            icon.classList.remove('fa-eye');
+                            icon.classList.add('fa-eye-slash');
+                            this.setAttribute('title', 'Hide password');
+                        } else {
+                            passwordInput.type = 'password';
+                            icon.classList.remove('fa-eye-slash');
+                            icon.classList.add('fa-eye');
+                            this.setAttribute('title', 'Show password');
+                        }
+                    }
+                });
+            });
+        }
+
+        // Call the function after all your existing setup
+        setupPasswordToggle();
+
+        // // On page load, disable all save buttons initially
+        // document.querySelectorAll('form#accountUpdateForm button[type="submit"]').forEach((btn) => {
+        //     btn.disabled = true;
+        // });
+
     });
 </script>
 
