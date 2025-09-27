@@ -19,8 +19,8 @@ class AuthController extends Controller
 
     // Login method to redirect authenticated users based on their role
     public function login()
-
     {
+
         // Check if a user is already logged in and redirect accordingly
         if (Auth::check()) {
             if (Auth::user()->roles->name === 'student') {
