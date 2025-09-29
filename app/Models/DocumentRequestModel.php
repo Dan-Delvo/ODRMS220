@@ -34,6 +34,7 @@ class DocumentRequestModel extends Model
         'forRelease_date',
         'claimed_date',
         'claimed_time',
+        'deleted_at',
         'req_no',
         'image',
         'supporting_document'

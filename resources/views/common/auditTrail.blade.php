@@ -111,9 +111,9 @@
                     <table class="table table-sm table-bordered table-hover align-middle text-nowrap" style="font-size: 0.85rem;">
                         <thead class="table-dark">
                             <tr>
-                                <th title="Audit ID">ID</th>
+                                <th title="Audit ID">Audit No.</th>
                                 <th title="Action Type">Type</th>
-                                <th title="Table Name">Table</th>
+                                <th title="Description">Description</th>
                                 <th title="Changed By User">Changed By</th>
                                 <th title="Date and Time">Date/Time</th>
                                 <th title="Old Data">Old Data</th>
@@ -126,13 +126,13 @@
                             <tr class="audit-row"
                                 data-id="{{ $item->id }}"
                                 data-type="{{ strtolower($item->type) }}"
+                                data-description="{{ strtolower($item->description) }}"
                                 data-user="{{ strtolower($item->changedBy) }}"
-                                data-table="{{ strtolower($item->fromTableName) }}"
                                 data-date="{{ $item->time ? $item->time->format('Y-m-d') : '' }}"
                                 data-old-data="{{ strtolower($item->old_data ?? '') }}"
                                 data-new-data="{{ strtolower($item->new_data ?? '') }}">
 
-                                <td>{{ $item->id }}</td>
+                                <td>{{ $loop->iteration + $auditTrail->firstItem() - 1 }}</td>
                                 <td>
                                     @switch($item->type)
                                     @case('CREATE')
@@ -148,7 +148,7 @@
                                     <span class="badge bg-secondary px-2 py-1">{{ $item->type }}</span>
                                     @endswitch
                                 </td>
-                                <td>{{ $item->fromTableName }}</td>
+                                <td> {{ $item->description }}</td>
                                 <td>{{ $item->changedBy }}</td>
                                 <td>{{ $item->time ? $item->time->format('M d, Y - h:i A') : 'N/A' }}</td>
                                 <td>
@@ -170,7 +170,7 @@
                                     @endif
                                 </td>
                                 <td class="text-nowrap">
-                                    <button class="btn btn-sm btn-details"  data-bs-toggle="modal" data-bs-target="#detailModal{{ $item->id }}">
+                                    <button class="btn btn-sm btn-details" data-bs-toggle="modal" data-bs-target="#detailModal{{ $item->id }}">
                                         <i class="fas fa-info-circle me-1"></i>Details
                                     </button>
                                 </td>
@@ -181,9 +181,9 @@
 
                     <div class="d-flex flex-column justify-content-center align-items-center mt-3">
                         {{ $auditTrail->links() }}
-                            <small class="text-muted">
-                                Showing {{ $auditTrail->firstItem() }} - {{ $auditTrail->lastItem() }} of {{ $auditTrail->total() }}
-                            </small>
+                        <small class="text-muted">
+                            Showing {{ $auditTrail->firstItem() }} - {{ $auditTrail->lastItem() }} of {{ $auditTrail->total() }}
+                        </small>
                     </div>
 
                     <!-- No Results Message -->
@@ -225,7 +225,11 @@
                                 <hr>
                                 <h6 class="text-secondary mb-3">Previous Data:</h6>
                                 <div class="bg-white p-3 border rounded">
-                                    <pre class="mb-0" style="white-space: pre-wrap; font-size: 0.9rem;">{{ $item->old_data }}</pre>
+                                    <ul class="mb-0" style="font-size: 0.9rem;">
+                                        @foreach(explode(',', $item->old_data) as $value)
+                                        <li>{{ trim($value) }}</li>
+                                        @endforeach
+                                    </ul>
                                 </div>
                             </div>
                             <div class="modal-footer" style="background-color: #f8f9fa;">
@@ -266,7 +270,11 @@
                                 <hr>
                                 <h6 class="text-info mb-3">Current Data:</h6>
                                 <div class="bg-white p-3 border rounded">
-                                    <pre class="mb-0" style="white-space: pre-wrap; font-size: 0.9rem;">{{ $item->new_data }}</pre>
+                                    <ul class="mb-0" style="font-size: 0.9rem;">
+                                        @foreach(explode(',', $item->new_data) as $value)
+                                        <li>{{ trim($value) }}</li>
+                                        @endforeach
+                                    </ul>
                                 </div>
                             </div>
                             <div class="modal-footer" style="background-color: #f8f9fa;">
@@ -299,7 +307,7 @@
                                                 <i class="fas fa-tag text-primary mb-2" style="font-size: 1.5rem;"></i>
                                                 <h6 class="card-title">Action Type</h6>
                                                 @switch($item->type)
-                                                @case('CREATE')
+                                                @case('INSERT')
                                                 <span class="badge bg-success px-3 py-2">{{ $item->type }}</span>
                                                 @break
                                                 @case('UPDATE')
@@ -319,7 +327,7 @@
                                             <div class="card-body text-center">
                                                 <i class="fas fa-user text-info mb-2" style="font-size: 1.5rem;"></i>
                                                 <h6 class="card-title">Changed By</h6>
-                                                <p class="card-text">{{ $item->changedBy }}</p>
+                                                <p class="card-text fs-5">{{ $item->changedBy }}</p>
                                             </div>
                                         </div>
                                     </div>
@@ -327,8 +335,8 @@
                                         <div class="card border-0 shadow-sm h-100">
                                             <div class="card-body text-center">
                                                 <i class="fas fa-table text-warning mb-2" style="font-size: 1.5rem;"></i>
-                                                <h6 class="card-title">Table</h6>
-                                                <p class="card-text">{{ $item->fromTableName }}</p>
+                                                <h6 class="card-title">Description</h6>
+                                                <p class="card-text fs-5">{{ $item->description }}</p>
                                             </div>
                                         </div>
                                     </div>
@@ -337,7 +345,7 @@
                                             <div class="card-body text-center">
                                                 <i class="fas fa-clock text-success mb-2" style="font-size: 1.5rem;"></i>
                                                 <h6 class="card-title">Date & Time</h6>
-                                                <p class="card-text small">{{ $item->time ? $item->time->format('M d, Y') : 'N/A' }}<br>{{ $item->time ? $item->time->format('h:i A') : '' }}</p>
+                                                <p class="card-text fs-5">{{ $item->time ? $item->time->format('M d, Y') : 'N/A' }}<br>{{ $item->time ? $item->time->format('h:i A') : '' }}</p>
                                             </div>
                                         </div>
                                     </div>
@@ -352,7 +360,11 @@
                                                 <h6 class="mb-0"><i class="fas fa-arrow-left me-2"></i>Previous Data</h6>
                                             </div>
                                             <div class="card-body bg-white">
-                                                <pre class="mb-0" style="white-space: pre-wrap; font-size: 0.85rem; max-height: 300px; overflow-y: auto;">{{ $item->old_data }}</pre>
+                                                <ul class="mb-0" style="font-size: 0.9rem;">
+                                                    @foreach(explode(',', $item->old_data) as $value)
+                                                    <li>{{ trim($value) }}</li>
+                                                    @endforeach
+                                                </ul>
                                             </div>
                                         </div>
                                     </div>
@@ -365,7 +377,11 @@
                                                 <h6 class="mb-0"><i class="fas fa-arrow-right me-2"></i>Current Data</h6>
                                             </div>
                                             <div class="card-body bg-white">
-                                                <pre class="mb-0" style="white-space: pre-wrap; font-size: 0.85rem; max-height: 300px; overflow-y: auto;">{{ $item->new_data }}</pre>
+                                                <ul class="mb-0" style="font-size: 0.9rem;">
+                                                    @foreach(explode(',', $item->new_data) as $value)
+                                                    <li>{{ trim($value) }}</li>
+                                                    @endforeach
+                                                </ul>
                                             </div>
                                         </div>
                                     </div>
@@ -397,37 +413,37 @@
 
 
 
-        <div class="row mb-3 mt-5">
-            <div class="col-12">
-                <h4 class="fw-bold text-dark mb-3">
-                    <i class="fas fa-database me-2" style="color:#1dd3b0;"></i> Backup & Restore
-                </h4>
-            </div>
-        </div>
+<div class="row mb-3 mt-5">
+    <div class="col-12">
+        <h4 class="fw-bold text-dark mb-3">
+            <i class="fas fa-database me-2" style="color:#1dd3b0;"></i> Backup & Restore
+        </h4>
+    </div>
+</div>
 
-        <div class="row">
-            <!-- Backup Button -->
-            <div class="col-md-6 mb-3">
-                <button class="btn btn-lg w-100"
-                    style="background-color: #1f2937; border-color: #1f2937; color: white;"
-                    onclick="window.location.href='{{ route('backup.download') }}'">
-                    <i class="fas fa-download me-2"></i> Backup Database
+<div class="row">
+    <!-- Backup Button -->
+    <div class="col-md-6 mb-3">
+        <button class="btn btn-lg w-100"
+            style="background-color: #1f2937; border-color: #1f2937; color: white;"
+            onclick="window.location.href='{{ route('backup.download') }}'">
+            <i class="fas fa-download me-2"></i> Backup Database
+        </button>
+    </div>
+
+    <!-- Restore Form -->
+    <div class="col-md-6 mb-3">
+        <form action="{{ route('backup.restore') }}" method="POST" enctype="multipart/form-data">
+            @csrf
+            <div class="input-group">
+                <input type="file" name="backup_file" class="form-control" accept=".sql,.txt" required>
+                <button type="submit" class="btn btn-lg" style="background-color: #1f2937; border-color: #1f2937; color: white;">
+                    <i class="fas fa-upload me-2"></i> Restore
                 </button>
             </div>
-
-            <!-- Restore Form -->
-            <div class="col-md-6 mb-3">
-                <form action="{{ route('backup.restore') }}" method="POST" enctype="multipart/form-data">
-                    @csrf
-                    <div class="input-group">
-                        <input type="file" name="backup_file" class="form-control" accept=".sql,.txt" required>
-                        <button type="submit" class="btn btn-lg" style="background-color: #1f2937; border-color: #1f2937; color: white;">
-                            <i class="fas fa-upload me-2"></i> Restore
-                        </button>
-                    </div>
-                </form>
-            </div>
-        </div>
+        </form>
+    </div>
+</div>
 
 
 {{-- Enhanced JavaScript with loading spinners and search functionality --}}

@@ -10,7 +10,7 @@ use Illuminate\Contracts\Auth\MustVerifyEmail;
 class Account extends Authenticatable implements MustVerifyEmail
 {
     use HasFactory, Notifiable;
-        use Notifiable;
+    use Notifiable;
 
     // Specify the table name
     protected $table = 'acc_users';

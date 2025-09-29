@@ -44,7 +44,10 @@
             </div>
 
             <div class="card-body" style="background-color: rgb(34, 43, 55);">
-                <form action="{{ route('role.update', $roles->id) }}" method="POST">
+                <form action="{{ route('role.update', $roles->id) }}" method="POST"
+                    data-swal-loading="true"
+                    data-swal-title="Updating role"
+                    data-swal-text="This may take a few seconds...">
                     @csrf
 
                     <!-- Role Name -->
@@ -56,7 +59,7 @@
                             style="background: #2d3748; border: none; color: #e2e8f0;"
                             @if($roles->id == 1) disabled @endif />
                         @error('role')
-                            <div class="text-danger mt-1">{{ $message }}</div>
+                        <div class="text-danger mt-1">{{ $message }}</div>
                         @enderror
                     </div>
 
@@ -65,76 +68,76 @@
                         <label class="form-label fw-bold text-uppercase text-white fs-5 mb-3">Permissions</label>
 
                         @if($roles->id == 1)
-                            <div class="text-light fst-italic">This role cannot be modified.</div>
+                        <div class="text-light fst-italic">This role cannot be modified.</div>
                         @else
-                            @foreach($getPermission as $value)
-                                <div class="rounded p-3 mb-4" style="background: #2d3748; border: none; color: #e2e8f0;">
-                                    <div class="mb-2">
-                                        <strong class="fs-6" style="color: #1dd3b0;">{{ $value['name'] }}</strong>
-                                    </div>
+                        @foreach($getPermission as $value)
+                        <div class="rounded p-3 mb-4" style="background: #2d3748; border: none; color: #e2e8f0;">
+                            <div class="mb-2">
+                                <strong class="fs-6" style="color: #1dd3b0;">{{ $value['name'] }}</strong>
+                            </div>
 
-                                    <div class="row">
-                                        @foreach($value['group'] as $group)
-                                            @php
-                                                $checked = '';
-                                                foreach ($getRolePermission as $role) {
-                                                    if ($role->permission_id == $group['id']) {
-                                                        $checked = 'checked';
-                                                        break;
-                                                    }
-                                                }
-                                            @endphp
+                            <div class="row">
+                                @foreach($value['group'] as $group)
+                                @php
+                                $checked = '';
+                                foreach ($getRolePermission as $role) {
+                                if ($role->permission_id == $group['id']) {
+                                $checked = 'checked';
+                                break;
+                                }
+                                }
+                                @endphp
 
-                                            <div class="col-md-3 mb-2">
-                                                <div class="form-check">
-                                                    <input type="checkbox" class="form-check-input" id="permission_{{ $group['id'] }}"
-                                                           name="permission_id[]" value="{{ $group['id'] }}" {{ $checked }}>
-                                                    <label class="form-check-label text-light" for="permission_{{ $group['id'] }}">
-                                                        {{ $group['name'] }}
-                                                    </label>
-                                                </div>
-                                            </div>
-                                        @endforeach
+                                <div class="col-md-3 mb-2">
+                                    <div class="form-check">
+                                        <input type="checkbox" class="form-check-input" id="permission_{{ $group['id'] }}"
+                                            name="permission_id[]" value="{{ $group['id'] }}" {{ $checked }}>
+                                        <label class="form-check-label text-light" for="permission_{{ $group['id'] }}">
+                                            {{ $group['name'] }}
+                                        </label>
                                     </div>
                                 </div>
-                            @endforeach
+                                @endforeach
+                            </div>
+                        </div>
+                        @endforeach
                         @endif
                     </div>
 
                     <!-- Error Message + Submit -->
                     @if($roles->id != 1)
-                        <div id="permission-error" class="text-danger fw-semibold mb-3" style="display: none;">
-                            Please select at least one permission.
-                        </div>
+                    <div id="permission-error" class="text-danger fw-semibold mb-3" style="display: none;">
+                        Please select at least one permission.
+                    </div>
 
-                        <div class="text-end">
-                            <button type="submit" class="btn text-black fw-semibold"
-                                style="background-color: #1dd3b0; box-shadow: 0 4px 10px rgba(29, 211, 176, 0.5);">
-                                Save
-                            </button>
-                        </div>
+                    <div class="text-end">
+                        <button type="submit" class="btn text-black fw-semibold"
+                            style="background-color: #1dd3b0; box-shadow: 0 4px 10px rgba(29, 211, 176, 0.5);">
+                            Save
+                        </button>
+                    </div>
 
-                        <!-- JavaScript Validation -->
-                        <script>
-                            document.querySelector('form').addEventListener('submit', function (e) {
-                                const checkboxes = document.querySelectorAll('input[name="permission_id[]"]');
-                                const errorDiv = document.getElementById('permission-error');
-                                let isChecked = false;
+                    <!-- JavaScript Validation -->
+                    <script>
+                        document.querySelector('form').addEventListener('submit', function(e) {
+                            const checkboxes = document.querySelectorAll('input[name="permission_id[]"]');
+                            const errorDiv = document.getElementById('permission-error');
+                            let isChecked = false;
 
-                                checkboxes.forEach((checkbox) => {
-                                    if (checkbox.checked) {
-                                        isChecked = true;
-                                    }
-                                });
-
-                                if (!isChecked) {
-                                    e.preventDefault();
-                                    errorDiv.style.display = 'block';
-                                } else {
-                                    errorDiv.style.display = 'none';
+                            checkboxes.forEach((checkbox) => {
+                                if (checkbox.checked) {
+                                    isChecked = true;
                                 }
                             });
-                        </script>
+
+                            if (!isChecked) {
+                                e.preventDefault();
+                                errorDiv.style.display = 'block';
+                            } else {
+                                errorDiv.style.display = 'none';
+                            }
+                        });
+                    </script>
                     @endif
 
                 </form>
