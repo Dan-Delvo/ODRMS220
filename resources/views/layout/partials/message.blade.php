@@ -16,21 +16,25 @@
 @if(session('Success') || session('Warning') || session('Status') || session('Error') || session('Danger') || $errors->has('password') || session('Declined'))
 <script>
     Swal.fire({
-        icon: '{{ 
-            session('Warning') ? 'warning' : 
-            ((session('Error') || session('Danger') || $errors->has('password')) ? 'error' : 'success') 
-        }}',
-        title: 'Notice!!!',
+            icon: '{{ 
+            session('Warning') ? 'warning' : ((session('Error') || session('Danger') || $errors - > has('password')) ? 'error' : 'success')
+        }
+    }
+    ',
+    title: 'Notice!!!',
         text: "{{ ucfirst(
-            session('Success') 
-            ?? session('Status') 
-            ?? session('Error') 
-            ?? session('Danger') 
-            ?? session('Warning') 
-            ?? session('Declined') 
-            ?? $errors->first('password')
-        ) }}",
-        confirmButtonColor: '#1dd3b0'
+    session('Success') ??
+        session('Status') ??
+        session('Error') ??
+        session('Danger') ??
+        session('Warning') ??
+        session('Declined') ??
+        $errors - > first('password')
+    )
+    }
+    }
+    ",
+    confirmButtonColor: '#1dd3b0'
     });
 </script>
 @endif
@@ -55,6 +59,21 @@
                 setTimeout(() => alert.remove(), 500);
             });
         }
+        // const Toast = Swal.mixin({
+        //     toast: true,
+        //     position: "top",
+        //     showConfirmButton: false,
+        //     timer: 3000,
+        //     timerProgressBar: true,
+        //     didOpen: (toast) => {
+        //         toast.onmouseenter = Swal.stopTimer;
+        //         toast.onmouseleave = Swal.resumeTimer;
+        //     }
+        // });
+        // Toast.fire({
+        //     icon: "success",
+        //     title: "Signed in successfully"
+        // });
     });
 </script>
 @endpush

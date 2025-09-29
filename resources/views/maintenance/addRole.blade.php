@@ -32,10 +32,10 @@
 <div class="row mb-4">
     <div class="col-md-12">
         @if(session('Status'))
-            <div class="alert alert-success">{{ session('Status') }}</div>
+        <div class="alert alert-success">{{ session('Status') }}</div>
         @endif
         @if(session('Danger'))
-            <div class="alert alert-danger">{{ session('Danger') }}</div>
+        <div class="alert alert-danger">{{ session('Danger') }}</div>
         @endif
     </div>
 </div>
@@ -52,7 +52,10 @@
             </div>
 
             <div class="card-body" style="background-color: rgb(34, 43, 55);">
-                <form action="{{ route('role.insert') }}" method="POST" id="addRoleForm">
+                <form action="{{ route('role.insert') }}" method="POST" id="addRoleForm"
+                    data-swal-loading="true"
+                    data-swal-title="Adding role"
+                    data-swal-text="This may take a few seconds...">
                     @csrf
 
                     <!-- Role Name -->
@@ -62,7 +65,7 @@
                             placeholder="Enter role name"
                             style="background: #2d3748; border: none; color: #e2e8f0;" />
                         @error('role')
-                            <div class="text-danger mt-1">{{ $message }}</div>
+                        <div class="text-danger mt-1">{{ $message }}</div>
                         @enderror
                     </div>
 
@@ -110,7 +113,7 @@
 
 <!-- Client-side Validation Script -->
 <script>
-    document.getElementById('addRoleForm').addEventListener('submit', function (e) {
+    document.getElementById('addRoleForm').addEventListener('submit', function(e) {
         const checkboxes = document.querySelectorAll('input[name="permission_id[]"]');
         const errorDiv = document.getElementById('permission-error');
         let isChecked = false;

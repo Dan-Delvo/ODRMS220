@@ -24,6 +24,7 @@
 
     <!-- Customized Pagination Links-->
     <style>
+        
         .zoomable.zoomed {
             max-height: none !important;
             max-width: 100% !important;
@@ -467,6 +468,7 @@
                 });
         }
     </script>
+    @include('layout.partials.swal-loading')
     @stack('scripts')
 </body>
 
