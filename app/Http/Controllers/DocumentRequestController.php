@@ -111,9 +111,15 @@ class DocumentRequestController extends Controller
         $pdo = DB::connection()->getPdo();
         $pdo->exec("SET @current_user = " . $pdo->quote(Auth::check() ? Auth::user()->username : 'guest'));
 
-        $validated = $this->validateDocumentRequest($request);
-        DocumentRequestModel::updateOrCreateRequest($validated);
-
+        $validated = $request->validate([
+            'app_date' => 'required|date|before_or_equal:today',
+            'rel_date' => 'required|date|after_or_equal:app_date|before_or_equal:today',
+        ]);
+        DocumentRequestModel::where('id', $request->id)
+            ->update([
+                'approve_date' => $validated['app_date'],
+                'forRelease_date' => $validated['rel_date'],
+            ]);
         return redirect('/tables')->with('Status', 'Updated Successfully');
     }
 
@@ -326,7 +332,7 @@ class DocumentRequestController extends Controller
             'request_mode' => 'required|string|max:255',
             'release_mode' => 'required|string|max:255',
             'remarks' => 'nullable|string|max:500',
-            'status' => 'required|string',
+            'status' => 'required|string'
         ]);
     }
 

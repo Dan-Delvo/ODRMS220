@@ -35,68 +35,70 @@ editTable.blade.php
 
                     <input type="hidden" name="id" value="{{ $ongoing->id }}">
 
-                    <div class="mb-3">
-                        <label class="form-label">Claimer</label>
-                        <input type="text" name="claimer_id" class="form-control" value="{{ $ongoing->claimer->full_name }}" readonly>
-                        @error('claimer_id')
-                            <small class="text-danger">{{ $message }}</small>
-                        @enderror
+        
+                    <div class="row">
+                        <div class="mb-3 col-lg-6">
+                            <label>Claimer</label>
+                            <input type="text" name="claimer_id" class="form-control" value="{{$ongoing->claimer->full_name}}" />
+                            @error('claimer_id') {{$message}} @enderror
+                        </div>
+
+                        <div class="mb-3 col-lg-6">
+                            <label for="inputDocumentId">Requested Document</label>
+                            <select class="form-control" id="inputDocumentId" name="document_id">
+                                @foreach($DocType as $doc)
+                                <option value="{{$doc->id}}">{{$doc->DocType}}</option>
+                                @endforeach
+                            </select>
+                            @error('document_id') {{$message}} @enderror
+                        </div>
                     </div>
 
-                    <div class="mb-3">
-                        <label for="inputDocumentId" class="form-label">Requested Document</label>
-                        <select class="form-control" id="inputDocumentId" name="document_id">
-                            @foreach($DocType as $doc)
-                                <option value="{{ $doc->id }}" {{ $ongoing->document_id == $doc->id ? 'selected' : '' }}>
-                                    {{ $doc->DocType }}
-                                </option>
-                            @endforeach
-                        </select>
-                        @error('document_id')
-                            <small class="text-danger">{{ $message }}</small>
-                        @enderror
+                    <div class="row">
+
+                        <div class="mb-3 col-lg-8">
+                            <label>Requesting School</label>
+                            <input type="text" name="request_schl_entity" class="form-control" value="{{$ongoing->request_schl_entity}}" readonly />
+                            @error('request_schl_entity') {{$message}} @enderror
+                        </div>
+
+                        <div class="mb-3 col-lg-4">
+                            <label>Request Mode</label>
+                            <input type="text" name="requested_sf10" class="form-control" value="{{$ongoing->request_mode}}" readonly />
+                            @error('requested_sf10') {{$message}} @enderror
+                        </div>
                     </div>
 
-                    <div class="mb-3">
-                        <label class="form-label">Requesting School</label>
-                        <input type="text" name="request_schl_entity" class="form-control" value="{{ $ongoing->request_schl_entity }}">
-                        @error('request_schl_entity')
-                            <small class="text-danger">{{ $message }}</small>
-                        @enderror
-                    </div>
+                    <div class="row">
+                        <div class="mb-3 col-md-4">
+                            <label>Release Mode</label>
+                            <input type="text" name="release_mode" class="form-control" value="{{$ongoing->release_mode}}" readonly />
+                            @error('release_mode') {{$message}} @enderror
+                        </div>
 
-                    <div class="mb-3">
-                        <label class="form-label">Request Mode</label>
-                        <input type="text" name="request_mode" class="form-control" value="{{ $ongoing->request_mode }}">
-                        @error('requested_sf10')
-                            <small class="text-danger">{{ $message }}</small>
-                        @enderror
-                    </div>
+                        <div class="mb-3 col-md-4">
+                            <label>Remarks</label>
+                            <input type="text" name="remarks" class="form-control" value="{{$ongoing->remarks}}" readonly />
+                            @error('remarks') {{$message}} @enderror
+                        </div>
 
-                    <div class="mb-3">
-                        <label class="form-label">Release Mode</label>
-                        <input type="text" name="release_mode" class="form-control" value="{{ $ongoing->release_mode }}">
-                        @error('release_mode')
-                            <small class="text-danger">{{ $message }}</small>
-                        @enderror
-                    </div>
+                        <div class="mb-3 col-md-4">
+                            <label>Request Status</label>
+                            <input type="text" name="status" class="form-control" value="{{$ongoing->status}}" readonly />
+                            @error('status') {{$message}} @enderror
+                        </div>
 
-                    <div class="mb-3">
-                        <label class="form-label">Remarks</label>
-                        <input type="text" name="remarks" class="form-control" value="{{ $ongoing->remarks }}">
-                        @error('remarks')
-                            <small class="text-danger">{{ $message }}</small>
-                        @enderror
-                    </div>
+                        <h5>Edit Date</h5>
 
-                    <div class="mb-3">
-                        <label class="form-label">Request Status</label>
-                        <input type="text" name="status" class="form-control" value="{{ $ongoing->status }}">
-                        @error('status')
-                            <small class="text-danger">{{ $message }}</small>
-                        @enderror
-                    </div>
+                        <div class="row">
+                            <div class="mb-3 col-lg-6">
+                                <label>Approved Date</label>
+                                <input type="date" name="app_date" class="form-control"/>
+                                @error('app_date') {{$message}} @enderror
+                            </div>
+                        </div>
 
+                    </div>
                     <div class="text-end">
                         <button type="submit" class="btn text-black fw-semibold" style="background-color: #1dd3b0; box-shadow: 0 4px 10px rgba(29, 211, 176, 0.5);">Save Changes</button>
                     </div>
