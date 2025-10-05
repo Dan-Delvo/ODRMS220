@@ -27,6 +27,7 @@ use SebastianBergmann\CodeCoverage\Report\Html\Dashboard;
 use App\Http\Controllers\FcmController;
 use App\Http\Controllers\forgotpassword;
 use Illuminate\Support\Facades\Http;
+use App\Http\Controllers\SyncController;
 
 Route::middleware(['web', 'sessionStarter'])->group(function () {
     Route::get('/', [AuthController::class, 'login'])->name('login');
@@ -81,6 +82,13 @@ Route::group(['middleware' => 'useradmin'], function () {
     Route::get('/pending/ajax', [PendingController::class, 'ajaxPending'])->name('pending.ajax');
     Route::resource('claimed-documents', ClaimedDocumentController::class);
     Route::get('/declined-documents', [declinedController::class, 'index'])->name('declined-documents.index');
+    Route::get('/sync', [DocumentRequestController::class, 'viewSync']);
+
+    Route::prefix('sync')->middleware(['auth'])->group(function () {
+        Route::get('/status', [SyncController::class, 'status'])->name('sync.status');
+        Route::post('/trigger', [SyncController::class, 'sync'])->name('sync.trigger');
+        Route::get('/check-connection', [SyncController::class, 'checkConnection'])->name('sync.check');
+    });
 
     // Additional custom routes for specific functionality
     Route::prefix('claimed-documents')->group(function () {

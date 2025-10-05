@@ -16,10 +16,14 @@ use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
+use App\Services\SyncService;
 
 
 class DocumentRequestController extends Controller
 {
+
+    protected $syncService;
+
     // ============================
     // READ FUNCTIONS
     // ============================
@@ -224,16 +228,37 @@ class DocumentRequestController extends Controller
     // WALK-IN STORE
     // ============================
 
+    public function viewSync() {
+
+        return view('requestTables.sync');
+    }
+
+    public function __construct(SyncService $syncService)
+    {
+        $this->syncService = $syncService;
+    }
+
     public function storeWalkIn(Request $request)
     {
-        $pdo = DB::connection()->getPdo();
+        // ALWAYS USE LOCAL DATABASE - NEVER CHECK IF ONLINE
+        $connection = 'mysql_local';
+
+        Log::info('=== WALKIN FORM SUBMITTED ===');
+        Log::info('Request Data: ', $request->all());
+
+        // Enable query logging
+        DB::connection('mysql_local')->enableQueryLog();
+
+        // ALWAYS USE LOCAL DATABASE
+        $connection = 'mysql_local';
+
+        $pdo = DB::connection($connection)->getPdo();
         $pdo->exec("SET @current_user = " . $pdo->quote(Auth::check() ? Auth::user()->username : 'guest'));
 
         $validated = $request->validate([
             'request_schl_entity' => 'required|string|max:255',
             'document_id' => 'required|exists:doc_categories,id',
             'release_mode' => 'required|string|max:255',
-
             'student_first_name' => 'required|string|max:255',
             'student_last_name' => 'required|string|max:255',
             'lrn' => 'max:12',
@@ -243,19 +268,85 @@ class DocumentRequestController extends Controller
             'email_address' => 'required|string|max:100',
         ]);
 
-        $claimer = ClaimerModel::updateOrCreate(
-            ['Fname' => 'Blank', 'Lname' => 'Blank'],
-            ['contact_no' => '000000']
-        );
+        DB::connection($connection)->beginTransaction();
 
-        // Check if email address is unique
-        if (Account::where('email_address', $request->email_address)->exists()) {
+        try {
+            // Get or create claimer (always in local database)
+            $claimer = ClaimerModel::on($connection)->updateOrCreate(
+                ['Fname' => 'Blank', 'Lname' => 'Blank'],
+                [
+                    'contact_no' => '000000',
+                    'synced' => false, // Always mark as not synced initially
+                ]
+            );
 
-            $idAcc = Account::where('email_address', $request->email_address)->value('user_account_id');
-            DocumentRequestModel::create([
+            // Check if email address already exists in LOCAL database
+            $existingAccount = Account::on($connection)
+                ->where('email_address', $request->email_address)
+                ->first();
+
+            if ($existingAccount) {
+                // Account exists locally, just create document request
+                DocumentRequestModel::on($connection)->create([
+                    'id' => random_int(10000, 99999),
+                    'clm_claimers_id' => $claimer->id,
+                    'std_students_id' => $existingAccount->user_account_id,
+                    'doc_categories_id' => $validated['document_id'],
+                    'request_time' => now()->format('H:i:s'),
+                    'request_date' => now()->toDateString(),
+                    'request_schl_entity' => $validated['request_schl_entity'],
+                    'release_mode' => $validated['release_mode'],
+                    'remarks' => 'Pending',
+                    'status' => 'Pending',
+                    'request_mode' => 'Walk-in',
+                    'synced' => false, // Always mark as not synced
+                        'receipt_no' => 0, // <--- ADD THIS LINE
+
+                ]);
+
+                DB::connection($connection)->commit();
+
+                return redirect()->route('walkin.form')
+                    ->with('Success', 'Document request saved locally. Use sync button to upload to online database.');
+            }
+
+            // Create new student in LOCAL database
+            $student = StudentInformationModel::on($connection)->create([
+                'FirstName' => $validated['student_first_name'],
+                'LastName' => $validated['student_last_name'],
+                'LRN' => $validated['lrn'] ?? '0000',
+                'Grade_level' => $validated['grade_level'],
+                'Std_status' => $validated['student_status'],
+                'Last_sy_attended' => $validated['last_sy_attended'],
+                'synced' => false, // Not synced yet
+            ]);
+
+            // Generate temporary password
+            $tempPassword = Str::random(10);
+
+            // Create account in LOCAL database
+            Account::on($connection)->create([
+                'user_account_id' => $student->id,
+                'std_students_id' => $student->id,
+                'role_id' => 1,
+                'email_address' => $validated['email_address'],
+                'username' => $validated['student_first_name'] . $validated['student_last_name'],
+                'password' => bcrypt($tempPassword),
+                'synced' => false, // Not synced yet
+            ]);
+
+            // Store temp password for later sync (you might want to create a temp_passwords table)
+            DB::connection($connection)->table('temp_passwords')->insert([
+                'email_address' => $validated['email_address'],
+                'temp_password' => $tempPassword,
+                'created_at' => now(),
+            ]);
+
+            // Create document request in LOCAL database
+            DocumentRequestModel::on($connection)->create([
                 'id' => random_int(10000, 99999),
                 'clm_claimers_id' => $claimer->id,
-                'std_students_id' => $idAcc,
+                'std_students_id' => $student->id,
                 'doc_categories_id' => $validated['document_id'],
                 'request_time' => now()->format('H:i:s'),
                 'request_date' => now()->toDateString(),
@@ -263,61 +354,51 @@ class DocumentRequestController extends Controller
                 'release_mode' => $validated['release_mode'],
                 'remarks' => 'Pending',
                 'status' => 'Pending',
-                'request_mode' => 'Online',
+                'request_mode' => 'Walk-in',
+                'synced' => false, // Not synced yet
+                    'receipt_no' => 0, // <--- ADD THIS LINE
+
             ]);
 
-            return redirect()->route('walkin.form')->with('Success', 'Document request submitted successfully!');
+            DB::connection($connection)->commit();
+
+            // Show different message based on connection status
+            $isOnline = $this->syncService->isOnline();
+            $message = $isOnline
+                ? 'Document request saved locally. Click the SYNC button to upload to server and send email.'
+                : 'Document request saved locally (OFFLINE). Click SYNC when internet is available.';
+
+            return redirect()->route('walkin.form')->with('Success', $message);
+
+        } catch (\Exception $e) {
+            DB::connection($connection)->rollBack();
+
+            Log::error('=== WALKIN FORM ERROR ===');
+            Log::error('Error Message: ' . $e->getMessage());
+            Log::error('File: ' . $e->getFile() . ' Line: ' . $e->getLine());
+            Log::error('Stack Trace: ' . $e->getTraceAsString());
+            Log::error('Queries Executed: ', DB::connection('mysql_local')->getQueryLog());
+
+            return redirect()->route('walkin.form')
+                ->with('Error', 'Failed: ' . $e->getMessage());
         }
-
-
-        $student = StudentInformationModel::create(
-            [
-                'FirstName' => $validated['student_first_name'],
-                'LastName' => $validated['student_last_name'],
-                'LRN' => $validated['lrn'] ?? 0000,
-                'Grade_level' => $validated['grade_level'],
-                'Std_status' => $validated['student_status'],
-                'Last_sy_attended' => $validated['last_sy_attended']
-            ]
-        );
-        $tempPassword = Str::random(10);
-
-        Account::create([
-            'user_account_id' => $student->id,
-            'std_students_id' => $student->id,
-            'role_id' => 1,
-            'email_address' => $validated['email_address'],
-            'username' => $validated['student_first_name'] . $validated['student_last_name'],
-            'password' => bcrypt($tempPassword),
-        ]);
-
-        $subject = 'Your Temporary Password';
-        $name = $validated['student_first_name'] . ' ' . $validated['student_last_name'];
-        $email = $validated['email_address'];
-
-        // Send email
-        Mail::send('emails.tempPassword', compact('subject', 'name', 'tempPassword', 'email'), function ($message) use ($email, $subject) {
-            $message->to($email)->subject($subject);
-        });
-
-        DocumentRequestModel::create([
-            'id' => random_int(10000, 99999),
-            'clm_claimers_id' => $claimer->id,
-            'std_students_id' => $student->id,
-            'doc_categories_id' => $validated['document_id'],
-            'request_time' => now()->format('H:i:s'),
-            'request_date' => now()->toDateString(),
-            'request_schl_entity' => $validated['request_schl_entity'],
-            'release_mode' => $validated['release_mode'],
-            'remarks' => 'Pending',
-            'status' => 'Pending',
-            'request_mode' => 'Online',
-        ]);
-
-
-        return redirect()->route('walkin.form')->with('Success', 'Document request submitted successfully!');
     }
 
+    /**
+     * Send temporary password email
+     */
+    protected function sendTempPasswordEmail($email, $name, $tempPassword)
+    {
+        $subject = 'Your Temporary Password';
+
+        try {
+            Mail::send('emails.tempPassword', compact('subject', 'name', 'tempPassword', 'email'), function ($message) use ($email, $subject) {
+                $message->to($email)->subject($subject);
+            });
+        } catch (\Exception $e) {
+            Log::error("Failed to send temp password email to {$email}: " . $e->getMessage());
+        }
+    }
     // ============================
     // VALIDATION FUNCTION
     // ============================

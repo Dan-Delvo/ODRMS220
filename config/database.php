@@ -112,7 +112,54 @@ return [
             // 'trust_server_certificate' => env('DB_TRUST_SERVER_CERTIFICATE', 'false'),
         ],
 
+            // LOCAL DATABASE CONNECTION (Registrar Window - Always use this first)
+    'mysql_local' => [
+        'driver' => 'mysql',
+        'url' => env('DATABASE_URL'),
+        'host' => env('DB_LOCAL_HOST', '127.0.0.1'),
+        'port' => env('DB_LOCAL_PORT', '3307'),
+        'database' => env('DB_LOCAL_DATABASE', 'forge'),
+        'username' => env('DB_LOCAL_USERNAME', 'forge'),
+        'password' => env('DB_LOCAL_PASSWORD', ''),
+        'unix_socket' => env('DB_SOCKET', ''),
+        'charset' => 'utf8mb4',
+        'collation' => 'utf8mb4_unicode_ci',
+        'prefix' => '',
+        'prefix_indexes' => true,
+        'strict' => true,
+        'engine' => null,
+        'options' => extension_loaded('pdo_mysql') ? array_filter([
+            PDO::ATTR_TIMEOUT => 5,
+            PDO::MYSQL_ATTR_SSL_CA => env('MYSQL_ATTR_SSL_CA'),
+        ]) : [],
     ],
+
+    // ONLINE DATABASE CONNECTION (For syncing only)
+    'mysql_online' => [
+        'driver' => 'mysql',
+        'url' => env('DATABASE_URL'),
+        'host' => env('DB_ONLINE_HOST', '127.0.0.1'),
+        'port' => env('DB_ONLINE_PORT', '3306'),
+        'database' => env('DB_ONLINE_DATABASE', 'forge'),
+        'username' => env('DB_ONLINE_USERNAME', 'forge'),
+        'password' => env('DB_ONLINE_PASSWORD', ''),
+        'unix_socket' => env('DB_SOCKET', ''),
+        'charset' => 'utf8mb4',
+        'collation' => 'utf8mb4_unicode_ci',
+        'prefix' => '',
+        'prefix_indexes' => true,
+        'strict' => true,
+        'engine' => null,
+        'options' => extension_loaded('pdo_mysql') ? array_filter([
+            PDO::ATTR_TIMEOUT => 5,
+            PDO::MYSQL_ATTR_SSL_CA => env('MYSQL_ATTR_SSL_CA'),
+        ]) : [],
+    ],
+
+
+],
+
+'default' => env('DB_CONNECTION', 'mysql_local'), // Default to local
 
     /*
     |--------------------------------------------------------------------------

@@ -21,7 +21,7 @@ class DocumentsModel extends Model
     // Define the fillable attributes
     protected $fillable = [
         'DocType',
-        'DocPrice'
+        'DocPrice',
     ];
 
     // Optionally, you can define custom methods or accessors here

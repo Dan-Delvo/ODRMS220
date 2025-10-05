@@ -10,6 +10,7 @@ class DocumentRequestModel extends Model
 {
     //
     use Notifiable;
+    protected $connection = 'mysql_local';
 
     protected $table = 'doc_requests';
     protected $primaryKey = 'id';
@@ -34,10 +35,14 @@ class DocumentRequestModel extends Model
         'forRelease_date',
         'claimed_date',
         'claimed_time',
-        'deleted_at',
+        //'deleted_at',
         'req_no',
         'image',
-        'supporting_document'
+        'supporting_document',
+        'synced',           // Add these 4 lines
+        'needs_sync',
+        'synced_at',
+        'online_id',
     ];
 
     public function claimer()

@@ -13,6 +13,7 @@ class Account extends Authenticatable implements MustVerifyEmail
     use Notifiable;
 
     // Specify the table name
+    protected $connection = 'mysql_local';
     protected $table = 'acc_users';
     public $timestamps = false;
 
@@ -37,7 +38,11 @@ class Account extends Authenticatable implements MustVerifyEmail
         'account_edited',
         'deleted_at',
         'fcm_token',
-        'token'
+        'token',
+        'synced',           // Add these 4 lines
+        'needs_sync',
+        'synced_at',
+        'online_id',
     ];
 
     // Hide sensitive fields

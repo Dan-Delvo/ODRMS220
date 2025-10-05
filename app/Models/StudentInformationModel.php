@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class StudentInformationModel extends Model
 {
     use HasFactory;
+    protected $connection = 'mysql_local';
     protected $table = 'std_students'; // Replace with your actual table name
     protected $primaryKey = 'id'; // Primary key column
     public $incrementing = false; // Disable auto-incrementing
@@ -24,7 +25,11 @@ class StudentInformationModel extends Model
         'Grade_level',
         'Std_status',
         'Last_sy_attended',
-        'Id_image'
+        'Id_image',
+        'synced',           // Add these 4 lines
+        'needs_sync',
+        'synced_at',
+        'online_id',
     ];
 
     protected static function boot()
