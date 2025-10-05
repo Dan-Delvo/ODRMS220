@@ -90,7 +90,8 @@ class AuthController extends Controller
                     ]),
                     'time'          => now(),                  // Current datetime
                     'changedBy'     => $user->studentInformation->full_name, // The user who logged in
-                    'fromTableName' => 'Log In'                 // Assuming the related table
+                    'fromTableName' => 'Log In',                 // Assuming the related table
+                    'description' => 'An Admin has Logged In'
                 ]);
 
 
@@ -108,7 +109,8 @@ class AuthController extends Controller
                     ]),
                     'time'          => now(),                  // Current datetime
                     'changedBy'     => $user->studentInformation->full_name, // The user who logged in
-                    'fromTableName' => 'Log In'                 // Assuming the related table
+                    'fromTableName' => 'Log In',                 // Assuming the related table
+                    'description' => 'A Student has logged In'
                 ]);
                 return redirect('/stpage');
             }

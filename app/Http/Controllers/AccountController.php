@@ -19,6 +19,7 @@ use Illuminate\Auth\Events\Registered;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Exception;
+use Illuminate\Validation\Rule;
 
 class AccountController extends Controller
 {
@@ -137,60 +138,100 @@ class AccountController extends Controller
 
     public function verifyUpdateProfile(Request $request, $id)
     {
-        $request->validate([
-            'email' => 'required|email}unique:acc_users,email_address',
-            'username' => 'required|string|max:255',
-            'new_password' => 'nullable|string|min:8|confirmed',
-        ], [
-            'email.unique' => 'This email already exists',
-            'username.unique' => 'This username already exists',
-        ]);
         $student = StudentInformationModel::where('id', $id)
             ->with('account')
-            ->first();
-        $token = Str::random(40);
-        session([
-            'account_update' => [
-                'student_id' => $student->id,
-                'username' => $request->username,
-                'email' => $request->email,
-                'password' => $request->new_password ? bcrypt($request->new_password) : null,
-                'token' => $token,
-                'expires_at' => now()->addMinutes(3), // optional expiry
+            ->firstOrFail();
+
+        $request->validate([
+            'email' => [
+                'sometimes',
+                'filled',
+                'email',
+                Rule::unique('acc_users', 'email_address')
+                    ->ignore($student->account->getKey(), $student->account->getKeyName())
             ],
+            'username' => [
+                'sometimes',
+                'filled',
+                'string',
+                'max:255',
+                Rule::unique('acc_users', 'username')
+                    ->ignore($student->account->getKey(), $student->account->getKeyName())
+            ],
+            'new_password' => 'nullable|string|min:8|confirmed',
         ]);
 
-        $verifyUrl = route('student.profile.confirmUpdate', ['token' => $token]);
+        $changes = [];
+        if ($request->username !== $student->account->username) {
+            $changes['username'] = $request->username;
+        }
+        if ($request->email !== $student->account->email_address) {
+            $changes['email'] = $request->email;
+        }
+        if ($request->filled('new_password')) {
+            $changes['password'] = bcrypt($request->new_password);
+        }
 
-        Mail::to($request->email)->send(new VerifyAccountUpdateMail($student, $verifyUrl));
+        if (empty($changes)) {
+            return back()->with('Info', 'No changes are updated.');
+        }
 
-        return back()->with('Success', 'Verification email sent! Please check your inbox.');
+        // If email changed → require verification
+        if (isset($changes['email'])) {
+            $token = Str::random(40);
+            session([
+                'account_update' => [
+                    'student_id' => $student->id,
+                    'username' => $changes['username'] ?? null,
+                    'email' => $changes['email'] ?? null,
+                    'password' => $changes['password'] ?? null,
+                    'token' => $token,
+                    'expires_at' => now()->addMinutes(10),
+                ],
+            ]);
+
+            $verifyUrl = route('student.profile.confirmUpdate', ['token' => $token]);
+            Mail::to($changes['email'])->send(new VerifyAccountUpdateMail($student, $verifyUrl));
+
+            return back()->with('Success', 'Verification email sent! Please check your inbox.');
+        }
+
+        // Otherwise apply changes directly
+        if (isset($changes['username'])) {
+            $student->account->username = $changes['username'];
+        }
+        if (isset($changes['password'])) {
+            $student->account->password = $changes['password'];
+        }
+        $student->account->save();
+
+        return back()->with('Success', 'Your account has been updated successfully!');
     }
+
 
     public function confirmUpdate($token)
     {
         $pending = session('account_update');
 
-        if ($pending['token'] !== $token || now()->greaterThan($pending['expires_at'])) {
+        if (!$pending || $pending['token'] !== $token || now()->greaterThan($pending['expires_at'])) {
             return redirect()->route('student.profile')->with('Danger', 'Invalid or expired verification link.');
         }
 
-        // Apply changes
         $student = StudentInformationModel::where('id', $pending['student_id'])
             ->with('account')
-            ->first();
+            ->firstOrFail();
+
         if ($pending['email']) {
             $student->account->email_address = $pending['email'];
-        }
-        if ($pending['password']) {
-            $student->account->password = $pending['password'];
         }
         if ($pending['username']) {
             $student->account->username = $pending['username'];
         }
+        if ($pending['password']) {
+            $student->account->password = $pending['password'];
+        }
         $student->account->save();
 
-        // Clear session
         session()->forget('account_update');
 
         return redirect()->route('student.profile')->with('Success', 'Your account has been updated successfully!');

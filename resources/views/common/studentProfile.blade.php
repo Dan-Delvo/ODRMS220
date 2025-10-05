@@ -1,7 +1,7 @@
 @extends('layout.studentpage')
 
 @section('content')
-@include('layout.partials.message')
+@include('layout.partials.studentMessage')
 
 <div class="main-content" style="background-color: #0f172a; min-height: 100vh;">
     <div class="container-fluid py-4 text-light">
@@ -32,7 +32,7 @@
                         Student Information
                     </h6>
                 </div>
-                <form id="accountUpdateForm" action="{{ route('student.profile.update', $studInfo->id) }}" method="POST" enctype="multipart/form-data">
+                <form class="accountUpdateForm" action="{{ route('student.profile.update', $studInfo->id) }}" method="POST" enctype="multipart/form-data">
                     @csrf
                     @method('PUT')
                     <input type="hidden" name="update_type" value="student_info">
@@ -169,7 +169,7 @@
                         Account Details
                     </h6>
                 </div>
-                <form id="accountUpdateForm" action="{{ route('student.profile.verifyUpdate', $studInfo->id) }}" method="POST">
+                <form class="accountUpdateForm" action="{{ route('student.profile.verifyUpdate', $studInfo->id) }}" method="POST">
                     @csrf
                     @method('PUT')
                     <input type="hidden" name="update_type" value="account_info">
@@ -207,7 +207,7 @@
 
                         <!-- Save Button for Account Info -->
                         <div class="mt-3 text-end">
-                            <button id="saveAccountBtn" type="submit" class="btn" style="background:#1dd3b0; color:#0f172a;" disabled>
+                            <button id="saveAccountBtn" type="submit" class="btn" style="background:#1dd3b0; color:#0f172a;">
                                 <i class="fas fa-save me-2"></i>Save Account Details
                             </button>
                         </div>
@@ -223,7 +223,7 @@
                 <div class="col-12">
                     <div class="card shadow-sm border-0 h-100"
                         style="background:#1e293b; border:1px solid #334155;">
-                        <form id="accountUpdateForm" action="{{ route('student.profile.update', $studInfo->id) }}" method="POST" enctype="multipart/form-data">
+                        <form class="accountUpdateForm" action="{{ route('student.profile.update', $studInfo->id) }}" method="POST" enctype="multipart/form-data">
                             @csrf
                             @method('PUT')
                             <div class="row g-0">
@@ -397,7 +397,7 @@
                                 Account Details
                             </h5>
                         </div>
-                        <form id="accountUpdateForm" action="{{ route('student.profile.verifyUpdate', $studInfo->id) }}" method="POST">
+                        <form class="accountUpdateForm" action="{{ route('student.profile.verifyUpdate', $studInfo->id) }}" method="POST">
                             @csrf
                             @method('PUT')
                             <input type="hidden" name="update_type" value="account_info">
@@ -446,7 +446,7 @@
 
                                 <!-- Save button for Account Info -->
                                 <div class="text-end">
-                                    <button id="saveAccountBtn" type="submit" class="btn" style="background:#1dd3b0; color:#0f172a;" disabled>
+                                    <button id="saveAccountBtn" type="submit" class="btn" style="background:#1dd3b0; color:#0f172a;">
                                         <i class="fas fa-save me-2"></i>Save Account Details
                                     </button>
                                 </div>
@@ -527,23 +527,26 @@
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        document.getElementById('accountUpdateForm').addEventListener('submit', function(e) {
-            Swal.fire({
-                title: 'Processing...',
-                text: 'Please wait while we send the verification email.',
-                allowOutsideClick: false,
-                allowEscapeKey: false,
-                didOpen: () => {
-                    Swal.showLoading();
-                },
-                background: '#0f172a',
-                color: '#f1f5f9',
-                confirmButtonColor: '#1dd3b0',
+        document.querySelectorAll('.accountUpdateForm').forEach(function(form) {
+            form.addEventListener('submit', function(e) {
+                Swal.fire({
+                    title: 'Processing...',
+                    text: 'Please wait while we process your information.',
+                    allowOutsideClick: false,
+                    allowEscapeKey: false,
+                    didOpen: () => {
+                        Swal.showLoading();
+                    },
+                    background: '#334155',
+                    color: '#f1f5f9',
+                    confirmButtonColor: '#1dd3b0',
+                });
             });
         });
 
         // Function to setup image upload for new images
-        function setupImageUpload(addBtnId, inputId, previewId, imgId, placeholderId, otherPreviewImgId, otherPreviewContainerId, otherPlaceholderId, otherBtnId) {
+        function setupImageUpload(addBtnId, inputId, previewId, imgId, placeholderId,
+            otherPreviewImgId, otherPreviewContainerId, otherPlaceholderId, otherBtnId) {
             const addBtn = document.getElementById(addBtnId);
             const fileInput = document.getElementById(inputId);
             const previewContainer = document.getElementById(previewId);
@@ -563,13 +566,13 @@
                     if (file) {
                         const reader = new FileReader();
                         reader.onload = (e) => {
-                            // Update current view
-                            originalImg.src = e.target.result; // just swap the image
+                            // show preview in current view
+                            previewImg.src = e.target.result;
                             previewContainer.classList.remove("d-none");
                             placeholder.classList.add("d-none");
                             addBtn.classList.add("d-none");
 
-                            // Sync with other view
+                            // mirror the image to the other view
                             if (otherPreviewImg && otherPreviewContainer && otherPlaceholder && otherBtn) {
                                 otherPreviewImg.src = e.target.result;
                                 otherPreviewContainer.classList.remove("d-none");
@@ -583,7 +586,7 @@
             }
         }
 
-        // Function to setup replace image functionality for existing images
+        // Replace existing image script (unchanged)
         function setupReplaceImage(replaceBtnId, replaceInputId, replacePreviewId, replacePreviewImgId, originalImgSelector) {
             const replaceBtn = document.getElementById(replaceBtnId);
             const replaceInput = document.getElementById(replaceInputId);
@@ -591,9 +594,7 @@
             const replacePreviewImg = document.getElementById(replacePreviewImgId);
             const originalImg = document.querySelector(originalImgSelector);
 
-            if (!replaceBtn || !replaceInput || !originalImg) {
-                return; // missing required elements
-            }
+            if (!replaceBtn || !replaceInput || !originalImg) return;
 
             replaceBtn.addEventListener("click", () => replaceInput.click());
 
@@ -603,24 +604,15 @@
 
                 const reader = new FileReader();
                 reader.onload = (e) => {
-                    // show preview if element exists
                     if (replacePreviewImg) replacePreviewImg.src = e.target.result;
                     if (replacePreview) replacePreview.classList.remove("d-none");
-
-                    // hide the original image element (so preview replaces it)
                     originalImg.style.display = "none";
-
-                    // update button UI
-                    // replaceBtn.textContent = "Change Again";
-                    // replaceBtn.style.background = "#f87171";
-                    // replaceBtn.style.color = "#0f172a";
                 };
                 reader.readAsDataURL(file);
             });
         }
 
-
-        // Setup for new image upload (when no image exists)
+        // Setup connections between desktop & mobile
         setupImageUpload(
             "desktopAddImageBtn", "desktopImageInput",
             "desktop-image-preview", "desktopPreviewImg", "desktop-placeholder",
@@ -633,7 +625,7 @@
             "desktopPreviewImg", "desktop-image-preview", "desktop-placeholder", "desktopAddImageBtn"
         );
 
-        // Setup for replace image functionality (when image already exists)
+        // Replace existing image functionality
         setupReplaceImage(
             "desktopReplaceImageBtn",
             "desktopReplaceImageInput",
@@ -649,7 +641,6 @@
             "mobileReplacePreviewImg",
             ".mobile-profile-img"
         );
-
         // Password change functionality for mobile
         const mobileChangePasswordBtn = document.getElementById('mobileChangePasswordBtn');
         const mobilePasswordFields = document.getElementById('mobilePasswordChangeFields');
@@ -740,18 +731,27 @@
 
         // Validate all conditions and enable/disable Save button
         function validateForm(form) {
-            const newPass = form.querySelector('input[name="new_password"]').value;
-            const confirmPass = form.querySelector('input[name="password_confirmation"]').value;
-            const saveBtn = form.querySelector('#saveAccountBtn'); // 👈 only this button
+            const newPass = form.querySelector('input[name="new_password"]').value.trim();
+            const confirmPass = form.querySelector('input[name="password_confirmation"]').value.trim();
+            const saveBtn = form.querySelector('#saveAccountBtn');
             const strength = checkPasswordStrength(newPass);
 
-            if (saveBtn) {
-                if (strength.level >= 2 && confirmPass === newPass && newPass !== "") {
-                    saveBtn.disabled = false;
-                } else {
-                    saveBtn.disabled = true;
-                }
+            if (!saveBtn) return;
+
+            // Case 1: No password entered → button stays enabled
+            if (newPass === "" && confirmPass === "") {
+                saveBtn.disabled = false;
+                return;
             }
+
+            // Case 2: Password entered but weak or not matching → disable
+            if (strength.level < 3 || confirmPass !== newPass) {
+                saveBtn.disabled = true;
+                return;
+            }
+
+            // Case 3: Strong password + match → enable
+            saveBtn.disabled = false;
         }
 
         const newPasswordInputs = document.querySelectorAll('input[name="new_password"]');
