@@ -55,7 +55,7 @@ class StudentRequestController extends Controller
             'document_id' => 'required|integer',
             'request_schl_entity' => 'required|string|max:255',
             'release_mode' => 'required|max:255',
-            'supporting_document' => 'nullable|file|mimes:jpeg,jpg,png,pdf,doc,docx|max:10240', // 10MB max
+            'supporting_document' => 'required|file|mimes:jpeg,jpg,png,pdf,doc,docx|max:10240', // 10MB max
         ]);
 
         // Step 2: Initialize file path variable
@@ -173,6 +173,6 @@ class StudentRequestController extends Controller
         }
 
         // Redirect back with success message
-        return redirect()->back()->with('success', 'Supporting document replaced successfully!');
+        return redirect()->back()->with('Success', 'Supporting document replaced successfully!');
     }
 }

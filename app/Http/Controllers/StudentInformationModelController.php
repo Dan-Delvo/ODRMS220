@@ -161,11 +161,14 @@ class StudentInformationModelController extends Controller
             ->with('documentRequests', 'documentRequests.claimer', 'account')
             ->first(); // Execute the query
 
+        $grade = ['7', '8', '9', '10', '11', '12'];
+        $stat = ['Alumni', 'Regular', 'ALS'];
+
         if (!$studInfo) {
             return redirect()->route('st.page')->with('error', 'Student information not found.');
         }
 
-        return view('common.studentProfile', compact('studInfo'));
+        return view('common.studentProfile', compact('studInfo', 'grade', 'stat'));
     }
 
     public function updateProfile(Request $request, $id)

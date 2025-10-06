@@ -114,41 +114,137 @@
                                 <label class="form-label fw-semibold" style="color:#e2e8f0;">Student ID</label>
                                 <input type="text" name="id" class="form-control" value="{{ $studInfo->id }}" readonly>
                             </div>
+
                             <div class="mb-3 col-6">
                                 <label class="form-label fw-semibold" style="color:#e2e8f0;">LRN</label>
-                                <input type="text" name="LRN" class="form-control" value="{{ $studInfo->LRN }}">
+                                <input
+                                    type="text"
+                                    name="LRN"
+                                    id="lrn-mobile"
+                                    class="form-control @error('LRN') is-invalid @enderror"
+                                    value="{{ old('LRN', $studInfo->LRN) }}"
+                                    maxlength="12"
+                                    pattern="\d{12}">
+                                @error('LRN')
+                                <div class="invalid-feedback">
+                                    <i class="fas fa-exclamation-circle me-1"></i>{{ $message }}
+                                </div>
+                                @enderror
+                                <div id="lrn-error-mobile" class="text-danger mt-1" style="font-size: 0.875rem; display: none;">
+                                    <i class="fas fa-exclamation-circle me-1"></i>LRN must be exactly 12 digits
+                                </div>
+                                <div id="lrn-success-mobile" class="text-success mt-1" style="font-size: 0.875rem; display: none;">
+                                    <i class="fas fa-check-circle me-1"></i>Valid LRN
+                                </div>
                             </div>
 
-                            <!-- Grade Level, Status, and Last SY in 3 equal columns -->
+                            <!-- Grade Level, Status, and Last SY -->
                             <div class="mb-3 col-6 col-md-4">
                                 <label class="form-label fw-semibold" style="color:#e2e8f0;">Grade Level</label>
-                                <input type="text" name="Grade_level" class="form-control" value="{{ $studInfo->Grade_level }}">
+                                <select name="Grade_level" class="form-select white-dropdown @error('Grade_level') is-invalid @enderror">
+                                    <option value="" disabled selected>Select Grade</option>
+                                    @foreach($grade as $g)
+                                    <option value="{{ $g }}" {{ old('Grade_level', $studInfo->Grade_level) == $g ? 'selected' : '' }}>
+                                        {{ $g }}
+                                    </option>
+                                    @endforeach
+                                </select>
+                                @error('Grade_level')
+                                <div class="invalid-feedback">
+                                    <i class="fas fa-exclamation-circle me-1"></i>{{ $message }}
+                                </div>
+                                @enderror
                             </div>
+
                             <div class="mb-3 col-6 col-md-4">
                                 <label class="form-label fw-semibold" style="color:#e2e8f0;">Status</label>
-                                <input type="text" name="Std_status" class="form-control" value="{{ $studInfo->Std_status }}">
+                                <select name="Std_status" class="form-select white-dropdown @error('Std_status') is-invalid @enderror">
+                                    <option value="" disabled selected>Select Status</option>
+                                    @foreach($stat as $s)
+                                    <option value="{{ $s }}" {{ old('Std_status', $studInfo->Std_status) == $s ? 'selected' : '' }}>
+                                        {{ $s }}
+                                    </option>
+                                    @endforeach
+                                </select>
+                                @error('Std_status')
+                                <div class="invalid-feedback">
+                                    <i class="fas fa-exclamation-circle me-1"></i>{{ $message }}
+                                </div>
+                                @enderror
                             </div>
+
                             <div class="mb-3 col-12 col-md-4">
                                 <label class="form-label fw-semibold" style="color:#e2e8f0;">Last School Year Attended</label>
-                                <input type="text" name="Last_sy_attended" class="form-control" value="{{ $studInfo->Last_sy_attended ?? '' }}">
+                                <input
+                                    type="text"
+                                    name="Last_sy_attended"
+                                    class="form-control @error('Last_sy_attended') is-invalid @enderror"
+                                    value="{{ old('Last_sy_attended', $studInfo->Last_sy_attended) }}">
+                                @error('Last_sy_attended')
+                                <div class="invalid-feedback">
+                                    <i class="fas fa-exclamation-circle me-1"></i>{{ $message }}
+                                </div>
+                                @enderror
                             </div>
+
+                            <!-- Name Fields -->
                             <div class="mb-3 col-6 col-md-4">
                                 <label class="form-label fw-semibold" style="color:#e2e8f0;">First Name</label>
-                                <input type="text" name="firstname" class="form-control" value="{{ $studInfo->FirstName ?? '' }}">
+                                <input
+                                    type="text"
+                                    name="FirstName"
+                                    class="form-control @error('FirstName') is-invalid @enderror"
+                                    value="{{ old('FirstName', $studInfo->FirstName) }}">
+                                @error('FirstName')
+                                <div class="invalid-feedback">
+                                    <i class="fas fa-exclamation-circle me-1"></i>{{ $message }}
+                                </div>
+                                @enderror
                             </div>
+
                             <div class="mb-3 col-6 col-md-4">
                                 <label class="form-label fw-semibold" style="color:#e2e8f0;">Middle Name</label>
-                                <input type="text" name="middlename" class="form-control" value="{{ $studInfo->MiddleName ?? '' }}">
+                                <input
+                                    type="text"
+                                    name="MiddleName"
+                                    class="form-control @error('MiddleName') is-invalid @enderror"
+                                    value="{{ old('MiddleName', $studInfo->MiddleName) }}">
+                                @error('MiddleName')
+                                <div class="invalid-feedback">
+                                    <i class="fas fa-exclamation-circle me-1"></i>{{ $message }}
+                                </div>
+                                @enderror
                             </div>
+
                             <div class="mb-3 col-8 col-md-4">
                                 <label class="form-label fw-semibold" style="color:#e2e8f0;">Last Name</label>
-                                <input type="text" name="Lastname" class="form-control" value="{{ $studInfo->LastName ?? '' }}">
+                                <input
+                                    type="text"
+                                    name="LastName"
+                                    class="form-control @error('LastName') is-invalid @enderror"
+                                    value="{{ old('LastName', $studInfo->LastName) }}">
+                                @error('LastName')
+                                <div class="invalid-feedback">
+                                    <i class="fas fa-exclamation-circle me-1"></i>{{ $message }}
+                                </div>
+                                @enderror
                             </div>
+
                             <div class="mb-3 col-4 col-md-4">
                                 <label class="form-label fw-semibold" style="color:#e2e8f0;">Suffix</label>
-                                <input type="text" name="suffix" class="form-control" value="{{ $studInfo->Suffix ?? '' }}">
+                                <input
+                                    type="text"
+                                    name="Suffix"
+                                    class="form-control @error('Suffix') is-invalid @enderror"
+                                    value="{{ old('Suffix', $studInfo->Suffix) }}">
+                                @error('Suffix')
+                                <div class="invalid-feedback">
+                                    <i class="fas fa-exclamation-circle me-1"></i>{{ $message }}
+                                </div>
+                                @enderror
                             </div>
                         </div>
+
 
                         <!-- Save Button for Student Info -->
                         <div class="mt-3 text-end">
@@ -181,7 +277,7 @@
                             </div>
                             <div class="mb-3">
                                 <label class="form-label fw-semibold" style="color:#e2e8f0;">Email Address</label>
-                                <input type="email" name="email" class="form-control" value="{{ $studInfo->account->email_address ?? '' }}">
+                                <input type="email" name="email" class="form-control" value="{{ $studInfo->account->email_address ?? '' }}" readonly>
                             </div>
                             <div class="mb-3 col-6">
                                 <label class="form-label fw-semibold" style="color:#e2e8f0;">New Password:</label>
@@ -309,6 +405,7 @@
                                     <input type="hidden" name="update_type" value="student_info">
                                     <div class="card-body" style="color:#f1f5f9;">
                                         <div class="row g-3">
+                                            <!-- Student ID -->
                                             <div class="col-6">
                                                 <div class="mb-3">
                                                     <label class="form-label fw-semibold" style="color:#e2e8f0;">Student ID:</label>
@@ -316,63 +413,157 @@
                                                 </div>
                                             </div>
 
+                                            <!-- LRN -->
                                             <div class="col-6">
                                                 <div class="mb-3">
                                                     <label class="form-label fw-semibold" style="color:#e2e8f0;">LRN:</label>
-                                                    <input type="text" name="LRN" class="form-control" value="{{ $studInfo->LRN }}">
+                                                    <input
+                                                        type="text"
+                                                        name="LRN"
+                                                        id="lrn-desktop"
+                                                        class="form-control @error('LRN') is-invalid @enderror"
+                                                        value="{{ old('LRN', $studInfo->LRN) }}"
+                                                        maxlength="12"
+                                                        pattern="\d{12}">
+                                                    @error('LRN')
+                                                    <div class="invalid-feedback">
+                                                        <i class="fas fa-exclamation-circle me-1"></i>{{ $message }}
+                                                    </div>
+                                                    @enderror
+                                                    <div id="lrn-error-desktop" class="text-danger mt-1" style="font-size: 0.875rem; display: none;">
+                                                        <i class="fas fa-exclamation-circle me-1"></i>LRN must be exactly 12 digits
+                                                    </div>
+                                                    <div id="lrn-success-desktop" class="text-success mt-1" style="font-size: 0.875rem; display: none;">
+                                                        <i class="fas fa-check-circle me-1"></i>Valid LRN
+                                                    </div>
                                                 </div>
                                             </div>
 
+                                            <!-- Grade Level -->
                                             <div class="col-4">
                                                 <div class="mb-3">
                                                     <label class="form-label fw-semibold" style="color:#e2e8f0;">Grade Level:</label>
-                                                    <input type="text" name="Grade_level" class="form-control" value="{{ $studInfo->Grade_level }}">
+                                                    <select name="Grade_level" class="form-select white-dropdown @error('Grade_level') is-invalid @enderror">
+                                                        <option value="" disabled selected>Select Grade</option>
+                                                        @foreach($grade as $g)
+                                                        <option value="{{ $g }}" {{ old('Grade_level', $studInfo->Grade_level) == $g ? 'selected' : '' }}>
+                                                            {{ $g }}
+                                                        </option>
+                                                        @endforeach
+                                                    </select>
+                                                    @error('Grade_level')
+                                                    <div class="invalid-feedback">
+                                                        <i class="fas fa-exclamation-circle me-1"></i>{{ $message }}
+                                                    </div>
+                                                    @enderror
                                                 </div>
                                             </div>
+
+                                            <!-- Status -->
                                             <div class="col-4">
                                                 <div class="mb-3">
                                                     <label class="form-label fw-semibold" style="color:#e2e8f0;">Status:</label>
-                                                    <input type="text" name="status" class="form-control" value="{{ $studInfo->Std_status }}">
+                                                    <select name="Std_status" class="form-select white-dropdown @error('Std_status') is-invalid @enderror">
+                                                        <option class="text-white" value="" disabled selected>Select Status</option>
+                                                        @foreach($stat as $s)
+                                                        <option value="{{ $s }}" {{ old('Std_status', $studInfo->Std_status) == $s ? 'selected' : '' }}>
+                                                            {{ $s }}
+                                                        </option>
+                                                        @endforeach
+                                                    </select>
+                                                    @error('Std_status')
+                                                    <div class="invalid-feedback">
+                                                        <i class="fas fa-exclamation-circle me-1"></i>{{ $message }}
+                                                    </div>
+                                                    @enderror
                                                 </div>
                                             </div>
 
+                                            <!-- Last School Year -->
                                             <div class="col-4">
                                                 <div class="mb-3">
                                                     <label class="form-label fw-semibold" style="color:#e2e8f0;">Last School Year:</label>
-                                                    <input type="text" name="Last_sy_attended" class="form-control" value="{{ $studInfo->Last_sy_attended ?? '' }}">
+                                                    <input
+                                                        type="text"
+                                                        name="Last_sy_attended"
+                                                        class="form-control @error('Last_sy_attended') is-invalid @enderror"
+                                                        value="{{ old('Last_sy_attended', $studInfo->Last_sy_attended) }}">
+                                                    @error('Last_sy_attended')
+                                                    <div class="invalid-feedback">
+                                                        <i class="fas fa-exclamation-circle me-1"></i>{{ $message }}
+                                                    </div>
+                                                    @enderror
                                                 </div>
                                             </div>
 
-                                            <!-- Name Fields -->
+                                            <!-- First Name -->
                                             <div class="col-6">
                                                 <div class="mb-3">
                                                     <label class="form-label fw-semibold" style="color:#e2e8f0;">First Name:</label>
-                                                    <input type="text" name="FirstName" class="form-control" value="{{ $studInfo->FirstName }}">
+                                                    <input
+                                                        type="text"
+                                                        name="FirstName"
+                                                        class="form-control @error('FirstName') is-invalid @enderror"
+                                                        value="{{ old('FirstName', $studInfo->FirstName) }}">
+                                                    @error('FirstName')
+                                                    <div class="invalid-feedback">
+                                                        <i class="fas fa-exclamation-circle me-1"></i>{{ $message }}
+                                                    </div>
+                                                    @enderror
                                                 </div>
                                             </div>
 
+                                            <!-- Middle Name -->
                                             <div class="col-6">
                                                 <div class="mb-3">
                                                     <label class="form-label fw-semibold" style="color:#e2e8f0;">Middle Name:</label>
-                                                    <input type="text" name="MiddleName" class="form-control" value="{{ $studInfo->MiddleName ?? '' }}">
+                                                    <input
+                                                        type="text"
+                                                        name="MiddleName"
+                                                        class="form-control @error('MiddleName') is-invalid @enderror"
+                                                        value="{{ old('MiddleName', $studInfo->MiddleName) }}">
+                                                    @error('MiddleName')
+                                                    <div class="invalid-feedback">
+                                                        <i class="fas fa-exclamation-circle me-1"></i>{{ $message }}
+                                                    </div>
+                                                    @enderror
                                                 </div>
                                             </div>
 
+                                            <!-- Last Name -->
                                             <div class="col-8">
                                                 <div class="mb-3">
                                                     <label class="form-label fw-semibold" style="color:#e2e8f0;">Last Name:</label>
-                                                    <input type="text" name="LastName" class="form-control" value="{{ $studInfo->LastName }}">
+                                                    <input
+                                                        type="text"
+                                                        name="LastName"
+                                                        class="form-control @error('LastName') is-invalid @enderror"
+                                                        value="{{ old('LastName', $studInfo->LastName) }}">
+                                                    @error('LastName')
+                                                    <div class="invalid-feedback">
+                                                        <i class="fas fa-exclamation-circle me-1"></i>{{ $message }}
+                                                    </div>
+                                                    @enderror
                                                 </div>
                                             </div>
 
+                                            <!-- Suffix -->
                                             <div class="col-4">
                                                 <div class="mb-3">
                                                     <label class="form-label fw-semibold" style="color:#e2e8f0;">Suffix:</label>
-                                                    <input type="text" name="Suffix" class="form-control" value="{{ $studInfo->Suffix ?? '' }}">
+                                                    <input
+                                                        type="text"
+                                                        name="Suffix"
+                                                        class="form-control @error('Suffix') is-invalid @enderror"
+                                                        value="{{ old('Suffix', $studInfo->Suffix) }}">
+                                                    @error('Suffix')
+                                                    <div class="invalid-feedback">
+                                                        <i class="fas fa-exclamation-circle me-1"></i>{{ $message }}
+                                                    </div>
+                                                    @enderror
                                                 </div>
                                             </div>
                                         </div>
-
                                         <!-- Save button for Student Info -->
                                         <div class="text-end mt-4">
                                             <button type="submit" class="btn" style="background:#1dd3b0; color:#0f172a;">
@@ -413,7 +604,7 @@
                                     <div class="col-12">
                                         <div class="mb-3">
                                             <label class="form-label fw-semibold" style="color:#e2e8f0;">Email Address:</label>
-                                            <input type="email" name="email" class="form-control" value="{{ $studInfo->account->email_address ?? '' }}">
+                                            <input type="email" name="email" class="form-control" value="{{ $studInfo->account->email_address ?? '' }}" readonly>
                                         </div>
                                     </div>
 
@@ -461,72 +652,61 @@
     </div>
 </div>
 
-<style>
-    .form-control::placeholder {
-        color: #ffffff;
-        /* white */
-        opacity: 1;
-        /* ensure it's not transparent */
-    }
-
-    /* Custom responsive adjustments */
-    @media (max-width: 576px) {
-        .container-fluid {
-            padding-left: 15px;
-            padding-right: 15px;
-        }
-
-        .card-body {
-            padding: 1rem;
-        }
-
-        .fs-2 {
-            font-size: 1.5rem !important;
-        }
-
-        .card-header h6 {
-            font-size: 0.95rem;
-        }
-    }
-
-    @media (min-width: 768px) and (max-width: 991px) {
-
-        /* Tablet specific adjustments */
-        .col-md-6 .card-body {
-            padding: 2rem;
-        }
-
-        .rounded-circle {
-            width: 100px !important;
-            height: 100px !important;
-        }
-
-        .fs-1 {
-            font-size: 2rem !important;
-        }
-    }
-
-    @media (min-width: 1200px) {
-
-        /* Large screen optimizations */
-        .col-xl-6 .row {
-            margin-bottom: 1rem;
-        }
-    }
-
-    /* Ensure equal height cards */
-    .h-100 {
-        height: 100% !important;
-    }
-
-    /* Custom separator styling */
-    hr {
-        opacity: 0.5;
-    }
-</style>
-
 <script>
     document.addEventListener('DOMContentLoaded', function() {
+        function validateLRN(inputId, errorId, successId, submitBtnId) {
+            const lrnInput = document.getElementById(inputId);
+            const errorMsg = document.getElementById(errorId);
+            const successMsg = document.getElementById(successId);
+            const submitBtn = document.getElementById(submitBtnId);
+
+            if (!lrnInput) return; // Exit if element doesn't exist in current view
+
+            lrnInput.addEventListener('input', function(e) {
+                // Remove non-digit characters
+                this.value = this.value.replace(/\D/g, '');
+
+                const value = this.value;
+                const isValid = /^\d{12}$/.test(value);
+
+                if (value.length === 0) {
+                    // Empty field - hide all messages
+                    errorMsg.style.display = 'none';
+                    successMsg.style.display = 'none';
+                    lrnInput.classList.remove('is-invalid', 'is-valid');
+                    submitBtn.disabled = false;
+                } else if (isValid) {
+                    // Valid LRN
+                    errorMsg.style.display = 'none';
+                    successMsg.style.display = 'block';
+                    lrnInput.classList.remove('is-invalid');
+                    lrnInput.classList.add('is-valid');
+                    submitBtn.disabled = false;
+                } else {
+                    // Invalid LRN
+                    errorMsg.style.display = 'block';
+                    successMsg.style.display = 'none';
+                    lrnInput.classList.remove('is-valid');
+                    lrnInput.classList.add('is-invalid');
+                    submitBtn.disabled = true;
+                }
+            });
+
+            // Prevent form submission if LRN is invalid
+            const form = lrnInput.closest('form');
+            if (form) {
+                form.addEventListener('submit', function(e) {
+                    const value = lrnInput.value;
+                    if (value.length > 0 && !/^\d{12}$/.test(value)) {
+                        e.preventDefault();
+                        errorMsg.style.display = 'block';
+                        lrnInput.classList.add('is-invalid');
+                        lrnInput.focus();
+                    }
+                });
+            }
+        }
+
         document.querySelectorAll('.accountUpdateForm').forEach(function(form) {
             form.addEventListener('submit', function(e) {
                 Swal.fire({
@@ -611,6 +791,10 @@
                 reader.readAsDataURL(file);
             });
         }
+
+        // Initialize validation for both views
+        validateLRN('lrn-mobile', 'lrn-error-mobile', 'lrn-success-mobile', 'submit-btn-mobile');
+        validateLRN('lrn-desktop', 'lrn-error-desktop', 'lrn-success-desktop', 'submit-btn-desktop');
 
         // Setup connections between desktop & mobile
         setupImageUpload(

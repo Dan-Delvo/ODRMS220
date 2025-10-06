@@ -1,7 +1,7 @@
 @extends('layout.studentpage')
 
 @section('content')
-@include('layout.partials.message')
+
 <style>
     :root {
         --sidebar-width: 270px;
@@ -355,7 +355,7 @@
                         </div>
                     </div>
 
-                    <small class="text-muted">Optional: Upload any supporting documents for your request</small>
+                    <small class="text-white">Upload any supporting documents for your request</small>
                 </div>
             </div>
 

@@ -15,6 +15,18 @@
     <p class="mt-2 text-muted">
         <strong>{{ strtoupper($ext) }}</strong> — {{ basename($filePath) }}
     </p>
+    <div class="mt-3">
+        <a href="{{ asset($filePath) }}"
+            class="btn btn-sm btn-primary me-2"
+            download>
+            <i class="fas fa-download me-1"></i> Download
+        </a>
+        <a href="{{ asset($filePath) }}"
+            class="btn btn-sm btn-outline-secondary"
+            target="_blank">
+            <i class="fas fa-external-link-alt me-1"></i> Open in New Tab
+        </a>
+    </div>
 </div>
 @break
 
@@ -29,6 +41,18 @@
         <i class="fas fa-file-pdf text-danger"></i>
         <strong>PDF</strong> — {{ basename($filePath) }}
     </p>
+    <div class="mt-3">
+        <a href="{{ asset($filePath) }}"
+            class="btn btn-sm btn-primary me-2"
+            download>
+            <i class="fas fa-download me-1"></i> Download
+        </a>
+        <a href="{{ asset($filePath) }}"
+            class="btn btn-sm btn-outline-secondary"
+            target="_blank">
+            <i class="fas fa-external-link-alt me-1"></i> Open in New Tab
+        </a>
+    </div>
 </div>
 @break
 
@@ -38,6 +62,18 @@
 <div class="text-center">
     <i class="fas fa-file-word text-primary" style="font-size:3rem;"></i>
     <p class="mt-2"><strong>WORD</strong> — {{ basename($filePath) }}</p>
+    <div class="mt-3">
+        <a href="{{ asset($filePath) }}"
+            class="btn btn-sm btn-primary me-2"
+            download>
+            <i class="fas fa-download me-1"></i> Download
+        </a>
+        <a href="{{ asset($filePath) }}"
+            class="btn btn-sm btn-outline-secondary"
+            target="_blank">
+            <i class="fas fa-external-link-alt me-1"></i> Open in New Tab
+        </a>
+    </div>
 </div>
 @break
 
@@ -47,6 +83,18 @@
 <div class="text-center">
     <i class="fas fa-file-excel text-success" style="font-size:3rem;"></i>
     <p class="mt-2"><strong>EXCEL</strong> — {{ basename($filePath) }}</p>
+    <div class="mt-3">
+        <a href="{{ asset($filePath) }}"
+            class="btn btn-sm btn-primary me-2"
+            download>
+            <i class="fas fa-download me-1"></i> Download
+        </a>
+        <a href="{{ asset($filePath) }}"
+            class="btn btn-sm btn-outline-secondary"
+            target="_blank">
+            <i class="fas fa-external-link-alt me-1"></i> Open in New Tab
+        </a>
+    </div>
 </div>
 @break
 
@@ -56,6 +104,18 @@
 <div class="text-center">
     <i class="fas fa-file-powerpoint text-warning" style="font-size:3rem;"></i>
     <p class="mt-2"><strong>POWERPOINT</strong> — {{ basename($filePath) }}</p>
+    <div class="mt-3">
+        <a href="{{ asset($filePath) }}"
+            class="btn btn-sm btn-primary me-2"
+            download>
+            <i class="fas fa-download me-1"></i> Download
+        </a>
+        <a href="{{ asset($filePath) }}"
+            class="btn btn-sm btn-outline-secondary"
+            target="_blank">
+            <i class="fas fa-external-link-alt me-1"></i> Open in New Tab
+        </a>
+    </div>
 </div>
 @break
 
@@ -64,6 +124,18 @@
 <div class="text-center">
     <i class="fas fa-file-alt text-secondary" style="font-size:3rem;"></i>
     <p class="mt-2"><strong>TEXT</strong> — {{ basename($filePath) }}</p>
+    <div class="mt-3">
+        <a href="{{ asset($filePath) }}"
+            class="btn btn-sm btn-primary me-2"
+            download>
+            <i class="fas fa-download me-1"></i> Download
+        </a>
+        <a href="{{ asset($filePath) }}"
+            class="btn btn-sm btn-outline-secondary"
+            target="_blank">
+            <i class="fas fa-external-link-alt me-1"></i> Open in New Tab
+        </a>
+    </div>
 </div>
 @break
 
@@ -72,5 +144,17 @@
 <div class="text-center">
     <i class="fas fa-file text-muted" style="font-size:3rem;"></i>
     <p class="mt-2"><strong>{{ strtoupper($ext) }}</strong> — {{ basename($filePath) }}</p>
+    <div class="mt-3">
+        <a href="{{ asset($filePath) }}"
+            class="btn btn-sm btn-primary me-2"
+            download>
+            <i class="fas fa-download me-1"></i> Download
+        </a>
+        <a href="{{ asset($filePath) }}"
+            class="btn btn-sm btn-outline-secondary"
+            target="_blank">
+            <i class="fas fa-external-link-alt me-1"></i> Open in New Tab
+        </a>
+    </div>
 </div>
 @endswitch

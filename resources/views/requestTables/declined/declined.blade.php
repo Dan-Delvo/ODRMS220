@@ -304,6 +304,7 @@
                                                 <div class="text-center text-muted">
                                                     <i class="fas fa-file text-secondary" style="font-size:3rem;"></i>
                                                     <p class="mt-2">No new file uploaded</p>
+                                                    
                                                 </div>
                                                 @endif
                                             </div>
