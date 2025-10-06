@@ -143,13 +143,13 @@ class AccountController extends Controller
             ->firstOrFail();
 
         $request->validate([
-            'email' => [
-                'sometimes',
-                'filled',
-                'email',
-                Rule::unique('acc_users', 'email_address')
-                    ->ignore($student->account->getKey(), $student->account->getKeyName())
-            ],
+            // 'email' => [
+            //     'sometimes',
+            //     'filled',
+            //     'email',
+            //     Rule::unique('acc_users', 'email_address')
+            //         ->ignore($student->account->getKey(), $student->account->getKeyName())
+            // ],
             'username' => [
                 'sometimes',
                 'filled',
@@ -158,7 +158,7 @@ class AccountController extends Controller
                 Rule::unique('acc_users', 'username')
                     ->ignore($student->account->getKey(), $student->account->getKeyName())
             ],
-            'new_password' => 'nullable|string|min:8|confirmed',
+            'new_password' => 'required|string|min:8|confirmed',
         ]);
 
         $changes = [];
@@ -191,7 +191,7 @@ class AccountController extends Controller
             ]);
 
             $verifyUrl = route('student.profile.confirmUpdate', ['token' => $token]);
-            Mail::to($changes['email'])->send(new VerifyAccountUpdateMail($student, $verifyUrl));
+            Mail::to($changes['email'])->queue(new VerifyAccountUpdateMail($student, $verifyUrl));
 
             return back()->with('Success', 'Verification email sent! Please check your inbox.');
         }

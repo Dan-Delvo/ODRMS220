@@ -178,6 +178,7 @@ class DocumentRequestController extends Controller
             $claimedTime  = ($selectedDate === $today) ? now()->format('H:i:s') : null;
 
             $documentRequest->update([
+                'remarks'      => 'Claimed',
                 'status'       => 'Claimed',
                 'claimed_date' => $selectedDate,
                 'claimed_time' => $claimedTime,

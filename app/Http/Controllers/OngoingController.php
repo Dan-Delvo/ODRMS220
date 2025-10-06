@@ -177,6 +177,7 @@ class OngoingController extends Controller
         // }
 
         $documentRequest->update([
+            'remarks' => 'For Release',
             'status' => 'For Release',
             'forRelease_date' => Carbon::now(),
         ]);

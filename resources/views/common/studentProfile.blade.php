@@ -277,7 +277,7 @@
                             </div>
                             <div class="mb-3">
                                 <label class="form-label fw-semibold" style="color:#e2e8f0;">Email Address</label>
-                                <input type="email" name="email" class="form-control" value="{{ $studInfo->account->email_address ?? '' }}" readonly>
+                                <input type="email" name="email" class="form-control" value="{{ $studInfo->account->email_address ?? '' }}" readonly disabled>
                             </div>
                             <div class="mb-3 col-6">
                                 <label class="form-label fw-semibold" style="color:#e2e8f0;">New Password:</label>

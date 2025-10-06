@@ -244,7 +244,7 @@
     <aside class="sidebar">
         <!-- side bar header -->
         <header class="sidebar-header">
-            <a href="#" class="header-logo">
+            <a href="{{ route ('st.page') }}" class="header-logo">
                 <img src="{{ asset('images/UBLOGO.png') }}" alt="ubnhsLogo">
             </a>
             <button id="sidebarToggle" class="toggler sidebar-toggler">
