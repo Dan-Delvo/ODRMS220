@@ -28,7 +28,7 @@ use App\Http\Controllers\FcmController;
 use App\Http\Controllers\forgotpassword;
 use Illuminate\Support\Facades\Http;
 
-Route::middleware(['web', 'sessionStarter'])->group(function () {
+Route::middleware(['web'])->group(function () {
     Route::get('/', [AuthController::class, 'login'])->name('login');
     Route::post('/', [AuthController::class, 'auth_login'])->name('login.post');
     Route::get('logout', [AuthController::class, 'logout']);
