@@ -1,6 +1,8 @@
 @extends('layout.blankpage')
 
 @section('content')
+@include('layout.partials.swal-loading')
+@include('layout.partials.message')
 
 <!-- Page Title and Breadcrumbs -->
 <div class="row mb-4">
@@ -54,13 +56,15 @@
                     </button>
                     <ul class="dropdown-menu" aria-labelledby="sortDropdown">
                         <li><a class="dropdown-item sort-option" href="#" data-sort="default">Default Order</a></li>
-                        <li><hr class="dropdown-divider"></li>
+                        <li>
+                            <hr class="dropdown-divider">
+                        </li>
                         <li><a class="dropdown-item sort-option" href="#" data-sort="asc">
-                            <i class="fas fa-sort-numeric-down me-2"></i> Student ID (Ascending)
-                        </a></li>
+                                <i class="fas fa-sort-numeric-down me-2"></i> Student ID (Ascending)
+                            </a></li>
                         <li><a class="dropdown-item sort-option" href="#" data-sort="desc">
-                            <i class="fas fa-sort-numeric-up me-2"></i> Student ID (Descending)
-                        </a></li>
+                                <i class="fas fa-sort-numeric-up me-2"></i> Student ID (Descending)
+                            </a></li>
                     </ul>
                 </div>
             </div>
@@ -100,10 +104,10 @@
                                     @endif
 
                                     @if(!empty($PermissionDelete))
-                                    <form action="{{ route('student.delete', $item->id) }}" method="POST" class="mb-0">
+                                    <form action="{{ route('student.delete', $item->id) }}" method="POST" class="mb-0" data-swal-loading="true" data-swal-delete="true">
                                         @csrf
                                         @method('DELETE')
-                                        <button type="submit" class="btn btn-danger me-2">Delete</button>
+                                        <button type="submit" class="btn btn-danger btb-delete me-2">Delete</button>
                                     </form>
                                     @endif
 
@@ -129,35 +133,36 @@
 
 <!-- Sorting Script -->
 <script>
-document.addEventListener("DOMContentLoaded", function () {
-    const table = document.getElementById("studentsTable").getElementsByTagName("tbody")[0];
-    const rows = Array.from(table.querySelectorAll("tr"));
-    const originalOrder = [...rows]; // save default order
+    document.addEventListener("DOMContentLoaded", function() {
 
-    document.querySelectorAll(".sort-option").forEach(option => {
-        option.addEventListener("click", function (e) {
-            e.preventDefault();
-            const sortType = this.getAttribute("data-sort");
+        const table = document.getElementById("studentsTable").getElementsByTagName("tbody")[0];
+        const rows = Array.from(table.querySelectorAll("tr"));
+        const originalOrder = [...rows]; // save default order
 
-            let sortedRows;
-            if (sortType === "asc") {
-                sortedRows = [...rows].sort((a, b) => {
-                    return parseInt(a.cells[0].textContent) - parseInt(b.cells[0].textContent);
-                });
-            } else if (sortType === "desc") {
-                sortedRows = [...rows].sort((a, b) => {
-                    return parseInt(b.cells[0].textContent) - parseInt(a.cells[0].textContent);
-                });
-            } else {
-                sortedRows = [...originalOrder];
-            }
+        document.querySelectorAll(".sort-option").forEach(option => {
+            option.addEventListener("click", function(e) {
+                e.preventDefault();
+                const sortType = this.getAttribute("data-sort");
 
-            // Clear table and re-append rows
-            table.innerHTML = "";
-            sortedRows.forEach(r => table.appendChild(r));
+                let sortedRows;
+                if (sortType === "asc") {
+                    sortedRows = [...rows].sort((a, b) => {
+                        return parseInt(a.cells[0].textContent) - parseInt(b.cells[0].textContent);
+                    });
+                } else if (sortType === "desc") {
+                    sortedRows = [...rows].sort((a, b) => {
+                        return parseInt(b.cells[0].textContent) - parseInt(a.cells[0].textContent);
+                    });
+                } else {
+                    sortedRows = [...originalOrder];
+                }
+
+                // Clear table and re-append rows
+                table.innerHTML = "";
+                sortedRows.forEach(r => table.appendChild(r));
+            });
         });
     });
-});
 </script>
 
 @endsection

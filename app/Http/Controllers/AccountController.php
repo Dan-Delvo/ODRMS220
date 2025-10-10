@@ -443,15 +443,16 @@ class AccountController extends Controller
             'FirstName' => 'required|string|max:255',
             'LastName' => 'required|string|max:255',
             'MiddleName' => 'nullable|string|max:255',
-            'LRN' => 'sometimes|filled|digits:12|unique:std_students,LRN',
-            'Grade_level' => 'sometimes|filled|string|max:50',
-            'Std_status' => 'sometimes|filled|string|max:50',
-            'Last_sy_attended' => 'sometimes|filled|required|digits:4',
+            'LRN' => 'sometimes|required_if:role,1|string|max:12',
+            'Grade_level' => 'sometimes|required_if:role,1|string|max:50',
+            'Std_status' => 'sometimes|required_if:role,1|string|max:50',
+            'Last_sy_attended' => 'sometimes|required_if:role,1|string|max:9',
             'role' => 'required',
 
             // Validation for account information
             'email_address' => 'required|email|unique:acc_users,email_address',
             'username' => 'required|string|max:255|unique:acc_users,username',
+            'password' => 'required|string|min:8|max:20|confirmed:password_confirmation'
 
         ], [
             'FirstName.required' => 'Please enter your first name.',
