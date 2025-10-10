@@ -67,7 +67,7 @@ class DocumentsModelController extends Controller
         $pdo->exec("SET @current_user = " . $pdo->quote(Auth::check() ? Auth::user()->username : 'guest'));
 
         $request->validate([
-            'DocType' => 'required|string|max:255',
+            'DocType' => 'required|string|max:255|unique:doc_categories,DocType',
         ]);
 
         $document = DocumentsModel::findOrFail($id);
