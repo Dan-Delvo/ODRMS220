@@ -293,7 +293,8 @@ class AccountController extends Controller
             DB::commit();
 
             // Redirect back with success message
-            return redirect('panel/user')->with('Status', 'User "' . $user->username . '" has been successfully deleted.');
+            return redirect('panel/user')
+                ->with('Status', "User {$user->username} has been successfully deleted.");
         } catch (Exception $e) {
             DB::rollback();
             Log::error('Error in delete method: ' . $e->getMessage());
@@ -441,10 +442,11 @@ class AccountController extends Controller
             // Validation for personal information
             'FirstName' => 'required|string|max:255',
             'LastName' => 'required|string|max:255',
-            'LRN' => 'required|digits:12|unique:std_students,LRN',
-            'Grade_level' => 'string|max:50',
-            'Std_status' => 'string|max:50',
-            'Last_sy_attended' => 'required|digits:4',
+            'MiddleName' => 'nullable|string|max:255',
+            'LRN' => 'sometimes|filled|digits:12|unique:std_students,LRN',
+            'Grade_level' => 'sometimes|filled|string|max:50',
+            'Std_status' => 'sometimes|filled|string|max:50',
+            'Last_sy_attended' => 'sometimes|filled|required|digits:4',
             'role' => 'required',
 
             // Validation for account information

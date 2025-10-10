@@ -29,18 +29,25 @@ class AuthController extends Controller
             }
 
             $PermissionDashboard = PermissionRoleModel::getPermission('dashboard', Auth::user()->role_id);
-            if(empty($PermissionDashboard))
-            {
-                return redirect ('/walkin/form');
-            }
-            else{
+            if (empty($PermissionDashboard)) {
+                return redirect('/walkin/form');
+            } else {
 
                 return redirect('/dashboard');
             }
         }
 
-        // Show the login page if no user is logged in
-        return view('common.studentlogin');
+        if (session('otp_verified')) {
+            return redirect()->route('newpassword');
+        }
+        if (session('otp_requested')) {
+            return redirect()->route('verifyotp');
+        }
+        return response()
+            ->view('common.studentlogin')
+            ->header('Cache-Control', 'no-cache, no-store, must-revalidate')
+            ->header('Pragma', 'no-cache')
+            ->header('Expires', '0');
     }
 
     // Handle login logic with validation
@@ -129,7 +136,8 @@ class AuthController extends Controller
         }
 
         return redirect()->route('login')->with(
-            'error','Invalid email or password. You have ' . RateLimiter::remaining($key, $maxAttempts) . ' attempts left.'
+            'error',
+            'Invalid email or password. You have ' . RateLimiter::remaining($key, $maxAttempts) . ' attempts left.'
         );
     }
 

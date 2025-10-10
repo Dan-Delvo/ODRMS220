@@ -30,7 +30,7 @@
                     <!-- Personal Information Section -->
                     <h4 class="mb-3 text-dark">Personal Information</h4>
 
-                    <!-- First and Last Name -->
+                    <!-- First and Middle Name -->
                     <div class="row mb-3">
                         <div class="col-md-6">
                             <div class="form-floating mb-3 mb-md-0">
@@ -49,31 +49,32 @@
                         </div>
                         <div class="col-md-6">
                             <div class="form-floating">
-                                <input class="form-control @error('LastName') is-invalid @enderror"
-                                    value="{{ old('LastName') }}"
-                                    id="inputLastName"
+                                <input class="form-control @error('MiddleName') is-invalid @enderror" value="{{ old('MiddleName') }}"
+                                    id="inputMiddleName"
                                     type="text"
-                                    name="LastName"
-                                    placeholder="Enter your last name"
+                                    name="MiddleName"
+                                    placeholder="Enter your middle name"
                                     required />
-                                <label for="inputLastName">Last Name</label>
-                                @error('LastName')
+                                <label for="inputMiddleName">Middle Name (Optional)</label>
+                                @error('MiddleName')
                                 <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
                             </div>
+
                         </div>
                     </div>
 
-                    <!-- Middle Name -->
+                    <!-- Last Name -->
                     <div class="form-floating mb-3">
-                        <input class="form-control @error('MiddleName') is-invalid @enderror" value="{{ old('MiddleName') }}"
-                            id="inputMiddleName"
+                        <input class="form-control @error('LastName') is-invalid @enderror"
+                            value="{{ old('LastName') }}"
+                            id="inputLastName"
                             type="text"
-                            name="MiddleName"
-                            placeholder="Enter your middle name"
+                            name="LastName"
+                            placeholder="Enter your last name"
                             required />
-                        <label for="inputMiddleName">Middle Name</label>
-                        @error('MiddleName')
+                        <label for="inputLastName">Last Name</label>
+                        @error('LastName')
                         <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
                     </div>
@@ -160,16 +161,18 @@
 
                     <!-- Last School Year Attended -->
                     <div class="form-floating mb-3" id="lastSyField">
-                        <input class="form-control @error('Last_sy_attended') is-invalid @enderror"
-                            value="{{ old('Last_sy_attended') }}"
-                            id="inputLastSYAttended"
-                            type="text"
-                            name="Last_sy_attended"
-                            placeholder="Enter last school year attended" />
-                        <label for="inputLastSYAttended">Last School Year Attended</label>
-                        @error('Last_sy_attended')
-                        <div class="invalid-feedback">{{ $message }}</div>
-                        @enderror
+                        <div class="form-group">
+                            <label for="inputLastSYAttended">Last School Year Attended</label>
+                            <input class="form-control @error('Last_sy_attended') is-invalid @enderror"
+                                value="{{ old('Last_sy_attended') }}"
+                                id="inputLastSYAttended"
+                                type="text"
+                                name="Last_sy_attended"
+                                placeholder="Enter last school year attended" />
+                            @error('Last_sy_attended')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
                     </div>
 
                     <!-- Account Information Section -->
@@ -259,10 +262,12 @@
         background-color: #e9ecef !important;
         cursor: not-allowed;
     }
+
     input:read-only {
         background-color: #f8f9fa !important;
         cursor: default;
     }
+
     .field-hidden {
         display: none !important;
     }
@@ -278,11 +283,22 @@
         console.log('Selected role ID:', selectedRole); // Debug log
 
         // All student-specific fields
-        const studentFields = [
-            { element: document.getElementById("inputLRN"), container: document.getElementById("lrnField") },
-            { element: document.getElementById("grade_level"), container: document.getElementById("gradeLevelField") },
-            { element: document.getElementById("inputStdStatus"), container: document.getElementById("stdStatusField") },
-            { element: document.getElementById("inputLastSYAttended"), container: document.getElementById("lastSyField") }
+        const studentFields = [{
+                element: document.getElementById("inputLRN"),
+                container: document.getElementById("lrnField")
+            },
+            {
+                element: document.getElementById("grade_level"),
+                container: document.getElementById("gradeLevelField")
+            },
+            {
+                element: document.getElementById("inputStdStatus"),
+                container: document.getElementById("stdStatusField")
+            },
+            {
+                element: document.getElementById("inputLastSYAttended"),
+                container: document.getElementById("lastSyField")
+            }
         ];
 
         // Check if role is student-related
