@@ -19,6 +19,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Exception;
 use Illuminate\Validation\Rule;
+use Illuminate\Auth\Events\Registered;
 
 class AccountController extends Controller
 {

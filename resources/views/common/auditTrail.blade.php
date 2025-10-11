@@ -430,19 +430,6 @@
             <i class="fas fa-download me-2"></i> Backup Database
         </button>
     </div>
-
-    <!-- Restore Form -->
-    <div class="col-md-6 mb-3">
-        <form action="{{ route('backup.restore') }}" method="POST" enctype="multipart/form-data">
-            @csrf
-            <div class="input-group">
-                <input type="file" name="backup_file" class="form-control" accept=".sql,.txt" required>
-                <button type="submit" class="btn btn-lg" style="background-color: #1f2937; border-color: #1f2937; color: white;">
-                    <i class="fas fa-upload me-2"></i> Restore
-                </button>
-            </div>
-        </form>
-    </div>
 </div>
 
 

@@ -327,6 +327,15 @@
             transform: translateY(0);
         }
     }
+    /* Fixed Width Cell for Release Mode */
+    .fixed-width-cell {
+        width: 150px;
+        min-width: 150px;
+        max-width: 150px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
 
     .custom-table tbody tr {
         animation: fadeInUp 0.6s ease forwards;
@@ -397,7 +406,7 @@
                                             {{ $item->request_schl_entity }}
                                         </div>
                                     </td>
-                                    <td>
+                                    <td class="fixed-width-cell">
                                         <span class="release-mode-badge">{{ $item->release_mode }}</span>
                                     </td>
                                     <td>

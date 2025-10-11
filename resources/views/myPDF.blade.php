@@ -271,10 +271,10 @@
                     @endphp
                     <span class="status-badge {{ $statusClass }}">{{ $status }}</span>
                 </td>
-                <td>{{ optional($item->request_date)->format('m/d/Y') ?? 'N/A' }}</td>
-                <td>{{ optional($item->approve_date)->format('m/d/Y') ?? 'N/A' }}</td>
-                <td>{{ optional($item->forRelease_date)->format('m/d/Y') ?? 'N/A' }}</td>
-                <td>{{ optional($item->claimed_date)->format('m/d/Y') ?? 'N/A' }}</td>
+                <td>{{ $item->request_date ? \Carbon\Carbon::parse($item->request_date)->format('m/d/Y') : 'N/A' }}</td>
+                <td>{{ $item->approve_date ? \Carbon\Carbon::parse($item->approve_date)->format('m/d/Y') : 'N/A' }}</td>
+                <td>{{ $item->forRelease_date ? \Carbon\Carbon::parse($item->forRelease_date)->format('m/d/Y') : 'N/A' }}</td>
+                <td>{{ $item->claimed_date ? \Carbon\Carbon::parse($item->claimed_date)->format('m/d/Y') : 'N/A' }}</td>
             </tr>
             @endforeach
         </tbody>
