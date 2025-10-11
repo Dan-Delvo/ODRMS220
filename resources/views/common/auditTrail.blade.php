@@ -430,261 +430,260 @@
             <i class="fas fa-download me-2"></i> Backup Database
         </button>
     </div>
+
+
 </div>
 
 
 {{-- Enhanced JavaScript with loading spinners and search functionality --}}
 <script>
-    // Fixed JavaScript for search and filter functionality
-    document.addEventListener("DOMContentLoaded", function() {
-        // Initial page load spinner
-        const spinner = document.getElementById("spinner");
-        const table = document.getElementById("auditTable");
+document.addEventListener("DOMContentLoaded", function() {
+    const spinner = document.getElementById("spinner");
+    const auditTableContainer = document.getElementById("auditTable");
+    const searchInput = document.getElementById('searchInput');
+    const clearSearchBtn = document.getElementById('clearSearch');
+    const searchInfo = document.getElementById('searchInfo');
+    const searchResultText = document.getElementById('searchResultText');
+    const searchQuery = document.getElementById('searchQuery');
+    const noResults = document.getElementById('noResults');
+    const filterDropdown = document.getElementById('filterDropdown');
+    const tableFilterDropdown = document.getElementById('tableFilterDropdown');
 
-        if (spinner && table) {
-            spinner.style.display = "block";
-            table.style.display = "none";
+    let currentFilter = 'all';
+    let currentTableFilter = 'all';
+    let searchTimeout;
 
-            setTimeout(() => {
-                spinner.style.display = "none";
-                table.style.display = "block";
-            }, 600);
-        }
+    // Initial page load
+    if (spinner && auditTableContainer) {
+        spinner.style.display = "block";
+        auditTableContainer.style.display = "none";
+        setTimeout(() => {
+            spinner.style.display = "none";
+            auditTableContainer.style.display = "block";
+        }, 600);
+    }
 
-        // Search functionality
-        const searchInput = document.getElementById('searchInput');
-        const clearSearchBtn = document.getElementById('clearSearch');
-        const searchInfo = document.getElementById('searchInfo');
-        const searchResultText = document.getElementById('searchResultText');
-        const searchQuery = document.getElementById('searchQuery');
-        const noResults = document.getElementById('noResults');
-        const tableRows = document.querySelectorAll('.audit-row');
-        const filterDropdown = document.getElementById('filterDropdown');
-        const tableFilterDropdown = document.getElementById('tableFilterDropdown');
+    // Search with debouncing
+    searchInput.addEventListener('input', function() {
+        clearTimeout(searchTimeout);
+        searchTimeout = setTimeout(() => {
+            performServerSearch();
+        }, 500);
+    });
 
-        let currentFilter = 'all';
-        let currentTableFilter = 'all';
-        let totalRows = tableRows.length;
+    // Clear search
+    clearSearchBtn.addEventListener('click', function() {
+        clearSearch();
+    });
 
-        // Check if required elements exist
-        if (!searchInput || !tableRows.length) {
-            console.warn('Search elements not found');
-            return;
-        }
-
-        // Search input event listener with debouncing
-        let searchTimeout;
-        searchInput.addEventListener('input', function() {
-            clearTimeout(searchTimeout);
-            searchTimeout = setTimeout(() => {
-                performSearch();
-            }, 300); // 300ms debounce
-        });
-
-        // Clear search button
-        if (clearSearchBtn) {
-            clearSearchBtn.addEventListener('click', function() {
-                clearSearch();
-            });
-        }
-
-        // Filter dropdown options
-        const filterOptions = document.querySelectorAll('.filter-option');
-        filterOptions.forEach(option => {
-            option.addEventListener('click', function(e) {
-                e.preventDefault();
-                currentFilter = this.getAttribute('data-filter');
-
-                // Update dropdown button text
-                if (filterDropdown) {
-                    filterDropdown.innerHTML = '<i class="fas fa-filter me-1"></i>' + this.textContent + ' <i class="fas fa-chevron-down ms-1"></i>';
-                }
-
-                // Update active state
-                filterOptions.forEach(opt => opt.classList.remove('active'));
-                this.classList.add('active');
-
-                performSearch();
-            });
-        });
-
-        // Table filter dropdown options
-        const tableFilterOptions = document.querySelectorAll('.table-filter-option');
-        tableFilterOptions.forEach(option => {
-            option.addEventListener('click', function(e) {
-                e.preventDefault();
-                currentTableFilter = this.getAttribute('data-table');
-
-                // Update dropdown button text
-                if (tableFilterDropdown) {
-                    const buttonText = currentTableFilter === 'all' ? 'Table Filter' : this.textContent;
-                    tableFilterDropdown.innerHTML = '<i class="fas fa-table me-1"></i>' + buttonText + ' <i class="fas fa-chevron-down ms-1"></i>';
-                }
-
-                // Update active state
-                tableFilterOptions.forEach(opt => opt.classList.remove('active'));
-                this.classList.add('active');
-
-                performSearch();
-            });
-        });
-
-        // Perform search function
-        function performSearch() {
-            const query = searchInput.value.toLowerCase().trim();
-            let visibleCount = 0;
-
-            tableRows.forEach(row => {
-                let shouldShow = false;
-
-                // First apply table filter
-                let passesTableFilter = true;
-                if (currentTableFilter !== 'all') {
-                    const tableData = row.getAttribute('data-table');
-                    passesTableFilter = tableData && tableData === currentTableFilter.toLowerCase();
-                }
-
-                // Then apply search filter only if table filter passes
-                if (passesTableFilter) {
-                    if (query === '') {
-                        shouldShow = true;
-                    } else {
-                        // Search based on current filter
-                        switch (currentFilter) {
-                            case 'all':
-                                shouldShow = searchAllColumns(row, query);
-                                break;
-                            case 'type':
-                                const typeData = row.getAttribute('data-type');
-                                shouldShow = typeData && typeData.includes(query);
-                                break;
-                            case 'user':
-                                const userData = row.getAttribute('data-user');
-                                shouldShow = userData && userData.includes(query);
-                                break;
-                            case 'table':
-                                const tableData = row.getAttribute('data-table');
-                                shouldShow = tableData && tableData.includes(query);
-                                break;
-                            case 'date':
-                                const dateData = row.getAttribute('data-date');
-                                shouldShow = dateData && dateData.includes(query);
-                                break;
-                            default:
-                                shouldShow = searchAllColumns(row, query);
-                        }
-                    }
-                }
-
-                if (shouldShow) {
-                    row.style.display = '';
-                    visibleCount++;
-                } else {
-                    row.style.display = 'none';
-                }
-            });
-
-            // Update search info and results
-            updateSearchInfo(query, visibleCount);
-        }
-
-        // Search all columns function - improved
-        function searchAllColumns(row, query) {
-            // Search in visible text content of the row
-            const rowText = row.textContent.toLowerCase();
-            if (rowText.includes(query)) {
-                return true;
-            }
-
-            // Also search in data attributes
-            const searchableAttributes = [
-                'data-type', 'data-user', 'data-table', 'data-date',
-                'data-old-data', 'data-new-data'
-            ];
-
-            return searchableAttributes.some(attr => {
-                const value = row.getAttribute(attr);
-                return value && value.includes(query);
-            });
-        }
-
-        // Update search info
-        function updateSearchInfo(query, visibleCount) {
-            if (!searchInfo || !searchResultText) return;
-
-            if (query === '') {
-                searchInfo.style.display = 'none';
-                if (noResults) noResults.style.display = 'none';
-            } else {
-                searchInfo.style.display = 'block';
-                if (searchQuery) searchQuery.textContent = `"${query}"`;
-
-                if (visibleCount === 0) {
-                    searchResultText.textContent = 'No records found for';
-                    if (noResults) noResults.style.display = 'block';
-                } else {
-                    searchResultText.textContent = `Found ${visibleCount} of ${totalRows} records for`;
-                    if (noResults) noResults.style.display = 'none';
-                }
-            }
-        }
-
-        // Clear search function
-        window.clearSearch = function() {
-            searchInput.value = '';
-            currentFilter = 'all';
-            currentTableFilter = 'all';
+    // Filter options
+    const filterOptions = document.querySelectorAll('.filter-option');
+    filterOptions.forEach(option => {
+        option.addEventListener('click', function(e) {
+            e.preventDefault();
+            currentFilter = this.getAttribute('data-filter');
 
             if (filterDropdown) {
-                filterDropdown.innerHTML = '<i class="fas fa-filter me-1"></i>Filter <i class="fas fa-chevron-down ms-1"></i>';
+                filterDropdown.innerHTML = '<i class="fas fa-filter me-1"></i>' + this.textContent;
             }
+
+            filterOptions.forEach(opt => opt.classList.remove('active'));
+            this.classList.add('active');
+
+            performServerSearch();
+        });
+    });
+
+    // Table filter options
+    const tableFilterOptions = document.querySelectorAll('.table-filter-option');
+    tableFilterOptions.forEach(option => {
+        option.addEventListener('click', function(e) {
+            e.preventDefault();
+            currentTableFilter = this.getAttribute('data-table');
+
             if (tableFilterDropdown) {
-                tableFilterDropdown.innerHTML = '<i class="fas fa-table me-1"></i>Table Filter <i class="fas fa-chevron-down ms-1"></i>';
+                const buttonText = currentTableFilter === 'all' ? 'Table Filter' : this.textContent;
+                tableFilterDropdown.innerHTML = '<i class="fas fa-table me-1"></i>' + buttonText;
             }
 
-            // Reset active states
-            const allFilterOptions = document.querySelectorAll('.filter-option, .table-filter-option');
-            allFilterOptions.forEach(opt => opt.classList.remove('active'));
+            tableFilterOptions.forEach(opt => opt.classList.remove('active'));
+            this.classList.add('active');
 
-            // Set default active states
-            const defaultFilterOption = document.querySelector('.filter-option[data-filter="all"]');
-            const defaultTableOption = document.querySelector('.table-filter-option[data-table="all"]');
-            if (defaultFilterOption) defaultFilterOption.classList.add('active');
-            if (defaultTableOption) defaultTableOption.classList.add('active');
+            performServerSearch();
+        });
+    });
 
-            performSearch();
+    // Perform server-side search
+    function performServerSearch(url = null) {
+        const query = searchInput.value.trim();
+
+        // Show loading state
+        if (spinner && auditTableContainer) {
+            spinner.style.display = "block";
+            auditTableContainer.style.opacity = "0.5";
+        }
+
+        // Build query parameters
+        const params = new URLSearchParams({
+            search: query,
+            filter: currentFilter,
+            table_filter: currentTableFilter
+        });
+
+        // Use provided URL or default route
+        const fetchUrl = url || `{{ route('audit.index') }}?${params.toString()}`;
+
+        // Fetch filtered results from server
+        fetch(fetchUrl, {
+            method: 'GET',
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest',
+                'Accept': 'text/html'
+            }
+        })
+        .then(response => response.text())
+        .then(html => {
+            // Create temporary container
+            const temp = document.createElement('div');
+            temp.innerHTML = html;
+
+            // Extract ONLY the table and pagination, preserve modals
+            const newTable = temp.querySelector('.table-responsive table');
+            const newPagination = temp.querySelector('.d-flex.flex-column.justify-content-center');
+            const newNoResults = temp.querySelector('#noResults');
+
+            // Find existing elements
+            const existingTable = auditTableContainer.querySelector('table');
+            const existingPagination = auditTableContainer.querySelector('.d-flex.flex-column.justify-content-center');
+            const existingNoResults = auditTableContainer.querySelector('#noResults');
+
+            // Update table if it exists
+            if (newTable && existingTable) {
+                existingTable.replaceWith(newTable);
+            } else if (newTable) {
+                // Insert table before pagination
+                const warningDiv = auditTableContainer.querySelector('.alert-warning');
+                if (warningDiv) {
+                    warningDiv.replaceWith(newTable);
+                }
+            }
+
+            // Update pagination
+            if (newPagination && existingPagination) {
+                existingPagination.replaceWith(newPagination);
+            }
+
+            // Update no results message
+            if (newNoResults && existingNoResults) {
+                existingNoResults.replaceWith(newNoResults);
+            }
+
+            // Update search info
+            updateSearchInfo(query);
+
+            // Hide loading state
+            if (spinner && auditTableContainer) {
+                spinner.style.display = "none";
+                auditTableContainer.style.opacity = "1";
+            }
+        })
+        .catch(error => {
+            console.error('Search error:', error);
+            if (spinner && auditTableContainer) {
+                spinner.style.display = "none";
+                auditTableContainer.style.opacity = "1";
+            }
+        });
+    }
+
+    // Update search info display
+    function updateSearchInfo(query) {
+        if (!searchInfo || !searchResultText) return;
+
+        const visibleRows = document.querySelectorAll('.audit-row');
+        const visibleCount = visibleRows.length;
+
+        if (query === '' && currentTableFilter === 'all' && currentFilter === 'all') {
+            searchInfo.style.display = 'none';
+            if (noResults) noResults.style.display = 'none';
+        } else {
+            searchInfo.style.display = 'block';
+            if (searchQuery) searchQuery.textContent = query ? `"${query}"` : '';
+
+            if (visibleCount === 0) {
+                searchResultText.textContent = 'No records found' + (query ? ' for' : '');
+                if (noResults) noResults.style.display = 'block';
+            } else {
+                let filterText = '';
+                if (currentTableFilter !== 'all') {
+                    filterText = ` (Table: ${currentTableFilter})`;
+                }
+                if (currentFilter !== 'all') {
+                    filterText += ` (Filter: ${currentFilter})`;
+                }
+
+                searchResultText.textContent = query ? `Found ${visibleCount} records for` : `Showing ${visibleCount} records${filterText}`;
+                if (noResults) noResults.style.display = 'none';
+            }
+        }
+    }
+
+    // Clear search function
+    window.clearSearch = function() {
+        searchInput.value = '';
+        currentFilter = 'all';
+        currentTableFilter = 'all';
+
+        if (filterDropdown) {
+            filterDropdown.innerHTML = '<i class="fas fa-filter me-1"></i>Filter';
+        }
+        if (tableFilterDropdown) {
+            tableFilterDropdown.innerHTML = '<i class="fas fa-table me-1"></i>Table Filter';
+        }
+
+        // Reset active states
+        document.querySelectorAll('.filter-option, .table-filter-option').forEach(opt => {
+            opt.classList.remove('active');
+        });
+
+        const defaultFilter = document.querySelector('.filter-option[data-filter="all"]');
+        const defaultTable = document.querySelector('.table-filter-option[data-table="all"]');
+        if (defaultFilter) defaultFilter.classList.add('active');
+        if (defaultTable) defaultTable.classList.add('active');
+
+        performServerSearch();
+        searchInput.focus();
+    }
+
+    // Keyboard shortcuts
+    document.addEventListener('keydown', function(e) {
+        if ((e.ctrlKey || e.metaKey) && e.key === 'f') {
+            e.preventDefault();
             searchInput.focus();
         }
-
-        // Add keyboard shortcuts
-        document.addEventListener('keydown', function(e) {
-            // Ctrl/Cmd + F to focus search
-            if ((e.ctrlKey || e.metaKey) && e.key === 'f') {
-                e.preventDefault();
-                searchInput.focus();
-            }
-            // Escape to clear search
-            if (e.key === 'Escape' && searchInput.value !== '') {
-                clearSearch();
-            }
-        });
-
-        // Modal loading states
-        const modalButtons = document.querySelectorAll('[data-bs-toggle="modal"]');
-        modalButtons.forEach(button => {
-            button.addEventListener('click', function() {
-                this.classList.add('loading');
-                setTimeout(() => {
-                    this.classList.remove('loading');
-                }, 200);
-            });
-        });
-
-        // Initialize search on page load if there's a value
-        if (searchInput.value.trim() !== '') {
-            performSearch();
+        if (e.key === 'Escape' && searchInput.value !== '') {
+            clearSearch();
         }
     });
+
+    // Handle pagination links with search/filter preservation
+    document.addEventListener('click', function(e) {
+        const paginationLink = e.target.closest('.pagination a');
+        if (paginationLink && paginationLink.href) {
+            e.preventDefault();
+
+            const url = new URL(paginationLink.href);
+
+            // Preserve current search and filters
+            url.searchParams.set('search', searchInput.value);
+            url.searchParams.set('filter', currentFilter);
+            url.searchParams.set('table_filter', currentTableFilter);
+
+            // Use the performServerSearch with the pagination URL
+            performServerSearch(url.toString());
+        }
+    });
+});
 </script>
 
 @endsection
