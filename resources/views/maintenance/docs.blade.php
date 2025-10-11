@@ -3,6 +3,7 @@
 
 @section ('content')
 @include ('layout.partials.message')
+@include('layout.partials.swal-loading')
 
 <!-- Page Title and Breadcrumbs -->
 <div class="row mb-4">
@@ -14,23 +15,6 @@
             <li class="breadcrumb-item"><a href="{{ route('dashboard') }}" class="text-dark">Dashboard</a></li>
             <li class="breadcrumb-item active text-dark">Document Types</li>
         </ol>
-    </div>
-</div>
-
-<!-- Status Alerts -->
-<div class="row mb-4">
-    <div class="col-md-12">
-        @if(session('Status'))
-        <div class="alert alert-success">
-            {{ session('Status') }}
-        </div>
-        @endif
-
-        @if(session('Danger'))
-        <div class="alert alert-danger">
-            {{ session('Danger') }}
-        </div>
-        @endif
     </div>
 </div>
 
@@ -67,10 +51,10 @@
                                 <td class="d-flex justify-content-start">
                                     <a href="{{ route('doc.edit', ['id' => $item->id]) }}" class="btn btn-success me-2">Edit</a>
 
-                                    <form action="{{ route('doc.destroy', $item->id) }}" method="POST" style="display:inline;">
+                                    <form action="{{ route('doc.destroy', $item->id) }}" method="POST" style="display:inline;" data-swal-loading="true" data-swal-delete="true">
                                         @csrf
                                         @method('DELETE')
-                                        <button type="submit" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete this document?')">Delete</button>
+                                        <button type="submit" class="btn btn-danger">Delete</button>
                                     </form>
                                 </td>
                             </tr>

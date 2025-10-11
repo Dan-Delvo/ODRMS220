@@ -1,6 +1,8 @@
 @extends('layout.blankpage')
 
-@section ('content')
+@section('content')
+@include('layout.partials.swal-loading')
+@include('layout.partials.message')
 
 <!-- Page Title and Breadcrumbs -->
 <div class="row mb-4">
@@ -38,9 +40,27 @@
     <div class="col-md-12">
         <div class="card shadow-lg border-0 bg-white text-dark">
             <div class="card-header text-white d-flex align-items-center justify-content-between" style="background-color: #1f2937; height: 60px;">
-                <h4 class="mb-0">
-                    Students Information
-                </h4>
+                <h4 class="mb-0">Students Information</h4>
+
+                <!-- Sorting Dropdown -->
+                <div class="dropdown">
+                    <button class="btn btn-outline-light btn-sm dropdown-toggle" type="button" id="sortDropdown"
+                        data-bs-toggle="dropdown" aria-expanded="false" title="Sort by Student ID">
+                        <i class="fas fa-sort me-1"></i>Sort
+                    </button>
+                    <ul class="dropdown-menu" aria-labelledby="sortDropdown">
+                        <li><a class="dropdown-item sort-option" href="#" data-sort="default">Default Order</a></li>
+                        <li>
+                            <hr class="dropdown-divider">
+                        </li>
+                        <li><a class="dropdown-item sort-option" href="#" data-sort="asc">
+                                <i class="fas fa-sort-numeric-down me-2"></i> Student ID (Ascending)
+                            </a></li>
+                        <li><a class="dropdown-item sort-option" href="#" data-sort="desc">
+                                <i class="fas fa-sort-numeric-up me-2"></i> Student ID (Descending)
+                            </a></li>
+                    </ul>
+                </div>
             </div>
 
             <div class="card-body">
@@ -76,10 +96,10 @@
                                     @endif
 
                                     @if(!empty($PermissionDelete))
-                                    <form action="{{ route('student.delete', $item->id) }}" method="POST" class="mb-0">
+                                    <form action="{{ route('student.delete', $item->id) }}" method="POST" class="mb-0" data-swal-loading="true" data-swal-delete="true">
                                         @csrf
                                         @method('DELETE')
-                                        <button type="submit" class="btn btn-danger me-2">Delete</button>
+                                        <button type="submit" class="btn btn-danger btb-delete me-2">Delete</button>
                                     </form>
                                     @endif
 
@@ -103,5 +123,39 @@
         </div>
     </div>
 </div>
+
+<!-- Sorting Script -->
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+
+        const table = document.getElementById("studentsTable").getElementsByTagName("tbody")[0];
+        const rows = Array.from(table.querySelectorAll("tr"));
+        const originalOrder = [...rows]; // save default order
+
+        document.querySelectorAll(".sort-option").forEach(option => {
+            option.addEventListener("click", function(e) {
+                e.preventDefault();
+                const sortType = this.getAttribute("data-sort");
+
+                let sortedRows;
+                if (sortType === "asc") {
+                    sortedRows = [...rows].sort((a, b) => {
+                        return parseInt(a.cells[0].textContent) - parseInt(b.cells[0].textContent);
+                    });
+                } else if (sortType === "desc") {
+                    sortedRows = [...rows].sort((a, b) => {
+                        return parseInt(b.cells[0].textContent) - parseInt(a.cells[0].textContent);
+                    });
+                } else {
+                    sortedRows = [...originalOrder];
+                }
+
+                // Clear table and re-append rows
+                table.innerHTML = "";
+                sortedRows.forEach(r => table.appendChild(r));
+            });
+        });
+    });
+</script>
 
 @endsection

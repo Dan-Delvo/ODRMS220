@@ -19,12 +19,11 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels"></script>
-
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
     @vite(['resources/css/app.css', 'resources/sass/app.scss', 'resources/js/scripts.js', 'resources/js/datatables-simple-demo.js'])
 
     <!-- Customized Pagination Links-->
     <style>
-        
         .zoomable.zoomed {
             max-height: none !important;
             max-width: 100% !important;
@@ -135,6 +134,7 @@
             opacity: 0;
             transition: opacity 0.5s ease;
         }
+
         /* Additional CSS for the new table filter functionality */
 
         /* Search container styling */

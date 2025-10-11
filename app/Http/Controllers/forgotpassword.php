@@ -17,6 +17,12 @@ class forgotpassword extends Controller
 {
     public function index()
     {
+        if (session('otp_verified')) {
+            return redirect()->route('newpassword');
+        }
+        if (session('otp_requested')) {
+            return redirect()->route('verifyotp');
+        }
         return view('common/forgetpass');
     }
 
@@ -40,9 +46,9 @@ class forgotpassword extends Controller
             ]);
 
             Mail::to($request->variable)->send(new ResetPasswordMail($otpCode));
-            session(['password_reset_step' => 'otp']);
+            session(['otp_requested' => true]);
             session()->flash('success', 'OTP Sent successfully!');
-            return view('redirect/redirectVerifyOtp');
+            return redirect()->route('verifyotp');
         } else {
             return redirect()->back()->with('error', 'Invalid email address!');
         }
@@ -50,6 +56,14 @@ class forgotpassword extends Controller
 
     public function showVerifyOTP()
     {
+        if (!session('otp_requested')) {
+            // No OTP requested — send them back to email form
+            return redirect()->route('forgot');
+        }
+        if (session('otp_verified')) {
+            // OTP already verified — go straight to new password
+            return redirect()->route('newpassword');
+        }
         // Check if user is locked out
         $lockoutUntil = session('lockout_until');
         if ($lockoutUntil && now()->lessThan($lockoutUntil)) {
@@ -64,7 +78,6 @@ class forgotpassword extends Controller
             session()->flash('error', 'OTP has expired. Please request a new one.');
             return view('common/OTP/otp');
         }
-
         return view('common/OTP/otp');
     }
 
@@ -76,6 +89,7 @@ class forgotpassword extends Controller
         $lockoutUntil = session('lockout_until');
         if ($lockoutUntil && now()->lessThan($lockoutUntil)) {
             $remainingMinutes = ceil(now()->diffInMinutes($lockoutUntil, false));
+            session()->forget('otp_requested');
             session()->flash('error', "Account temporarily locked. Please wait {$remainingMinutes} minutes before trying again.");
             return view('common/OTP/otp');
         }
@@ -88,6 +102,7 @@ class forgotpassword extends Controller
 
         // Check if OTP has expired
         if (!$otpCode || !$expiry || now()->greaterThan($expiry)) {
+            session()->forget('otp_requested');
             session()->flash('error', 'OTP has expired. Please request a new one.');
             return view('common/OTP/otp');
         }
@@ -99,7 +114,7 @@ class forgotpassword extends Controller
             session(['otp_verified' => true]);
             session(['password_reset_step' => 'newpassword']);
             session()->flash('status', 'OTP Verified successfully!');
-            return view('redirect/redirectNewPassword');
+            return redirect()->route('newpassword');
         } else {
             // Failed attempt
             $attempts++;
@@ -165,6 +180,10 @@ class forgotpassword extends Controller
 
     public function showNewPassword()
     {
+        if (!session('otp_verified')) {
+            // User can’t access this without verified OTP
+            return redirect()->route('verifyotp');
+        }
         return view('common/OTP/newpassword');
     }
 
@@ -188,7 +207,7 @@ class forgotpassword extends Controller
             'password' => $password
         ]);
         session(['password_change' => true]);
-        session()->forget(['email_entered', 'otp_sent', 'otp_verified']);
+        session()->forget(['email_entered', 'otp_requested', 'otp_verified', '']);
         session()->forget('password_reset_step');
         return view('redirect/redirectLogin')->with('status', 'Password updated successfully!');
     }

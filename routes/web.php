@@ -166,8 +166,9 @@ Route::group(['middleware' => 'useradmin'], function () {
     Route::get('/auditTrail', [AuditTableController::class, 'index'])->name('audit.index');
     Route::get('/activityLog', [AuditTableController::class, 'activityLog']);
 });
-//test
-route::group(['middleware' => 'forgotpassword'], function () {
+
+
+Route::middleware(['forgotpassword'])->group(function () {
     Route::get('/forgotpassword', [forgotpassword::class, 'index'])->name('forgot');
     Route::post('/forgotpassword', [forgotpassword::class, 'forgotpost'])->name('forgot.submit');
     Route::get('/verifyotp', [forgotpassword::class, 'showVerifyOTP'])->name('verifyotp');
