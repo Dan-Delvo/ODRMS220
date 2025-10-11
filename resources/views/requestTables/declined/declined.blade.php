@@ -153,28 +153,17 @@
                                 <td>{{ $item->claimed_date }}</td>
                                 <td class="text-nowrap">
                                     <!-- Accept and Decline buttons moved here -->
-<<<<<<< HEAD
-                                    <form action="{{ route('pending.decline', $item->id) }}" method="POST" class="d-inline decline-form">
-                                        @csrf
-                                        @method('DELETE')
-                                        <input type="hidden" name="remarks" class="decline-reason">
-                                        <button type="button" class="btn btn-sm btn-danger mb-1 decline-btn">Delete</button>
-                                    </form>
-=======
                                     <form action="{{ route('tables.destroy', $item->id) }}" method="POST" class="d-inline decline-form">
                                         @csrf
                                         @method('DELETE')
                                         <button type="submit" class="btn btn-sm btn-danger mb-1 decline-btn">Delete</button>
                                     </form>
 
->>>>>>> bbc28d2e785d490cc664c3533b12548529dd5693
                                     <form action="{{ route('document-request.complete', $item->id) }}" method="POST" class="d-inline accept-form">
                                         @csrf
                                         @method('PUT')
                                         <button type="submit" class="btn btn-sm btn-success mb-1 accept-btn" data-original-text="Accept">Accept</button>
                                     </form>
-<<<<<<< HEAD
-=======
                                     @if($item->supporting_document)
                                     <button type="button" class="btn btn-sm btn-primary mb-1" data-bs-toggle="modal" data-bs-target="#documentModal{{ $item->id }}">
                                         <i class="fas fa-file-alt me-1"></i>
@@ -182,7 +171,6 @@
                                     </button>
                                     @endif
 
->>>>>>> bbc28d2e785d490cc664c3533b12548529dd5693
                                 </td>
                             </tr>
                             @endforeach
