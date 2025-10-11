@@ -105,11 +105,16 @@ class OngoingController extends Controller
     {
         $this->setCurrentUserVariable();
 
-        $validated = $this->validateDocumentRequest($request);
-        DocumentRequestModel::updateOrCreateRequest($validated);
+        $validated = $request->validate([
+            'app_date' => 'required|date|before_or_equal:today'
+        ]);
+        DocumentRequestModel::where('id', $request->id)
+            ->update([
+                'approve_date' => $validated['app_date']
+            ]);
 
-        $studentId = $documentRequestModel->student_information_id;
-        $student = StudentInformationModel::find($studentId);
+        // $studentId = $documentRequestModel->student_information_id;
+        // $student = StudentInformationModel::find($studentId);
 
         return redirect('/ongoing')->with('status', 'Updated Successfully');
     }
@@ -172,6 +177,7 @@ class OngoingController extends Controller
         // }
 
         $documentRequest->update([
+            'remarks' => 'For Release',
             'status' => 'For Release',
             'forRelease_date' => Carbon::now(),
         ]);

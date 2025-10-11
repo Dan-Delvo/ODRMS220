@@ -20,6 +20,7 @@ class AuditTable extends Model
         'time',
         'changedBy',
         'fromTableName',
+        'description'
     ];
 
     protected $casts = [

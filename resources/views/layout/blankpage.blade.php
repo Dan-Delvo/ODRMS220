@@ -24,6 +24,14 @@
 
     <!-- Customized Pagination Links-->
     <style>
+        
+        .zoomable.zoomed {
+            max-height: none !important;
+            max-width: 100% !important;
+            height: auto !important;
+            cursor: zoom-out;
+        }
+
         .switch {
             position: relative;
             display: inline-block;
@@ -127,40 +135,6 @@
             opacity: 0;
             transition: opacity 0.5s ease;
         }
-
-        .floating-attempt {
-            position: absolute;
-            top: 1.25rem;
-            left: 50%;
-            transform: translateX(-50%);
-            z-index: 1051;
-            background-color: rgba(220, 53, 69, 0.95);
-            /* Bootstrap red */
-            color: #fff;
-            padding: 0.75rem 1.25rem;
-            border-radius: 0.75rem;
-            font-weight: 500;
-            max-width: 90%;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
-            animation: fadeInSlide 0.3s ease-out;
-            text-align: center;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0.5rem;
-            font-size: 0.95rem;
-        }
-
-        .floating-attempt i {
-            font-size: 1.2rem;
-        }
-
-        .floating-attempt.hide {
-            opacity: 0;
-            transition: opacity 0.5s ease;
-        }
-
         /* Additional CSS for the new table filter functionality */
 
         /* Search container styling */
@@ -494,6 +468,7 @@
                 });
         }
     </script>
+    @include('layout.partials.swal-loading')
     @stack('scripts')
 </body>
 

@@ -57,7 +57,7 @@ class DocumentsModelController extends Controller
             'DocPrice' => $request->input('DocPrice'),
         ]);
 
-        return redirect()->route('doc')->with('Status', 'Document added successfully.');
+        return redirect()->route('doc')->with('status', 'Document added successfully.');
     }
 
     public function update(Request $request, $id)
@@ -67,7 +67,7 @@ class DocumentsModelController extends Controller
         $pdo->exec("SET @current_user = " . $pdo->quote(Auth::check() ? Auth::user()->username : 'guest'));
 
         $request->validate([
-            'DocType' => 'required|string|max:255',
+            'DocType' => 'required|string|max:255|unique:doc_categories,DocType',
         ]);
 
         $document = DocumentsModel::findOrFail($id);
@@ -76,7 +76,7 @@ class DocumentsModelController extends Controller
             'DocPrice' => $request->input('DocPrice'),
         ]);
 
-        return redirect()->route('doc')->with('Success', 'Document updated successfully.');
+        return redirect()->route('doc')->with('success', 'Document updated successfully.');
     }
 
     public function destroy($id)

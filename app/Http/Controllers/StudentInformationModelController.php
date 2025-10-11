@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use App\Models\Account;
 use App\Models\DocumentRequestModel;
+use Illuminate\Validation\Rule;
 
 class StudentInformationModelController extends Controller
 {
@@ -151,5 +152,96 @@ class StudentInformationModelController extends Controller
                 ? 'This student has ' . $requestCount . ' existing document request(s) and cannot be deleted.'
                 : 'Student can be deleted.'
         ]);
+    }
+
+    public function showProfile()
+    {
+        $studID = Auth::user()->std_students_id;
+        $studInfo = StudentInformationModel::where('id', $studID)
+            ->with('documentRequests', 'documentRequests.claimer', 'account')
+            ->first(); // Execute the query
+
+        $grade = ['7', '8', '9', '10', '11', '12'];
+        $stat = ['Alumni', 'Regular', 'ALS'];
+
+        if (!$studInfo) {
+            return redirect()->route('st.page')->with('error', 'Student information not found.');
+        }
+
+        return view('common.studentProfile', compact('studInfo', 'grade', 'stat'));
+    }
+
+    public function updateProfile(Request $request, $id)
+    {
+        $studInfo = StudentInformationModel::find($id);
+
+        if (!$studInfo) {
+            return redirect()->route('st.page')->with('error', 'Student information not found.');
+        }
+
+        $validatedData = $request->validate([
+            'FirstName' => 'required|string|max:255',
+            'MiddleName' => 'nullable|string|max:255',
+            'LastName' => 'required|string|max:255',
+            'LRN' => [
+                'sometimes',
+                'filled',
+                'string',
+                'digits:12',
+                Rule::unique('std_students', 'LRN')->ignore($studInfo->id),
+            ],
+            'Grade_level' => 'required|string|max:255',
+            'Suffix' => 'nullable|string|max:10',
+            'status' => 'required',
+            'Last_sy_attended' => 'nullable|string|max:255',
+            'Id_image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+        ], [
+            'LRN.digits' => 'LRN must be exactly 12 digits.',
+            'LRN.unique' => 'LRN must be unique.',
+        ]);
+
+        // Map form fields to DB columns (important!)
+        $fieldMap = [
+            'FirstName' => 'FirstName',
+            'MiddleName' => 'MiddleName',
+            'LastName' => 'LastName',
+            'LRN' => 'LRN',
+            'Grade_level' => 'Grade_level',
+            'Suffix' => 'Suffix',
+            'status' => 'Std_status',
+            'Last_sy_attended' => 'Last_sy_attended',
+        ];
+
+        $changes = [];
+
+        foreach ($fieldMap as $formField => $dbField) {
+            if (array_key_exists($formField, $validatedData)) {
+                // Normalize both sides before comparison
+                $oldValue = trim((string)($studInfo->{$dbField} ?? ''));
+                $newValue = trim((string)($validatedData[$formField] ?? ''));
+
+                if ($oldValue !== $newValue) {
+                    $changes[$dbField] = $validatedData[$formField];
+                }
+            }
+        }
+
+        // Handle file upload
+        if ($request->hasFile('Id_image')) {
+            $image = $request->file('Id_image');
+            $imageName = time() . '_' . uniqid() . '.' . $image->getClientOriginalExtension();
+            $image->move(public_path('uploads/supporting_documents'), $imageName);
+            $changes['Id_image'] = 'uploads/supporting_documents/' . $imageName;
+        }
+
+        // Nothing changed
+        if (empty($changes)) {
+            return redirect()->back()->with('Info', 'No changes were made.');
+        }
+
+        // Update only changed fields
+        $studInfo->update($changes);
+
+        return redirect()->route('student.profile')->with('Success', 'Profile updated successfully.');
     }
 }

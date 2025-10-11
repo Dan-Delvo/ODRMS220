@@ -1,38 +1,23 @@
-navbar.blade.php
 <!-- Navbar Start -->
-<nav class="sb-topnav navbar navbar-expand-lg  shadow-sm" style="background-color: #1f2937;">
-    <div class="container-fluid">
-        <!-- Navbar Brand -->
-         <!-- Sidebar Toggle (for small screens) -->
-        <button class="btn btn-link order-1 order-lg-0 me-3 me-lg-0 text-light" id="sidebarToggle">
+<nav class="sb-topnav navbar navbar-expand-lg shadow-sm" style="background-color: #1f2937;">
+    <div class="container-fluid d-flex align-items-center flex-nowrap">
+
+        <!-- Sidebar Toggle (for small screens) -->
+        <button class="btn btn-link order-1 order-lg-0 me-2 text-light flex-shrink-0" id="sidebarToggle">
             <i class="fas fa-bars fa-lg"></i>
         </button>
 
-        <a class="navbar-brand d-flex align-items-center ps-3" href="{{ route('dashboard') }}">
-            <img src="/images/UBLOGO.png" alt="Logo" width="40" height="40" class="me-2">
-            <span class="fw-bold text-uppercase" style="color: #1dd3b0;">ODRMS</span>
+        <!-- Navbar Brand -->
+        <a class="navbar-brand d-flex align-items-center flex-shrink-0" href="{{ route('dashboard') }}" style="min-width: 0;">
+            <img src="/images/UBLOGO.png" alt="Logo" width="40" height="40" class="me-2 flex-shrink-0">
+            <span class="fw-bold text-uppercase text-truncate" style="color: #1dd3b0;">ODRMS</span>
         </a>
 
-        <!-- Sidebar Toggle (for small screens)
-        <button class="btn btn-link btn-sm order-1 order-lg-0 me-3 me-lg-0 text-light" id="sidebarToggle">
-            <i class="fas fa-bars"></i>
-        </button> -->
-
-        <!-- Navbar Search (Optional) -->
-        <!-- Uncomment if search is needed
-        <form class="d-none d-md-inline-block form-inline ms-auto me-0 me-md-3 my-2 my-md-0">
-            <div class="input-group">
-                <input class="form-control" type="text" placeholder="Search..." aria-label="Search" />
-                <button class="btn btn-primary" type="button"><i class="fas fa-search"></i></button>
-            </div>
-        </form>
-        -->
-        
         <!-- User Dropdown -->
-        <ul class="navbar-nav ms-auto">
-            <li class="nav-item dropdown d-flex align-items-center">
-                <span class="fw-bold text-white">{{ Auth::user()->username }}</span>
-                <a class="nav-link dropdown-toggle text-white" id="navbarDropdown" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+        <ul class="navbar-nav ms-auto flex-shrink-0">
+            <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle text-white d-flex align-items-center" id="navbarDropdown" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    <span class="fw-bold text-white d-none d-sm-inline me-2">{{ Auth::user()->username }}</span>
                     <i class="fas fa-user fa-fw" style="color: #1dd3b0;"></i>
                 </a>
                 <ul class="dropdown-menu dropdown-menu-end shadow" aria-labelledby="navbarDropdown">
@@ -46,3 +31,39 @@ navbar.blade.php
     </div>
 </nav>
 <!-- Navbar End -->
+
+<!-- Add this style block to ensure navbar stays on one line -->
+<style>
+    .sb-topnav .container-fluid {
+        flex-wrap: nowrap !important;
+        overflow: visible !important;
+    }
+
+    .sb-topnav .navbar-brand {
+        overflow: hidden;
+    }
+
+    .sb-topnav .navbar-brand span {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .sb-topnav .navbar-nav {
+        position: relative;
+        z-index: 1050;
+    }
+
+    /* Hide username text on very small screens */
+    @media (max-width: 576px) {
+        .sb-topnav .navbar-brand span {
+            font-size: 0.9rem;
+        }
+    }
+
+    @media (max-width: 400px) {
+        .sb-topnav .navbar-brand span {
+            display: none;
+        }
+    }
+</style>

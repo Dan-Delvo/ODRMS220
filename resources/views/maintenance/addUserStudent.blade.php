@@ -24,7 +24,7 @@
                 @endif -->
 
                 <!-- Form to create user -->
-                <form action="{{ route('userStud.store') }}" method="POST">
+                <form action="{{ route('account.otp') }}" method="POST">
                     @csrf
 
                     <!-- Personal Information Section -->

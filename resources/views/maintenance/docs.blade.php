@@ -2,6 +2,7 @@
 @extends('layout.blankpage')
 
 @section ('content')
+@include ('layout.partials.message')
 
 <!-- Page Title and Breadcrumbs -->
 <div class="row mb-4">

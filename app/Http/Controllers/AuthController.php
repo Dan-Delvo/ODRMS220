@@ -12,19 +12,19 @@ use App\Models\AuditTable;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Str;
 use GeoIP;
-
+use Illuminate\Support\Facades\Session;
 
 class AuthController extends Controller
 {
 
     // Login method to redirect authenticated users based on their role
     public function login()
-
     {
+
         // Check if a user is already logged in and redirect accordingly
         if (Auth::check()) {
             if (Auth::user()->roles->name === 'student') {
-                dd("hello world");
+                // dd("hello world");
                 return redirect('stpage');
             }
 
@@ -90,7 +90,8 @@ class AuthController extends Controller
                     ]),
                     'time'          => now(),                  // Current datetime
                     'changedBy'     => $user->studentInformation->full_name, // The user who logged in
-                    'fromTableName' => 'Log In'                 // Assuming the related table
+                    'fromTableName' => 'Log In',                 // Assuming the related table
+                    'description' => 'An Admin has Logged In'
                 ]);
 
 
@@ -108,7 +109,8 @@ class AuthController extends Controller
                     ]),
                     'time'          => now(),                  // Current datetime
                     'changedBy'     => $user->studentInformation->full_name, // The user who logged in
-                    'fromTableName' => 'Log In'                 // Assuming the related table
+                    'fromTableName' => 'Log In',                 // Assuming the related table
+                    'description' => 'A Student has logged In'
                 ]);
                 return redirect('/stpage');
             }

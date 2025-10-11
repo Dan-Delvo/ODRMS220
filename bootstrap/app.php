@@ -6,6 +6,7 @@ use Illuminate\Foundation\Configuration\Middleware;
 use App\Http\Middleware\AdminUserMiddleware;
 use App\Http\Middleware\ForgotPasswordFlow;
 use App\Http\Middleware\StudentUserMiddleware;
+use App\Http\Middleware\EnsureSessionStarted;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(

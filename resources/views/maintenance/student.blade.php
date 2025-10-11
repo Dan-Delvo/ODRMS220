@@ -48,7 +48,6 @@
                     <table class="table table-striped table-bordered bg-white text-dark">
                         <thead class="bg-dark text-white">
                             <tr>
-                                <th>Student ID</th>
                                 <th>Last Name</th>
                                 <th>First Name</th>
                                 <th>Middle Name</th>
@@ -63,7 +62,6 @@
                         <tbody>
                             @foreach ($user as $item)
                             <tr>
-                                <td>{{ $item->id }}</td>
                                 <td>{{ $item->LastName }}</td>
                                 <td>{{ $item->FirstName }}</td>
                                 <td>{{ $item->MiddleName }}</td>

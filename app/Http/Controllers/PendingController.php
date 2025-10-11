@@ -13,9 +13,14 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
+use App\Mail\RequestApprovedMail;
+use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldQueue;
 
 class PendingController extends Controller
 {
+
+
     private function setCurrentUserVariable()
     {
         $username = Auth::check() ? Auth::user()->username : 'guest';
@@ -148,34 +153,15 @@ class PendingController extends Controller
         $email = $account->email_address;
         $name = $stud->full_name;
         $subject = 'Your Request is Approved!';
+        $view = 'emails.toOngoing';
 
         Log::info("Sending email to: " . $account->email_address);
 
-        Mail::send('emails.toOngoing', compact('subject', 'name'), function ($message) use ($email, $subject) {
-            $message->to($email)->subject($subject);
-        });
-
-        // $pushId = $account->fcm_token;
-
-        // try {
-        //     $response = Http::withHeaders([
-        //         'Authorization' => 'Basic os_v2_app_if32gbsxsffszlc2vzvuxojxx5v5u3kriweuqn4s2luqs6vfjt5gaoxdhoqhd6vi5w33ake2swiwgpvwudxdidn35dzpgubfyjeszsq',
-        //         'accept' => 'application/json',
-        //         'content-type' => 'application/json',
-        //     ])->post('https://onesignal.com/api/v1/notifications', [
-        //         'app_id' => '4177a306-5791-4b2c-ac5a-ae6b4bb937bf',
-        //         'include_player_ids' => [$pushId],
-        //         'contents' => ['en' => $name . ', Your document request has been approved and is now ongoing.'],
-        //     ]);
-
-        //     Log::info('Notification sent: ' . $response->body());
-
-        // } catch (\Exception $e) {
-        //     report($e);
-        //     return response()->json(['error' => $e->getMessage()], 500);
-        // }
+        // Queue email (non-blocking)
+        Mail::to($email)->queue(new RequestApprovedMail($name, $subject, $view));
 
         $documentRequest->update([
+            'remarks' => 'Proessing',
             'status' => 'Processing',
             'approve_date' => Carbon::now(),
         ]);

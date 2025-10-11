@@ -9,6 +9,7 @@ use Illuminate\Notifications\Notifiable;
 class Account extends Authenticatable
 {
     use HasFactory, Notifiable;
+    use Notifiable;
 
     // Specify the table name
     protected $table = 'acc_users';
@@ -32,7 +33,8 @@ class Account extends Authenticatable
         'account_created',
         'account_edited',
         'deleted_at',
-        'fcm_token'
+        'fcm_token',
+        'token'
     ];
 
     // Hide sensitive fields

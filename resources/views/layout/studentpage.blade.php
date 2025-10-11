@@ -14,57 +14,163 @@
     <link href="https://fonts.bunny.net/css?family=Nunito" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/simple-datatables@7.1.2/dist/style.min.css" rel="stylesheet" />
     <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
     @vite(['resources/css/app.css', 'resources/sass/app.scss', 'resources/js/scripts.js', 'resources/js/datatables-simple-demo.js'])
 
     <style>
-    :root {
-        --sidebar-width: 270px;      /* full size sidebar */
-        --sidebar-collapsed-width: 85px; /* collapsed sidebar */
-    }
+        .white-dropdown {
+            appearance: none;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            background-image: url("data:image/svg+xml;utf8,<svg fill='white' height='16' viewBox='0 0 24 24' width='16' xmlns='http://www.w3.org/2000/svg'><path d='M7 10l5 5 5-5z'/></svg>");
+            background-repeat: no-repeat;
+            background-position: right 0.75rem center;
+            background-size: 1rem;
+            padding-right: 2rem;
+        }
 
-    /* Default desktop layout */
-    .sidebar {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: var(--sidebar-width);
-        height: 100vh;
-        z-index: 1050; /* stays above content */
-        transition: width 0.3s ease;
-    }
+        .white-dropdown:focus {
+            border-color: #1dd3b0;
+            /* highlight teal on focus */
+            box-shadow: 0 0 0 0.2rem rgba(29, 211, 176, 0.25);
+        }
 
-    body.sidebar-shrink .sidebar {
-        width: var(--sidebar-collapsed-width);
-    }
+        .form-control::placeholder {
+            color: #ffffff;
+            /* white */
+            opacity: 1;
+            /* ensure it's not transparent */
+        }
 
-    .main-content {
-        margin-left: var(--sidebar-width);
-        transition: margin-left 0.3s ease;
-        min-height: 100vh;
-        background: #0f172a;
-        padding: 6rem 2rem 2rem;
-    }
+        /* Custom responsive adjustments */
+        @media (max-width: 576px) {
+            .container-fluid {
+                padding-left: 15px;
+                padding-right: 15px;
+            }
 
-    body.sidebar-shrink .main-content {
-        margin-left: var(--sidebar-collapsed-width);
-    }
+            .card-body {
+                padding: 1rem;
+            }
 
-    /* Mobile behavior */
-    @media (max-width: 991.98px) {
+            .fs-2 {
+                font-size: 1.5rem !important;
+            }
+
+            .card-header h6 {
+                font-size: 0.95rem;
+            }
+        }
+
+        @media (min-width: 768px) and (max-width: 991px) {
+
+            /* Tablet specific adjustments */
+            .col-md-6 .card-body {
+                padding: 2rem;
+            }
+
+            .rounded-circle {
+                width: 100px !important;
+                height: 100px !important;
+            }
+
+            .fs-1 {
+                font-size: 2rem !important;
+            }
+        }
+
+        @media (min-width: 1200px) {
+
+            /* Large screen optimizations */
+            .col-xl-6 .row {
+                margin-bottom: 1rem;
+            }
+        }
+
+        /* Ensure equal height cards */
+        .h-100 {
+            height: 100% !important;
+        }
+
+        /* Custom separator styling */
+        hr {
+            opacity: 0.5;
+        }
+
+        .form-control.is-invalid {
+            border-color: #dc3545;
+        }
+
+        .form-control.is-valid {
+            border-color: #28a745;
+        }
+
+        .form-control.is-invalid:focus {
+            border-color: #dc3545;
+            box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25);
+        }
+
+        .form-control.is-valid:focus {
+            border-color: #28a745;
+            box-shadow: 0 0 0 0.2rem rgba(40, 167, 69, 0.25);
+        }
+
+        :root {
+            --sidebar-width: 270px;
+            /* full size sidebar */
+            --sidebar-collapsed-width: 85px;
+            /* collapsed sidebar */
+        }
+
+        /* Default desktop layout */
         .sidebar {
-            width: 100%;
-            height: auto;
             position: fixed;
             top: 0;
             left: 0;
-            z-index: 1100; /* ensure it's always above cards */
+            width: var(--sidebar-width);
+            height: 100vh;
+            z-index: 1050;
+            /* stays above content */
+            transition: width 0.3s ease;
+        }
+
+        body.sidebar-shrink .sidebar {
+            width: var(--sidebar-collapsed-width);
         }
 
         .main-content {
-            margin-left: 0 !important;  /* don’t push content */
-            padding: 5rem 1rem 1rem;    /* add top padding so cards don’t hide under nav */
+            margin-left: var(--sidebar-width);
+            transition: margin-left 0.3s ease;
+            min-height: 100vh;
+            background: #0f172a;
+            padding: 6rem 2rem 2rem;
         }
-    }
+
+        body.sidebar-shrink .main-content {
+            margin-left: var(--sidebar-collapsed-width);
+        }
+
+        /* Mobile behavior */
+        @media (max-width: 991.98px) {
+            .sidebar {
+                width: 100%;
+                height: auto;
+                position: fixed;
+                top: 0;
+                left: 0;
+                z-index: 1100;
+                /* ensure it's always above cards */
+            }
+
+            .main-content {
+                margin-left: 0 !important;
+                /* don’t push content */
+                padding: 5rem 1rem 1rem;
+                /* add top padding so cards don’t hide under nav */
+            }
+        }
 
 
         body,
@@ -262,11 +368,82 @@
                 width: 100%;
             }
         }
+
+        .floating-attempt {
+            position: absolute;
+            top: 1.25rem;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 1051;
+            background-color: rgba(220, 53, 69, 0.95);
+            /* Bootstrap red */
+            color: #fff;
+            padding: 0.75rem 1.25rem;
+            border-radius: 0.75rem;
+            font-weight: 500;
+            max-width: 90%;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+            animation: fadeInSlide 0.3s ease-out;
+            text-align: center;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            font-size: 0.95rem;
+        }
+
+        .floating-attempt i {
+            font-size: 1.2rem;
+        }
+
+        .floating-attempt.hide {
+            opacity: 0;
+            transition: opacity 0.5s ease;
+        }
+
+        .form-container {
+            width: 100%;
+            max-width: 15000px;
+            background-color: #1e293b;
+            border: 2px solid #334155;
+            border-radius: 1rem;
+            padding: 3rem 4rem;
+        }
+
+        .form-title {
+            font-size: 1.8rem;
+            font-weight: 600;
+            color: #1dd3b0;
+            margin-bottom: 2rem;
+        }
+
+        .form-section-title {
+            font-size: 1.1rem;
+            font-weight: bold;
+            color: #1dd3b0;
+            margin-bottom: 1rem;
+        }
+
+        .form-control,
+        .form-select {
+            background-color: #334155;
+            border: none;
+            color: #f1f5f9;
+        }
+
+        .form-control:focus,
+        .form-select:focus {
+            background-color: #475569;
+            color: #fff;
+            box-shadow: none;
+        }
     </style>
 </head>
 
 <body>
     @include('layout.partials.navstud')
+    @include('layout.partials.studentMessage')
 
     <div id="layoutStudent">
         <div id="layoutStudent_content">
