@@ -3,7 +3,7 @@
 @section('content')
 @include('layout.partials.studentMessage')
 
-<div class="main-content" style="background-color: #0f172a; min-height: 100vh;">
+<div class="main-content mt-5" style="background-color: #0f172a; min-height: 100vh;">
     <div class="container-fluid py-4 text-light">
 
         <!-- Page Header -->

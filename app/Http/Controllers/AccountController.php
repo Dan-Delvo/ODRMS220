@@ -14,7 +14,6 @@ use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
-use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Exception;
@@ -24,20 +23,62 @@ use Illuminate\Auth\Events\Registered;
 class AccountController extends Controller
 {
     // Show the account creation form
-    public function display()
+    public function display(Request $request)
     {
         $pdo = DB::connection()->getPdo();
         $pdo->exec("SET @current_user = " . $pdo->quote(Auth::check() ? Auth::user()->username : 'guest'));
+
         try {
             $PermissionAcc = PermissionRoleModel::getPermission('user', Auth::user()->role_id);
             if (empty($PermissionAcc)) {
                 abort(404);
             }
 
+            // Get search and sort parameters
+            $search = $request->input('search');
+            $sortBy = $request->input('sort_by', 'user_account_id');
+            $sortOrder = $request->input('sort_order', 'asc');
+
+            // Validate sort column to prevent SQL injection
+            $allowedSortColumns = ['user_account_id', 'username', 'email_address', 'role_id'];
+            if (!in_array($sortBy, $allowedSortColumns)) {
+                $sortBy = 'user_account_id';
+            }
+
+            // Validate sort order
+            if (!in_array($sortOrder, ['asc', 'desc'])) {
+                $sortOrder = 'asc';
+            }
+
+            // Build query with relationships
+            $query = Account::with(['roles', 'studentInformation']);
+
+            // Apply search filter
+            if ($search) {
+                $query->where(function($q) use ($search) {
+                    $q->where('user_account_id', 'like', '%' . $search . '%')
+                    ->orWhere('username', 'like', '%' . $search . '%')
+                    ->orWhere('email_address', 'like', '%' . $search . '%')
+                    ->orWhereHas('roles', function($roleQuery) use ($search) {
+                        $roleQuery->where('name', 'like', '%' . $search . '%');
+                    })
+                    ->orWhereHas('studentInformation', function($studentQuery) use ($search) {
+                        $studentQuery->whereRaw("CONCAT(FirstName, ' ', MiddleName, ' ', LastName) LIKE ?", ['%' . $search . '%'])
+                                    ->orWhereRaw("CONCAT(FirstName, ' ', LastName) LIKE ?", ['%' . $search . '%']);
+                    });
+                });
+            }
+
+            // Apply sorting
+            $query->orderBy($sortBy, $sortOrder);
+
+            // Paginate results (10 per page to match your original)
+            $user = $query->paginate(10);
+
+            // Get permissions
             $data = PermissionRoleModel::getPermission('userEdit', Auth::user()->role_id);
             $data1 = PermissionRoleModel::getPermission('userDelete', Auth::user()->role_id);
             $data2 = PermissionRoleModel::getPermission('userInfo', Auth::user()->role_id);
-            $user = Account::with('roles')->paginate(10);
 
             return view('maintenance.users', compact('user'))
                 ->with([

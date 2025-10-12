@@ -2,17 +2,13 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Account;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Log;
 use App\Models\PermissionRoleModel;
 use App\Models\AuditTable;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Str;
-use GeoIP;
-use Illuminate\Support\Facades\Session;
+
 
 class AuthController extends Controller
 {

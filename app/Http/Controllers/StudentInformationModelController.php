@@ -13,17 +13,57 @@ use Illuminate\Validation\Rule;
 
 class StudentInformationModelController extends Controller
 {
-    public function display()
+    public function display(Request $request)
     {
+        // Check permission
         $PermissionStud = PermissionRoleModel::getPermission('student', Auth::user()->role_id);
         if (empty($PermissionStud)) {
             abort(404);
         }
 
+        // Get search and sort parameters
+        $search = $request->input('search');
+        $sortBy = $request->input('sort_by', 'id');
+        $sortOrder = $request->input('sort_order', 'asc');
+
+        // Validate sort column to prevent SQL injection
+        $allowedSortColumns = ['id', 'LastName', 'FirstName', 'LRN', 'Grade_level', 'Last_sy_attended'];
+        if (!in_array($sortBy, $allowedSortColumns)) {
+            $sortBy = 'id';
+        }
+
+        // Validate sort order
+        if (!in_array($sortOrder, ['asc', 'desc'])) {
+            $sortOrder = 'asc';
+        }
+
+        // Build query
+        $query = StudentInformationModel::query();
+
+        // Apply search filter
+        if ($search) {
+            $query->where(function($q) use ($search) {
+                $q->where('LastName', 'like', '%' . $search . '%')
+                  ->orWhere('FirstName', 'like', '%' . $search . '%')
+                  ->orWhere('MiddleName', 'like', '%' . $search . '%')
+                  ->orWhere('LRN', 'like', '%' . $search . '%')
+                  ->orWhere('Grade_level', 'like', '%' . $search . '%')
+                  ->orWhere('Std_status', 'like', '%' . $search . '%')
+                  ->orWhere('Last_sy_attended', 'like', '%' . $search . '%');
+            });
+        }
+
+        // Apply sorting
+        $query->orderBy($sortBy, $sortOrder);
+
+        // Paginate results (10 per page to match your original)
+        $user = $query->paginate(10);
+
+        // Get permissions
         $data = PermissionRoleModel::getPermission('studentEdit', Auth::user()->role_id);
         $data1 = PermissionRoleModel::getPermission('studentDelete', Auth::user()->role_id);
         $data2 = PermissionRoleModel::getPermission('studentInfo', Auth::user()->role_id);
-        $user = StudentInformationModel::paginate(10);
+
         return view('maintenance.student', compact('user'))
             ->with([
                 'PermissionEdit' => $data,
@@ -31,6 +71,9 @@ class StudentInformationModelController extends Controller
                 'PermissionInfo' => $data2,
             ]);
     }
+
+
+
 
     public function edit($id)
     {
