@@ -61,21 +61,8 @@ class AnalyticsController extends Controller
             ->groupBy('doc_categories.DocType')
             ->get()
             ->pluck('count', 'DocType');
-        // Document Type Distribution
-        $docTypeData = DB::table('doc_requests')
-            ->join('doc_categories', 'doc_requests.doc_categories_id', '=', 'doc_categories.id')
-            ->select('doc_categories.DocType', DB::raw('COUNT(*) as count'))
-            ->groupBy('doc_categories.DocType')
-            ->get()
-            ->pluck('count', 'DocType');
 
 
-        // Request Mode Distribution (walk-in / online)
-        $modeData = DB::table('doc_requests')
-            ->select('request_mode', DB::raw('COUNT(*) as count'))
-            ->groupBy('request_mode')
-            ->get()
-            ->pluck('count', 'request_mode');
         // Request Mode Distribution (walk-in / online)
         $modeData = DB::table('doc_requests')
             ->select('request_mode', DB::raw('COUNT(*) as count'))
@@ -95,6 +82,15 @@ class AnalyticsController extends Controller
                 return [Carbon::create()->month($item->month)->format('F') => $item->total];
             });
 
+
+        $gradeLevelData = DocumentRequestModel::join('std_students', 'doc_requests.std_students_id', '=', 'std_students.id')
+            ->select('std_students.Grade_level', DB::raw('COUNT(*) as count'))
+            ->whereNotNull('std_students.Grade_level')
+            ->groupBy('std_students.Grade_level')
+            ->orderBy('std_students.Grade_level')
+            ->get()
+            ->pluck('count', 'Grade_level');
+
         $unclaimedData = DB::table('doc_requests')
             ->select(DB::raw("MONTH(request_date) as month"), DB::raw("COUNT(*) as count"))
             ->whereNotNull('forRelease_date')
@@ -106,13 +102,17 @@ class AnalyticsController extends Controller
                 return [Carbon::create()->month($item->month)->format('F') => $item->count];
             });
 
-        $gradeLevelData = DocumentRequestModel::join('std_students', 'doc_requests.std_students_id', '=', 'std_students.id')
-            ->select('std_students.Grade_level', DB::raw('COUNT(*) as count'))
-            ->whereNotNull('std_students.Grade_level')
-            ->groupBy('std_students.Grade_level')
-            ->orderBy('std_students.Grade_level')
+        // Yearly unclaimed data
+        $unclaimedYearlyData = DB::table('doc_requests')
+            ->select(DB::raw("YEAR(request_date) as year"), DB::raw("COUNT(*) as count"))
+            ->whereNotNull('forRelease_date')
+            ->whereNull('claimed_date')
+            ->groupBy(DB::raw("YEAR(forRelease_date)"))
+            ->orderBy('year')
             ->get()
-            ->pluck('count', 'Grade_level');
+            ->mapWithKeys(function ($item) {
+                return [$item->year => $item->count];
+            });
 
         return view('common.analyticsDashboard', [
             'monthlyRequestsData' => $monthlyRequestsData,
@@ -121,6 +121,7 @@ class AnalyticsController extends Controller
             'modeData' => $modeData,
             'revenueData' => $revenueData,
             'unclaimedData' => $unclaimedData,
+            'unclaimedYearlyData' => $unclaimedYearlyData,
             'gradeLevelData' => $gradeLevelData,
             'totalRequestsInInterval' => $totalRequestsInInterval,
             'startDate' => $startDate,
