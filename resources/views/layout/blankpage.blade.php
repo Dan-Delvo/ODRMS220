@@ -7,6 +7,7 @@
     <title>UBNHS: Online Document Request and Management System</title>
     <link rel="icon" type="image/jpg" href="\images\APPLOGO.jpg">
     <link rel="icon" type="image/jpg" href="\images\APPLOGO.jpg">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <!-- PWA -->
     <meta name="theme-color" content="#6777ef">
     <link rel="apple-touch-icon" href="{{ asset('logo.PNG') }}">
@@ -24,7 +25,7 @@
 
     <!-- Customized Pagination Links-->
     <style>
-        
+
         .zoomable.zoomed {
             max-height: none !important;
             max-width: 100% !important;

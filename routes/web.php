@@ -84,7 +84,7 @@ Route::group(['middleware' => 'useradmin'], function () {
     Route::get('/declined-documents', [declinedController::class, 'index'])->name('declined-documents.index');
     Route::get('/sync', [DocumentRequestController::class, 'viewSync']);
 
-    Route::prefix('sync')->middleware(['auth'])->group(function () {
+    Route::prefix('sync')->group(function () {
         Route::get('/status', [SyncController::class, 'status'])->name('sync.status');
         Route::post('/trigger', [SyncController::class, 'sync'])->name('sync.trigger');
         Route::get('/check-connection', [SyncController::class, 'checkConnection'])->name('sync.check');
