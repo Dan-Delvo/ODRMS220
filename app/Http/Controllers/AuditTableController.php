@@ -11,44 +11,78 @@ class AuditTableController extends Controller
     //
 // In your AuditTrailController or wherever you handle the audit trail route
 
+/**
+ * Display audit trail with search and filter functionality
+ *
+ * @param Request $request
+ * @return \Illuminate\View\View
+ */
     public function index(Request $request)
     {
-        $query = AuditTable::query(); // Replace with your actual model name
+        $query = AuditTable::query(); // Replace AuditTable with your actual model name
 
-        // Get filter parameters
+        // Get filter parameters from request
         $search = $request->input('search');
         $filter = $request->input('filter', 'all');
-        $tableFilter = $request->input('table_filter', 'all');
+        $actionType = $request->input('action_type');
 
-        // Apply table filter first
-        if ($tableFilter !== 'all') {
-            $query->where('fromTableName', 'LIKE', '%' . $tableFilter . '%');
+        // Apply action type filter (independent filter)
+        if ($actionType) {
+            // Handle different variations of action types
+            $typeMapping = [
+                'BACKUP' => 'Back Up',
+                'RESTORE' => 'Restore',
+                'CREATE' => 'Create',
+                'UPDATE' => 'Update',
+                'DELETE' => 'Delete',
+                'LOGIN' => 'Login'
+            ];
+
+            $searchType = $typeMapping[$actionType] ?? $actionType;
+            $query->where('type', $searchType);
         }
 
-        // Apply search based on filter type
+        // Apply search based on selected filter type
         if ($search) {
             switch ($filter) {
                 case 'type':
-                    $query->where('type', 'LIKE', '%' . $search . '%');
+                    // Search in action type field only (case-insensitive, space-insensitive)
+                    $query->where(function($q) use ($search) {
+                        $q->whereRaw('UPPER(REPLACE(type, " ", "")) LIKE ?', ['%' . strtoupper(str_replace(' ', '', $search)) . '%']);
+                    });
                     break;
+
                 case 'user':
+                    // Search in changed by field only
                     $query->where('changedBy', 'LIKE', '%' . $search . '%');
                     break;
+
                 case 'table':
+                    // Search in table name field only
                     $query->where('fromTableName', 'LIKE', '%' . $search . '%');
                     break;
+
                 case 'date':
-                    $query->whereDate('time', 'LIKE', '%' . $search . '%');
+                    // Search by date - supports multiple formats
+                    $query->where(function($q) use ($search) {
+                        $q->whereDate('time', $search)
+                        ->orWhere('time', 'LIKE', '%' . $search . '%');
+                    });
                     break;
+
                 case 'all':
                 default:
+                    // Search across all fields
                     $query->where(function($q) use ($search) {
-                        $q->where('type', 'LIKE', '%' . $search . '%')
+                        $searchUpper = strtoupper(str_replace(' ', '', $search));
+                        $q->whereRaw('UPPER(REPLACE(type, " ", "")) LIKE ?', ['%' . $searchUpper . '%'])
                         ->orWhere('description', 'LIKE', '%' . $search . '%')
                         ->orWhere('changedBy', 'LIKE', '%' . $search . '%')
                         ->orWhere('fromTableName', 'LIKE', '%' . $search . '%')
                         ->orWhere('old_data', 'LIKE', '%' . $search . '%')
-                        ->orWhere('new_data', 'LIKE', '%' . $search . '%');
+                        ->orWhere('new_data', 'LIKE', '%' . $search . '%')
+                        ->orWhereDate('time', $search)
+                        ->orWhere('time', 'LIKE', '%' . $search . '%');
                     });
                     break;
             }
@@ -57,12 +91,8 @@ class AuditTableController extends Controller
         // Order by latest first and paginate
         $auditTrail = $query->orderBy('time', 'desc')->paginate(15);
 
-        // Append query parameters to pagination links
-        $auditTrail->appends([
-            'search' => $search,
-            'filter' => $filter,
-            'table_filter' => $tableFilter
-        ]);
+        // Append query parameters to pagination links to maintain filters
+        $auditTrail->appends($request->only(['search', 'filter', 'action_type']));
 
         return view('common.auditTrail', compact('auditTrail'));
     }
