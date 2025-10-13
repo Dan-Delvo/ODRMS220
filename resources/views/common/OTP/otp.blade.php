@@ -17,12 +17,6 @@
                 <h5 id="timer" class="text-warning mb-0">05:00</h5>
             </div>
 
-            <!-- Lockout Message -->
-            <div id="lockout-message" class="alert alert-danger d-none">
-                <strong>Account Temporarily Locked!</strong><br>
-                Too many failed attempts. Please wait <span id="lockout-timer"></span> before trying again.
-            </div>
-
             <!-- Expired Message -->
             <div id="expired-message" class="alert alert-warning d-none">
                 <strong>OTP Expired!</strong><br>
@@ -69,33 +63,17 @@ document.addEventListener("DOMContentLoaded", function () {
     const resendContainer = document.getElementById("resend-container");
     const timerElement = document.getElementById("timer");
     const timerContainer = document.getElementById("timer-container");
-    const lockoutMessage = document.getElementById("lockout-message");
     const expiredMessage = document.getElementById("expired-message");
-    const lockoutTimer = document.getElementById("lockout-timer");
 
     // Get expiry time from session (passed from backend)
     let expiryTime = @json(session('expiry'));
-    let attemptCount = parseInt(localStorage.getItem('otp_attempts') || '0');
-    let lockoutUntil = localStorage.getItem('otp_lockout_until');
-    
-    // Check if currently locked out
-    if (lockoutUntil && new Date() < new Date(lockoutUntil)) {
-        showLockout();
-        startLockoutTimer(new Date(lockoutUntil));
-        return;
-    } else {
-        // Clear expired lockout
-        localStorage.removeItem('otp_lockout_until');
-        localStorage.removeItem('otp_attempts');
-        attemptCount = 0;
-    }
 
     // Start the countdown timer
     if (expiryTime) {
         startCountdown(new Date(expiryTime));
     }
 
-    // OTP input functionality
+    // OTP input functionality - Auto-advance to next input
     inputs.forEach((input, index) => {
         input.addEventListener("input", (e) => {
             if (e.target.value.length === 1 && index < inputs.length - 1) {
@@ -109,12 +87,14 @@ document.addEventListener("DOMContentLoaded", function () {
             }
         });
 
+        // Only allow numeric input
         input.addEventListener("keypress", (e) => {
             if (!/[0-9]/.test(e.key)) {
                 e.preventDefault();
             }
         });
 
+        // Handle paste - auto-fill all inputs
         input.addEventListener("paste", (e) => {
             e.preventDefault();
             let pastedData = e.clipboardData.getData("text");
@@ -131,35 +111,18 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     });
 
-    // Form submission handler
+    // Form submission handler - prevent if expired
     form.addEventListener("submit", function(e) {
-        if (isExpired() || isLockedOut()) {
+        if (isExpired()) {
             e.preventDefault();
+            handleExpiry();
             return false;
         }
     });
 
-    // Handle form submission response
-    @if(session('error'))
-        attemptCount++;
-        localStorage.setItem('otp_attempts', attemptCount);
-        
-        if (attemptCount >= 3) {
-            // Lock out for 15 minutes
-            let lockoutTime = new Date();
-            lockoutTime.setMinutes(lockoutTime.getMinutes() + 15);
-            localStorage.setItem('otp_lockout_until', lockoutTime.toISOString());
-            showLockout();
-            startLockoutTimer(lockoutTime);
-        }
-    @endif
-
     // Resend OTP functionality
     resendBtn.addEventListener("click", function(e) {
         e.preventDefault();
-        // Reset attempts when resending
-        localStorage.removeItem('otp_attempts');
-        localStorage.removeItem('otp_lockout_until');
         
         // Make AJAX call to resend OTP
         fetch("{{ route('resend.otp') }}", {
@@ -217,34 +180,6 @@ document.addEventListener("DOMContentLoaded", function () {
         resendContainer.classList.remove("d-none");
     }
 
-    function showLockout() {
-        lockoutMessage.classList.remove("d-none");
-        timerContainer.classList.add("d-none");
-        disableForm();
-    }
-
-    function startLockoutTimer(lockoutTime) {
-        const timer = setInterval(() => {
-            const now = new Date().getTime();
-            const lockout = new Date(lockoutTime).getTime();
-            const timeLeft = lockout - now;
-
-            if (timeLeft <= 0) {
-                clearInterval(timer);
-                localStorage.removeItem('otp_lockout_until');
-                localStorage.removeItem('otp_attempts');
-                location.reload();
-                return;
-            }
-
-            const minutes = Math.floor(timeLeft / (1000 * 60));
-            const seconds = Math.floor((timeLeft % (1000 * 60)) / 1000);
-
-            lockoutTimer.textContent = 
-                `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
-        }, 1000);
-    }
-
     function disableForm() {
         inputs.forEach(input => input.disabled = true);
         verifyBtn.disabled = true;
@@ -253,11 +188,6 @@ document.addEventListener("DOMContentLoaded", function () {
     function isExpired() {
         if (!expiryTime) return false;
         return new Date() > new Date(expiryTime);
-    }
-
-    function isLockedOut() {
-        if (!lockoutUntil) return false;
-        return new Date() < new Date(lockoutUntil);
     }
 });
 </script>
