@@ -52,8 +52,11 @@
                     <!-- LRN -->
                     <div class="mb-3">
                         <label for="LRN" class="form-label">LRN</label>
-                        <input type="text" name="LRN" id="LRN" class="form-control" value="{{ $student->LRN }}">
-                        @error('LRN') <small class="text-danger">{{ $message }}</small> @enderror
+                        <input type="text" name="LRN" id="LRN" class="form-control" value="{{ $student->LRN }}" maxlength="12" pattern="\d{12}">
+                        <small id="lrn-feedback" class="text-danger d-none"></small>
+                        @error('LRN')
+                            <small class="text-danger">{{ $message }}</small>
+                        @enderror
                     </div>
 
                     <!-- Grade Level -->
@@ -94,5 +97,36 @@
         </div>
     </div>
 </div>
+
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    const lrnInput = document.getElementById('LRN');
+    const feedback = document.getElementById('lrn-feedback');
+
+    lrnInput.addEventListener('input', () => {
+        // remove non-numeric characters
+        lrnInput.value = lrnInput.value.replace(/\D/g, '');
+
+        if (lrnInput.value.length === 0) {
+            feedback.textContent = '';
+            feedback.classList.add('d-none');
+        }
+        else if (lrnInput.value.length < 12) {
+            feedback.textContent = `LRN must be 12 digits (${12 - lrnInput.value.length} more needed)`;
+            feedback.classList.remove('d-none');
+        }
+        else if (lrnInput.value.length > 12) {
+            feedback.textContent = 'LRN must be exactly 12 digits';
+            feedback.classList.remove('d-none');
+        }
+        else {
+            feedback.textContent = '✅ LRN looks good';
+            feedback.classList.remove('text-danger');
+            feedback.classList.add('text-success');
+        }
+    });
+});
+</script>
 
 @endsection
