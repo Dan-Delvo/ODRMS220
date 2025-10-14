@@ -182,6 +182,7 @@ class DocumentRequestController extends Controller
             $claimedTime  = ($selectedDate === $today) ? now()->format('H:i:s') : null;
 
             $documentRequest->update([
+                'remarks'      => 'Claimed',
                 'status'       => 'Claimed',
                 'claimed_date' => $selectedDate,
                 'claimed_time' => $claimedTime,
@@ -219,9 +220,9 @@ class DocumentRequestController extends Controller
         $table = DocumentRequestModel::find($id);
         if ($table) {
             $table->delete();
-            return redirect('/declined-documents')->with('Danger', 'Deleted Successfully');
+            return redirect('/tables')->with('Danger', 'Deleted Successfully');
         }
-        return redirect('/declined-documents')->with('error', 'Record not found');
+        return redirect('/tables')->with('error', 'Record not found');
     }
 
     // ============================

@@ -62,11 +62,11 @@
                                 <hr class="dropdown-divider">
                             </li>
                             <li><a class="dropdown-item sort-option" href="#" data-sort="req-asc">
-                                <i class="fas fa-sort-numeric-down me-2"></i>Req No. (A-Z)
-                            </a></li>
+                                    <i class="fas fa-sort-numeric-down me-2"></i>Req No. (A-Z)
+                                </a></li>
                             <li><a class="dropdown-item sort-option" href="#" data-sort="req-desc">
-                                <i class="fas fa-sort-numeric-up me-2"></i>Req No. (Z-A)
-                            </a></li>
+                                    <i class="fas fa-sort-numeric-up me-2"></i>Req No. (Z-A)
+                                </a></li>
                         </ul>
                     </div>
                 </div>
@@ -346,8 +346,22 @@
                                         <p class="text-muted">{{ basename($item->supporting_document) }}</p>
                                         <p class="small text-info">
                                             <i class="fas fa-info-circle me-1"></i>
-                                            Click "Download" or "Open in New Tab" to view this document
+                                            This document type cannot be previewed directly.
                                         </p>
+
+                                        <!-- ✅ Download & Open Links -->
+                                        <div class="mt-3">
+                                            <a href="{{ asset($documentPath) }}"
+                                                class="btn btn-sm btn-primary me-2"
+                                                download>
+                                                <i class="fas fa-download me-1"></i> Download
+                                            </a>
+                                            <a href="{{ asset($documentPath) }}"
+                                                class="btn btn-sm btn-outline-secondary"
+                                                target="_blank">
+                                                <i class="fas fa-external-link-alt me-1"></i> Open in New Tab
+                                            </a>
+                                        </div>
                                     </div>
                                     @endif
 
@@ -539,19 +553,25 @@
 
             let sortedRows;
 
-            switch(order) {
+            switch (order) {
                 case 'req-asc':
                     sortedRows = rows.sort((a, b) => {
                         const aVal = a.getAttribute('data-req-no-raw');
                         const bVal = b.getAttribute('data-req-no-raw');
-                        return aVal.localeCompare(bVal, undefined, {numeric: true, sensitivity: 'base'});
+                        return aVal.localeCompare(bVal, undefined, {
+                            numeric: true,
+                            sensitivity: 'base'
+                        });
                     });
                     break;
                 case 'req-desc':
                     sortedRows = rows.sort((a, b) => {
                         const aVal = a.getAttribute('data-req-no-raw');
                         const bVal = b.getAttribute('data-req-no-raw');
-                        return bVal.localeCompare(aVal, undefined, {numeric: true, sensitivity: 'base'});
+                        return bVal.localeCompare(aVal, undefined, {
+                            numeric: true,
+                            sensitivity: 'base'
+                        });
                     });
                     break;
                 default: // 'default'
@@ -577,7 +597,7 @@
         function updateSortIcon(order) {
             const icon = document.getElementById('req-no-icon');
 
-            switch(order) {
+            switch (order) {
                 case 'req-asc':
                     icon.className = 'fas fa-sort-up sort-icon ms-1';
                     break;
@@ -593,7 +613,7 @@
         function updateSortInfo(order) {
             let sortText = '';
 
-            switch(order) {
+            switch (order) {
                 case 'req-asc':
                     sortText = '(sorted by Req No. A-Z)';
                     break;

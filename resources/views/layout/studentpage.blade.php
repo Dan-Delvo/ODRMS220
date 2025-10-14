@@ -20,6 +20,103 @@
     @vite(['resources/css/app.css', 'resources/sass/app.scss', 'resources/js/scripts.js', 'resources/js/datatables-simple-demo.js'])
 
     <style>
+        .white-dropdown {
+            appearance: none;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            background-image: url("data:image/svg+xml;utf8,<svg fill='white' height='16' viewBox='0 0 24 24' width='16' xmlns='http://www.w3.org/2000/svg'><path d='M7 10l5 5 5-5z'/></svg>");
+            background-repeat: no-repeat;
+            background-position: right 0.75rem center;
+            background-size: 1rem;
+            padding-right: 2rem;
+        }
+
+        .white-dropdown:focus {
+            border-color: #1dd3b0;
+            /* highlight teal on focus */
+            box-shadow: 0 0 0 0.2rem rgba(29, 211, 176, 0.25);
+        }
+
+        .form-control::placeholder {
+            color: #ffffff;
+            /* white */
+            opacity: 1;
+            /* ensure it's not transparent */
+        }
+
+        /* Custom responsive adjustments */
+        @media (max-width: 576px) {
+            .container-fluid {
+                padding-left: 15px;
+                padding-right: 15px;
+            }
+
+            .card-body {
+                padding: 1rem;
+            }
+
+            .fs-2 {
+                font-size: 1.5rem !important;
+            }
+
+            .card-header h6 {
+                font-size: 0.95rem;
+            }
+        }
+
+        @media (min-width: 768px) and (max-width: 991px) {
+
+            /* Tablet specific adjustments */
+            .col-md-6 .card-body {
+                padding: 2rem;
+            }
+
+            .rounded-circle {
+                width: 100px !important;
+                height: 100px !important;
+            }
+
+            .fs-1 {
+                font-size: 2rem !important;
+            }
+        }
+
+        @media (min-width: 1200px) {
+
+            /* Large screen optimizations */
+            .col-xl-6 .row {
+                margin-bottom: 1rem;
+            }
+        }
+
+        /* Ensure equal height cards */
+        .h-100 {
+            height: 100% !important;
+        }
+
+        /* Custom separator styling */
+        hr {
+            opacity: 0.5;
+        }
+
+        .form-control.is-invalid {
+            border-color: #dc3545;
+        }
+
+        .form-control.is-valid {
+            border-color: #28a745;
+        }
+
+        .form-control.is-invalid:focus {
+            border-color: #dc3545;
+            box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25);
+        }
+
+        .form-control.is-valid:focus {
+            border-color: #28a745;
+            box-shadow: 0 0 0 0.2rem rgba(40, 167, 69, 0.25);
+        }
+
         :root {
             --sidebar-width: 270px;
             /* full size sidebar */
@@ -346,6 +443,7 @@
 
 <body>
     @include('layout.partials.navstud')
+    @include('layout.partials.studentMessage')
 
     <div id="layoutStudent">
         <div id="layoutStudent_content">

@@ -1,9 +1,9 @@
 @extends('layout.studentpage')
 
 @section('content')
-@include('layout.partials.message')
+@include('layout.partials.studentMessage')
 
-<div class="main-content" style="background-color: #0f172a; min-height: 100vh;">
+<div class="main-content mt-5" style="background-color: #0f172a; min-height: 100vh;">
     <div class="container-fluid py-4 text-light">
 
         <!-- Page Header -->
@@ -168,7 +168,7 @@
                                                 title="View Details">
                                                 <i class="fas fa-eye"></i>
                                             </button>
-                                            
+
                                         </td>
                                     </tr>
                                     @endforeach
@@ -433,12 +433,14 @@
                 </h6>
                 <div class="mb-3 mt-4">
                     @if(in_array($fileExtension, ['jpg','jpeg','png','gif','webp']))
+                    <!-- IMAGE PREVIEW -->
                     <img src="{{ asset($documentPath) }}"
                         alt="Supporting Document for {{ $item->req_no }}"
                         class="img-fluid w-100 mb-2"
                         style="max-height: 70vh; object-fit: contain;"
                         onerror="this.onerror=null; this.src='{{ asset('images/no-image-placeholder.png') }}'; this.alt='Document not available';">
                     @elseif($fileExtension === 'pdf')
+                    <!-- PDF PREVIEW -->
                     <div class="p-4 text-center">
                         <i class="fas fa-file-pdf text-danger" style="font-size: 4rem;"></i>
                         <h5 class="mt-2">PDF Document</h5>
@@ -446,22 +448,48 @@
                         <iframe src="{{ asset($documentPath) }}" width="100%" height="400px" style="border: 1px solid #ddd;"></iframe>
                     </div>
                     @else
+                    <!-- OTHER FILE TYPES -->
                     <div class="p-5 text-center">
                         @switch($fileExtension)
-                        @case('doc') @case('docx') <i class="fas fa-file-word text-primary" style="font-size: 4rem;"></i> @break
-                        @case('xls') @case('xlsx') <i class="fas fa-file-excel text-success" style="font-size: 4rem;"></i> @break
-                        @case('ppt') @case('pptx') <i class="fas fa-file-powerpoint text-warning" style="font-size: 4rem;"></i> @break
-                        @case('txt') <i class="fas fa-file-alt text-secondary" style="font-size: 4rem;"></i> @break
-                        @default <i class="fas fa-file text-muted" style="font-size: 4rem;"></i>
+                        @case('doc') @case('docx')
+                        <i class="fas fa-file-word text-primary" style="font-size: 4rem;"></i>
+                        @break
+                        @case('xls') @case('xlsx')
+                        <i class="fas fa-file-excel text-success" style="font-size: 4rem;"></i>
+                        @break
+                        @case('ppt') @case('pptx')
+                        <i class="fas fa-file-powerpoint text-warning" style="font-size: 4rem;"></i>
+                        @break
+                        @case('txt')
+                        <i class="fas fa-file-alt text-secondary" style="font-size: 4rem;"></i>
+                        @break
+                        @default
+                        <i class="fas fa-file text-muted" style="font-size: 4rem;"></i>
                         @endswitch
+
                         <h5 class="mt-3">{{ strtoupper($fileExtension) }} Document</h5>
                         <p class="text-muted">{{ basename($item->supporting_document) }}</p>
+
+                        <!-- ✅ Download & Open Buttons -->
+                        <div class="mt-3">
+                            <a href="{{ asset($documentPath) }}"
+                                class="btn btn-sm btn-primary me-2"
+                                download>
+                                <i class="fas fa-download me-1"></i> Download
+                            </a>
+                            <a href="{{ asset($documentPath) }}"
+                                class="btn btn-sm btn-outline-secondary"
+                                target="_blank">
+                                <i class="fas fa-external-link-alt me-1"></i> Open in New Tab
+                            </a>
+                        </div>
                     </div>
                     @endif
                 </div>
 
+
                 <!-- Upload & Request Again -->
-                <form action="{{ route('document-request.replaceFile', $item->id) }}" method="POST" enctype="multipart/form-data">
+                <form class="accountUpdateForm" action="{{ route('document-request.replaceFile', $item->id) }}" method="POST" enctype="multipart/form-data">
                     @csrf
                     @method('PUT')
                     <div class="mb-3">
@@ -722,6 +750,22 @@
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {
+        document.querySelectorAll('.accountUpdateForm').forEach(function(form) {
+            form.addEventListener('submit', function(e) {
+                Swal.fire({
+                    title: 'Processing...',
+                    text: 'Please wait while we process your information.',
+                    allowOutsideClick: false,
+                    allowEscapeKey: false,
+                    didOpen: () => {
+                        Swal.showLoading();
+                    },
+                    background: '#334155',
+                    color: '#f1f5f9',
+                    confirmButtonColor: '#1dd3b0',
+                });
+            });
+        });
         const sidebar = document.querySelector('.sidebar');
         const sidebarToggler = document.querySelector('.sidebar-toggler');
 

@@ -9,20 +9,61 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use App\Models\Account;
 use App\Models\DocumentRequestModel;
+use Illuminate\Validation\Rule;
 
 class StudentInformationModelController extends Controller
 {
-    public function display()
+    public function display(Request $request)
     {
+        // Check permission
         $PermissionStud = PermissionRoleModel::getPermission('student', Auth::user()->role_id);
         if (empty($PermissionStud)) {
             abort(404);
         }
 
+        // Get search and sort parameters
+        $search = $request->input('search');
+        $sortBy = $request->input('sort_by', 'id');
+        $sortOrder = $request->input('sort_order', 'asc');
+
+        // Validate sort column to prevent SQL injection
+        $allowedSortColumns = ['id', 'LastName', 'FirstName', 'LRN', 'Grade_level', 'Last_sy_attended'];
+        if (!in_array($sortBy, $allowedSortColumns)) {
+            $sortBy = 'id';
+        }
+
+        // Validate sort order
+        if (!in_array($sortOrder, ['asc', 'desc'])) {
+            $sortOrder = 'asc';
+        }
+
+        // Build query
+        $query = StudentInformationModel::query();
+
+        // Apply search filter
+        if ($search) {
+            $query->where(function($q) use ($search) {
+                $q->where('LastName', 'like', '%' . $search . '%')
+                  ->orWhere('FirstName', 'like', '%' . $search . '%')
+                  ->orWhere('MiddleName', 'like', '%' . $search . '%')
+                  ->orWhere('LRN', 'like', '%' . $search . '%')
+                  ->orWhere('Grade_level', 'like', '%' . $search . '%')
+                  ->orWhere('Std_status', 'like', '%' . $search . '%')
+                  ->orWhere('Last_sy_attended', 'like', '%' . $search . '%');
+            });
+        }
+
+        // Apply sorting
+        $query->orderBy($sortBy, $sortOrder);
+
+        // Paginate results (10 per page to match your original)
+        $user = $query->paginate(10);
+
+        // Get permissions
         $data = PermissionRoleModel::getPermission('studentEdit', Auth::user()->role_id);
         $data1 = PermissionRoleModel::getPermission('studentDelete', Auth::user()->role_id);
         $data2 = PermissionRoleModel::getPermission('studentInfo', Auth::user()->role_id);
-        $user = StudentInformationModel::paginate(10);
+
         return view('maintenance.student', compact('user'))
             ->with([
                 'PermissionEdit' => $data,
@@ -30,6 +71,9 @@ class StudentInformationModelController extends Controller
                 'PermissionInfo' => $data2,
             ]);
     }
+
+
+
 
     public function edit($id)
     {
@@ -59,7 +103,7 @@ class StudentInformationModelController extends Controller
         $validatedData = $request->validate([
             'FirstName' => 'required|string|max:255',
             'LastName' => 'required|string|max:255',
-            'LRN' => 'nullable|string|max:255',
+            'LRN' => 'nullable|string|max:255|unique: std_students, LRN',
             'Grade_level' => 'required|string|max:255',
             'Std_status' => 'required|in:Regular,Alumni,ALS',
             'Last_sy_attended' => 'nullable|string|max:255',
@@ -160,11 +204,14 @@ class StudentInformationModelController extends Controller
             ->with('documentRequests', 'documentRequests.claimer', 'account')
             ->first(); // Execute the query
 
+        $grade = ['7', '8', '9', '10', '11', '12'];
+        $stat = ['Alumni', 'Regular', 'ALS'];
+
         if (!$studInfo) {
             return redirect()->route('st.page')->with('error', 'Student information not found.');
         }
 
-        return view('common.studentProfile', compact('studInfo'));
+        return view('common.studentProfile', compact('studInfo', 'grade', 'stat'));
     }
 
     public function updateProfile(Request $request, $id)
@@ -179,33 +226,64 @@ class StudentInformationModelController extends Controller
             'FirstName' => 'required|string|max:255',
             'MiddleName' => 'nullable|string|max:255',
             'LastName' => 'required|string|max:255',
-            'LRN' => 'digits:12|nullable',
+            'LRN' => [
+                'sometimes',
+                'filled',
+                'string',
+                'digits:12',
+                Rule::unique('std_students', 'LRN')->ignore($studInfo->id),
+            ],
             'Grade_level' => 'required|string|max:255',
             'Suffix' => 'nullable|string|max:10',
             'status' => 'required',
             'Last_sy_attended' => 'nullable|string|max:255',
             'Id_image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+        ], [
+            'LRN.digits' => 'LRN must be exactly 12 digits.',
+            'LRN.unique' => 'LRN must be unique.',
         ]);
 
-        // Update text fields
-        $studInfo->FirstName = $validatedData['FirstName'];
-        $studInfo->LastName = $validatedData['LastName'];
-        $studInfo->LRN = $validatedData['LRN'];
-        $studInfo->Grade_level = $validatedData['Grade_level'];
-        $studInfo->Std_status = $validatedData['status'];
-        $studInfo->Last_sy_attended = $validatedData['Last_sy_attended'];
-        $studInfo->MiddleName = $validatedData['MiddleName'];
-        $studInfo->Suffix = $validatedData['Suffix'];
+        // Map form fields to DB columns (important!)
+        $fieldMap = [
+            'FirstName' => 'FirstName',
+            'MiddleName' => 'MiddleName',
+            'LastName' => 'LastName',
+            'LRN' => 'LRN',
+            'Grade_level' => 'Grade_level',
+            'Suffix' => 'Suffix',
+            'status' => 'Std_status',
+            'Last_sy_attended' => 'Last_sy_attended',
+        ];
 
-        // Handle image upload
+        $changes = [];
+
+        foreach ($fieldMap as $formField => $dbField) {
+            if (array_key_exists($formField, $validatedData)) {
+                // Normalize both sides before comparison
+                $oldValue = trim((string)($studInfo->{$dbField} ?? ''));
+                $newValue = trim((string)($validatedData[$formField] ?? ''));
+
+                if ($oldValue !== $newValue) {
+                    $changes[$dbField] = $validatedData[$formField];
+                }
+            }
+        }
+
+        // Handle file upload
         if ($request->hasFile('Id_image')) {
             $image = $request->file('Id_image');
             $imageName = time() . '_' . uniqid() . '.' . $image->getClientOriginalExtension();
             $image->move(public_path('uploads/supporting_documents'), $imageName);
-            $studInfo->Id_image = 'uploads/supporting_documents/' . $imageName;
+            $changes['Id_image'] = 'uploads/supporting_documents/' . $imageName;
         }
-        // dd($studInfo->Id_image);
-        $studInfo->save();
+
+        // Nothing changed
+        if (empty($changes)) {
+            return redirect()->back()->with('Info', 'No changes were made.');
+        }
+
+        // Update only changed fields
+        $studInfo->update($changes);
 
         return redirect()->route('student.profile')->with('Success', 'Profile updated successfully.');
     }

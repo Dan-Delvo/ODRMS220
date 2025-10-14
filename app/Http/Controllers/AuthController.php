@@ -2,17 +2,13 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Account;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Log;
 use App\Models\PermissionRoleModel;
 use App\Models\AuditTable;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Str;
-use GeoIP;
-use Illuminate\Support\Facades\Session;
+
 
 class AuthController extends Controller
 {
@@ -29,18 +25,25 @@ class AuthController extends Controller
             }
 
             $PermissionDashboard = PermissionRoleModel::getPermission('dashboard', Auth::user()->role_id);
-            if(empty($PermissionDashboard))
-            {
-                return redirect ('/walkin/form');
-            }
-            else{
+            if (empty($PermissionDashboard)) {
+                return redirect('/walkin/form');
+            } else {
 
                 return redirect('/dashboard');
             }
         }
 
-        // Show the login page if no user is logged in
-        return view('common.studentlogin');
+        if (session('otp_verified')) {
+            return redirect()->route('newpassword');
+        }
+        if (session('otp_requested')) {
+            return redirect()->route('verifyotp');
+        }
+        return response()
+            ->view('common.studentlogin')
+            ->header('Cache-Control', 'no-cache, no-store, must-revalidate')
+            ->header('Pragma', 'no-cache')
+            ->header('Expires', '0');
     }
 
     // Handle login logic with validation
@@ -90,7 +93,8 @@ class AuthController extends Controller
                     ]),
                     'time'          => now(),                  // Current datetime
                     'changedBy'     => $user->studentInformation->full_name, // The user who logged in
-                    'fromTableName' => 'Log In'                 // Assuming the related table
+                    'fromTableName' => 'Log In',                 // Assuming the related table
+                    'description' => 'An Admin has Logged In'
                 ]);
 
 
@@ -108,7 +112,8 @@ class AuthController extends Controller
                     ]),
                     'time'          => now(),                  // Current datetime
                     'changedBy'     => $user->studentInformation->full_name, // The user who logged in
-                    'fromTableName' => 'Log In'                 // Assuming the related table
+                    'fromTableName' => 'Log In',                 // Assuming the related table
+                    'description' => 'A Student has logged In'
                 ]);
                 return redirect('/stpage');
             }
@@ -127,7 +132,8 @@ class AuthController extends Controller
         }
 
         return redirect()->route('login')->with(
-            'error','Invalid email or password. You have ' . RateLimiter::remaining($key, $maxAttempts) . ' attempts left.'
+            'error',
+            'Invalid email or password. You have ' . RateLimiter::remaining($key, $maxAttempts) . ' attempts left.'
         );
     }
 

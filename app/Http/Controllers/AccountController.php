@@ -14,29 +14,71 @@ use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
-
-use Illuminate\Auth\Events\Registered;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Exception;
+use Illuminate\Validation\Rule;
+use Illuminate\Auth\Events\Registered;
 
 class AccountController extends Controller
 {
     // Show the account creation form
-    public function display()
+    public function display(Request $request)
     {
         $pdo = DB::connection()->getPdo();
         $pdo->exec("SET @current_user = " . $pdo->quote(Auth::check() ? Auth::user()->username : 'guest'));
+
         try {
             $PermissionAcc = PermissionRoleModel::getPermission('user', Auth::user()->role_id);
             if (empty($PermissionAcc)) {
                 abort(404);
             }
 
+            // Get search and sort parameters
+            $search = $request->input('search');
+            $sortBy = $request->input('sort_by', 'user_account_id');
+            $sortOrder = $request->input('sort_order', 'asc');
+
+            // Validate sort column to prevent SQL injection
+            $allowedSortColumns = ['user_account_id', 'username', 'email_address', 'role_id'];
+            if (!in_array($sortBy, $allowedSortColumns)) {
+                $sortBy = 'user_account_id';
+            }
+
+            // Validate sort order
+            if (!in_array($sortOrder, ['asc', 'desc'])) {
+                $sortOrder = 'asc';
+            }
+
+            // Build query with relationships
+            $query = Account::with(['roles', 'studentInformation']);
+
+            // Apply search filter
+            if ($search) {
+                $query->where(function($q) use ($search) {
+                    $q->where('user_account_id', 'like', '%' . $search . '%')
+                    ->orWhere('username', 'like', '%' . $search . '%')
+                    ->orWhere('email_address', 'like', '%' . $search . '%')
+                    ->orWhereHas('roles', function($roleQuery) use ($search) {
+                        $roleQuery->where('name', 'like', '%' . $search . '%');
+                    })
+                    ->orWhereHas('studentInformation', function($studentQuery) use ($search) {
+                        $studentQuery->whereRaw("CONCAT(FirstName, ' ', MiddleName, ' ', LastName) LIKE ?", ['%' . $search . '%'])
+                                    ->orWhereRaw("CONCAT(FirstName, ' ', LastName) LIKE ?", ['%' . $search . '%']);
+                    });
+                });
+            }
+
+            // Apply sorting
+            $query->orderBy($sortBy, $sortOrder);
+
+            // Paginate results (10 per page to match your original)
+            $user = $query->paginate(10);
+
+            // Get permissions
             $data = PermissionRoleModel::getPermission('userEdit', Auth::user()->role_id);
             $data1 = PermissionRoleModel::getPermission('userDelete', Auth::user()->role_id);
             $data2 = PermissionRoleModel::getPermission('userInfo', Auth::user()->role_id);
-            $user = Account::with('roles')->paginate(10);
 
             return view('maintenance.users', compact('user'))
                 ->with([
@@ -137,60 +179,100 @@ class AccountController extends Controller
 
     public function verifyUpdateProfile(Request $request, $id)
     {
-        $request->validate([
-            'email' => 'required|email}unique:acc_users,email_address',
-            'username' => 'required|string|max:255',
-            'new_password' => 'nullable|string|min:8|confirmed',
-        ], [
-            'email.unique' => 'This email already exists',
-            'username.unique' => 'This username already exists',
-        ]);
         $student = StudentInformationModel::where('id', $id)
             ->with('account')
-            ->first();
-        $token = Str::random(40);
-        session([
-            'account_update' => [
-                'student_id' => $student->id,
-                'username' => $request->username,
-                'email' => $request->email,
-                'password' => $request->new_password ? bcrypt($request->new_password) : null,
-                'token' => $token,
-                'expires_at' => now()->addMinutes(3), // optional expiry
+            ->firstOrFail();
+
+        $request->validate([
+            // 'email' => [
+            //     'sometimes',
+            //     'filled',
+            //     'email',
+            //     Rule::unique('acc_users', 'email_address')
+            //         ->ignore($student->account->getKey(), $student->account->getKeyName())
+            // ],
+            'username' => [
+                'sometimes',
+                'filled',
+                'string',
+                'max:255',
+                Rule::unique('acc_users', 'username')
+                    ->ignore($student->account->getKey(), $student->account->getKeyName())
             ],
+            'new_password' => 'required|string|min:8|confirmed',
         ]);
 
-        $verifyUrl = route('student.profile.confirmUpdate', ['token' => $token]);
+        $changes = [];
+        if ($request->username !== $student->account->username) {
+            $changes['username'] = $request->username;
+        }
+        if ($request->email !== $student->account->email_address) {
+            $changes['email'] = $request->email;
+        }
+        if ($request->filled('new_password')) {
+            $changes['password'] = bcrypt($request->new_password);
+        }
 
-        Mail::to($request->email)->send(new VerifyAccountUpdateMail($student, $verifyUrl));
+        if (empty($changes)) {
+            return back()->with('Info', 'No changes are updated.');
+        }
 
-        return back()->with('Success', 'Verification email sent! Please check your inbox.');
+        // If email changed → require verification
+        if (isset($changes['email'])) {
+            $token = Str::random(40);
+            session([
+                'account_update' => [
+                    'student_id' => $student->id,
+                    'username' => $changes['username'] ?? null,
+                    'email' => $changes['email'] ?? null,
+                    'password' => $changes['password'] ?? null,
+                    'token' => $token,
+                    'expires_at' => now()->addMinutes(10),
+                ],
+            ]);
+
+            $verifyUrl = route('student.profile.confirmUpdate', ['token' => $token]);
+            Mail::to($changes['email'])->queue(new VerifyAccountUpdateMail($student, $verifyUrl));
+
+            return back()->with('Success', 'Verification email sent! Please check your inbox.');
+        }
+
+        // Otherwise apply changes directly
+        if (isset($changes['username'])) {
+            $student->account->username = $changes['username'];
+        }
+        if (isset($changes['password'])) {
+            $student->account->password = $changes['password'];
+        }
+        $student->account->save();
+
+        return back()->with('Success', 'Your account has been updated successfully!');
     }
+
 
     public function confirmUpdate($token)
     {
         $pending = session('account_update');
 
-        if ($pending['token'] !== $token || now()->greaterThan($pending['expires_at'])) {
+        if (!$pending || $pending['token'] !== $token || now()->greaterThan($pending['expires_at'])) {
             return redirect()->route('student.profile')->with('Danger', 'Invalid or expired verification link.');
         }
 
-        // Apply changes
         $student = StudentInformationModel::where('id', $pending['student_id'])
             ->with('account')
-            ->first();
+            ->firstOrFail();
+
         if ($pending['email']) {
             $student->account->email_address = $pending['email'];
-        }
-        if ($pending['password']) {
-            $student->account->password = $pending['password'];
         }
         if ($pending['username']) {
             $student->account->username = $pending['username'];
         }
+        if ($pending['password']) {
+            $student->account->password = $pending['password'];
+        }
         $student->account->save();
 
-        // Clear session
         session()->forget('account_update');
 
         return redirect()->route('student.profile')->with('Success', 'Your account has been updated successfully!');
@@ -252,7 +334,8 @@ class AccountController extends Controller
             DB::commit();
 
             // Redirect back with success message
-            return redirect('panel/user')->with('Status', 'User "' . $user->username . '" has been successfully deleted.');
+            return redirect('panel/user')
+                ->with('Status', "User {$user->username} has been successfully deleted.");
         } catch (Exception $e) {
             DB::rollback();
             Log::error('Error in delete method: ' . $e->getMessage());
@@ -271,9 +354,10 @@ class AccountController extends Controller
             $requestTypes = [];
             $hasRequests = false;
 
-            // Check for document requests (corrected table name)
-            $documentRequests = DB::table('doc_requests')
-                ->where('std_students_id', $userId)
+            // Check for document requests
+            $documentRequests = DB::table('document_requests')
+                ->where('user_id', $userId)
+                ->whereNotIn('status', ['completed', 'cancelled', 'rejected'])
                 ->count();
 
             if ($documentRequests > 0) {
@@ -281,6 +365,39 @@ class AccountController extends Controller
                 $requestTypes[] = $documentRequests . ' pending document request(s)';
             }
 
+            // Check for service requests
+            $serviceRequests = DB::table('service_requests')
+                ->where('user_id', $userId)
+                ->whereNotIn('status', ['completed', 'cancelled', 'rejected'])
+                ->count();
+
+            if ($serviceRequests > 0) {
+                $hasRequests = true;
+                $requestTypes[] = $serviceRequests . ' pending service request(s)';
+            }
+
+            // Check for other types of requests (add more as needed)
+            // Example: Certificate requests
+            // $certificateRequests = DB::table('certificate_requests')
+            //                         ->where('user_id', $userId)
+            //                         ->whereNotIn('status', ['completed', 'cancelled', 'rejected'])
+            //                         ->count();
+
+            // if ($certificateRequests > 0) {
+            //     $hasRequests = true;
+            //     $requestTypes[] = $certificateRequests . ' pending certificate request(s)';
+            // }
+
+            // Check for any transactions or pending payments
+            $pendingTransactions = DB::table('transactions')
+                ->where('user_id', $userId)
+                ->whereIn('status', ['pending', 'processing', 'in_progress'])
+                ->count();
+
+            if ($pendingTransactions > 0) {
+                $hasRequests = true;
+                $requestTypes[] = $pendingTransactions . ' pending transaction(s)';
+            }
 
             return [
                 'hasRequests' => $hasRequests,
@@ -295,6 +412,7 @@ class AccountController extends Controller
             ];
         }
     }
+
     /**
      * Check if user has existing requests
      * Adjust this method based on your actual request tables
@@ -400,15 +518,17 @@ class AccountController extends Controller
             // Validation for personal information
             'FirstName' => 'required|string|max:255',
             'LastName' => 'required|string|max:255',
-            'LRN' => 'required|digits:12|unique:std_students,LRN',
-            'Grade_level' => 'string|max:50',
-            'Std_status' => 'string|max:50',
-            'Last_sy_attended' => 'required|digits:4',
+            'MiddleName' => 'nullable|string|max:255',
+            'LRN' => 'sometimes|required_if:role,1|string|max:12',
+            'Grade_level' => 'sometimes|required_if:role,1|string|max:50',
+            'Std_status' => 'sometimes|required_if:role,1|string|max:50',
+            'Last_sy_attended' => 'sometimes|required_if:role,1|string|max:9',
             'role' => 'required',
 
             // Validation for account information
             'email_address' => 'required|email|unique:acc_users,email_address',
             'username' => 'required|string|max:255|unique:acc_users,username',
+            'password' => 'required|string|min:8|max:20|confirmed:password_confirmation'
 
         ], [
             'FirstName.required' => 'Please enter your first name.',

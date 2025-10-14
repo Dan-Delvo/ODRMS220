@@ -10,37 +10,19 @@ class ForgotPasswordFlow
 {
     /**
      * Handle an incoming request.
-     *
-     * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
      */
-    public function handle($request, Closure $next)
+    public function handle(Request $request, Closure $next): Response
     {
-        $step = session('password_reset_step', 'email'); // default step is 'email'
-        $routeName = $request->route()->getName();
+        /** @var \Illuminate\Http\Response|\Illuminate\Http\JsonResponse $response */
+        $response = $next($request);
 
-        $steps = [
-            'forgot' => 'email',
-            'forgot.submit' => 'email',
-            'verifyotp' => 'otp',
-            'verifyotp.submit' => 'otp',
-            'newpassword' => 'newpassword',
-            'newpassword.submit' => 'newpassword',
-        ];
-
-        $requiredStep = $steps[$routeName] ?? null;
-
-        if ($requiredStep === null) {
-            return redirect()->route('forgot');
+        // Ensure it's a proper Laravel Response before adding headers
+        if (method_exists($response, 'header')) {
+            $response->headers->set('Cache-Control', 'no-cache, no-store, max-age=0, must-revalidate');
+            $response->headers->set('Pragma', 'no-cache');
+            $response->headers->set('Expires', 'Sat, 01 Jan 1990 00:00:00 GMT');
         }
 
-        if ($requiredStep === 'otp' && $step === 'email') {
-            return redirect()->route('forgot');
-        }
-
-        if ($requiredStep === 'newpassword' && ($step === 'email' || $step === 'otp')) {
-            return redirect()->route('verifyotp');
-        }
-
-        return $next($request);
+        return $response;
     }
 }

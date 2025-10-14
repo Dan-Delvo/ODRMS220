@@ -20,7 +20,6 @@ return Application::configure(basePath: dirname(__DIR__))
             'useradmin' => AdminUserMiddleware::class,   // Alias for admin middleware
             'userstudent' => StudentUserMiddleware::class,  // Alias for student middleware
             'forgotpassword' => ForgotPasswordFlow::class, // Alias for forgot password middleware
-            'sessionStarter' => EnsureSessionStarted::class,
         ]));
     })
     ->withExceptions(function (Exceptions $exceptions) {

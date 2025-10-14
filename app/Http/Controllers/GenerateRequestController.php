@@ -31,13 +31,25 @@ class GenerateRequestController extends Controller
         $query = DocumentRequestModel::with(['claimer', 'studentInformation', 'documents']);
 
         // Apply status filter if provided
-        $statusFilter = $request->input('status');
+        $statusFilter = $request->input('status', 'all');
         if ($statusFilter && $statusFilter !== 'all') {
             $query->where('status', $statusFilter);
         }
 
+        // Apply sorting
+        $sortBy = $request->input('sort', 'desc'); // 'asc', 'desc', or 'default'
+
+        if ($sortBy === 'asc') {
+            $query->orderBy('req_no', 'asc');
+        } elseif ($sortBy === 'desc') {
+            $query->orderBy('req_no', 'desc');
+        } else {
+            // Default order - you can use created_at or id
+            $query->orderBy('id', 'desc');
+        }
+
         // Get paginated results
-        $DocRequests = $query->orderBy('req_no', 'desc')->paginate(10);
+        $DocRequests = $query->paginate(10);
 
         return view('generation.generateRequest', compact('DocRequests', 'totalCount', 'statusFilter'));
     }
@@ -68,7 +80,7 @@ class GenerateRequestController extends Controller
                 $query->where('status', $statusFilter);
             }
 
-            $DocRequests = $query->orderBy('request_date', 'desc')->get();
+            $DocRequests = $query->orderBy('req_no', 'desc')->get();
             $totalCount = $DocRequests->count();
 
             if ($totalCount === 0) {
@@ -131,7 +143,7 @@ public function exportExcel(Request $request)
             $query->where('status', $statusFilter);
         }
 
-        $DocRequests = $query->orderBy('request_date', 'desc')->get();
+        $DocRequests = $query->orderBy('req_no', 'desc')->get();
 
         if ($DocRequests->isEmpty()) {
             return redirect()->back()->with('error', 'No requests found for the selected date range and status.');

@@ -236,20 +236,13 @@
                                 <input class="form-control @error('lrn') is-invalid @enderror"
                                     id="inputLRN" type="text" name="lrn"
                                     value="{{ old('lrn') }}"
-                                    placeholder="Enter LRN"
-                                    maxlength="12">
-                                <label for="inputLRN">LRN (12-digit)</label>
+                                    placeholder="Enter LRN">
+                                <label for="inputLRN">LRN (Optional)</label>
                                 @error('lrn')
                                 <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
                             </div>
-                            <!-- Real-time validation messages -->
-                            <div id="lrnValidation" class="mt-1 small">
-                                <div id="lrnRuleNumbers" class="text-muted">❌ Only numbers allowed</div>
-                                <div id="lrnRuleLength" class="text-muted">❌ Must be exactly 12 digits</div>
-                            </div>
                         </div>
-
 
                         <div class="col-md-6">
                             <div class="form-floating">

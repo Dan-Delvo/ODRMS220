@@ -13,31 +13,32 @@
 </div>
 @endif
 
-@if(session('Success') || session('Warning') || session('Status') || session('Error') || session('Danger') || $errors->has('password') || session('Declined'))
+@if(
+    session('Success') || session('Warning') || session('Status') ||
+    session('Error') || session('Danger') || session('Declined') ||
+    $errors->has('password')
+)
 <script>
     Swal.fire({
-            icon: '{{ 
-            session('Warning') ? 'warning' : ((session('Error') || session('Danger') || $errors - > has('password')) ? 'error' : 'success')
-        }
-    }
-    ',
-    title: 'Notice!!!',
+        icon: '{{ 
+            session('Warning') ? 'warning' : 
+            ((session('Error') || session('Danger') || $errors->has('password')) ? 'error' : 'success') 
+        }}',
+        title: 'Notice!!!',
         text: "{{ ucfirst(
-    session('Success') ??
-        session('Status') ??
-        session('Error') ??
-        session('Danger') ??
-        session('Warning') ??
-        session('Declined') ??
-        $errors - > first('password')
-    )
-    }
-    }
-    ",
-    confirmButtonColor: '#1dd3b0'
+            session('Success') ??
+            session('Status') ??
+            session('Error') ??
+            session('Danger') ??
+            session('Warning') ??
+            session('Declined') ??
+            $errors->first('password')
+        ) }}",
+        confirmButtonColor: '#1dd3b0'
     });
 </script>
 @endif
+
 
 
 

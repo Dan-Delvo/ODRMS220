@@ -1,4 +1,7 @@
 import './bootstrap';
+import ApexCharts from 'apexcharts';
+window.ApexCharts = ApexCharts;
+
 
 // Initialize Firebase and Firebase Messaging
 import { initializeApp } from "firebase/app";

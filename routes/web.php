@@ -29,7 +29,7 @@ use App\Http\Controllers\forgotpassword;
 use Illuminate\Support\Facades\Http;
 use App\Http\Controllers\SyncController;
 
-Route::middleware(['web', 'sessionStarter'])->group(function () {
+Route::middleware(['web'])->group(function () {
     Route::get('/', [AuthController::class, 'login'])->name('login');
     Route::post('/', [AuthController::class, 'auth_login'])->name('login.post');
     Route::get('logout', [AuthController::class, 'logout']);
@@ -175,7 +175,8 @@ Route::group(['middleware' => 'useradmin'], function () {
     Route::get('/activityLog', [AuditTableController::class, 'activityLog']);
 });
 
-route::group(['middleware' => 'forgotpassword'], function () {
+
+Route::middleware(['forgotpassword'])->group(function () {
     Route::get('/forgotpassword', [forgotpassword::class, 'index'])->name('forgot');
     Route::post('/forgotpassword', [forgotpassword::class, 'forgotpost'])->name('forgot.submit');
     Route::get('/verifyotp', [forgotpassword::class, 'showVerifyOTP'])->name('verifyotp');
