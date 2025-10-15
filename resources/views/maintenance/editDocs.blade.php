@@ -15,15 +15,21 @@
 
 <div class="row">
     <div class="col-md-12">
-        <div class="card">
-            <div class="card-header">
-                <h4>Edit Document
-                    <a href="{{ route('doc') }}" class="btn btn-danger float-end">Back</a>
+        <div class="card shadow-lg border-0 bg-white text-dark">
+            <div class="card-header text-white d-flex align-items-center justify-content-between" style="background-color: #1f2937; height: 60px;">
+                <h4 class="mb-0">
+                    Edit Document
                 </h4>
+                <a href="{{ route('doc') }}" class="btn text-black fw-semibold" style="background-color: #1dd3b0; box-shadow: 0 4px 10px rgba(29, 211, 176, 0.5);">
+                    Back
+                </a>
             </div>
 
             <div class="card-body">
-                <form action="{{ route('doc.update', $document->id) }}" method="POST">
+                <form action="{{ route('doc.update', $document->id) }}" method="POST"
+                    data-swal-loading="true"
+                    data-swal-title="Updating Document"
+                    data-swal-text="This may take a few seconds...">
                     @csrf
                     @method('PUT')
 
@@ -53,7 +59,7 @@
 
                     <!-- Save Button -->
                     <div>
-                        <button type="submit" class="btn btn-primary float-end">Update</button>
+                        <button type="submit" class="btn fw-semibold text-white float-end" style="background-color: #1dd3b0; box-shadow: 0 4px 10px rgba(29, 211, 176, 0.5);">Update</button>
                     </div>
                 </form>
             </div>
@@ -61,24 +67,22 @@
     </div>
 </div>
 <script>
-document.addEventListener('DOMContentLoaded', function () {
-    const priceInput = document.getElementById('DocPrice');
-    const priceHelp = document.getElementById('priceHelp');
+    document.addEventListener('DOMContentLoaded', function() {
+        const priceInput = document.getElementById('DocPrice');
+        const priceHelp = document.getElementById('priceHelp');
 
-    priceInput.addEventListener('input', function () {
-        // Remove any non-digit characters
-        this.value = this.value.replace(/\D/g, '');
+        priceInput.addEventListener('input', function() {
+            // Remove any non-digit characters
+            this.value = this.value.replace(/\D/g, '');
 
-        if (/^\d+$/.test(this.value)) {
-            priceHelp.textContent = "✅ Only numbers allowed";
-            priceHelp.className = "text-success small";
-        } else {
-            priceHelp.textContent = "❌ Only numbers allowed";
-            priceHelp.className = "text-danger small";
-        }
+            if (/^\d+$/.test(this.value)) {
+                priceHelp.textContent = "✅ Only numbers allowed";
+                priceHelp.className = "text-success small";
+            } else {
+                priceHelp.textContent = "❌ Only numbers allowed";
+                priceHelp.className = "text-danger small";
+            }
+        });
     });
-});
-
-
 </script>
 @endsection

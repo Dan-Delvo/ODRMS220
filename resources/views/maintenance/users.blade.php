@@ -46,13 +46,15 @@
                         </button>
                         <ul class="dropdown-menu" aria-labelledby="sortDropdown">
                             <li><a class="dropdown-item sort-option" href="#" data-sort="default">Default Order</a></li>
-                            <li><hr class="dropdown-divider"></li>
+                            <li>
+                                <hr class="dropdown-divider">
+                            </li>
                             <li><a class="dropdown-item sort-option" href="#" data-sort="asc">
-                                <i class="fas fa-sort-numeric-down me-2"></i> Account ID (Ascending)
-                            </a></li>
+                                    <i class="fas fa-sort-numeric-down me-2"></i> Account ID (Ascending)
+                                </a></li>
                             <li><a class="dropdown-item sort-option" href="#" data-sort="desc">
-                                <i class="fas fa-sort-numeric-up me-2"></i> Account ID (Descending)
-                            </a></li>
+                                    <i class="fas fa-sort-numeric-up me-2"></i> Account ID (Descending)
+                                </a></li>
                         </ul>
                     </div>
 
@@ -83,9 +85,9 @@
                                 <td>{{ $item->user_account_id }}</td>
 
                                 @if(!$item->studentInformation)
-                                    <td class="text-danger">No Student Info</td>
+                                <td class="text-danger">No Student Info</td>
                                 @else
-                                    <td>{{ $item->studentInformation->full_name }}</td>
+                                <td>{{ $item->studentInformation->full_name }}</td>
                                 @endif
 
                                 <td>{{ $item->roles->name }}</td>
@@ -98,7 +100,7 @@
                                     @endif
 
                                     @if(!empty($PermissionDelete))
-                                    <form action="{{ route('user.delete', $item->user_account_id) }}" method="POST" class="d-inline">
+                                    <form action="{{ route('user.delete', $item->user_account_id) }}" method="POST" class="d-inline" data-swal-loading="true" data-swal-delete="true">
                                         @csrf
                                         @method('DELETE')
                                         <button type="button" class="btn btn-danger btn-delete me-2">Delete</button>
@@ -129,73 +131,73 @@
 
 <!-- Sorting Script -->
 <script>
-document.addEventListener("DOMContentLoaded", function () {
-    const table = document.getElementById("usersTable").getElementsByTagName("tbody")[0];
-    const rows = Array.from(table.querySelectorAll("tr"));
-    const originalOrder = [...rows]; // keep default order
+    document.addEventListener("DOMContentLoaded", function() {
+        const table = document.getElementById("usersTable").getElementsByTagName("tbody")[0];
+        const rows = Array.from(table.querySelectorAll("tr"));
+        const originalOrder = [...rows]; // keep default order
 
-    document.querySelectorAll(".sort-option").forEach(option => {
-        option.addEventListener("click", function (e) {
-            e.preventDefault();
-            const sortType = this.getAttribute("data-sort");
+        document.querySelectorAll(".sort-option").forEach(option => {
+            option.addEventListener("click", function(e) {
+                e.preventDefault();
+                const sortType = this.getAttribute("data-sort");
 
-            let sortedRows;
-            if (sortType === "asc") {
-                sortedRows = [...rows].sort((a, b) => {
-                    return parseInt(a.cells[0].textContent) - parseInt(b.cells[0].textContent);
-                });
-            } else if (sortType === "desc") {
-                sortedRows = [...rows].sort((a, b) => {
-                    return parseInt(b.cells[0].textContent) - parseInt(a.cells[0].textContent);
-                });
-            } else {
-                sortedRows = [...originalOrder];
-            }
+                let sortedRows;
+                if (sortType === "asc") {
+                    sortedRows = [...rows].sort((a, b) => {
+                        return parseInt(a.cells[0].textContent) - parseInt(b.cells[0].textContent);
+                    });
+                } else if (sortType === "desc") {
+                    sortedRows = [...rows].sort((a, b) => {
+                        return parseInt(b.cells[0].textContent) - parseInt(a.cells[0].textContent);
+                    });
+                } else {
+                    sortedRows = [...originalOrder];
+                }
 
-            table.innerHTML = "";
-            sortedRows.forEach(r => table.appendChild(r));
+                table.innerHTML = "";
+                sortedRows.forEach(r => table.appendChild(r));
+            });
         });
     });
-});
 </script>
 
 <!-- Delete Confirmation -->
 <script>
-document.addEventListener("DOMContentLoaded", function() {
-    document.querySelectorAll(".btn-delete").forEach(button => {
-        button.addEventListener("click", function() {
-            let form = this.closest("form");
+    document.addEventListener("DOMContentLoaded", function() {
+        document.querySelectorAll(".btn-delete").forEach(button => {
+            button.addEventListener("click", function() {
+                let form = this.closest("form");
 
-            Swal.fire({
-                title: "Are you sure?",
-                text: "The user accounts connected to this role will also be deleted",
-                icon: "warning",
-                showCancelButton: true,
-                confirmButtonColor: "#1dd3b0",
-                cancelButtonColor: "#1f2937",
-                confirmButtonText: "Yes, delete it!",
-                cancelButtonText: "Cancel"
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    Swal.fire({
-                        title: "Final Confirmation",
-                        text: "This action cannot be undone!",
-                        icon: "error",
-                        showCancelButton: true,
-                        confirmButtonColor: "#d33",
-                        cancelButtonColor: "#1f2937",
-                        confirmButtonText: "Yes, I understand",
-                        cancelButtonText: "Cancel"
-                    }).then((finalResult) => {
-                        if (finalResult.isConfirmed) {
-                            form.submit();
-                        }
-                    });
-                }
+                Swal.fire({
+                    title: "Are you sure?",
+                    text: "The user accounts connected to this role will also be deleted",
+                    icon: "warning",
+                    showCancelButton: true,
+                    confirmButtonColor: "#1dd3b0",
+                    cancelButtonColor: "#1f2937",
+                    confirmButtonText: "Yes, delete it!",
+                    cancelButtonText: "Cancel"
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        Swal.fire({
+                            title: "Final Confirmation",
+                            text: "This action cannot be undone!",
+                            icon: "error",
+                            showCancelButton: true,
+                            confirmButtonColor: "#d33",
+                            cancelButtonColor: "#1f2937",
+                            confirmButtonText: "Yes, I understand",
+                            cancelButtonText: "Cancel"
+                        }).then((finalResult) => {
+                            if (finalResult.isConfirmed) {
+                                form.submit();
+                            }
+                        });
+                    }
+                });
             });
         });
     });
-});
 </script>
 
 @endsection

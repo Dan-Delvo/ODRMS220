@@ -248,9 +248,9 @@
 
                         <!-- Save Button for Student Info -->
                         <div class="mt-3 text-end">
-                            <button type="submit" class="btn" style="background:#1dd3b0; color:#0f172a;">
+                            <button type="submit" id="submit-btn-mobile" class="btn" style="background:#1dd3b0; color:#0f172a;">
                                 <i class="fas fa-save me-2"></i>Save Student Info
-                            </button>
+                            </button>s
                         </div>
                     </div>
                 </form>
@@ -566,7 +566,7 @@
                                         </div>
                                         <!-- Save button for Student Info -->
                                         <div class="text-end mt-4">
-                                            <button type="submit" class="btn" style="background:#1dd3b0; color:#0f172a;">
+                                            <button type="submit" id="submit-btn-desktop" class="btn" style="background:#1dd3b0; color:#0f172a;">
                                                 <i class="fas fa-save me-2"></i>Save Student Information
                                             </button>
                                         </div>

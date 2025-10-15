@@ -1,7 +1,7 @@
-editTable.blade.php
 @extends('layout.blankpage')
 
 @section('content')
+@include('layout.partials.swal-loading')
 
 <h1 class="mt-4">
     <span class="badge" style="background-color: #1dd3b0; font-size: 2rem;">Pending Requests</span>
@@ -25,7 +25,7 @@ editTable.blade.php
             </div>
 
             <div class="card-body bg-light">
-                <form action="{{ route('pending.update', $pending->id) }}" method="POST">
+                <form action="{{ route('pending.update', $pending->id) }}" method="POST" data-swal-loading="true">
                     @csrf
                     @method('PUT')
 
@@ -33,7 +33,8 @@ editTable.blade.php
 
                     <div class="mb-3">
                         <label class="form-label">Claimer</label>
-                        <input type="text" name="claimer_id" class="form-control" value="{{ $pending->claimer->full_name }}" readonly>
+                        <input type="text" name="claimer_id" id="claimer_id" class="form-control"
+                            value="{{ $pending->claimer->full_name }}">
                         @error('claimer_id') <small class="text-danger">{{ $message }}</small> @enderror
                     </div>
 
@@ -41,9 +42,9 @@ editTable.blade.php
                         <label class="form-label">Requested Document</label>
                         <select class="form-control" name="document_id">
                             @foreach($DocType as $doc)
-                                <option value="{{ $doc->id }}" {{ $doc->id == $pending->document_id ? 'selected' : '' }}>
-                                    {{ $doc->DocType }}
-                                </option>
+                            <option value="{{ $doc->id }}" {{ $doc->id == $pending->document_id ? 'selected' : '' }}>
+                                {{ $doc->DocType }}
+                            </option>
                             @endforeach
                         </select>
                         @error('document_id') <small class="text-danger">{{ $message }}</small> @enderror
@@ -75,18 +76,48 @@ editTable.blade.php
 
                     <div class="mb-3">
                         <label class="form-label">Request Status</label>
-                        <input type="text" name="status" class="form-control" value="{{ $pending->status }}">
+                        <input type="text" id="status" name="status" class="form-control" value="{{ $pending->status }}">
                         @error('status') <small class="text-danger">{{ $message }}</small> @enderror
                     </div>
 
                     <div class="d-flex justify-content-end">
-                        <button type="submit" class="btn text-black fw-semibold" style="background-color: #1dd3b0; box-shadow: 0 4px 10px rgba(29, 211, 176, 0.5);">Save Changes</button>
+                        <button type="submit" class="btn text-black fw-semibold"
+                            style="background-color: #1dd3b0; box-shadow: 0 4px 10px rgba(29, 211, 176, 0.5);">
+                            Save Changes
+                        </button>
                     </div>
-
                 </form>
             </div>
         </div>
     </div>
 </div>
+
+{{-- 🧩 JavaScript to disable Claimer if status == "Pending" --}}
+@push('scripts')
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const statusField = document.getElementById('status');
+        const claimerField = document.getElementById('claimer_id');
+
+        if (statusField && claimerField) {
+            // Convert status to lowercase for flexible matching
+            if (statusField.value.trim().toLowerCase() === 'pending') {
+                claimerField.setAttribute('readonly', true);
+                claimerField.style.backgroundColor = '#fff'; // keep white background
+                claimerField.style.cursor = 'not-allowed';
+                claimerField.title = 'Cannot edit Claimer while status is Pending';
+
+                // Optional: Show a small warning with SweetAlert
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Notice',
+                    text: 'Claimer cannot be edited while the request is pending.',
+                    confirmButtonColor: '#1dd3b0'
+                });
+            }
+        }
+    });
+</script>
+@endpush
 
 @endsection

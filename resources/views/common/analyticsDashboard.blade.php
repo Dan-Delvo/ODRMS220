@@ -15,7 +15,7 @@
         }
 
         .page-header {
-            background: #1dd3b0;
+            background: #1f2937;
             border-radius: 16px;
             padding: 2rem;
             margin-bottom: 2rem;
@@ -209,7 +209,7 @@
             <h1>📊 Analytics Dashboard</h1>
             <ol class="breadcrumb">
                 <li class="breadcrumb-item"><a href="{{ url('/dashboard')}}">Dashboard</a></li>
-                <li class="breadcrumb-item active">Analytics</li>
+                <li class="breadcrumb-item active text-white">Analytics</li>
             </ol>
         </div>
 

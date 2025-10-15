@@ -173,7 +173,24 @@ class PendingController extends Controller
     {
         return $request->validate([
             'id' => 'required',
-            'claimer_id' => 'required',
+            'claimer_id' => [
+                'required',
+                function ($attribute, $value, $fail) use ($request) {
+                    // Get the record by ID
+                    $record = DocumentRequestModel::find($request->id);
+
+                    // If no record found, stop validation safely
+                    if (!$record) {
+                        $fail('The document request record does not exist.');
+                        return;
+                    }
+
+                    // Prevent editing claimer when status is Pending
+                    if ($record->status === 'Pending') {
+                        $fail('Cannot edit Claimer Name while status is Pending.');
+                    }
+                },
+            ],
             'document_id' => 'required',
             'request_schl_entity' => 'required|string|max:255',
             'request_mode' => 'required|string|max:255',
@@ -183,13 +200,14 @@ class PendingController extends Controller
         ]);
     }
 
+
     /**
      * Remove the specified resource from storage.
      */
 
 
-        // if (!$inserted) {
-        //     Log::error('Update failed', ['data' => $request->all()]);
-        //     dd('Validation asdsc');
-        // }
+    // if (!$inserted) {
+    //     Log::error('Update failed', ['data' => $request->all()]);
+    //     dd('Validation asdsc');
+    // }
 }

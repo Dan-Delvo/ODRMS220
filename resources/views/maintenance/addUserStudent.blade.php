@@ -12,7 +12,10 @@
             </div>
             <div class="card-body bg-light">
 
-                <form action="{{ route('account.otp') }}" method="POST">
+                <form action="{{ route('account.otp') }}" method="POST"
+                    data-swal-loading="true"
+                    data-swal-title="Adding Users"
+                    data-swal-text="This may take a few seconds...">
                     @csrf
 
                     <!-- Personal Information Section -->

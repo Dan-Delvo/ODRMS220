@@ -66,7 +66,7 @@
                                 <td>
                                     <a href="{{ route('role.edit', ['id' => $item->id]) }}" class="btn btn-success">Edit</a>
                                     @if(!in_array($item->id, [1, 2, 4]))
-                                    <form action="{{ route('role.delete', ['id' => $item->id]) }}" method="POST" class="d-inline">
+                                    <form action="{{ route('role.delete', ['id' => $item->id]) }}" method="POST" class="d-inline" data-swal-loading="true" data-swal-delete="true">
                                         @csrf
                                         @method('DELETE')
                                         <button type="button" class="btn btn-danger btn-delete">Delete</button>

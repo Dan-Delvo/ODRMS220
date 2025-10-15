@@ -176,7 +176,7 @@ class StudentInformationModelController extends Controller
         $studInfo = StudentInformationModel::find($id);
 
         if (!$studInfo) {
-            return redirect()->route('st.page')->with('error', 'Student information not found.');
+            return redirect()->route('st.page')->with('Error', 'Student information not found.');
         }
 
         $validatedData = $request->validate([
@@ -192,15 +192,15 @@ class StudentInformationModelController extends Controller
             ],
             'Grade_level' => 'required|string|max:255',
             'Suffix' => 'nullable|string|max:10',
-            'status' => 'required',
+            'Std_status' => 'required|string',  // ✅ Changed from 'status'
             'Last_sy_attended' => 'nullable|string|max:255',
             'Id_image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ], [
             'LRN.digits' => 'LRN must be exactly 12 digits.',
             'LRN.unique' => 'LRN must be unique.',
+            'Std_status.required' => 'Status is required.',
         ]);
 
-        // Map form fields to DB columns (important!)
         $fieldMap = [
             'FirstName' => 'FirstName',
             'MiddleName' => 'MiddleName',
@@ -208,7 +208,7 @@ class StudentInformationModelController extends Controller
             'LRN' => 'LRN',
             'Grade_level' => 'Grade_level',
             'Suffix' => 'Suffix',
-            'status' => 'Std_status',
+            'Std_status' => 'Std_status',  // ✅ Changed from 'status' => 'Std_status'
             'Last_sy_attended' => 'Last_sy_attended',
         ];
 
@@ -216,7 +216,6 @@ class StudentInformationModelController extends Controller
 
         foreach ($fieldMap as $formField => $dbField) {
             if (array_key_exists($formField, $validatedData)) {
-                // Normalize both sides before comparison
                 $oldValue = trim((string)($studInfo->{$dbField} ?? ''));
                 $newValue = trim((string)($validatedData[$formField] ?? ''));
 
@@ -231,15 +230,19 @@ class StudentInformationModelController extends Controller
             $image = $request->file('Id_image');
             $imageName = time() . '_' . uniqid() . '.' . $image->getClientOriginalExtension();
             $image->move(public_path('uploads/supporting_documents'), $imageName);
+
+            // Delete old image if exists
+            if (!empty($studInfo->Id_image) && file_exists(public_path($studInfo->Id_image))) {
+                @unlink(public_path($studInfo->Id_image));
+            }
+
             $changes['Id_image'] = 'uploads/supporting_documents/' . $imageName;
         }
 
-        // Nothing changed
         if (empty($changes)) {
             return redirect()->back()->with('Info', 'No changes were made.');
         }
 
-        // Update only changed fields
         $studInfo->update($changes);
 
         return redirect()->route('student.profile')->with('Success', 'Profile updated successfully.');
