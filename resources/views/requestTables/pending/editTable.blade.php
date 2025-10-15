@@ -31,54 +31,80 @@
 
                     <input type="hidden" name="id" value="{{ $pending->id }}">
 
-                    <div class="mb-3">
-                        <label class="form-label">Claimer</label>
-                        <input type="text" name="claimer_id" id="claimer_id" class="form-control"
-                            value="{{ $pending->claimer->full_name }}">
-                        @error('claimer_id') <small class="text-danger">{{ $message }}</small> @enderror
+                    <div class="row">
+                        <div class="mb-3 col-lg-6">
+                            <label class="form-label d-flex align-items-center">
+                                Claimer
+                                <span id="claimerLockIcon" class="ms-2 text-muted" style="display: none;">
+                                    <i class="fas fa-lock"></i>
+                                </span>
+                            </label>
+                            <input type="text" name="claimer_id" id="claimer_id" class="form-control"
+                                value="{{ $pending->claimer->full_name }}">
+                            <small id="claimerHelp" class="text-muted" style="display: none;">
+                                🔒 This field is locked while the request is pending.
+                            </small>
+                            @error('claimer_id') <small class="text-danger">{{ $message }}</small> @enderror
+                        </div>
+
+                        {{-- Requested Document --}}
+                        <div class="mb-3 col-lg-6">
+                            <label class="form-label">Requested Document</label>
+                            <select class="form-control" name="document_id">
+                                @foreach($DocType as $doc)
+                                <option value="{{ $doc->id }}" {{ $doc->id == $pending->doc_categories_id ? 'selected' : '' }}>
+                                    {{ $doc->DocType }}
+                                </option>
+                                @endforeach
+                            </select>
+                            @error('document_id') <small class="text-danger">{{ $message }}</small> @enderror
+                        </div>
                     </div>
 
-                    <div class="mb-3">
-                        <label class="form-label">Requested Document</label>
-                        <select class="form-control" name="document_id">
-                            @foreach($DocType as $doc)
-                            <option value="{{ $doc->id }}" {{ $doc->id == $pending->document_id ? 'selected' : '' }}>
-                                {{ $doc->DocType }}
-                            </option>
-                            @endforeach
-                        </select>
-                        @error('document_id') <small class="text-danger">{{ $message }}</small> @enderror
+                    <div class="row">
+                        {{-- Other Fields --}}
+                        <div class="mb-3 col-lg-8">
+                            <label class="form-label">Requesting School</label>
+                            <input type="text" name="request_schl_entity" class="form-control" value="{{ $pending->request_schl_entity }}">
+                            @error('request_schl_entity') <small class="text-danger">{{ $message }}</small> @enderror
+                        </div>
+
+                        <div class="mb-3 col-lg-4">
+                            <label class="form-label">Request Mode</label>
+                            <input type="text" name="request_mode" class="form-control" value="{{ $pending->request_mode }}">
+                            @error('request_mode') <small class="text-danger">{{ $message }}</small> @enderror
+                        </div>
                     </div>
 
-                    <div class="mb-3">
-                        <label class="form-label">Requesting School</label>
-                        <input type="text" name="request_schl_entity" class="form-control" value="{{ $pending->request_schl_entity }}">
-                        @error('request_schl_entity') <small class="text-danger">{{ $message }}</small> @enderror
+                    <div class="row">
+                        <div class="mb-3 col-md-4">
+                            <label class="form-label">Release Mode</label>
+                            <input type="text" name="release_mode" class="form-control" value="{{ $pending->release_mode }}">
+                            @error('release_mode') <small class="text-danger">{{ $message }}</small> @enderror
+                        </div>
+
+                        <div class="mb-3 col-md-4">
+                            <label class="form-label">Remarks</label>
+                            <input type="text" name="remarks" class="form-control" value="{{ $pending->remarks }}">
+                            @error('remarks') <small class="text-danger">{{ $message }}</small> @enderror
+                        </div>
+
+                        {{-- Status Field --}}
+                        <div class="mb-3 col-md-4">
+                            <label class="form-label d-flex align-items-center">
+                                Request Status
+                                <span id="statusLockIcon" class="ms-2 text-muted" style="display: none;">
+                                    <i class="fas fa-lock"></i>
+                                </span>
+                            </label>
+                            <input type="text" id="status" name="status" class="form-control" value="{{ $pending->status }}">
+                            <small id="statusHelp" class="text-muted" style="display: none;">
+                                🔒 This field is locked.
+                            </small>
+                            @error('status') <small class="text-danger">{{ $message }}</small> @enderror
+                        </div>
                     </div>
 
-                    <div class="mb-3">
-                        <label class="form-label">Request Mode</label>
-                        <input type="text" name="request_mode" class="form-control" value="{{ $pending->request_mode }}">
-                        @error('request_mode') <small class="text-danger">{{ $message }}</small> @enderror
-                    </div>
-
-                    <div class="mb-3">
-                        <label class="form-label">Release Mode</label>
-                        <input type="text" name="release_mode" class="form-control" value="{{ $pending->release_mode }}">
-                        @error('release_mode') <small class="text-danger">{{ $message }}</small> @enderror
-                    </div>
-
-                    <div class="mb-3">
-                        <label class="form-label">Remarks</label>
-                        <input type="text" name="remarks" class="form-control" value="{{ $pending->remarks }}">
-                        @error('remarks') <small class="text-danger">{{ $message }}</small> @enderror
-                    </div>
-
-                    <div class="mb-3">
-                        <label class="form-label">Request Status</label>
-                        <input type="text" id="status" name="status" class="form-control" value="{{ $pending->status }}">
-                        @error('status') <small class="text-danger">{{ $message }}</small> @enderror
-                    </div>
 
                     <div class="d-flex justify-content-end">
                         <button type="submit" class="btn text-black fw-semibold"
@@ -92,32 +118,42 @@
     </div>
 </div>
 
-{{-- 🧩 JavaScript to disable Claimer if status == "Pending" --}}
-@push('scripts')
+{{-- 🧩 Improved UX for locked fields --}}
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         const statusField = document.getElementById('status');
         const claimerField = document.getElementById('claimer_id');
 
         if (statusField && claimerField) {
-            // Convert status to lowercase for flexible matching
-            if (statusField.value.trim().toLowerCase() === 'pending') {
-                claimerField.setAttribute('readonly', true);
-                claimerField.style.backgroundColor = '#fff'; // keep white background
-                claimerField.style.cursor = 'not-allowed';
-                claimerField.title = 'Cannot edit Claimer while status is Pending';
+            const statusValue = statusField.value.trim().toLowerCase();
 
-                // Optional: Show a small warning with SweetAlert
-                Swal.fire({
-                    icon: 'warning',
-                    title: 'Notice',
-                    text: 'Claimer cannot be edited while the request is pending.',
-                    confirmButtonColor: '#1dd3b0'
+            if (statusValue === 'pending') {
+                // Disable visually + functionally
+                [claimerField, statusField].forEach(field => {
+                    field.setAttribute('readonly', true);
+                    field.style.backgroundColor = '#f3f4f6';
+                    field.style.cursor = 'not-allowed';
+                    field.style.opacity = '0.8';
                 });
+
+                // Show lock icons & help text
+                document.getElementById('claimerLockIcon').style.display = 'inline';
+                document.getElementById('statusLockIcon').style.display = 'inline';
+                document.getElementById('claimerHelp').style.display = 'block';
+                document.getElementById('statusHelp').style.display = 'block';
+
+                // SweetAlert — only once
+                if (!window._claimerNoticeShown) {
+                    window._claimerNoticeShown = true;
+                    Swal.fire({
+                        icon: 'info',
+                        title: 'Locked Fields',
+                        text: 'Claimer and Status fields are disabled while the request is pending.',
+                        confirmButtonColor: '#1dd3b0'
+                    });
+                }
             }
         }
     });
 </script>
-@endpush
-
 @endsection

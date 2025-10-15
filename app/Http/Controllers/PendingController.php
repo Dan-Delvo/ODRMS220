@@ -85,11 +85,12 @@ class PendingController extends Controller
         if (!$pending) {
             abort(404, 'Document Request not found.');
         }
-
         $DocType = DocumentsModel::all();
 
+        // dd($pending->documents());
         return view('requestTables.pending.editTable', compact('pending', 'DocType'));
     }
+
 
     public function update(Request $request, DocumentRequestModel $documentRequestModel)
     {
@@ -176,18 +177,16 @@ class PendingController extends Controller
             'claimer_id' => [
                 'required',
                 function ($attribute, $value, $fail) use ($request) {
-                    // Get the record by ID
                     $record = DocumentRequestModel::find($request->id);
 
-                    // If no record found, stop validation safely
                     if (!$record) {
-                        $fail('The document request record does not exist.');
+                        $fail('The document request does not exist.');
                         return;
                     }
 
-                    // Prevent editing claimer when status is Pending
-                    if ($record->status === 'Pending') {
-                        $fail('Cannot edit Claimer Name while status is Pending.');
+                    // ✅ Only fail if user *actually changes* the claimer while status = Pending
+                    if ($record->status === 'Pending' && (string) $record->claimer->full_name !== (string) $value) {
+                        $fail('Cannot change the Claimer while the request is Pending.');
                     }
                 },
             ],
@@ -196,9 +195,21 @@ class PendingController extends Controller
             'request_mode' => 'required|string|max:255',
             'release_mode' => 'required|string|max:255',
             'remarks' => 'nullable|string|max:500',
-            'status' => 'required|string',
+
+            // 🔒 Prevent status tampering
+            'status' => [
+                'required',
+                function ($attribute, $value, $fail) use ($request) {
+                    $record = DocumentRequestModel::find($request->id);
+                    if ($record && $value !== $record->status) {
+                        $fail('You cannot manually change the request status.');
+                    }
+                }
+            ],
         ]);
     }
+
+
 
 
     /**
