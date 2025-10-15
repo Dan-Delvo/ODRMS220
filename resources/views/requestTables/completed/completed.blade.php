@@ -5,6 +5,7 @@
 @endpush
 
 @section('content')
+@include('layout.partials.message')
 
 <div class="row">
     <div class="col-md-6">
@@ -172,7 +173,7 @@
                                     @endif
 
                                     @if(!empty($deleteCompleted))
-                                    <form action="{{ route('tables.destroy', $item->id) }}" method="POST" class="d-inline delete-form">
+                                    <form action="{{ route('tables.destroy', $item->id) }}" method="POST" class="d-inline delete-form" data-swal-loading="true" data-swal-delete="true">
                                         @csrf
                                         @method('DELETE')
                                         <button type="submit" class="btn btn-sm btn-danger mb-1 delete-btn">Delete</button>
@@ -214,7 +215,10 @@
                 </h5>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <form id="claimerForm" action="{{ route('document-request3.complete', '') }}" method="POST">
+            <form id="claimerForm" action="{{ route('document-request3.complete', '') }}" method="POST"
+                data-swal-loading="true"
+                data-swal-title="The request is being claim"
+                data-swal-text="This may take a few seconds...">
                 @csrf
                 @method('PUT')
                 <div class="modal-body">
@@ -227,11 +231,12 @@
 
                     <!-- Checkbox: Claimer same as Student -->
                     <div class="form-check mb-3">
-                        <input class="form-check-input" type="checkbox" id="sameAsStudent">
+                        <input class="form-check-input thick-outline" type="checkbox" id="sameAsStudent">
                         <label class="form-check-label fw-bold" for="sameAsStudent">
                             Claimer is the same as the requestor
                         </label>
                     </div>
+
 
                     <div class="row">
                         <div class="col-md-6">
@@ -879,6 +884,21 @@
 
 <style>
     /* Additional styling for better loading states */
+    .thick-outline {
+        width: 1.2rem;
+        height: 1.2rem;
+        border: 2.5px solid #1f2937 !important;
+        /* darker outline */
+        accent-color: #1dd3b0;
+        /* your theme color for checkmark */
+        cursor: pointer;
+    }
+
+    .thick-outline:focus {
+        box-shadow: 0 0 0 3px rgba(29, 211, 176, 0.4);
+        /* subtle glow */
+    }
+
     .btn:disabled {
         cursor: not-allowed;
     }

@@ -153,13 +153,16 @@
                                 <td>{{ $item->claimed_date }}</td>
                                 <td class="text-nowrap">
                                     <!-- Accept and Decline buttons moved here -->
-                                    <form action="{{ route('tables.destroy', $item->id) }}" method="POST" class="d-inline decline-form">
+                                    <form action="{{ route('tables.destroy', $item->id) }}" method="POST" class="d-inline decline-form" data-swal-loading="true" data-swal-delete="true">
                                         @csrf
                                         @method('DELETE')
                                         <button type="submit" class="btn btn-sm btn-danger mb-1 decline-btn">Delete</button>
                                     </form>
 
-                                    <form action="{{ route('document-request.complete', $item->id) }}" method="POST" class="d-inline accept-form">
+                                    <form action="{{ route('document-request.complete', $item->id) }}" method="POST" class="d-inline accept-form"
+                                        data-swal-loading="true"
+                                        data-swal-title="Reaccepting Declined Request"
+                                        data-swal-text="This may take a few seconds...">
                                         @csrf
                                         @method('PUT')
                                         <button type="submit" class="btn btn-sm btn-success mb-1 accept-btn" data-original-text="Accept">Accept</button>
@@ -304,7 +307,7 @@
                                                 <div class="text-center text-muted">
                                                     <i class="fas fa-file text-secondary" style="font-size:3rem;"></i>
                                                     <p class="mt-2">No new file uploaded</p>
-                                                    
+
                                                 </div>
                                                 @endif
                                             </div>
