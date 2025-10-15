@@ -1,4 +1,3 @@
-
 @extends('layout.blankpage')
 
 @section('content')
@@ -15,11 +14,11 @@
 </div>
 
 <div class="row">
-@if(session('error'))
+    @if(session('error'))
     <div class="alert alert-danger">
         {{ session('error') }}
     </div>
-@endif
+    @endif
 
     <div class="col-md-12">
         <div class="card shadow-lg border-0 rounded-lg mt-5">
@@ -33,7 +32,10 @@
             </div>
 
             <div class="card-body bg-light">
-                <form action="{{ route('user.update', $user->user_account_id) }}" method="POST">
+                <form action="{{ route('user.update', $user->user_account_id) }}" method="POST"
+                    data-swal-loading="true"
+                    data-swal-title="Updating Users"
+                    data-swal-text="This may take a few seconds...">
                     @csrf
                     @method('PUT')
 
@@ -55,7 +57,7 @@
                         <label for="role" class="form-label">Role</label>
                         <select name="role" id="role" class="form-select">
                             @foreach ($roles as $role)
-                                <option value="{{ $role->id }}" {{ $role->id == $user->roles->id ? 'selected' : '' }}>{{ $role->name }}</option>
+                            <option value="{{ $role->id }}" {{ $role->id == $user->roles->id ? 'selected' : '' }}>{{ $role->name }}</option>
                             @endforeach
                         </select>
                         @error('role') <small class="text-danger">{{ $message }}</small> @enderror

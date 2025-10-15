@@ -469,6 +469,7 @@
         }
     </script>
     @include('layout.partials.swal-loading')
+    @include ('layout.partials.message')
     @stack('scripts')
 </body>
 

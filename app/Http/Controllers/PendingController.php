@@ -85,11 +85,12 @@ class PendingController extends Controller
         if (!$pending) {
             abort(404, 'Document Request not found.');
         }
-
         $DocType = DocumentsModel::all();
 
+        // dd($pending->documents());
         return view('requestTables.pending.editTable', compact('pending', 'DocType'));
     }
+
 
     public function update(Request $request, DocumentRequestModel $documentRequestModel)
     {
@@ -173,23 +174,51 @@ class PendingController extends Controller
     {
         return $request->validate([
             'id' => 'required',
-            'claimer_id' => 'required',
+            'claimer_id' => [
+                'required',
+                function ($attribute, $value, $fail) use ($request) {
+                    $record = DocumentRequestModel::find($request->id);
+
+                    if (!$record) {
+                        $fail('The document request does not exist.');
+                        return;
+                    }
+
+                    // ✅ Only fail if user *actually changes* the claimer while status = Pending
+                    if ($record->status === 'Pending' && (string) $record->claimer->full_name !== (string) $value) {
+                        $fail('Cannot change the Claimer while the request is Pending.');
+                    }
+                },
+            ],
             'document_id' => 'required',
             'request_schl_entity' => 'required|string|max:255',
             'request_mode' => 'required|string|max:255',
             'release_mode' => 'required|string|max:255',
             'remarks' => 'nullable|string|max:500',
-            'status' => 'required|string',
+
+            // 🔒 Prevent status tampering
+            'status' => [
+                'required',
+                function ($attribute, $value, $fail) use ($request) {
+                    $record = DocumentRequestModel::find($request->id);
+                    if ($record && $value !== $record->status) {
+                        $fail('You cannot manually change the request status.');
+                    }
+                }
+            ],
         ]);
     }
+
+
+
 
     /**
      * Remove the specified resource from storage.
      */
 
 
-        // if (!$inserted) {
-        //     Log::error('Update failed', ['data' => $request->all()]);
-        //     dd('Validation asdsc');
-        // }
+    // if (!$inserted) {
+    //     Log::error('Update failed', ['data' => $request->all()]);
+    //     dd('Validation asdsc');
+    // }
 }

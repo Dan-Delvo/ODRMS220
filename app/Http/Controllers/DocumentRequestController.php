@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
 use App\Models\ClaimerModel;
 use App\Models\DocumentsModel;
+use App\Models\DocuPaymentFee;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\DB;
@@ -252,6 +253,15 @@ class DocumentRequestController extends Controller
         // Check if email address is unique
         if (Account::where('email_address', $request->email_address)->exists()) {
 
+            $document = DocumentsModel::find($validated['document_id']);
+            $receipt = DocuPaymentFee::create([
+                "receipt_no" => random_int(10000, 99999),
+                'docu_categories_id' => $validated['document_id'],
+                'doc_amount' => $document->DocPrice,
+                'name_request' => Auth::user()->std_students_id,
+                'time_request' => Carbon::now()
+            ]);
+
             $idAcc = Account::where('email_address', $request->email_address)->value('user_account_id');
             DocumentRequestModel::create([
                 'id' => random_int(10000, 99999),
@@ -265,6 +275,7 @@ class DocumentRequestController extends Controller
                 'remarks' => 'Pending',
                 'status' => 'Pending',
                 'request_mode' => 'Online',
+                'receipt_no' => $receipt->receipt_no
             ]);
 
             return redirect()->route('walkin.form')->with('Success', 'Document request submitted successfully!');

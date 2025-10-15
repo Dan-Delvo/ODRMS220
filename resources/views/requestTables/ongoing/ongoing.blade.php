@@ -53,7 +53,9 @@
                         </button>
                         <ul class="dropdown-menu" aria-labelledby="filterDropdown">
                             <li><a class="dropdown-item filter-option" href="#" data-filter="all">All Records</a></li>
-                            <li><hr class="dropdown-divider"></li>
+                            <li>
+                                <hr class="dropdown-divider">
+                            </li>
                             <li><a class="dropdown-item filter-option" href="#" data-filter="student">Student Name</a></li>
                             <li><a class="dropdown-item filter-option" href="#" data-filter="document">Document Type</a></li>
                             <li><a class="dropdown-item filter-option" href="#" data-filter="school">School/Entity</a></li>
@@ -72,11 +74,11 @@
                                 <hr class="dropdown-divider">
                             </li>
                             <li><a class="dropdown-item sort-option" href="#" data-sort="req-asc">
-                                <i class="fas fa-sort-numeric-down me-2"></i>Req No. (A-Z)
-                            </a></li>
+                                    <i class="fas fa-sort-numeric-down me-2"></i>Req No. (A-Z)
+                                </a></li>
                             <li><a class="dropdown-item sort-option" href="#" data-sort="req-desc">
-                                <i class="fas fa-sort-numeric-up me-2"></i>Req No. (Z-A)
-                            </a></li>
+                                    <i class="fas fa-sort-numeric-up me-2"></i>Req No. (Z-A)
+                                </a></li>
                         </ul>
                     </div>
                 </div>
@@ -103,9 +105,9 @@
 
                 <div class="table-responsive" id="requestTable">
                     @if($DocRequests->isEmpty())
-                        <div class="alert alert-warning text-center my-3">
-                            No Processing document requests found.
-                        </div>
+                    <div class="alert alert-warning text-center my-3">
+                        No Processing document requests found.
+                    </div>
                     @else
                     <table class="table table-sm table-bordered table-hover align-middle text-nowrap" style="font-size: 0.85rem;">
                         <thead class="table-dark">
@@ -157,43 +159,46 @@
                                 <td>{{ $item->claimed_date }}</td>
                                 <td class="text-nowrap">
                                     <div class="d-flex flex-wrap flex-md-nowrap gap-2 justify-content-center">
-                                    <!-- Update the Complete button form in the Actions column -->
-                                    @if(!empty($approveOngoing))
-                                        <form action="{{ route('ongoing.destroy', $item->id) }}" method="POST" class="d-inline delete-form">
+                                        <!-- Update the Complete button form in the Actions column -->
+                                        @if(!empty($approveOngoing))
+                                        <form action="{{ route('ongoing.destroy', $item->id) }}" method="POST" class="d-inline delete-form" data-swal-loading="true" data-swal-delete="true">
                                             @csrf
                                             @method('DELETE')
                                             <button type="submit" class="btn btn-danger btn-sm delete-btn">Delete</button>
                                         </form>
 
-                                        <form action="{{ route('document-request2.complete', $item->id) }}" method="POST" class="d-inline complete-form">
+                                        <form action="{{ route('document-request2.complete', $item->id) }}" method="POST" class="d-inline complete-form"
+                                            data-swal-loading="true"
+                                            data-swal-title="Completing Request"
+                                            data-swal-text="This may take a few seconds...">
                                             @csrf
                                             @method('PUT')
                                             <button type="submit" class="btn btn-success btn-sm complete-btn" data-original-text="Complete">Complete</button>
                                         </form>
 
                                         @if($item->documents->DocType == 'Good Moral')
-                                            <form action="{{ route('doc.print', $item->id) }}" method="POST" class="d-inline print-form">
-                                                @csrf
-                                                <button type="submit" class="btn btn-info btn-sm print-btn" data-original-text="Print">Print</button>
-                                            </form>
+                                        <form action="{{ route('doc.print', $item->id) }}" method="POST" class="d-inline print-form">
+                                            @csrf
+                                            <button type="submit" class="btn btn-info btn-sm print-btn" data-original-text="Print">Print</button>
+                                        </form>
                                         @endif
-                                    @endif
+                                        @endif
 
-                                    @if (!empty($PermissionEdit))
+                                        @if (!empty($PermissionEdit))
                                         <a href="{{ route('ongoing.edit', $item->id) }}" class="btn btn-warning btn-sm">Edit</a>
-                                    @endif
+                                        @endif
 
-                                    @if (!empty($deleteCompleted))
-                                        <form action="{{ route('ongoing.destroy', $item->id) }}" method="POST" class="d-inline delete2-form">
+                                        @if (!empty($deleteCompleted))
+                                        <form action="{{ route('ongoing.destroy', $item->id) }}" method="POST" class="d-inline delete2-form" data-swal-loading="true" data-swal-delete="true">
                                             @csrf
                                             @method('DELETE')
                                             <button type="submit" class="btn btn-danger btn-sm delete2-btn">Delete</button>
                                         </form>
-                                    @endif
+                                        @endif
 
-                                    <button class="btn btn-info btn-sm" data-bs-toggle="modal" data-bs-target="#receiptModal{{ $item->id }}">
-                                        Receipt
-                                    </button>
+                                        <button class="btn btn-info btn-sm" data-bs-toggle="modal" data-bs-target="#receiptModal{{ $item->id }}">
+                                            Receipt
+                                        </button>
                                     </div>
                                 </td>
                             </tr>
@@ -218,60 +223,60 @@
                 </div>
 
                 @foreach ($DocRequests as $item)
-                    @if ($item->receipt)
-                    <div class="modal fade" id="receiptModal{{ $item->id }}" tabindex="-1" aria-labelledby="receiptModalLabel{{ $item->id }}" aria-hidden="true">
-                        <div class="modal-dialog modal-dialog-centered modal-md">
-                            <div class="modal-content border-0 shadow-sm">
-                                <div class="modal-header bg-dark text-white">
-                                    <h5 class="modal-title mx-auto" id="receiptModalLabel{{ $item->id }}">
-                                        Receipt #{{ $item->receipt->receipt_no }}
-                                    </h5>
-                                    <button type="button" class="btn-close btn-close-white position-absolute end-0 me-3" data-bs-dismiss="modal" aria-label="Close"></button>
+                @if ($item->receipt)
+                <div class="modal fade" id="receiptModal{{ $item->id }}" tabindex="-1" aria-labelledby="receiptModalLabel{{ $item->id }}" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered modal-md">
+                        <div class="modal-content border-0 shadow-sm">
+                            <div class="modal-header bg-dark text-white">
+                                <h5 class="modal-title mx-auto" id="receiptModalLabel{{ $item->id }}">
+                                    Receipt #{{ $item->receipt->receipt_no }}
+                                </h5>
+                                <button type="button" class="btn-close btn-close-white position-absolute end-0 me-3" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+
+                            <div class="modal-body bg-white text-dark px-4 py-3" style="font-family: 'Courier New', Courier, monospace;">
+                                <div class="text-center mb-3">
+                                    <img src="{{ asset('images/UBLOGO.png') }}" alt="UB Logo" class="mb-2" style="max-height: 80px;">
+                                    <h5 class="fw-bold mb-1">Upper Bicutan National High School</h5>
+                                    <div class="text-muted small">Official Receipt</div>
                                 </div>
 
-                                <div class="modal-body bg-white text-dark px-4 py-3" style="font-family: 'Courier New', Courier, monospace;">
-                                    <div class="text-center mb-3">
-                                        <img src="{{ asset('images/UBLOGO.png') }}" alt="UB Logo" class="mb-2" style="max-height: 80px;">
-                                        <h5 class="fw-bold mb-1">Upper Bicutan National High School</h5>
-                                        <div class="text-muted small">Official Receipt</div>
-                                    </div>
+                                <hr>
 
-                                    <hr>
-
-                                    <div class="mb-2 d-flex justify-content-between">
-                                        <strong>Document:</strong>
-                                        <span>{{ $item->documents->DocType }}</span>
-                                    </div>
-
-                                    <div class="mb-2 d-flex justify-content-between">
-                                        <strong>Amount Paid:</strong>
-                                        <span>₱{{ number_format($item->receipt->doc_amount, 2) }}</span>
-                                    </div>
-
-                                    <div class="mb-2 d-flex justify-content-between">
-                                        <strong>Student ID:</strong>
-                                        <span>{{ $item->receipt->name_request }}</span>
-                                    </div>
-
-                                    <div class="mb-2 d-flex justify-content-between">
-                                        <strong>Date:</strong>
-                                        <span>{{ \Carbon\Carbon::parse($item->receipt->time_request)->format('F d, Y - h:i A') }}</span>
-                                    </div>
-
-                                    <hr>
-
-                                    <div class="text-center mt-3">
-                                        <div class="text-muted small">Thank you for your request!</div>
-                                    </div>
+                                <div class="mb-2 d-flex justify-content-between">
+                                    <strong>Document:</strong>
+                                    <span>{{ $item->documents->DocType }}</span>
                                 </div>
 
-                                <div class="modal-footer bg-light border-top-0">
-                                    <button type="button" class="btn btn-secondary w-100" data-bs-dismiss="modal">Close Receipt</button>
+                                <div class="mb-2 d-flex justify-content-between">
+                                    <strong>Amount Paid:</strong>
+                                    <span>₱{{ number_format($item->receipt->doc_amount, 2) }}</span>
                                 </div>
+
+                                <div class="mb-2 d-flex justify-content-between">
+                                    <strong>Student ID:</strong>
+                                    <span>{{ $item->receipt->name_request }}</span>
+                                </div>
+
+                                <div class="mb-2 d-flex justify-content-between">
+                                    <strong>Date:</strong>
+                                    <span>{{ \Carbon\Carbon::parse($item->receipt->time_request)->format('F d, Y - h:i A') }}</span>
+                                </div>
+
+                                <hr>
+
+                                <div class="text-center mt-3">
+                                    <div class="text-muted small">Thank you for your request!</div>
+                                </div>
+                            </div>
+
+                            <div class="modal-footer bg-light border-top-0">
+                                <button type="button" class="btn btn-secondary w-100" data-bs-dismiss="modal">Close Receipt</button>
                             </div>
                         </div>
                     </div>
-                    @endif
+                </div>
+                @endif
                 @endforeach
             </div>
         </div>
@@ -347,7 +352,7 @@
                     shouldShow = true;
                 } else {
                     // Search based on current filter
-                    switch(currentFilter) {
+                    switch (currentFilter) {
                         case 'all':
                             shouldShow = searchAllColumns(row, query);
                             break;
@@ -436,7 +441,7 @@
         // Handle Complete button clicks with loading spinner
         const completeForms = document.querySelectorAll(".complete-form");
         completeForms.forEach(form => {
-            form.addEventListener("submit", function (e) {
+            form.addEventListener("submit", function(e) {
                 e.preventDefault();
 
                 const completeBtn = form.querySelector(".complete-btn");
@@ -469,7 +474,7 @@
         // Handle Delete button clicks with loading spinner
         const deleteForms = document.querySelectorAll(".delete-form, .delete2-form");
         deleteForms.forEach(form => {
-            form.addEventListener("submit", function (e) {
+            form.addEventListener("submit", function(e) {
                 e.preventDefault();
 
                 const deleteBtn = form.querySelector(".delete-btn, .delete2-btn");
@@ -510,19 +515,25 @@
 
             let sortedRows;
 
-            switch(order) {
+            switch (order) {
                 case 'req-asc':
                     sortedRows = rows.sort((a, b) => {
                         const aVal = a.getAttribute('data-req-no-raw');
                         const bVal = b.getAttribute('data-req-no-raw');
-                        return aVal.localeCompare(bVal, undefined, {numeric: true, sensitivity: 'base'});
+                        return aVal.localeCompare(bVal, undefined, {
+                            numeric: true,
+                            sensitivity: 'base'
+                        });
                     });
                     break;
                 case 'req-desc':
                     sortedRows = rows.sort((a, b) => {
                         const aVal = a.getAttribute('data-req-no-raw');
                         const bVal = b.getAttribute('data-req-no-raw');
-                        return bVal.localeCompare(aVal, undefined, {numeric: true, sensitivity: 'base'});
+                        return bVal.localeCompare(aVal, undefined, {
+                            numeric: true,
+                            sensitivity: 'base'
+                        });
                     });
                     break;
                 default: // 'default'
@@ -548,7 +559,7 @@
         function updateSortIcon(order) {
             const icon = document.getElementById('req-no-icon');
 
-            switch(order) {
+            switch (order) {
                 case 'req-asc':
                     icon.className = 'fas fa-sort-up sort-icon ms-1';
                     break;
@@ -564,7 +575,7 @@
         function updateSortInfo(order) {
             let sortText = '';
 
-            switch(order) {
+            switch (order) {
                 case 'req-asc':
                     sortText = '(sorted by Req No. A-Z)';
                     break;
@@ -623,7 +634,7 @@
         // Handle Print button clicks with loading spinner
         const printForms = document.querySelectorAll(".print-form");
         printForms.forEach(form => {
-            form.addEventListener("submit", function (e) {
+            form.addEventListener("submit", function(e) {
                 e.preventDefault();
 
                 const printBtn = form.querySelector(".print-btn");
@@ -703,7 +714,10 @@
     }
 
     /* Ensure buttons maintain their size during loading */
-    .complete-btn, .delete-btn, .delete2-btn, .print-btn {
+    .complete-btn,
+    .delete-btn,
+    .delete2-btn,
+    .print-btn {
         min-width: 70px;
     }
 

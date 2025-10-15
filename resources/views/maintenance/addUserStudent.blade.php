@@ -12,7 +12,10 @@
             </div>
             <div class="card-body bg-light">
 
-                <form action="{{ route('account.otp') }}" method="POST">
+                <form action="{{ route('account.otp') }}" method="POST"
+                    data-swal-loading="true"
+                    data-swal-title="Adding Users"
+                    data-swal-text="This may take a few seconds...">
                     @csrf
 
                     <!-- Personal Information Section -->
@@ -41,14 +44,12 @@
                                     id="inputMiddleName"
                                     type="text"
                                     name="MiddleName"
-                                    placeholder="Enter your middle name"
-                                    required />
+                                    placeholder="Enter your middle name" />
                                 <label for="inputMiddleName">Middle Name (Optional)</label>
                                 @error('MiddleName')
                                 <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
                             </div>
-
                         </div>
                     </div>
 
@@ -383,7 +384,15 @@
 
         // 🧩 Optional: prevent typing non-digits
         lrnInput.addEventListener('keypress', (e) => {
+            const value = lrnInput.value;
+
+            // Disallow non-digits
             if (!/[0-9]/.test(e.key)) {
+                e.preventDefault();
+            }
+
+            // Prevent typing beyond 12 digits
+            if (value.length >= 12) {
                 e.preventDefault();
             }
         });

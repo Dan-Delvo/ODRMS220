@@ -8,7 +8,9 @@ use App\Models\PermissionRoleModel;
 use App\Models\AuditTable;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Str;
-
+use GeoIP;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Session;
 
 class AuthController extends Controller
 {
@@ -47,6 +49,7 @@ class AuthController extends Controller
     }
 
     // Handle login logic with validation
+    // Handle login logic with validation
     public function auth_login(Request $request)
     {
         $request->validate([
@@ -55,85 +58,109 @@ class AuthController extends Controller
         ]);
 
         $email = Str::lower($request->input('email_address'));
-
         $clientIp = $request->ip();
         $sessionId = $request->session()->getId();
-        $key = "login_attempts|{$clientIp}|{$sessionId}";
-        $maxAttempts = 3;
-        $decayMinutes = 1;
 
-        // Check if this email is locked out
-        if (RateLimiter::tooManyAttempts($key, $maxAttempts)) {
-            $seconds = RateLimiter::availableIn($key);
-            return redirect()->route('login')->with('error', 'Too many login attempts. Please try again in ' . ceil($seconds / 60) . ' minutes.');
+        // Unified lockout system (same as OTP)
+        $lockKey = "locked:$clientIp";
+        $attemptKey = "login_attempts:$clientIp";
+        $maxAttempts = 3;
+        $lockoutMinutes = 15;
+
+        // 🔒 Check if already locked (middleware will also catch this)
+        if (Cache::has($lockKey)) {
+            $lockedUntil = Cache::get($lockKey);
+            $remainingMinutes = ceil(($lockedUntil - time()) / 60);
+            $remainingSeconds = $lockedUntil - time();
+
+            // Return lockout page directly
+            return response()->view('auth.lockout', [
+                'remaining_minutes' => $remainingMinutes,
+                'remaining_seconds' => $remainingSeconds,
+                'locked_until' => $lockedUntil
+            ], 403);
         }
 
         $credentials = ['email_address' => $email, 'password' => $request->password];
         $remember = $request->has('remember');
 
-
-        // Attempt login regardless of whether email exists
+        // Attempt login
         if (Auth::attempt($credentials, $remember)) {
-            // ✅ Success — reset limiter
-            RateLimiter::clear($key);
+            // ✅ Success — clear attempts
+            Cache::forget($attemptKey);
 
             $user = Auth::user();
             $browser = request()->header('User-Agent');
-            $ipAddress = request()->ip(); // or request()->getClientIp();
+            $ipAddress = request()->ip();
 
             if ($user->roles->id > 1) {
-
                 AuditTable::create([
-                    'type'          => 'User Logged In',       // action becomes type
-                    'old_data'      => null,                   // No previous data for login
+                    'type'          => 'User Logged In',
+                    'old_data'      => null,
                     'new_data'      => json_encode([
                         'ip_address' => $ipAddress,
                         'session_id' => $sessionId,
                         'browser'    => $browser,
                     ]),
-                    'time'          => now(),                  // Current datetime
-                    'changedBy'     => $user->studentInformation->full_name, // The user who logged in
-                    'fromTableName' => 'Log In',                 // Assuming the related table
+                    'time'          => now(),
+                    'changedBy'     => $user->studentInformation->full_name,
+                    'fromTableName' => 'Log In',
                     'description' => 'An Admin has Logged In'
                 ]);
-
 
                 $PermissionDashboard = PermissionRoleModel::getPermission('dashboard', $user->role_id);
                 return empty($PermissionDashboard) ? redirect('/walkin/form') : redirect('/dashboard');
             } elseif ($user->roles->name === 'student') {
-
                 AuditTable::create([
-                    'type'          => 'User Logged In',       // action becomes type
-                    'old_data'      => null,                   // No previous data for login
+                    'type'          => 'User Logged In',
+                    'old_data'      => null,
                     'new_data'      => json_encode([
                         'ip_address' => $ipAddress,
                         'session_id' => $sessionId,
                         'browser'    => $browser,
                     ]),
-                    'time'          => now(),                  // Current datetime
-                    'changedBy'     => $user->studentInformation->full_name, // The user who logged in
-                    'fromTableName' => 'Log In',                 // Assuming the related table
+                    'time'          => now(),
+                    'changedBy'     => $user->studentInformation->full_name,
+                    'fromTableName' => 'Log In',
                     'description' => 'A Student has logged In'
                 ]);
+
                 return redirect('/stpage');
             }
         }
 
-        // ❌ Failed — always count the attempt, even if email doesn’t exist
-        RateLimiter::hit($key, $decayMinutes * 60);
+        // ❌ Failed attempt
+        $attempts = Cache::get($attemptKey, 0) + 1;
+        Cache::put($attemptKey, $attempts, now()->addMinutes($lockoutMinutes));
 
-        // Check remaining attempts AFTER hitting the rate limiter
-        $remainingAttempts = RateLimiter::remaining($key, $maxAttempts);
+        if ($attempts >= $maxAttempts) {
+            // Lock the account for 15 minutes
+            $lockedUntil = time() + ($lockoutMinutes * 60);
+            Cache::put($lockKey, $lockedUntil, now()->addMinutes($lockoutMinutes));
 
-        // If no attempts remaining, show lockout message
-        if ($remainingAttempts <= 0) {
-            $seconds = RateLimiter::availableIn($key);
-            return redirect()->route('login')->with('error', 'Too many login attempts. Please try again in ' . ceil($seconds / 60) . ' minutes.');
+            // Clear attempts counter
+            Cache::forget($attemptKey);
+
+            // Log the lockout event
+            Log::warning("Account locked due to failed login attempts", [
+                'ip' => $clientIp,
+                'email' => $email,
+                'locked_until' => date('Y-m-d H:i:s', $lockedUntil)
+            ]);
+
+            // Return lockout page directly
+            return response()->view('auth.lockout', [
+                'remaining_minutes' => $lockoutMinutes,
+                'remaining_seconds' => $lockoutMinutes * 60,
+                'locked_until' => $lockedUntil
+            ], 403);
         }
 
+        // Show remaining attempts
+        $remainingAttempts = $maxAttempts - $attempts;
         return redirect()->route('login')->with(
             'error',
-            'Invalid email or password. You have ' . RateLimiter::remaining($key, $maxAttempts) . ' attempts left.'
+            "Invalid email or password. You have {$remainingAttempts} attempt(s) remaining."
         );
     }
 

@@ -5,13 +5,13 @@ namespace App\Http\Controllers;
 use App\Mail\ResetPasswordMail;
 use App\Models\Account;
 use App\Models\User;
+use Illuminate\Support\Facades\Cache;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
-use Illuminate\Support\Facades\Session;
 
 class forgotpassword extends Controller
 {
@@ -34,21 +34,40 @@ class forgotpassword extends Controller
             $otpCode = rand(100000, 999999);
             $expiresAt = Carbon::now()->addMinutes(5);
 
-            // Clear any previous lockout data when generating new OTP
-            session()->forget(['otp_attempts', 'lockout_until']);
+            // ✅ Clear ALL old session data to prevent conflicts
+            session()->forget(['otp', 'expiry', 'otp_attempts', 'lockout_until', 'email_entered', 'otp_requested', 'otp_verified', 'password_reset_step']);
 
+            // ✅ Store OTP as STRING for consistency
             session([
                 'email' => $request->variable,
-                'otp' => $otpCode,
+                'otp' => (string)$otpCode,  // 👈 Convert to string
                 'expiry' => $expiresAt,
                 'email_entered' => true,
-                'otp_attempts' => 0
+                'otp_requested' => true
             ]);
 
-            Mail::to($request->variable)->send(new ResetPasswordMail($otpCode));
-            session(['otp_requested' => true]);
-            session()->flash('success', 'OTP Sent successfully!');
-            return redirect()->route('verifyotp');
+            try {
+                // Use send() instead of queue() to avoid mail queue issues
+                Mail::to($request->variable)->send(new ResetPasswordMail($otpCode));
+
+                // Log for debugging
+                \Log::info("Initial OTP Sent", [
+                    'email' => $request->variable,
+                    'otp' => $otpCode,
+                    'expiry' => $expiresAt->toDateTimeString()
+                ]);
+
+                session()->flash('success', 'OTP sent successfully!');
+                return redirect()->route('verifyotp');
+            } catch (\Exception $e) {
+                \Log::error("Failed to send initial OTP", [
+                    'email' => $request->variable,
+                    'error' => $e->getMessage(),
+                    'trace' => $e->getTraceAsString()
+                ]);
+
+                return redirect()->back()->with('error', 'Failed to send OTP. Please try again.');
+            }
         } else {
             return redirect()->back()->with('error', 'Invalid email address!');
         }
@@ -83,63 +102,102 @@ class forgotpassword extends Controller
 
     public function verifyOTP(Request $request)
     {
-        Log::info("OTP verification attempt");
+        $ip = $request->ip();
+        $lockKey = "locked:$ip";
+        $attemptKey = "otp_attempts:$ip";
 
-        // Check if user is locked out
-        $lockoutUntil = session('lockout_until');
-        if ($lockoutUntil && now()->lessThan($lockoutUntil)) {
-            $remainingMinutes = ceil(now()->diffInMinutes($lockoutUntil, false));
-            session()->forget('otp_requested');
-            session()->flash('error', "Account temporarily locked. Please wait {$remainingMinutes} minutes before trying again.");
-            return view('common/OTP/otp');
+        // 🔒 Check if already locked
+        if (Cache::has($lockKey)) {
+            $lockedUntil = Cache::get($lockKey);
+            $remainingMinutes = ceil(($lockedUntil - time()) / 60);
+            $remainingSeconds = $lockedUntil - time();
+
+            session()->flush();
+
+            return response()->view('auth.lockout', [
+                'remaining_minutes' => $remainingMinutes,
+                'remaining_seconds' => $remainingSeconds,
+                'locked_until' => $lockedUntil
+            ], 403);
         }
 
-        $otp = "{$request->first}{$request->second}{$request->third}{$request->fourth}{$request->fifth}{$request->sixth}";
-        $email = session('email');
-        $otpCode = session('otp');
+        // 🧩 Combine OTP input
+        $inputOtp = trim("{$request->first}{$request->second}{$request->third}{$request->fourth}{$request->fifth}{$request->sixth}");
+        $storedOtp = session('otp');
         $expiry = session('expiry');
-        $attempts = session('otp_attempts', 0);
 
-        // Check if OTP has expired
-        if (!$otpCode || !$expiry || now()->greaterThan($expiry)) {
+        // Debug logging (remove after testing)
+        \Log::info("OTP Verification Attempt", [
+            'input_otp' => $inputOtp,
+            'stored_otp' => $storedOtp,
+            'expiry' => $expiry ? $expiry->toDateTimeString() : 'null',
+            'ip' => $ip
+        ]);
+
+        // ⏳ Check if OTP exists and is not expired
+        if (!$storedOtp || !$expiry) {
             session()->forget('otp_requested');
-            session()->flash('error', 'OTP has expired. Please request a new one.');
-            return view('common/OTP/otp');
+            return redirect()->route('forgot.password')->with('error', 'No OTP found. Please request a new one.');
         }
 
-        // Validate OTP
-        if ($otp == $otpCode) {
-            // Success - Clear all session data related to OTP
-            session()->forget(['otp', 'expiry', 'otp_attempts', 'lockout_until']);
-            session(['otp_verified' => true]);
-            session(['password_reset_step' => 'newpassword']);
-            session()->flash('status', 'OTP Verified successfully!');
-            return redirect()->route('newpassword');
+        if (now()->greaterThan($expiry)) {
+            session()->forget(['otp', 'expiry', 'otp_requested']);
+            return back()->with('error', 'OTP has expired. Please request a new one.');
+        }
+
+        // ✅ Correct OTP - Convert both to strings for comparison
+        if ((string)$inputOtp === (string)$storedOtp) {
+            // Clear attempts on success
+            Cache::forget($attemptKey);
+            session()->forget(['otp', 'expiry']);
+            session(['otp_verified' => true, 'password_reset_step' => 'newpassword']);
+
+            \Log::info("OTP Verified Successfully", ['ip' => $ip]);
+
+            return redirect()->route('newpassword')->with('status', 'OTP verified successfully!');
+        }
+
+        // ❌ Failed attempt
+        $attempts = Cache::get($attemptKey, 0) + 1;
+        Cache::put($attemptKey, $attempts, now()->addMinutes(15));
+
+        \Log::warning("Invalid OTP Attempt", [
+            'ip' => $ip,
+            'attempt' => $attempts,
+            'input' => $inputOtp,
+            'expected' => $storedOtp
+        ]);
+
+        if ($attempts >= 3) {
+            // Lock the account for 15 minutes
+            $lockedUntil = time() + (15 * 60);
+            Cache::put($lockKey, $lockedUntil, now()->addMinutes(15));
+
+            // Clear all attempts and session data
+            Cache::forget($attemptKey);
+            session()->flush();
+
+            \Log::warning("Account locked due to failed OTP attempts", [
+                'ip' => $ip,
+                'locked_until' => date('Y-m-d H:i:s', $lockedUntil)
+            ]);
+
+            // Return lockout page directly
+            $remainingMinutes = 15;
+            $remainingSeconds = 15 * 60;
+
+            return response()->view('auth.lockout', [
+                'remaining_minutes' => $remainingMinutes,
+                'remaining_seconds' => $remainingSeconds,
+                'locked_until' => $lockedUntil
+            ], 403);
         } else {
-            // Failed attempt
-            $attempts++;
-            session(['otp_attempts' => $attempts]);
-
-            if ($attempts >= 3) {
-                // Lock out for 15 minutes
-                $lockoutUntil = now()->addMinutes(15);
-                session([
-                    'lockout_until' => $lockoutUntil,
-                    'otp_attempts' => $attempts
-                ]);
-
-                session()->flash('error', 'Too many failed attempts. Account locked for 15 minutes.');
-            } else {
-                $remainingAttempts = 3 - $attempts;
-                session()->flash('error', "Invalid OTP. {$remainingAttempts} attempts remaining.");
-            }
-
-            return view('common/OTP/otp');
+            $remaining = 3 - $attempts;
+            return back()->with('error', "Invalid OTP. You have {$remaining} attempt(s) remaining.");
         }
     }
 
-    // Optional: Add a method to resend OTP
-    public function resendOTP(Request $request)
+    public function resendOTP()
     {
         $email = session('email');
 
@@ -152,28 +210,48 @@ class forgotpassword extends Controller
 
         // Generate new OTP
         $otpCode = rand(100000, 999999);
-        $expiresAt = Carbon::now()->addMinutes(5);
+        $expiresAt = now()->addMinutes(5);
 
-        // Reset attempts and lockout
+        // ✅ Clear old OTP data completely
+        session()->forget(['otp', 'expiry', 'otp_verified', 'password_reset_step']);
+
+        // ✅ Store new OTP as STRING
         session([
-            'otp' => $otpCode,
+            'otp' => (string)$otpCode,  // 👈 Store as string
             'expiry' => $expiresAt,
-            'otp_attempts' => 0
+            'email' => $email,
+            'otp_requested' => true
         ]);
-        session()->forget('lockout_until');
 
         try {
+            // Use send() instead of queue()
             Mail::to($email)->send(new ResetPasswordMail($otpCode));
-            session()->flash('success', 'New OTP sent successfully!');
+
+            // Log for debugging
+            \Log::info("OTP Resent", [
+                'email' => $email,
+                'otp' => $otpCode,
+                'otp_type' => gettype($otpCode),
+                'session_otp' => session('otp'),
+                'session_otp_type' => gettype(session('otp')),
+                'expiry' => $expiresAt->toDateTimeString()
+            ]);
 
             return response()->json([
                 'success' => true,
-                'message' => 'New OTP sent successfully!'
+                'message' => 'New OTP sent successfully!',
+                'expiry' => $expiresAt->toIso8601String(),
             ]);
         } catch (\Exception $e) {
+            \Log::error("Resend OTP failed", [
+                'email' => $email,
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+
             return response()->json([
                 'success' => false,
-                'message' => 'Failed to send OTP. Please try again.'
+                'message' => 'Failed to send OTP: ' . $e->getMessage()
             ], 500);
         }
     }
@@ -209,6 +287,7 @@ class forgotpassword extends Controller
         session(['password_change' => true]);
         session()->forget(['email_entered', 'otp_requested', 'otp_verified', '']);
         session()->forget('password_reset_step');
-        return view('redirect/redirectLogin')->with('status', 'Password updated successfully!');
+        session()->flash('status', 'Password updated successfully!');
+        return redirect()->route('login');
     }
 }

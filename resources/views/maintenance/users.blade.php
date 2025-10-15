@@ -169,9 +169,9 @@
                                 <td>{{ $item->user_account_id }}</td>
 
                                 @if(!$item->studentInformation)
-                                    <td class="text-danger">No Student Info</td>
+                                <td class="text-danger">No Student Info</td>
                                 @else
-                                    <td>{{ $item->studentInformation->full_name }}</td>
+                                <td>{{ $item->studentInformation->full_name }}</td>
                                 @endif
 
                                 <td>{{ $item->roles->name }}</td>
@@ -184,6 +184,7 @@
                                     @endif
 
                                     @if(!empty($PermissionDelete))
+                                    <form action="{{ route('user.delete', $item->user_account_id) }}" method="POST" class="d-inline" data-swal-loading="true" data-swal-delete="true">
                                     <form action="{{ route('user.delete', $item->user_account_id) }}" method="POST" class="d-inline" onsubmit="return confirm('Are you sure you want to delete this user?')">
                                         @csrf
                                         @method('DELETE')

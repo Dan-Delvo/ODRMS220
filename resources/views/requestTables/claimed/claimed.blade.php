@@ -189,7 +189,7 @@
                                     @endif
 
                                     @if(!empty($deleteClaimed))
-                                    <form action="{{ route('claimed-documents.destroy', $item->id) }}" method="POST" class="d-inline delete-form">
+                                    <form action="{{ route('claimed-documents.destroy', $item->id) }}" method="POST" class="d-inline delete-form" data-swal-loading="true" data-swal-delete="true">
                                         @csrf
                                         @method('DELETE')
                                         <button type="submit" class="btn btn-sm btn-danger mb-1 delete-btn">Delete</button>

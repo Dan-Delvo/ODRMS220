@@ -1,10 +1,16 @@
-@if(session('success') || session('error') || session('status') || session('danger') || $errors->has('password'))
+@php
+    // Ensure $errors is always defined
+    $errors = $errors ?? new \Illuminate\Support\MessageBag();
+    $hasPasswordError = $errors->has('password');
+@endphp
+
+@if(session('success') || session('error') || session('status') || session('danger') || $hasPasswordError)
 <div id="floatingAlert" class="floating-attempt
-        @if(session('error') || session('danger') || $errors->has('password')) bg-danger
+        @if(session('error') || session('danger') || $hasPasswordError) bg-danger
         @elseif(session('success') || session('status')) bg-success
         @endif">
     <i class="fas 
-            @if(session('error') || session('danger') || $errors->has('password')) fa-exclamation-circle
+            @if(session('error') || session('danger') || $hasPasswordError) fa-exclamation-circle
             @else fa-check-circle
             @endif me-2"></i>
 
@@ -16,13 +22,13 @@
 @if(
     session('Success') || session('Warning') || session('Status') ||
     session('Error') || session('Danger') || session('Declined') ||
-    $errors->has('password')
+    $hasPasswordError
 )
 <script>
     Swal.fire({
         icon: '{{ 
             session('Warning') ? 'warning' : 
-            ((session('Error') || session('Danger') || $errors->has('password')) ? 'error' : 'success') 
+            ((session('Error') || session('Danger') || $hasPasswordError) ? 'error' : 'success') 
         }}',
         title: 'Notice!!!',
         text: "{{ ucfirst(
@@ -38,10 +44,6 @@
     });
 </script>
 @endif
-
-
-
-
 
 @push('scripts')
 <script>
@@ -60,21 +62,6 @@
                 setTimeout(() => alert.remove(), 500);
             });
         }
-        // const Toast = Swal.mixin({
-        //     toast: true,
-        //     position: "top",
-        //     showConfirmButton: false,
-        //     timer: 3000,
-        //     timerProgressBar: true,
-        //     didOpen: (toast) => {
-        //         toast.onmouseenter = Swal.stopTimer;
-        //         toast.onmouseleave = Swal.resumeTimer;
-        //     }
-        // });
-        // Toast.fire({
-        //     icon: "success",
-        //     title: "Signed in successfully"
-        // });
     });
 </script>
 @endpush

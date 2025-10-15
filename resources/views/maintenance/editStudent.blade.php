@@ -1,4 +1,3 @@
-
 @extends('layout.blankpage')
 
 @section('content')
@@ -25,7 +24,10 @@
             </div>
 
             <div class="card-body bg-light">
-                <form action="{{ route('student.update', $student->id) }}" method="POST">
+                <form action="{{ route('student.update', $student->id) }}" method="POST"
+                    data-swal-loading="true"
+                    data-swal-title="Updating Student"
+                    data-swal-text="This may take a few seconds...">
                     @csrf
                     @method('PUT')
 
@@ -64,7 +66,7 @@
                         <label for="Grade_level" class="form-label">Grade Level</label>
                         <select name="Grade_level" id="Grade_level" class="form-select">
                             @foreach ($gradeLevels as $level)
-                                <option value="{{ $level }}" {{ $level == $student->Grade_level ? 'selected' : '' }}>{{ $level }}</option>
+                            <option value="{{ $level }}" {{ $level == $student->Grade_level ? 'selected' : '' }}>{{ $level }}</option>
                             @endforeach
                         </select>
                         @error('Grade_level') <small class="text-danger">{{ $message }}</small> @enderror
@@ -89,7 +91,7 @@
                     </div>
 
                     <!-- Save Button -->
-                    <div class ="text-end">
+                    <div class="text-end">
                         <button type="submit" class="btn text-black fw-semibold" style="background-color: #1dd3b0; box-shadow: 0 4px 10px rgba(29, 211, 176, 0.5);">Update</button>
                     </div>
                 </form>
