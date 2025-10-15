@@ -41,14 +41,12 @@
                                     id="inputMiddleName"
                                     type="text"
                                     name="MiddleName"
-                                    placeholder="Enter your middle name"
-                                    required />
+                                    placeholder="Enter your middle name" />
                                 <label for="inputMiddleName">Middle Name (Optional)</label>
                                 @error('MiddleName')
                                 <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
                             </div>
-
                         </div>
                     </div>
 
@@ -473,7 +471,15 @@
 
         // 🧩 Optional: prevent typing non-digits
         lrnInput.addEventListener('keypress', (e) => {
+            const value = lrnInput.value;
+
+            // Disallow non-digits
             if (!/[0-9]/.test(e.key)) {
+                e.preventDefault();
+            }
+
+            // Prevent typing beyond 12 digits
+            if (value.length >= 12) {
                 e.preventDefault();
             }
         });
