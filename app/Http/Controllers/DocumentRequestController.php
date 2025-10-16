@@ -25,7 +25,7 @@ class DocumentRequestController extends Controller
     // READ FUNCTIONS
     // ============================
 
-    public function index()
+    public function index(Request $request)
     {
         $PermissionPending = PermissionRoleModel::getPermission('completed', Auth::user()->role_id);
         if (empty($PermissionPending)) {
@@ -35,12 +35,19 @@ class DocumentRequestController extends Controller
         $data = PermissionRoleModel::getPermission('editCompleted', Auth::user()->role_id);
         $data1 = PermissionRoleModel::getPermission('deleteCompleted', Auth::user()->role_id);
 
-        $totalCount = DocumentRequestModel::where('status', 'For Release')->count();
+        // Prepare search options
+        $searchOptions = [
+            'search' => $request->get('search'),
+            'filter' => $request->get('filter', 'all'),
+            'sort' => $request->get('sort', 'default'),
+            'per_page' => 10
+        ];
 
-        $DocRequests = DocumentRequestModel::where('status', 'For Release')
-            ->with('claimer', 'studentInformation')
-            ->orderBy('req_no', 'asc')
-            ->paginate(10);
+        // Get document requests with search/filter/sort
+        $DocRequests = DocumentRequestModel::getDocumentRequests('For Release', $searchOptions);
+
+        // Get total count (unfiltered)
+        $totalCount = DocumentRequestModel::getStatusCount('For Release');
 
         return view('requestTables.completed.completed', [
             'DocRequests' => $DocRequests,
