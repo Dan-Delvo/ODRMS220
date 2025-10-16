@@ -15,15 +15,71 @@ use App\Models\DocumentsModel;
 
 class ClaimedDocumentController extends Controller
 {
-    public function index()
-    {
-        $totalCount = DocumentRequestModel::where('status', 'Claimed')->count();
-        $DocRequests = DocumentRequestModel::where('status', 'Claimed')
+    public function index(Request $request){
+        // Start the base query for Claimed documents
+        $query = DocumentRequestModel::where('status', 'Claimed')
             ->with('claimer')
             ->with('studentInformation')
-            ->with('documents')
-            ->orderBy('claimed_date', 'desc')
-            ->paginate(10);
+            ->with('documents');
+
+        // --- 1. Apply Search and Filter ---
+        if ($request->filled('search')) {
+            $searchTerm = strtolower($request->input('search'));
+            $filterBy = $request->input('filter_by', 'all');
+
+            $query->where(function ($q) use ($searchTerm, $filterBy) {
+
+                // Search logic: uses OR conditions for 'all', otherwise filters to one column
+                if ($filterBy === 'all' || $filterBy === 'req-no') {
+                    $q->orWhere('req_no', 'like', "%{$searchTerm}%");
+                }
+                if ($filterBy === 'all' || $filterBy === 'school') {
+                    $q->orWhere('request_schl_entity', 'like', "%{$searchTerm}%");
+                }
+
+                // Search related models (requires joins or eager loading logic like orWhereHas)
+                if ($filterBy === 'all' || $filterBy === 'student') {
+                    $q->orWhereHas('studentInformation', function ($sq) use ($searchTerm) {
+                        // Assuming full_name is the correct field in studentInformation
+                // Use double quotes for the PHP string and single quotes for the SQL function
+                $sq->whereRaw("LOWER(CONCAT(FirstName, ' ', LastName)) LIKE ?", ["%{$searchTerm}%"]);
+                 });
+                }
+                if ($filterBy === 'all' || $filterBy === 'document') {
+                    $q->orWhereHas('documents', function ($dq) use ($searchTerm) {
+                        // Assuming DocType is the correct field in documents
+                        $dq->whereRaw('LOWER(DocType) LIKE ?', ["%{$searchTerm}%"]);
+                    });
+                }
+                if ($filterBy === 'all' || $filterBy === 'claimer') {
+                    $q->orWhereHas('claimer', function ($cq) use ($searchTerm) {
+                        // Search first name, last name, or combined name in claimer
+                        $cq->whereRaw('LOWER(Fname) LIKE ?', ["%{$searchTerm}%"])
+                        ->orWhereRaw('LOWER(Lname) LIKE ?', ["%{$searchTerm}%"])
+                        ->orWhereRaw("LOWER(CONCAT(Fname, ' ', Lname)) LIKE ?", ["%{$searchTerm}%"]);
+                    });
+                }
+            });
+        }
+
+
+        // --- 2. Apply Sorting ---
+        $sortBy = $request->input('sort', 'default');
+        if ($sortBy === 'asc') {
+            $query->orderBy('req_no', 'asc');
+        } elseif ($sortBy === 'req-desc') {
+            $query->orderBy('desc', 'desc');
+        } else {
+            // Default sort (claimed_date, desc)
+            $query->orderBy('req_no', 'desc');
+        }
+
+        // --- 3. Get Total Count (Only of the base "Claimed" status) ---
+        // If you want the count of the *filtered* results, you must use $query->count() before pagination, but this is usually simpler:
+        $totalCount = DocumentRequestModel::where('status', 'Claimed')->count();
+
+        // --- 4. Paginate the filtered and sorted results ---
+        $DocRequests = $query->paginate(10)->appends($request->except('page'));
 
         return view('requestTables.claimed.claimed', [
             'DocRequests' => $DocRequests,
