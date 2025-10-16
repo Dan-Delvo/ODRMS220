@@ -137,8 +137,6 @@
                             <th>Student</th>
                             <th>Doc</th>
                             <th>School</th>
-                            <th>Via</th>
-                            <th>Rel Mode</th>
                             <th>Claimer</th>
                             <th>Contact</th>
                             <th>Remarks</th>
@@ -146,7 +144,6 @@
                             <th>App Date</th>
                             <th>Rel Date</th>
                             <th>Claimed Date</th>
-                            <th>Claimed Time</th>
                             <th>Action</th>
                         </tr>
                     </thead>
@@ -157,8 +154,6 @@
                             <td>{{ strtoupper(optional($item->studentInformation)->full_name) }}</td>
                             <td>{{ $item->documents->DocType }}</td>
                             <td>{{ $item->request_schl_entity }}</td>
-                            <td>{{ $item->request_mode }}</td>
-                            <td>{{ $item->release_mode }}</td>
                             <td>{{ ($item->claimer->Fname ?? '') . ' ' . ($item->claimer->Lname ?? '') }}</td>
                             <td>{{ $item->claimer->contact_no ?? 'N/A' }}</td>
                             <td>{{ $item->remarks }}</td>
@@ -172,15 +167,6 @@
                                     </span>
                                 @else
                                     <span class="badge bg-secondary text-white">Not Claimed</span>
-                                @endif
-                            </td>
-                            <td>
-                                @if($item->claimed_time)
-                                    <span class="badge bg-success text-white">
-                                        {{ \Carbon\Carbon::parse($item->claimed_time)->format('h:i A') }}
-                                    </span>
-                                @else
-                                    <span class="badge bg-secondary text-white">--:-- --</span>
                                 @endif
                             </td>
                             <td class="text-nowrap">

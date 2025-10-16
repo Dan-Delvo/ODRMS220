@@ -14,7 +14,7 @@
     </div>
     <div class="col-md-6 text-end">
         <h1 class="mt-4 text-dark">
-            <span class="badge" style="background-color:#1f2937; font-size: 2rem;">Total Declined: {{ $totalCount }}</span>
+            <span class="badge" style="background-color:#1f2937; font-size: 2rem;">Total Declined: {{ $DocRequests->total() }}</span>
         </h1>
     </div>
 </div>
@@ -35,81 +35,115 @@
         @endif
 
         <div class="card shadow-lg border-0 rounded-lg mt-3">
+            {{-- START: Updated Card Header with Search/Filter Controls --}}
             <div class="card-header text-white d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center" style="background-color: #1f2937;">
                 <h5 class="mb-2 mb-md-0">Declined Document Requests</h5>
 
-                <!-- Search Bar -->
-                <div class="search-container d-flex gap-2 mt-2 mt-md-0">
-                    <div class="input-group" style="width: 300px;">
-                        <input type="text" id="searchInput" class="form-control form-control-sm" placeholder="Search requests..." style="border-radius: 0.375rem 0 0 0.375rem;">
-                        <button class="btn btn-outline-light btn-sm" type="button" id="clearSearch" title="Clear search">
-                            <i class="fas fa-times"></i>
+                {{-- Search/Filter Form - Targeting the current route --}}
+                <form method="GET" action="{{ url()->current() }}" id="searchForm">
+                    <div class="d-flex gap-2 mt-2 mt-md-0 flex-wrap" id="tableControls">
+                        {{-- Search Input --}}
+                        <div class="input-group" style="width: 300px;">
+                            <input type="text"
+                                   name="search"
+                                   id="searchInput"
+                                   class="form-control form-control-sm"
+                                   placeholder="Search requests..."
+                                   value="{{ request('search') }}"
+                                   style="border-radius: 0.375rem 0 0 0.375rem;">
+                            <button class="btn btn-outline-light btn-sm"
+                                    type="button"
+                                    id="clearSearch"
+                                    title="Clear search">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+
+                        {{-- Filter Dropdown (Now a select element) --}}
+                        <select name="filter" id="filterSelect" class="form-select form-select-sm" style="width: auto;">
+                            <option value="all" {{ request('filter') == 'all' ? 'selected' : '' }}>All Fields</option>
+                            <option value="student" {{ request('filter') == 'student' ? 'selected' : '' }}>Student Name</option>
+                            <option value="document" {{ request('filter') == 'document' ? 'selected' : '' }}>Document Type</option>
+                            <option value="school" {{ request('filter') == 'school' ? 'selected' : '' }}>School/Entity</option>
+                            <option value="reqno" {{ request('filter') == 'reqno' ? 'selected' : '' }}>Request No.</option>
+                            <option value="status" {{ request('filter') == 'status' ? 'selected' : '' }}>Status</option>
+                        </select>
+
+                        {{-- Sort Dropdown (Now a select element) --}}
+                        <select name="sort" id="sortSelect" class="form-select form-select-sm" style="width: auto;">
+                            <option value="default" {{ request('sort') == 'default' ? 'selected' : '' }}>Default Order</option>
+                            <option value="asc" {{ request('sort') == 'asc' ? 'selected' : '' }}>Req No. (A-Z)</option>
+                            <option value="desc" {{ request('sort') == 'desc' ? 'selected' : '' }}>Req No. (Z-A)</option>
+                        </select>
+
+                        {{-- Search Button --}}
+                        <button type="submit" class="btn btn-light btn-sm">
+                            <i class="fas fa-search"></i> Search
                         </button>
                     </div>
-                    <div class="dropdown">
-                        <button class="btn btn-outline-light btn-sm dropdown-toggle" type="button" id="filterDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-                            Filter
-                        </button>
-                        <ul class="dropdown-menu" aria-labelledby="filterDropdown">
-                            <li><a class="dropdown-item filter-option" href="#" data-filter="all">All Records</a></li>
-                            <li>
-                                <hr class="dropdown-divider">
-                            </li>
-                            <li><a class="dropdown-item filter-option" href="#" data-filter="student">Student Name</a></li>
-                            <li><a class="dropdown-item filter-option" href="#" data-filter="document">Document Type</a></li>
-                            <li><a class="dropdown-item filter-option" href="#" data-filter="school">School/Entity</a></li>
-                            <li><a class="dropdown-item filter-option" href="#" data-filter="reqno">Request No.</a></li>
-                            <li><a class="dropdown-item filter-option" href="#" data-filter="status">Status</a></li>
-                        </ul>
-                    </div>
-                    <div class="dropdown">
-                        <button class="btn btn-outline-light btn-sm dropdown-toggle" type="button" id="sortDropdown" data-bs-toggle="dropdown" aria-expanded="false" title="Sort by Request Number">
-                            <i class="fas fa-sort me-1"></i>Sort
-                        </button>
-                        <ul class="dropdown-menu" aria-labelledby="sortDropdown">
-                            <li><a class="dropdown-item sort-option" href="#" data-sort="default">Default Order</a></li>
-                            <li>
-                                <hr class="dropdown-divider">
-                            </li>
-                            <li><a class="dropdown-item sort-option" href="#" data-sort="req-asc">
-                                    <i class="fas fa-sort-numeric-down me-2"></i>Req No. (A-Z)
-                                </a></li>
-                            <li><a class="dropdown-item sort-option" href="#" data-sort="req-desc">
-                                    <i class="fas fa-sort-numeric-up me-2"></i>Req No. (Z-A)
-                                </a></li>
-                        </ul>
-                    </div>
-                </div>
+                </form>
             </div>
+            {{-- END: Updated Card Header with Search/Filter Controls --}}
 
             <div class="card-body bg-light">
+                {{-- Search Info Banner - Copied from pending.blade.php --}}
+                @if(request('search') || request('filter') != 'all' || request('sort') != 'default')
+                <div class="alert alert-info mb-3 py-2">
+                    <small>
+                        <i class="fas fa-search me-1"></i>
+                        @if(request('search'))
+                            Showing results for: <strong>"{{ request('search') }}"</strong>
+                        @else
+                            Showing all records
+                        @endif
+                        @if(request('filter') != 'all')
+                            filtered by <strong>{{ ucfirst(request('filter')) }}</strong>
+                        @endif
+                        @if(request('sort') != 'default')
+                            - Sorted by <strong>Request No. ({{ request('sort') == 'asc' ? 'A-Z' : 'Z-A' }})</strong>
+                        @endif
+                        {{-- Assuming the route is 'declined.index' or similar for clearing --}}
+                        <a href="{{ url()->current() }}" class="btn btn-sm btn-outline-info ms-2">Clear All</a>
+                    </small>
+                </div>
+                @endif
+
                 <div id="spinner" class="text-center my-4" style="display: none;">
                     <div class="spinner-border text-primary" role="status">
                         <span class="visually-hidden">Loading...</span>
                     </div>
                 </div>
 
-                <!-- Search Results Info -->
-                <div id="searchInfo" class="mb-3" style="display: none;">
-                    <div class="alert alert-info mb-2 py-2">
-                        <small>
-                            <i class="fas fa-search me-1"></i>
-                            <span id="searchResultText">Showing all records</span>
-                            <span id="searchQuery" class="fw-bold"></span>
-                        </small>
-                    </div>
-                </div>
+                {{-- Removed old searchInfo div --}}
 
                 <div class="table-responsive" id="requestTable">
                     @if($DocRequests->isEmpty())
                     <div class="alert alert-warning text-center my-3">
-                        No declined document requests found.
+                        @if(request('search'))
+                            No declined document requests found matching your search criteria.
+                            <a href="{{ url()->current() }}" class="btn btn-sm btn-outline-warning ms-2">Clear Search</a>
+                        @else
+                            No declined document requests found.
+                        @endif
                     </div>
                     @else
                     <table class="table table-sm table-bordered table-hover align-middle text-nowrap" style="font-size: 0.85rem;">
                         <thead class="table-dark">
                             <tr>
-                                <th title="Request Number">Req #</th>
+                                {{-- Updated Req # to include server-side sort link --}}
+                                <th title="Request Number">
+                                    <a href="{{ url()->current() . '?' . http_build_query(array_merge(request()->except(['sort', 'page']), ['sort' => request('sort') == 'asc' ? 'desc' : 'asc'])) }}"
+                                       class="text-white text-decoration-none">
+                                        Req #
+                                        @if(request('sort') == 'asc')
+                                            <i class="fas fa-sort-up"></i>
+                                        @elseif(request('sort') == 'desc')
+                                            <i class="fas fa-sort-down"></i>
+                                        @else
+                                            <i class="fas fa-sort"></i>
+                                        @endif
+                                    </a>
+                                </th>
                                 <th>Student</th>
                                 <th>Doc</th>
                                 <th title="School/Entity">School</th>
@@ -118,27 +152,12 @@
                                 <th>Remarks</th>
                                 <th>Status</th>
                                 <th title="Request Date">Req Date</th>
-                                <th title="Approved Date">App Date</th>
-                                <th title="For Release Date">Rel Date</th>
-                                <th title="Claimed Date">Clm Date</th>
                                 <th>Action</th>
                             </tr>
                         </thead>
                         <tbody id="tableBody">
                             @foreach ($DocRequests as $item)
-                            <tr class="table-row"
-                                data-req-no="{{ strtolower($item->req_no) }}"
-                                data-student="{{ strtolower($item->studentInformation->full_name) }}"
-                                data-document="{{ strtolower($item->documents->DocType) }}"
-                                data-school="{{ strtolower($item->request_schl_entity) }}"
-                                data-via="{{ strtolower($item->request_mode) }}"
-                                data-release-mode="{{ strtolower($item->release_mode) }}"
-                                data-remarks="{{ strtolower($item->remarks) }}"
-                                data-status="{{ strtolower($item->status) }}"
-                                data-request-date="{{ $item->request_date }}"
-                                data-approve-date="{{ $item->approve_date }}"
-                                data-release-date="{{ $item->forRelease_date }}"
-                                data-claimed-date="{{ $item->claimed_date }}">
+                            <tr class="table-row">
                                 <td>{{ $item->req_no }}</td>
                                 <td>{{ $item->studentInformation->full_name }}</td>
                                 <td>{{ $item->documents->DocType }}</td>
@@ -148,14 +167,13 @@
                                 <td>{{ $item->remarks }}</td>
                                 <td><span class="badge bg-danger text-white px-2 py-1">{{ $item->status }}</span></td>
                                 <td>{{ $item->request_date }}</td>
-                                <td>{{ $item->approve_date }}</td>
-                                <td>{{ $item->forRelease_date }}</td>
-                                <td>{{ $item->claimed_date }}</td>
                                 <td class="text-nowrap">
-                                    <!-- Accept and Decline buttons moved here -->
+                                    {{-- KEPT ACTION BUTTONS (DELETE & ACCEPT/REACCEPT) --}}
                                     <form action="{{ route('tables.destroy', $item->id) }}" method="POST" class="d-inline decline-form" data-swal-loading="true" data-swal-delete="true">
                                         @csrf
                                         @method('DELETE')
+                                        {{-- Add hidden input for reason, needed for the original JS logic --}}
+                                        <input type="hidden" name="decline_reason" class="decline-reason" value="">
                                         <button type="submit" class="btn btn-sm btn-danger mb-1 decline-btn">Delete</button>
                                     </form>
 
@@ -180,23 +198,20 @@
                         </tbody>
                     </table>
 
-                    <!-- No Results Message -->
-                    <div id="noResults" class="alert alert-warning text-center my-3" style="display: none;">
-                        <i class="fas fa-search me-2"></i>
-                        No records found matching your search criteria.
-                        <button class="btn btn-sm btn-outline-warning ms-2" onclick="clearSearch()">Clear Search</button>
-                    </div>
+                    {{-- No Results Message - Removed old client-side version --}}
+
                     @endif
                 </div>
 
                 <div class="d-flex flex-column justify-content-center align-items-center mt-3" id="paginationContainer">
-                    {{ $DocRequests->links() }}
+                    {{-- Pagination links must include existing query parameters --}}
+                    {{ $DocRequests->appends(request()->query())->links() }}
                     <small class="text-muted">
                         Showing {{ $DocRequests->firstItem() }} - {{ $DocRequests->lastItem() }} of {{ $DocRequests->total() }}
                     </small>
                 </div>
 
-                <!-- Receipt Modals -->
+                {{-- Modals (Receipt & Document) --}}
                 @foreach ($DocRequests as $item)
                 @if ($item->receipt)
                 <div class="modal fade" id="receiptModal{{ $item->id }}" tabindex="-1" aria-labelledby="receiptModalLabel{{ $item->id }}" aria-hidden="true">
@@ -268,7 +283,6 @@
                             <div class="modal-body bg-light">
                                 <div class="row g-3">
 
-                                    <!-- Old File -->
                                     <div class="col-md-6">
                                         <div class="border rounded bg-white shadow-sm h-100 d-flex flex-column">
                                             <div class="p-2 text-center border-bottom" style="background:#f8fafc;">
@@ -281,6 +295,7 @@
                                                 @endphp
 
                                                 @if($oldPath)
+                                                {{-- Assuming file-preview partial exists and works --}}
                                                 @include('layout.partials.file-preview', ['filePath' => $oldPath, 'ext' => $oldExt, 'id' => 'old_'.$item->id])
                                                 @else
                                                 <p class="text-muted">No old file available</p>
@@ -289,7 +304,6 @@
                                         </div>
                                     </div>
 
-                                    <!-- New File -->
                                     <div class="col-md-6">
                                         <div class="border rounded bg-white shadow-sm h-100 d-flex flex-column">
                                             <div class="p-2 text-center border-bottom" style="background:#f8fafc;">
@@ -302,12 +316,12 @@
                                                 @endphp
 
                                                 @if($newPath)
+                                                {{-- Assuming file-preview partial exists and works --}}
                                                 @include('layout.partials.file-preview', ['filePath' => $newPath, 'ext' => $newExt, 'id' => 'new_'.$item->id])
                                                 @else
                                                 <div class="text-center text-muted">
                                                     <i class="fas fa-file text-secondary" style="font-size:3rem;"></i>
                                                     <p class="mt-2">No new file uploaded</p>
-
                                                 </div>
                                                 @endif
                                             </div>
@@ -327,22 +341,17 @@
                     </div>
                 </div>
                 @endif
-
-
                 @endforeach
             </div>
         </div>
     </div>
 </div>
 
-<!-- Confirmation Modal -->
-
-
-<!-- Reason Modal -->
+{{-- Reason Modal (For Delete/Decline) - KEPT ORIGINAL LOGIC --}}
 <div class="modal fade" id="reasonModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
-            <div class="modal-header d-flex justify-content-start" style="background-color: #1f2937;">>
+            <div class="modal-header d-flex justify-content-start" style="background-color: #1f2937;">
                 <h5 class="modal-title" style="color: #1dd3b0;">Decline Reason</h5>
             </div>
             <div class="modal-body">
@@ -357,29 +366,32 @@
 </div>
 
 
-{{-- Enhanced JavaScript with loading spinners and search functionality --}}
+{{-- JavaScript - Updated for server-side search/sort --}}
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         let targetForm;
-        let currentSort = 'default';
 
         const reasonModal = new bootstrap.Modal(document.getElementById('reasonModal'));
-        const tableBody = document.getElementById('tableBody');
-        const originalOrder = Array.from(document.querySelectorAll('.table-row'));
+        const searchForm = document.getElementById('searchForm');
+        const searchInput = document.getElementById('searchInput');
+        const clearSearchBtn = document.getElementById('clearSearch');
+        const filterSelect = document.getElementById('filterSelect');
+        const sortSelect = document.getElementById('sortSelect');
 
-
-        // Step 1: Click decline → open reason modal
+        // Step 1: Click decline → open reason modal (Original Logic)
         document.querySelectorAll('.decline-btn').forEach(function(btn) {
-            btn.addEventListener('click', function() {
-                targetForm = btn.closest('form');
-                document.getElementById('reasonInput').value = ''; // clear previous
-                reasonModal.show();
-            });
+            // Only attach event listener if the form is the DELETE form (the old logic used this for 'Delete')
+            if (btn.closest('form').querySelector('input[name="_method"][value="DELETE"]')) {
+                btn.addEventListener('click', function(e) {
+                    e.preventDefault(); // Prevent immediate form submission
+                    targetForm = btn.closest('form');
+                    document.getElementById('reasonInput').value = ''; // clear previous
+                    reasonModal.show();
+                });
+            }
         });
 
-
-
-        // Step 2: After entering reason → show SweetAlert confirmation
+        // Step 2: After entering reason → show SweetAlert confirmation (Original Logic)
         document.getElementById('proceedToConfirmBtn').addEventListener('click', function() {
             const reason = document.getElementById('reasonInput').value.trim();
 
@@ -392,29 +404,91 @@
                 return;
             }
 
-            targetForm.querySelector('.decline-reason').value = reason;
+            // Note: The original decline logic was a bit confusing as it used 'decline-reason' for a 'DELETE' form.
+            // We set the reason here, assuming the backend can read it for logging/auditing the deletion.
+            const reasonInputHidden = targetForm.querySelector('.decline-reason');
+            if (reasonInputHidden) {
+                 reasonInputHidden.value = reason;
+            } else {
+                 // Fallback if the hidden input isn't found (though it was added above)
+                 const newInput = document.createElement('input');
+                 newInput.type = 'hidden';
+                 newInput.name = 'decline_reason'; // Reusing old logic name
+                 newInput.value = reason;
+                 targetForm.appendChild(newInput);
+            }
 
             reasonModal.hide();
 
             Swal.fire({
                 icon: 'warning',
                 title: 'Are you sure?',
-                html: `You are about to decline with reason:<br><strong>${reason}</strong><br>You won't be able to revert this!`,
+                html: `You are about to delete this request with reason:<br><strong>${reason}</strong><br>You won't be able to revert this!`,
                 showCancelButton: true,
-                confirmButtonColor: '#1dd3b0',
+                confirmButtonColor: '#dc3545', // Changed to match Delete color
                 cancelButtonColor: '#1f2937',
-                confirmButtonText: 'Confirm',
+                confirmButtonText: 'Confirm Delete',
                 cancelButtonText: 'Cancel'
             }).then((result) => {
                 if (result.isConfirmed) {
+                    // Disable all buttons in the row and submit
+                    const declineBtn = targetForm.querySelector(".decline-btn");
+                    declineBtn.disabled = true;
+                    declineBtn.innerHTML = `
+                        <span class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"></span>
+                        Deleting...
+                    `;
+                    const row = targetForm.closest('tr');
+                    if (row) {
+                        row.querySelectorAll('button').forEach(b => {
+                            if (b !== declineBtn) {
+                                b.disabled = true;
+                                b.style.opacity = '0.5';
+                            }
+                        });
+                    }
+
                     targetForm.submit();
                 }
             });
         });
-    });
 
-    document.addEventListener("DOMContentLoaded", function() {
-        // Initial page load spinner
+        // --- New Search/Filter/Sort Logic from pending.blade.php ---
+
+        // Auto-submit form on filter/sort change
+        filterSelect?.addEventListener('change', function() {
+            searchForm.submit();
+        });
+
+        sortSelect?.addEventListener('change', function() {
+            searchForm.submit();
+        });
+
+        // Clear search button (redirects to clear all params)
+        clearSearchBtn?.addEventListener('click', function() {
+            window.location.href = '{{ url()->current() }}';
+        });
+
+        // Auto-search with debounce (simplified to manual search on form submit for consistency)
+        // Kept the keydown events for user experience
+        let searchTimeout = null;
+        searchInput?.addEventListener('input', function() {
+             clearTimeout(searchTimeout);
+             // Submits if 3+ characters are typed or if the input is cleared
+             searchTimeout = setTimeout(() => {
+                 if (searchInput.value.length >= 3 || searchInput.value.length === 0) {
+                     searchForm.submit();
+                 }
+             }, 500);
+        });
+
+        // Show loading spinner on form submit
+        searchForm?.addEventListener('submit', function() {
+            document.getElementById('spinner').style.display = 'block';
+            document.getElementById('requestTable').style.opacity = '0.5';
+        });
+
+        // Initial page load spinner (kept from original declined.blade.php)
         const spinner = document.getElementById("spinner");
         const table = document.getElementById("requestTable");
 
@@ -426,207 +500,8 @@
             table.style.display = "block";
         }, 600);
 
-        // Document modal loading functionality
-        document.querySelectorAll('[id^="documentModal"]').forEach(modal => {
-            modal.addEventListener('show.bs.modal', function() {
-                const modalId = this.id.replace('documentModal', '');
-                const loader = document.getElementById('documentLoader' + modalId);
-                const img = this.querySelector('img');
-
-                if (loader && img) {
-                    loader.style.display = 'block';
-
-                    // Hide loader when image loads
-                    img.addEventListener('load', function() {
-                        loader.style.display = 'none';
-                    });
-
-                    // Hide loader on error too
-                    img.addEventListener('error', function() {
-                        loader.style.display = 'none';
-                    });
-                }
-            });
-        });
-
-        // Search functionality
-        const searchInput = document.getElementById('searchInput');
-        const clearSearchBtn = document.getElementById('clearSearch');
-        const searchInfo = document.getElementById('searchInfo');
-        const searchResultText = document.getElementById('searchResultText');
-        const searchQuery = document.getElementById('searchQuery');
-        const noResults = document.getElementById('noResults');
-        const tableRows = document.querySelectorAll('.table-row');
-        const paginationContainer = document.getElementById('paginationContainer');
-
-        let currentFilter = 'all';
-        let totalRows = tableRows.length;
-
-        // Search input event listener
-        searchInput.addEventListener('input', function() {
-            performSearch();
-        });
-
-        // Clear search button
-        clearSearchBtn.addEventListener('click', function() {
-            clearSearch();
-        });
-
-        // Filter dropdown options
-        document.querySelectorAll('.filter-option').forEach(option => {
-            option.addEventListener('click', function(e) {
-                e.preventDefault();
-                currentFilter = this.getAttribute('data-filter');
-                document.getElementById('filterDropdown').textContent = this.textContent;
-                performSearch();
-            });
-        });
-
-        document.querySelectorAll('.sort-option').forEach(option => {
-            option.addEventListener('click', function(e) {
-                e.preventDefault();
-                currentSort = this.getAttribute('data-sort');
-                document.getElementById('sortDropdown').innerHTML = `<i class="fas fa-sort me-1"></i>${this.textContent}`;
-                performSort();
-                performSearch(); // Re-apply search after sorting
-            });
-        });
-
-
-        function performSort() {
-            const rows = Array.from(tableBody.querySelectorAll('.table-row'));
-
-            let sortedRows;
-
-            switch (currentSort) {
-                case 'req-asc':
-                    sortedRows = rows.sort((a, b) => {
-                        const reqA = a.getAttribute('data-req-no').toLowerCase();
-                        const reqB = b.getAttribute('data-req-no').toLowerCase();
-                        return reqA.localeCompare(reqB);
-                    });
-                    break;
-
-                case 'req-desc':
-                    sortedRows = rows.sort((a, b) => {
-                        const reqA = a.getAttribute('data-req-no').toLowerCase();
-                        const reqB = b.getAttribute('data-req-no').toLowerCase();
-                        return reqB.localeCompare(reqA);
-                    });
-                    break;
-
-                case 'default':
-                default:
-                    // Restore original order
-                    sortedRows = originalOrder.slice();
-                    break;
-            }
-
-            // Clear table body and re-append sorted rows
-            tableBody.innerHTML = '';
-            sortedRows.forEach(row => tableBody.appendChild(row));
-        }
-        // Perform search function
-        function performSearch() {
-            const query = searchInput.value.toLowerCase().trim();
-            let visibleCount = 0;
-
-            tableRows.forEach(row => {
-                let shouldShow = false;
-
-                if (query === '') {
-                    shouldShow = true;
-                } else {
-                    // Search based on current filter
-                    switch (currentFilter) {
-                        case 'all':
-                            shouldShow = searchAllColumns(row, query);
-                            break;
-                        case 'student':
-                            shouldShow = row.getAttribute('data-student').includes(query);
-                            break;
-                        case 'document':
-                            shouldShow = row.getAttribute('data-document').includes(query);
-                            break;
-                        case 'school':
-                            shouldShow = row.getAttribute('data-school').includes(query);
-                            break;
-                        case 'reqno':
-                            shouldShow = row.getAttribute('data-req-no').includes(query);
-                            break;
-                        case 'status':
-                            shouldShow = row.getAttribute('data-status').includes(query);
-                            break;
-                        default:
-                            shouldShow = searchAllColumns(row, query);
-                    }
-                }
-
-                if (shouldShow) {
-                    row.style.display = '';
-                    visibleCount++;
-                } else {
-                    row.style.display = 'none';
-                }
-            });
-
-            // Update search info and results
-            updateSearchInfo(query, visibleCount);
-
-            // Hide pagination when searching
-            if (query !== '') {
-                paginationContainer.style.display = 'none';
-            } else {
-                paginationContainer.style.display = 'block';
-            }
-        }
-
-        // Search all columns function
-        function searchAllColumns(row, query) {
-            const searchableAttributes = [
-                'data-req-no', 'data-student', 'data-document', 'data-school',
-                'data-via', 'data-release-mode', 'data-remarks', 'data-status'
-            ];
-
-            return searchableAttributes.some(attr =>
-                row.getAttribute(attr).includes(query)
-            );
-        }
-
-        // Update search info
-        function updateSearchInfo(query, visibleCount) {
-            if (query === '') {
-                searchInfo.style.display = 'none';
-                noResults.style.display = 'none';
-            } else {
-                searchInfo.style.display = 'block';
-                searchQuery.textContent = `"${query}"`;
-
-                if (visibleCount === 0) {
-                    searchResultText.textContent = 'No records found for';
-                    noResults.style.display = 'block';
-                } else {
-                    searchResultText.textContent = `Found ${visibleCount} of ${totalRows} records for`;
-                    noResults.style.display = 'none';
-                }
-            }
-        }
-
-        // Clear search function
-        window.clearSearch = function() {
-            searchInput.value = '';
-            currentFilter = 'all';
-            currentSort = 'default'; // Add this line
-            document.getElementById('filterDropdown').textContent = 'Filter';
-            document.getElementById('sortDropdown').innerHTML = '<i class="fas fa-sort me-1"></i>Sort'; // Add this line
-            performSort(); // Add this line to reset to original order
-            performSearch();
-            searchInput.focus();
-        }
-
-        // Handle Accept button clicks with loading spinner
+        // --- Kept Accept Form Logic with Spinner ---
         const acceptForms = document.querySelectorAll('.accept-form');
-
         acceptForms.forEach(form => {
             let manualSubmit = false;
 
@@ -643,7 +518,7 @@
                         Processing...
                     `;
 
-                    const row = form.closest('tr') || form.closest('.modal-header');
+                    const row = form.closest('tr');
                     if (row) {
                         const allButtons = row.querySelectorAll('button, a.btn');
                         allButtons.forEach(btn => {
@@ -663,72 +538,37 @@
             });
         });
 
-        // Handle Decline button clicks with loading spinner
-        const declineForms = document.querySelectorAll(".decline-form");
-        declineForms.forEach(form => {
-            form.addEventListener("submit", function(e) {
-                e.preventDefault();
 
-                const declineBtn = form.querySelector(".decline-btn");
-
-                // Show confirmation dialog
-                if (confirm("Are you sure you want to decline this request?")) {
-                    // Disable button and show spinner
-                    declineBtn.disabled = true;
-                    declineBtn.innerHTML = `
-                        <span class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"></span>
-                        Declining...
-                    `;
-
-                    // Optional: Disable other buttons in the same row
-                    const row = form.closest('tr');
-                    const allButtons = row.querySelectorAll('button, a.btn');
-                    allButtons.forEach(btn => {
-                        if (btn !== declineBtn) {
-                            btn.disabled = true;
-                            btn.style.opacity = '0.5';
-                        }
-                    });
-
-                    // Submit form after a brief delay
-                    setTimeout(() => {
-                        form.submit();
-                    }, 200);
-                }
-            });
-        });
-
-        // Handle potential form submission errors (optional)
-        window.addEventListener('pageshow', function(event) {
-            // Re-enable buttons if user navigates back
-            const allButtons = document.querySelectorAll('.accept-btn, .decline-btn');
-            allButtons.forEach(btn => {
-                btn.disabled = false;
-                btn.style.opacity = '1';
-
-                if (btn.classList.contains('accept-btn')) {
-                    btn.innerHTML = btn.getAttribute('data-original-text') || 'Accept';
-                } else if (btn.classList.contains('decline-btn')) {
-                    btn.innerHTML = 'Decline';
-                }
-            });
-        });
-
-        // Add keyboard shortcuts
+        // Add keyboard shortcuts (copied from original declined.blade.php)
         document.addEventListener('keydown', function(e) {
             // Ctrl/Cmd + F to focus search
             if ((e.ctrlKey || e.metaKey) && e.key === 'f') {
                 e.preventDefault();
                 searchInput.focus();
             }
-            // Escape to clear search
+            // Escape to clear search (redirects to clear all params)
             if (e.key === 'Escape' && searchInput.value !== '') {
-                clearSearch();
+                 window.location.href = '{{ url()->current() }}';
+            }
+        });
+
+        // Re-enable buttons on page show (back button)
+        window.addEventListener('pageshow', function(event) {
+            if (event.persisted) {
+                 document.querySelectorAll('.accept-btn').forEach(btn => {
+                    btn.disabled = false;
+                    btn.innerHTML = btn.getAttribute('data-original-text') || 'Accept';
+                });
+                document.querySelectorAll('.decline-btn').forEach(btn => {
+                    btn.disabled = false;
+                    btn.innerHTML = 'Delete';
+                });
             }
         });
     });
 </script>
 
+{{-- Kept original styling, adapting it slightly for the new controls --}}
 <style>
     /* Additional styling for better loading states */
     .btn:disabled {
@@ -751,27 +591,23 @@
         min-width: 70px;
     }
 
-    /* Search container styling */
-    .search-container {
-        flex-wrap: nowrap;
+    /* Search container styling - Adopted from pending.blade.php's structure */
+    #tableControls {
+        gap: 0.5rem;
     }
 
     @media (max-width: 768px) {
-        .search-container {
+        #tableControls {
             width: 100%;
             flex-wrap: wrap;
         }
 
-        .search-container .input-group {
+        #tableControls .input-group,
+        #tableControls select,
+        #tableControls button[type="submit"] {
             width: 100% !important;
             margin-bottom: 0.5rem;
         }
-    }
-
-    /* Highlight search results */
-    .table-row.highlight {
-        background-color: #fff3cd !important;
-        transition: background-color 0.3s ease;
     }
 
     /* Search input focus styling */
@@ -780,57 +616,12 @@
         box-shadow: 0 0 0 0.2rem rgba(29, 211, 176, 0.25);
     }
 
-    /* Filter dropdown styling */
-    .dropdown-menu {
-        max-height: 200px;
-        overflow-y: auto;
+    /* Filter/Sort select focus styling */
+    .form-select:focus {
+        border-color: #1dd3b0;
+        box-shadow: 0 0 0 0.2rem rgba(29, 211, 176, 0.25);
     }
 
-    .filter-option:hover {
-        background-color: #f8f9fa;
-    }
-
-    .filter-option.active {
-        background-color: #1dd3b0;
-        color: white;
-    }
-
-    /* Image modal specific styles */
-    .modal-lg {
-        max-width: 900px;
-    }
-
-    .modal-body img {
-        border-radius: 0.375rem;
-    }
-
-    /* Image loading state */
-    .position-relative .spinner-border {
-        z-index: 10;
-    }
-
-    /* Responsive image modal */
-    @media (max-width: 768px) {
-        .modal-lg {
-            max-width: 95%;
-            margin: 1.75rem auto;
-        }
-
-        .modal-body img {
-            max-height: 50vh !important;
-        }
-    }
-
-    /* Image button styling */
-    .btn-primary {
-        background-color: #007bff;
-        border-color: #007bff;
-    }
-
-    .btn-primary:hover {
-        background-color: #0056b3;
-        border-color: #0056b3;
-    }
 
     /* Action column styling for better button layout */
     .table td.text-nowrap {
@@ -861,6 +652,29 @@
             display: block !important;
             width: 100%;
         }
+    }
+
+    /* Explicit styling for table layout to prevent horizontal issues */
+    .table-responsive {
+        overflow-x: auto;
+    }
+
+    .table {
+        width: max-content;
+        min-width: 100%;
+        table-layout: auto;
+    }
+
+    .table th,
+    .table td {
+        white-space: nowrap;
+    }
+
+    /* Make Remarks column allow wrapping */
+    .table th:nth-child(7),
+    .table td:nth-child(7) {
+        white-space: normal;
+        min-width: 100px;
     }
 </style>
 

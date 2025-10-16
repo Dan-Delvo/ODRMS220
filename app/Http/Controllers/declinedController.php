@@ -17,19 +17,26 @@ use Carbon\Carbon;
 class declinedController extends Controller
 {
     //
-        public function index()
+        public function index(Request $request)
     {
         $PermissionDeclined = PermissionRoleModel::getPermission('pending', Auth::user()->role_id);
         if (empty($PermissionDeclined)) {
             abort(404);
         }
 
-        $totalCount = DocumentRequestModel::where('status', 'Declined')->count();
-        $DocRequests = DocumentRequestModel::where('status', 'Declined')
-            ->with('claimer')
-            ->with('studentInformation')
-            ->orderBy('req_no', 'asc')
-            ->paginate(10);
+        // Prepare search options
+        $searchOptions = [
+            'search' => $request->get('search'),
+            'filter' => $request->get('filter', 'all'),
+            'sort' => $request->get('sort', 'default'),
+            'per_page' => 10
+        ];
+
+        // Get document requests with search/filter/sort
+        $DocRequests = DocumentRequestModel::getDocumentRequests('Declined', $searchOptions);
+
+        // Get total count (unfiltered)
+        $totalCount = DocumentRequestModel::getStatusCount('Declined');
 
         return view('requestTables.declined.declined', [
             'DocRequests' => $DocRequests,

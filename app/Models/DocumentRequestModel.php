@@ -152,7 +152,7 @@ class DocumentRequestModel extends Model
                                 ->orWhere('request_mode', 'LIKE', "%{$searchTerm}%")
                                 ->orWhere('release_mode', 'LIKE', "%{$searchTerm}%")
                                 ->orWhereHas('studentInformation', function($sq) use ($searchTerm) {
-                                    $sq->where('full_name', 'LIKE', "%{$searchTerm}%");
+                                    $sq->where(DB::raw("CONCAT(FirstName, ' ', LastName)"), 'LIKE', "%{$searchTerm}%");
                                 })
                                 ->orWhereHas('documents', function($dq) use ($searchTerm) {
                                     $dq->where('DocType', 'LIKE', "%{$searchTerm}%");
