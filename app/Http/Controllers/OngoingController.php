@@ -22,7 +22,7 @@ class OngoingController extends Controller
         DB::connection()->getPdo()->exec("SET @current_user = " . DB::connection()->getPdo()->quote($username));
     }
 
-    public function index()
+    public function index(Request $request)
     {
         $PermissionPending = PermissionRoleModel::getPermission('ongoing', Auth::user()->role_id);
         if (empty($PermissionPending)) {
@@ -32,12 +32,19 @@ class OngoingController extends Controller
         $data = PermissionRoleModel::getPermission('editOngoing', Auth::user()->role_id);
         $data1 = PermissionRoleModel::getPermission('approveOngoing', Auth::user()->role_id);
 
-        $totalCount = DocumentRequestModel::where('status', 'Processing')->count();
-        $DocRequests = DocumentRequestModel::where('status', 'Processing')
-            ->with('claimer')
-            ->with('studentInformation')
-            ->orderBy('req_no', 'asc')
-            ->paginate(10);
+        // Prepare search options
+        $searchOptions = [
+            'search' => $request->get('search'),
+            'filter' => $request->get('filter', 'all'),
+            'sort' => $request->get('sort', 'default'),
+            'per_page' => 10
+        ];
+
+                // Get document requests with search/filter/sort
+        $DocRequests = DocumentRequestModel::getDocumentRequests('processing', $searchOptions);
+
+        // Get total count (unfiltered)
+        $totalCount = DocumentRequestModel::getStatusCount('processing');
 
         return view('requestTables.ongoing.ongoing', [
             'DocRequests' => $DocRequests,

@@ -1,5 +1,4 @@
 @extends('layout.blankpage')
-
 @section('content')
 @include('layout.partials.message')
 
@@ -129,8 +128,6 @@
                             <th>Student</th>
                             <th>Doc</th>
                             <th>School</th>
-                            <th>Via</th>
-                            <th>Rel Mode</th>
                             <th>Remarks</th>
                             <th>Status</th>
                             <th>Req Date</th>
@@ -141,11 +138,9 @@
                         @foreach ($DocRequests as $item)
                         <tr>
                             <td>{{ $item->req_no }}</td>
-                            <td>{{ optional($item->studentInformation)->full_name }}</td>
+                            <td>{{ strtoupper(optional($item->studentInformation)->full_name) }}</td>
                             <td>{{ $item->documents->DocType }}</td>
                             <td>{{ $item->request_schl_entity }}</td>
-                            <td>{{ $item->request_mode }}</td>
-                            <td>{{ $item->release_mode }}</td>
                             <td>{{ $item->remarks }}</td>
                             <td><span class="badge bg-warning text-dark">{{ $item->status }}</span></td>
                             <td>{{ $item->request_date }}</td>
