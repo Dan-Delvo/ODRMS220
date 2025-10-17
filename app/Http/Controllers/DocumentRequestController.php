@@ -134,87 +134,159 @@ class DocumentRequestController extends Controller
     public function completeRequest(Request $request, $id)
     {
         $pdo = DB::connection()->getPdo();
+        // Set user for database auditing purposes
         $pdo->exec("SET @current_user = " . $pdo->quote(Auth::check() ? Auth::user()->username : 'guest'));
+
         try {
+            // Validate incoming request: MADE CLAIMER NAME FIELDS REQUIRED
             $request->validate([
-                'claimer_first_name' => 'nullable|string|max:255',
-                'claimer_last_name'  => 'nullable|string|max:255',
+                'claimer_first_name' => 'required|string|max:255', // CRITICAL FIX: required
+                'claimer_last_name'  => 'required|string|max:255',  // CRITICAL FIX: required
                 'claimer_date'       => 'required|date|before_or_equal:today',
             ], [
+                'claimer_first_name.required'  => 'The claimer\'s first name is required.',
+                'claimer_last_name.required'   => 'The claimer\'s last name is required.',
                 'claimer_date.before_or_equal' => 'The claimed date cannot be in the future.',
             ]);
 
+            // Find the document request
             $documentRequest = DocumentRequestModel::findOrFail($id);
-            $claimer = $documentRequest->clm_claimers_id ? ClaimerModel::find($documentRequest->clm_claimers_id) : null;
 
+            // Get account and student info (assuming these relationships exist)
             $account = $documentRequest->account;
             $stud    = $documentRequest->studentInformation;
 
-            $email   = $account->email_address;
-            $name    = $stud->full_name;
-            $subject = 'Your Request is Approved and Completed!';
+            // --- CLAIMER LOGIC (REVISED) ---
+            $claimerData = [
+                'Fname'        => $request->claimer_first_name,
+                'Lname'        => $request->claimer_last_name,
+                'claimed_date' => $request->claimer_date,
+                'contact_no'   => $request->input('claimer_contact_no', 'N/A'), // Use a default if not collected in modal
+            ];
 
-            // Email
-            try {
-                Mail::send('emails.toClaimed', compact('subject', 'name'), function ($message) use ($email, $subject) {
-                    $message->to($email)->subject($subject);
-                });
-            } catch (\Exception $e) {
-                Log::error("Email failed for account {$account->id} ({$email}): " . $e->getMessage());
-            }
+            // Find or Create the Claimer based on name combination
+            $claimer = ClaimerModel::firstOrCreate([
+                'Fname' => $claimerData['Fname'],
+                'Lname' => $claimerData['Lname'],
+            ], $claimerData);
 
-            // Push Notification
-            if ($account->fcm_token) {
-                try {
-                    Http::withHeaders([
-                        'Authorization' => 'Basic os_v2_app_if32gbsxsffszlc2vzvuxojxx5v5u3kriweuqn4s2luqs6vfjt5gaoxdhoqhd6vi5w33ake2swiwgpvwudxdidn35dzpgubfyjeszsq',
-                        'accept'        => 'application/json',
-                        'content-type'  => 'application/json',
-                    ])->post('https://onesignal.com/api/v1/notifications', [
-                        'app_id'             => '4177a306-5791-4b2c-ac5a-ae6b4bb937bf',
-                        'include_player_ids' => [$account->fcm_token],
-                        'contents'           => ['en' => "{$name}, Your document request has been approved and processed."],
-                    ]);
-                } catch (\Exception $e) {
-                    Log::error("Push notification failed for account {$account->id}: " . $e->getMessage());
-                }
+            // If it already existed, make sure we update the claimed_date
+            if (!$claimer->wasRecentlyCreated) {
+                 $claimer->update(['claimed_date' => $request->claimer_date]);
             }
+            // --- END CLAIMER LOGIC ---
+
 
             // Handle claimed date + time
             $selectedDate = $request->input('claimer_date');
             $today        = now()->toDateString();
             $claimedTime  = ($selectedDate === $today) ? now()->format('H:i:s') : null;
 
+            // Update document request: CRITICAL FIX: Assign the Claimer ID
             $documentRequest->update([
-                'remarks'      => 'Claimed',
-                'status'       => 'Claimed',
-                'claimed_date' => $selectedDate,
-                'claimed_time' => $claimedTime,
+                'remarks'         => 'Claimed',
+                'status'          => 'Claimed',
+                'claimed_date'    => $selectedDate,
+                'claimed_time'    => $claimedTime,
+                'clm_claimers_id' => $claimer->id, // CRITICAL: Link the claimer to the request
             ]);
 
-            if ($claimer) {
-                $claimer->update([
-                    'Fname'        => $request->claimer_first_name,
-                    'Lname'        => $request->claimer_last_name,
-                    'contact_no'   => "09xxxxxxxxxx",
-                    'claimed_date' => $selectedDate,
-                ]);
+            Log::info("Document request {$id} marked as claimed on {$selectedDate}. Claimer ID: {$claimer->id}");
+
+            // --- NOTIFICATION LOGIC (Send Email & Push Notification) ---
+            $email   = $account->email_address;
+            $name    = $stud->full_name;
+            $subject = 'Your Request is Approved and Completed!';
+
+            // Send Email
+            try {
+                Mail::send('emails.toClaimed', compact('subject', 'name'), function ($message) use ($email, $subject) {
+                    $message->to($email)->subject($subject);
+                });
+                Log::info("Email sent successfully to {$email} for request ID: {$id}");
+            } catch (\Exception $e) {
+                Log::error("Email failed for account {$account->id} ({$email}): " . $e->getMessage());
             }
 
-            return $request->expectsJson()
-                ? response()->json(['success' => true, 'message' => 'Document marked as claimed.'])
-                : redirect('/tables')->with('Status', 'Completed Successfully');
+            // Send Push Notification
+            if ($account->fcm_token) {
+                try {
+                    $response = Http::withHeaders([
+                        // Replace with your actual authorization header
+                        'Authorization' => 'Basic os_v2_app_if32gbsxsffszlc2vzvuxojxx5v5u3kriweuqn4s2luqs6vfjt5gaoxdhoqhd6vi5w33ake2swiwgpvwudxdidn35dzpgubfyjeszsq',
+                        'accept'        => 'application/json',
+                        'content-type'  => 'application/json',
+                    ])->post('https://onesignal.com/api/v1/notifications', [
+                        'app_id'             => '4177a306-5791-4b2c-ac5a-ae6b4bb937bf', // Replace with your actual App ID
+                        'include_player_ids' => [$account->fcm_token],
+                        'contents'           => ['en' => "{$name}, Your document request has been approved and processed."],
+                    ]);
+                    Log::info("Push notification sent for request ID: {$id}. Response: " . $response->body());
+                } catch (\Exception $e) {
+                    Log::error("Push notification failed for account {$account->id}: " . $e->getMessage());
+                }
+            }
+            // --- END NOTIFICATION LOGIC ---
+
+
+            // Return appropriate response based on request type
+            if ($request->expectsJson() || $request->wantsJson()) {
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Document marked as claimed successfully!',
+                    'redirect' => route('tables.index')
+                ], 200);
+            }
+
+            return redirect()->route('tables.index')
+                ->with('Status', 'Document marked as claimed successfully!');
+
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            Log::error('Validation Error in completeRequest: ' . json_encode($e->errors()), ['request_id' => $id]);
+
+            if ($request->expectsJson() || $request->wantsJson()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Validation failed. ' . collect($e->errors())->flatten()->implode('; '),
+                    'errors' => $e->errors()
+                ], 422);
+            }
+
+            return redirect()->back()
+                ->withErrors($e->errors())
+                ->withInput()
+                ->with('Danger', 'Validation failed. Please check your input.');
+
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            Log::error('Document Request Not Found: ' . $e->getMessage(), ['request_id' => $id]);
+
+            if ($request->expectsJson() || $request->wantsJson()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Document request not found.'
+                ], 404);
+            }
+
+            return redirect()->route('tables.index')
+                ->with('Danger', 'Document request not found.');
+
         } catch (\Exception $e) {
             Log::error('completeRequest Error: ' . $e->getMessage(), [
-                'request_data' => $request->all(),
+                'request_id' => $id,
+                'trace' => $e->getTraceAsString()
             ]);
 
-            return $request->expectsJson()
-                ? response()->json(['success' => false, 'message' => 'Error processing request.'], 500)
-                : redirect()->back()->with('Danger', 'An error occurred while processing the request.');
+            if ($request->expectsJson() || $request->wantsJson()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'An error occurred while processing the request. Please try again.'
+                ], 500);
+            }
+
+            return redirect()->back()
+                ->with('Danger', 'An error occurred while processing the request. Please try again.');
         }
     }
-
 
     public function destroy($id)
     {

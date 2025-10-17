@@ -27,12 +27,12 @@
 
 {{-- Main Card --}}
 <div class="card shadow-lg border-0 rounded-lg mt-3">
-    {{-- Card Header with Search/Filter Controls (UPDATED for uniformity) --}}
+    {{-- Card Header with Search/Filter Controls --}}
     <div class="card-header text-white d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center"
          style="background-color: #1f2937;">
         <h5 class="mb-2 mb-md-0">For Release Document Requests</h5>
 
-        {{-- Search/Filter Form (Uniform Structure) --}}
+        {{-- Search/Filter Form --}}
         <form method="GET" action="{{ route('tables.index') }}" id="searchForm">
             <div class="d-flex gap-2 mt-2 mt-md-0 flex-wrap" id="tableControls">
                 {{-- Search Input --}}
@@ -94,7 +94,7 @@
         </div>
         @endif
 
-        {{-- Loading Spinner (Kept for visual feedback on form submit) --}}
+        {{-- Loading Spinner --}}
         <div id="loadingSpinner" class="text-center my-4" style="display: none;">
             <div class="spinner-border text-primary" role="status">
                 <span class="visually-hidden">Loading...</span>
@@ -150,7 +150,7 @@
                             <td><span class="badge bg-success text-white px-2 py-1">{{ $item->status }}</span></td>
                             <td>{{ $item->forRelease_date }}</td>
                             <td class="text-nowrap">
-                                {{-- ACTION BUTTONS (Kept from original file) --}}
+                                {{-- ACTION BUTTONS --}}
                                 <button type="button" class="btn btn-success btn-sm complete-btn"
                                     data-request-id="{{ $item->id }}"
                                     data-request-no="{{ $item->req_no }}"
@@ -191,7 +191,7 @@
     </div>
 </div>
 
-{{-- Claimer Information Modal (KEPT AS IS) --}}
+{{-- Claimer Information Modal --}}
 <div class="modal fade" id="claimerModal" tabindex="-1" aria-labelledby="claimerModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
@@ -201,10 +201,7 @@
                 </h5>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <form id="claimerForm" action="{{ route('document-request3.complete', '') }}" method="POST"
-                data-swal-loading="true"
-                data-swal-title="The request is being claim"
-                data-swal-text="This may take a few seconds...">
+            <form id="claimerForm" action="{{ route('document-request3.complete', 0) }}" method="POST">
                 @csrf
                 @method('PUT')
                 <div class="modal-body">
@@ -272,11 +269,10 @@
     </div>
 </div>
 
-{{-- JavaScript (UPDATED to use form-based search logic and keep Claimer Modal functionality) --}}
+{{-- JavaScript --}}
 <script>
 document.addEventListener("DOMContentLoaded", function() {
-    // --- Uniform Search/Filter/Sort Logic (Server-Side) ---
-
+    // --- Search/Filter/Sort Logic ---
     const searchForm = document.getElementById('searchForm');
     const searchInput = document.getElementById('searchInput');
     const clearSearchBtn = document.getElementById('clearSearch');
@@ -289,25 +285,21 @@ document.addEventListener("DOMContentLoaded", function() {
     });
 
     sortSelect?.addEventListener('change', function() {
-        // When sorting, the page number should be reset to 1
         const url = new URL(searchForm.action);
         const params = new URLSearchParams(url.search);
-
         params.set('sort', this.value);
-        params.delete('page'); // Remove existing page parameter
+        params.delete('page');
         url.search = params.toString();
-
         searchForm.action = url.toString();
         searchForm.submit();
     });
 
     // Clear search button
     clearSearchBtn?.addEventListener('click', function() {
-        // Only clear if search is active, otherwise perform full clear
         if (searchInput.value || '{{ request('filter') }}' != 'all' || '{{ request('sort') }}' != 'default') {
             window.location.href = '{{ route("tables.index") }}';
         } else {
-            searchInput.value = ''; // Just clear input if nothing else is filtered
+            searchInput.value = '';
         }
     });
 
@@ -317,8 +309,7 @@ document.addEventListener("DOMContentLoaded", function() {
         document.getElementById('tableContainer').style.opacity = '0.5';
     });
 
-    // --- Original Claimer Modal Logic (Client-Side) ---
-
+    // --- Claimer Modal Logic ---
     const sameAsStudentCheckbox = document.getElementById('sameAsStudent');
     const claimerFirstName = document.getElementById('claimerFirstName');
     const claimerLastName = document.getElementById('claimerLastName');
@@ -330,8 +321,8 @@ document.addEventListener("DOMContentLoaded", function() {
         if (sameAsStudentCheckbox.checked) {
             if (studentName) {
                 const nameParts = studentName.split(' ');
-                claimerFirstName.value = nameParts.slice(0, -1).join(' ');
-                claimerLastName.value = nameParts[nameParts.length - 1] || '';
+                claimerLastName.value = nameParts.pop() || ''; // Assume last word is last name
+                claimerFirstName.value = nameParts.join(' '); // Remainder is first name
 
                 claimerFirstName.setAttribute('readonly', true);
                 claimerLastName.setAttribute('readonly', true);
@@ -339,7 +330,6 @@ document.addEventListener("DOMContentLoaded", function() {
         } else {
             claimerFirstName.value = '';
             claimerLastName.value = '';
-
             claimerFirstName.removeAttribute('readonly');
             claimerLastName.removeAttribute('readonly');
         }
@@ -358,13 +348,13 @@ document.addEventListener("DOMContentLoaded", function() {
             document.getElementById('modalStudentName').textContent = studentName;
 
             const form = document.getElementById('claimerForm');
-            // Assuming your route is named 'document-request3.complete' and accepts the ID
-            form.action = `{{ url('document-request3/complete') }}/${requestId}`;
+            // Fixed to match the actual route: /tables/completeRequest/{id}
+            form.action = `{{ url('tables/completeRequest') }}/${requestId}`;
 
             // Reset form state
             form.reset();
             form.classList.remove('was-validated');
-            sameAsStudentCheckbox.checked = false; // Reset checkbox
+            sameAsStudentCheckbox.checked = false;
 
             // Clear name fields and remove readonly
             claimerFirstName.value = '';
@@ -387,12 +377,10 @@ document.addEventListener("DOMContentLoaded", function() {
         });
     });
 
-    // Reset modal state when hidden (cleanup)
+    // Reset modal state when hidden
     claimerModal?.addEventListener('hidden.bs.modal', function() {
         const claimerForm = document.getElementById('claimerForm');
         claimerForm.classList.remove('was-validated');
-
-        // Clean up alerts
         document.getElementById('claimerForm').querySelectorAll('.alert-danger, .alert-success').forEach(alert => {
             if (!alert.classList.contains('alert-info')) {
                 alert.remove();
@@ -401,7 +389,7 @@ document.addEventListener("DOMContentLoaded", function() {
         setLoadingState(false);
     });
 
-    // IMPROVED CLAIMER FORM SUBMISSION (Kept with necessary cleanup/fixes)
+    // CLAIMER FORM SUBMISSION
     const claimerForm = document.getElementById('claimerForm');
     const submitClaimBtn = document.getElementById('submitClaimBtn');
 
@@ -415,77 +403,99 @@ document.addEventListener("DOMContentLoaded", function() {
             return;
         }
 
-        // Ensure date is set before submission
+        // Ensure date is set
         if (!claimerDate.value) {
             claimerDate.value = new Date().toISOString().split('T')[0];
         }
 
         setLoadingState(true);
 
-        const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
+        // Get CSRF token
+        let csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
+        if (!csrfToken) {
+            csrfToken = claimerForm.querySelector('input[name="_token"]')?.value;
+        }
+
+        if (!csrfToken) {
+            console.error('CSRF token not found!');
+            showError('Security token missing. Please refresh the page.');
+            setLoadingState(false);
+            return;
+        }
+
+        // --- FIX STARTS HERE: Prepare data as a JSON object ---
+        const formDataObject = {
+            claimer_first_name: claimerFirstName.value,
+            claimer_last_name: claimerLastName.value,
+            claimer_date: claimerDate.value,
+            _method: 'PUT',
+            _token: csrfToken // Include the token in the payload
+        };
+
         const actionUrl = claimerForm.action;
-        const formData = new FormData(claimerForm);
+        // --- FIX ENDS HERE ---
 
         // Submit using fetch
         fetch(actionUrl, {
-                method: 'POST', // Use POST for form submission
-                headers: {
-                    'X-CSRF-TOKEN': csrfToken,
-                    'Accept': 'application/json',
-                    'X-Requested-With': 'XMLHttpRequest'
-                },
-                body: (() => {
-                    formData.append('_method', 'PUT'); // Add method spoofing
-                    return formData;
-                })()
-            })
-            .then(async response => {
-                if (!response.ok) {
-                    let errorMessage = 'An error occurred while processing the request.';
-                    try {
-                        const errorData = await response.json();
-                        if (errorData.message) {
-                            errorMessage = errorData.message;
-                        } else if (errorData.errors) {
-                            const errors = Object.values(errorData.errors).flat();
-                            errorMessage = errors.join(', ');
-                        }
-                    } catch (e) {
-                        errorMessage = await response.text();
-                        if (errorMessage.includes('419')) {
-                            errorMessage = 'Session expired. Please refresh the page.';
-                        } else if (errorMessage.includes('404')) {
-                            errorMessage = 'Request not found. Please refresh the page.';
-                        }
+            method: 'POST', // Use POST with _method: 'PUT' override
+            headers: {
+                'X-CSRF-TOKEN': csrfToken,
+                'Accept': 'application/json',
+                'Content-Type': 'application/json', // CRITICAL FIX: Set Content-Type for JSON
+                'X-Requested-With': 'XMLHttpRequest'
+            },
+            body: JSON.stringify(formDataObject), // CRITICAL FIX: Send data as JSON string
+            credentials: 'same-origin'
+        })
+        .then(async response => {
+             // Explicitly check for 419 session expired
+            if (response.status === 419) {
+                throw new Error('Session expired. Please refresh the page (Error 419).');
+            }
+
+            if (!response.ok) {
+                let errorMessage = 'An error occurred while processing the request.';
+                try {
+                    const errorData = await response.json();
+
+                    if (errorData.message) {
+                        errorMessage = errorData.message;
+                    } else if (errorData.errors) {
+                        const errors = Object.values(errorData.errors).flat();
+                        errorMessage = 'Validation Failed: ' + errors.join('; ');
+                    } else if (response.status === 404) {
+                        errorMessage = 'Request not found. Please refresh the page (Error 404).';
                     }
-                    throw new Error(errorMessage);
+                } catch (e) {
+                    errorMessage = `Network or server error (Status ${response.status}).`;
                 }
+                throw new Error(errorMessage);
+            }
 
-                // Handle successful response
-                let result = {};
-                const contentType = response.headers.get('content-type');
-                if (contentType && contentType.includes('application/json')) {
-                    result = await response.json();
+            // Handle successful response
+            let result = {};
+            const contentType = response.headers.get('content-type');
+            if (contentType && contentType.includes('application/json')) {
+                result = await response.json();
+            }
+
+            const successMsg = result.message || 'Document marked as claimed successfully!';
+            showSuccess(successMsg);
+
+            // Redirect or reload after short delay
+            setTimeout(() => {
+                if (result.redirect) {
+                    window.location.href = result.redirect;
+                } else {
+                    window.location.reload();
                 }
-
-                // Show success message if provided
-                const successMsg = result.message || 'Document marked as claimed successfully!';
-                showSuccess(successMsg);
-
-                // Redirect or reload after short delay
-                setTimeout(() => {
-                    if (result.redirect) {
-                        window.location.href = result.redirect;
-                    } else {
-                        window.location.reload();
-                    }
-                }, 1000);
-            })
-            .catch(error => {
-                console.error('Fetch error:', error);
-                showError(error.message);
-                setLoadingState(false);
-            });
+            }, 1500);
+        })
+        .catch(error => {
+            console.error('Fetch error:', error);
+            showError(error.message);
+            setLoadingState(false);
+        });
     });
 
     function setLoadingState(isLoading) {
@@ -494,9 +504,9 @@ document.addEventListener("DOMContentLoaded", function() {
         if (isLoading) {
             submitClaimBtn.disabled = true;
             submitClaimBtn.innerHTML = `
-            <span class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"></span>
-            Processing...
-        `;
+                <span class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"></span>
+                Processing...
+            `;
             formInputs.forEach(input => {
                 if (input !== submitClaimBtn) {
                     input.disabled = true;
@@ -505,8 +515,8 @@ document.addEventListener("DOMContentLoaded", function() {
         } else {
             submitClaimBtn.disabled = false;
             submitClaimBtn.innerHTML = `
-            <i class="fas fa-check me-1"></i>Mark as Claimed
-        `;
+                <i class="fas fa-check me-1"></i>Mark as Claimed
+            `;
             formInputs.forEach(input => {
                 input.disabled = false;
             });
@@ -520,10 +530,11 @@ document.addEventListener("DOMContentLoaded", function() {
             errorAlert.id = 'modalErrorAlert';
             errorAlert.className = 'alert alert-danger alert-dismissible fade show';
             errorAlert.innerHTML = `
-            <strong>Error:</strong> <span id="errorMessage"></span>
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-        `;
-            claimerForm.querySelector('.modal-body').insertBefore(errorAlert, claimerForm.querySelector('.modal-body').firstChild);
+                <strong>Error:</strong> <span id="errorMessage"></span>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            `;
+            // Insert error message after the alert-info box in the modal body
+            claimerForm.querySelector('.modal-body').insertBefore(errorAlert, claimerForm.querySelector('.modal-body > .mb-3:first-child').nextSibling);
         }
 
         document.getElementById('errorMessage').textContent = message;
@@ -541,18 +552,17 @@ document.addEventListener("DOMContentLoaded", function() {
             successAlert.id = 'modalSuccessAlert';
             successAlert.className = 'alert alert-success fade show';
             successAlert.innerHTML = `
-            <i class="fas fa-check-circle me-2"></i><span id="successMessage"></span>
-        `;
-            claimerForm.querySelector('.modal-body').insertBefore(successAlert, claimerForm.querySelector('.modal-body').firstChild);
+                <i class="fas fa-check-circle me-2"></i><span id="successMessage"></span>
+            `;
+            // Insert success message after the alert-info box in the modal body
+            claimerForm.querySelector('.modal-body').insertBefore(successAlert, claimerForm.querySelector('.modal-body > .mb-3:first-child').nextSibling);
         }
 
         document.getElementById('successMessage').textContent = message;
         successAlert.style.display = 'block';
     }
 
-
-    // --- Original Delete Logic (Client-Side) ---
-
+    // --- Delete Logic ---
     const deleteForms = document.querySelectorAll(".delete-form");
     deleteForms.forEach(form => {
         form.addEventListener("submit", function(e) {
@@ -563,9 +573,9 @@ document.addEventListener("DOMContentLoaded", function() {
             if (confirm("Are you sure you want to delete this completed request? This action cannot be undone.")) {
                 deleteBtn.disabled = true;
                 deleteBtn.innerHTML = `
-                <span class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"></span>
-                Deleting...
-            `;
+                    <span class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"></span>
+                    Deleting...
+                `;
 
                 const row = form.closest('tr');
                 const allButtons = row.querySelectorAll('button, a.btn');
@@ -599,11 +609,6 @@ document.addEventListener("DOMContentLoaded", function() {
         }
     });
 
-    // --- Styling and Minor Helpers ---
-
-    // Initial loading spinner simulation (removed for server-side search)
-    // The spinner now only shows on form submit.
-
     // Keyboard shortcuts
     document.addEventListener('keydown', function(e) {
         if ((e.ctrlKey || e.metaKey) && e.key === 'f') {
@@ -616,7 +621,7 @@ document.addEventListener("DOMContentLoaded", function() {
     const nameFields = ['claimerFirstName', 'claimerLastName'];
     nameFields.forEach(fieldId => {
         const field = document.getElementById(fieldId);
-        field.addEventListener('input', function() {
+        field?.addEventListener('input', function() {
             this.value = this.value.replace(/\b\w/g, l => l.toUpperCase());
         });
     });
@@ -624,7 +629,7 @@ document.addEventListener("DOMContentLoaded", function() {
 </script>
 
 <style>
-/* CORE STYLES FROM PENDING FILE FOR UNIFORMITY */
+/* CORE STYLES */
 #requestsTable {
     font-size: 0.85rem;
 }
@@ -709,15 +714,14 @@ document.addEventListener("DOMContentLoaded", function() {
     padding: 0.5rem 1rem;
 }
 
-/* Make remarks column wider and allow wrapping only there */
-#requestsTable th:nth-child(7),
-#requestsTable td:nth-child(7) {
+/* Make remarks column wider and allow wrapping */
+#requestsTable th:nth-child(5),
+#requestsTable td:nth-child(5) {
     white-space: normal;
     min-width: 100px;
 }
 
-
-/* Additional styling for better loading states (from original completed.blade.php) */
+/* Checkbox styling */
 .thick-outline {
     width: 1.2rem;
     height: 1.2rem;
@@ -730,18 +734,18 @@ document.addEventListener("DOMContentLoaded", function() {
     box-shadow: 0 0 0 3px rgba(29, 211, 176, 0.4);
 }
 
-/* Smooth transitions for button states */
+/* Smooth transitions */
 .btn {
     transition: all 0.2s ease-in-out;
 }
 
-/* Ensure buttons maintain their size during loading */
+/* Ensure buttons maintain size during loading */
 .delete-btn,
 .complete-btn {
     min-width: 70px;
 }
 
-/* Modal styling enhancements */
+/* Modal styling */
 .modal-dialog {
     max-width: 600px;
 }
