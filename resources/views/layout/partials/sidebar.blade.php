@@ -136,6 +136,13 @@
                 @endif
             @endif
 
+            <div class="sb-sidenav-menu-heading text-uppercase text-light fw-bold mt-3">Bulk Requests</div>
+
+                <a class="nav-link text-light sidebar-item" href="{{ route('bulk_request.index') }}">
+                    <div class="sb-nav-link-icon"><i class="fas fa-check-circle"></i></div>
+                    Bulk Requests
+                </a>
+
         </div>
     </div>
 

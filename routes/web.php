@@ -19,6 +19,7 @@ use App\Http\Controllers\StudentRequestController;
 use App\Http\Controllers\ClaimedDocumentController;
 use App\Http\Controllers\AuditTableController;
 use App\Http\Controllers\BackupController;
+use App\Http\Controllers\BulkRequest;
 use App\Models\Account;
 use Illuminate\Support\Facades\Mail;
 use App\Models\DocumentRequestModel;
@@ -86,6 +87,8 @@ Route::group(['middleware' => 'useradmin'], function () {
     Route::get('/pending/ajax', [PendingController::class, 'ajaxPending'])->name('pending.ajax');
     Route::resource('claimed-documents', ClaimedDocumentController::class);
     Route::get('/declined-documents', [declinedController::class, 'index'])->name('declined-documents.index');
+
+    Route::get('/bulk-request', [BulkRequest::class, 'index'])->name('bulk_request.index');
 
     // Additional custom routes for specific functionality
     Route::prefix('claimed-documents')->group(function () {
