@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\PasswordOTPMail;
+use App\Mail\ResetPasswordMail;
 use App\Mail\VerifyAccountUpdateMail;
 use App\Mail\VerifyMail;
 use App\Models\Account;
@@ -19,6 +21,8 @@ use Illuminate\Auth\Events\Registered;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Exception;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
 
 class AccountController extends Controller
@@ -134,6 +138,146 @@ class AccountController extends Controller
             Log::error('Error in update method: ' . $e->getMessage());
             return redirect()->back()->with('Danger', 'An error occurred while updating the user.');
         }
+    }
+
+    public function accountSendOtp($id)
+    {
+        $user = Account::with('studentInformation')->find($id);
+        if (!$user) {
+            return response()->json(['success' => false, 'message' => 'User not found.']);
+        }
+        $fullName = $user->studentInformation->FirstName . ' ' . $user->studentInformation->LastName;
+        $customSubject = "UBNHS Portal - Requesting Change Password Verification";
+        // Generate a 6-digit OTP
+        $otp = rand(100000, 999999);
+
+        // Store OTP and expiry in session
+        Session::put('password_otp', [
+            'code' => $otp,
+            'expires_at' => now()->addMinutes(5),
+            'user_id' => $user->user_account_id
+        ]);
+
+        try {
+            // Send OTP to user's email
+            Mail::to($user->email_address)
+                ->send(new PasswordOTPMail($fullName, $otp, $customSubject, '3 minutes'));
+            return response()->json([
+                'success' => true,
+                'message' => 'OTP has been sent to your email address.'
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to send OTP. Please try again.'
+            ]);
+        }
+    }
+
+    /**
+     * Verify OTP from the user
+     */
+    public function accountVerifyOtp($id, Request $request)
+    {
+        $otp = $request->input('otp');
+        $sessionOtp = Session::get('password_otp');
+
+        if (!$sessionOtp) {
+            return response()->json(['verified' => false, 'message' => 'No OTP session found.']);
+        }
+
+        if ($sessionOtp['user_id'] != $id) {
+            return response()->json(['verified' => false, 'message' => 'Invalid session user.']);
+        }
+
+        if (Carbon::now()->greaterThan($sessionOtp['expires_at'])) {
+            Session::forget('password_otp');
+            return response()->json(['verified' => false, 'message' => 'OTP expired.']);
+        }
+
+        if ($sessionOtp['code'] != $otp) {
+            return response()->json(['verified' => false, 'message' => 'Invalid OTP code.']);
+        }
+
+        // Mark user as verified for password change
+        Session::put('password_verified', $id);
+        Session::forget('password_otp');
+
+        return response()->json([
+            'verified' => true,
+            'message' => 'OTP verified successfully. You can now change your password.'
+        ]);
+    }
+
+    /**
+     * Update password after OTP verification
+     */
+    public function accountUpdatePassword($id, Request $request)
+    {
+        // Check verification
+        if (Session::get('password_verified') != $id) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Unauthorized password update. Please verify OTP first.'
+            ], 403);
+        }
+
+        $validator = Validator::make($request->all(), [
+            'current_password' => 'required',
+            'new_password' => 'required|min:8|confirmed',
+        ], [
+            'current_password.required' => 'Please enter your current password',
+            'new_password.required' => 'Please enter a new password',
+            'new_password.min' => 'New password must be at least 8 characters',
+            'new_password.confirmed' => 'The passwords do not match'
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'success' => false,
+                'errors' => $validator->errors()
+            ], 422);
+        }
+
+        $user = Account::find($id);
+
+        if (!$user) {
+            return response()->json([
+                'success' => false,
+                'message' => 'User not found.'
+            ], 404);
+        }
+
+        // Check if current password is correct
+        if (!Hash::check($request->current_password, $user->password)) {
+            return response()->json([
+                'success' => false,
+                'errors' => [
+                    'current_password' => ['Current password is incorrect.']
+                ]
+            ], 422);
+        }
+
+        // Check if new password is the same as current password
+        if (Hash::check($request->new_password, $user->password)) {
+            return response()->json([
+                'success' => false,
+                'errors' => [
+                    'new_password' => ['New password cannot be the same as your current password.']
+                ]
+            ], 422);
+        }
+
+        $user->password = Hash::make($request->new_password);
+        $user->save();
+
+        // Clear session verification
+        Session::forget('password_verified');
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Password updated successfully!'
+        ]);
     }
 
     public function verifyUpdateProfile(Request $request, $id)

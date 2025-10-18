@@ -3,6 +3,217 @@
 @section('content')
 @include('layout.partials.studentMessage')
 
+<style>
+    /* Modal Styling */
+    .modal-content {
+        background: #1e293b;
+        border: 1px solid rgba(100, 116, 139, 0.3);
+        border-radius: 16px;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+        color: #f1f5f9;
+    }
+
+    .modal-header {
+        background: #1dd3b0;
+        color: #0f172a;
+        border-radius: 16px 16px 0 0;
+        border-bottom: none;
+        padding: 1.25rem 1.5rem;
+    }
+
+    .modal-title {
+        font-weight: 700;
+        font-size: 1.125rem;
+        display: flex;
+        align-items: center;
+    }
+
+    .modal-title i {
+        margin-right: 0.5rem;
+    }
+
+    .btn-close {
+        filter: brightness(0) invert(1);
+        opacity: 0.8;
+    }
+
+    .btn-close:hover {
+        opacity: 1;
+    }
+
+    .modal-body {
+        padding: 1.5rem;
+    }
+
+    .modal-body p {
+        color: #cbd5e1;
+        font-size: 0.9rem;
+        line-height: 1.5;
+        margin-bottom: 1.25rem;
+    }
+
+    /* Form Controls */
+    .form-control {
+        background: rgba(15, 23, 42, 0.5);
+        border: 1px solid rgba(100, 116, 139, 0.3);
+        color: #f1f5f9;
+        padding: 0.75rem 1rem;
+        border-radius: 8px;
+        transition: all 0.2s ease;
+    }
+
+    .form-control:focus {
+        background: rgba(15, 23, 42, 0.7);
+        border-color: #1dd3b0;
+        box-shadow: 0 0 0 3px rgba(29, 211, 176, 0.1);
+        color: #f1f5f9;
+        outline: none;
+    }
+
+    .form-control::placeholder {
+        color: #64748b;
+    }
+
+    .form-label {
+        color: #e2e8f0;
+        font-weight: 600;
+        font-size: 0.875rem;
+        margin-bottom: 0.5rem;
+    }
+
+    /* OTP Input */
+    #otpCode {
+        text-align: center;
+        font-size: 1.25rem;
+        letter-spacing: 0.25rem;
+        font-weight: 600;
+    }
+
+    /* Feedback Messages */
+    #otpFeedback {
+        font-weight: 600;
+        font-size: 0.875rem;
+        padding: 0.5rem;
+        border-radius: 6px;
+        margin-top: 0.5rem;
+    }
+
+    #otpFeedback:not(:empty) {
+        display: block;
+    }
+
+    /* Password Toggle */
+    .toggle-password {
+        cursor: pointer;
+        color: #94a3b8;
+        transition: color 0.2s ease;
+    }
+
+    .toggle-password:hover {
+        color: #1dd3b0;
+    }
+
+    /* Password Strength */
+    #passwordStrength {
+        font-size: 0.875rem;
+        font-weight: 600;
+        padding: 0.25rem 0;
+    }
+
+    /* Password Rules */
+    #passwordRules small {
+        font-size: 0.8rem;
+        display: block;
+        margin: 0.25rem 0;
+        transition: color 0.2s ease;
+    }
+
+    #passwordRules small.text-success {
+        color: #10b981 !important;
+    }
+
+    #passwordRules small.text-danger {
+        color: #f87171 !important;
+    }
+
+    /* Password Match */
+    #passwordMatch {
+        font-size: 0.875rem;
+        font-weight: 600;
+        padding: 0.25rem 0;
+    }
+
+    /* Invalid Feedback */
+    .invalid-feedback {
+        color: #fca5a5;
+        font-size: 0.875rem;
+        margin-top: 0.25rem;
+    }
+
+    .form-control.is-invalid {
+        border-color: #ef4444;
+    }
+
+    /* Modal Footer */
+    .modal-footer {
+        padding: 1rem 1.5rem;
+        border-top: 1px solid rgba(100, 116, 139, 0.2);
+    }
+
+    /* Buttons */
+    .btn {
+        padding: 0.625rem 1.25rem;
+        border-radius: 8px;
+        font-weight: 600;
+        font-size: 0.875rem;
+        transition: all 0.2s ease;
+        border: none;
+    }
+
+    .btn-primary-custom {
+        background: #1dd3b0;
+        color: #0f172a;
+    }
+
+    .btn-primary-custom:hover {
+        background: #14b8a6;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(29, 211, 176, 0.3);
+    }
+
+    .btn-outline-light {
+        background: transparent;
+        color: #cbd5e1;
+        border: 1px solid rgba(203, 213, 225, 0.3);
+    }
+
+    .btn-outline-light:hover {
+        background: rgba(203, 213, 225, 0.1);
+        color: #f1f5f9;
+        border-color: rgba(203, 213, 225, 0.5);
+    }
+
+    .btn:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+    }
+
+    /* Loading Spinner */
+    .fa-spinner {
+        animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+        0% {
+            transform: rotate(0deg);
+        }
+
+        100% {
+            transform: rotate(360deg);
+        }
+    }
+</style>
+
 <div class="main-content" style="background-color: #0f172a; min-height: 100vh;">
     <div class="container-fluid py-4 text-light">
 
@@ -257,8 +468,7 @@
             </div>
 
             <!-- Mobile Account Information Card -->
-            <div class="card shadow-sm border-0 mb-3"
-                style="background:#1e293b; border:1px solid #334155;">
+            <div class="card shadow-sm border-0 mb-3" style="background:#1e293b; border:1px solid #334155;">
                 <div class="card-header border-0 py-2" style="background:#1dd3b0; color:#0f172a;">
                     <h6 class="mb-0 d-flex align-items-center">
                         <i class="fas fa-user-cog me-2"></i>
@@ -277,33 +487,19 @@
                             </div>
                             <div class="mb-3">
                                 <label class="form-label fw-semibold" style="color:#e2e8f0;">Email Address</label>
-                                <input type="email" name="email" class="form-control" value="{{ $studInfo->account->email_address ?? '' }}" readonly disabled>
+                                <input type="email" name="email" class="form-control" value="{{ $studInfo->account->email_address ?? '' }}" readonly>
                             </div>
-                            <div class="mb-3 col-6">
-                                <label class="form-label fw-semibold" style="color:#e2e8f0;">New Password:</label>
-                                <div class="position-relative">
-                                    <input type="password" name="new_password" class="form-control pe-5" placeholder="Enter new password">
-                                    <button type="button" class="btn position-absolute top-50 end-0 translate-middle-y border-0 bg-transparent text-white mobile-password-toggle" data-target="new_password" style="z-index: 10;">
-                                        <i class="fas fa-eye"></i>
-                                    </button>
-                                </div>
-                                <small id="passwordStrength" class="form-text"></small>
-                            </div>
-                            <div class="mb-3 col-6">
-                                <label class="form-label fw-semibold" style="color:#e2e8f0;">Confirm Password:</label>
-                                <div class="position-relative">
-                                    <input type="password" name="password_confirmation" class="form-control pe-5" placeholder="Confirm new password">
-                                    <button type="button" class="btn position-absolute top-50 end-0 translate-middle-y border-0 bg-transparent text-white mobile-password-toggle" data-target="password_confirmation" style="z-index: 10;">
-                                        <i class="fas fa-eye"></i>
-                                    </button>
-                                </div>
-                                <small id="passwordMatch" class="form-text"></small>
+                            <div class="mb-3">
+                                <label class="form-label fw-semibold" style="color:#e2e8f0;">Password:</label>
+                                <button type="button" class="btn btn-outline-light w-100" id="mobileChangePasswordBtn">
+                                    <i class="fas fa-key me-2"></i>Change Password
+                                </button>
                             </div>
                         </div>
 
                         <!-- Save Button for Account Info -->
                         <div class="mt-3 text-end">
-                            <button id="saveAccountBtn" type="submit" class="btn" style="background:#1dd3b0; color:#0f172a;">
+                            <button type="submit" class="btn" style="background:#1dd3b0; color:#0f172a;">
                                 <i class="fas fa-save me-2"></i>Save Account Details
                             </button>
                         </div>
@@ -578,10 +774,9 @@
                     </div>
                 </div>
 
-                <!-- Account Information (Full Width, below Student Info) -->
+                <!-- Desktop Account Information Card -->
                 <div class="col-12">
-                    <div class="card shadow-sm border-0"
-                        style="background:#1e293b; border:1px solid #334155;">
+                    <div class="card shadow-sm border-0" style="background:#1e293b; border:1px solid #334155;">
                         <div class="card-header border-0" style="background:#1dd3b0; color:#0f172a;">
                             <h5 class="mb-0 d-flex align-items-center">
                                 <i class="fas fa-user-cog me-2"></i>
@@ -608,36 +803,19 @@
                                         </div>
                                     </div>
 
-                                    <div class="col-6">
+                                    <div class="col-12">
                                         <div class="mb-3">
-                                            <label class="form-label fw-semibold" style="color:#e2e8f0;">New Password:</label>
-                                            <div class="position-relative">
-                                                <input type="password" name="new_password" class="form-control pe-5" placeholder="Enter new password">
-                                                <button type="button" class="btn position-absolute top-50 end-0 translate-middle-y border-0 bg-transparent text-white desktop-password-toggle" data-target="new_password" style="z-index: 10;">
-                                                    <i class="fas fa-eye"></i>
-                                                </button>
-                                            </div>
-                                            <small id="passwordStrength" class="form-text"></small>
-                                        </div>
-                                    </div>
-
-                                    <div class="col-6">
-                                        <div class="mb-3">
-                                            <label class="form-label fw-semibold" style="color:#e2e8f0;">Confirm Password:</label>
-                                            <div class="position-relative">
-                                                <input type="password" name="password_confirmation" class="form-control pe-5" placeholder="Confirm new password">
-                                                <button type="button" class="btn position-absolute top-50 end-0 translate-middle-y border-0 bg-transparent text-white desktop-password-toggle" data-target="password_confirmation" style="z-index: 10;">
-                                                    <i class="fas fa-eye"></i>
-                                                </button>
-                                            </div>
-                                            <small id="passwordMatch" class="form-text"></small>
+                                            <label class="form-label fw-semibold" style="color:#e2e8f0;">Password:</label>
+                                            <button type="button" class="btn btn-outline-light" id="desktopChangePasswordBtn">
+                                                <i class="fas fa-key me-2"></i>Change Password
+                                            </button>
                                         </div>
                                     </div>
                                 </div>
 
                                 <!-- Save button for Account Info -->
                                 <div class="text-end">
-                                    <button id="saveAccountBtn" type="submit" class="btn" style="background:#1dd3b0; color:#0f172a;">
+                                    <button type="submit" class="btn" style="background:#1dd3b0; color:#0f172a;">
                                         <i class="fas fa-save me-2"></i>Save Account Details
                                     </button>
                                 </div>
@@ -652,8 +830,106 @@
     </div>
 </div>
 
+<!-- OTP Verification Modal -->
+<div class="modal fade" id="otpModal" tabindex="-1" aria-labelledby="otpModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="otpModalLabel"><i class="fas fa-envelope"></i>Verify OTP Code</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>An OTP code has been sent to your registered email. Please enter it below to continue.</p>
+                <input type="text" id="otpCode" class="form-control mb-3" placeholder="Enter OTP Code" maxlength="6">
+                <div id="otpFeedback" class="fw-semibold"></div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-light" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-primary-custom" id="verifyOtpBtn">Verify OTP</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Change Password Modal -->
+<div class="modal fade" id="changePasswordModal" tabindex="-1" aria-labelledby="changePasswordModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="changePasswordModalLabel"><i class="fas fa-key"></i>Change Password</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form id="changePasswordForm">
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label">Current Password:</label>
+                        <div class="position-relative">
+                            <input type="password" name="current_password" id="currentPassword"
+                                class="form-control"
+                                style="padding-right: 2.5rem;"
+                                required>
+                            <i class="fas fa-eye-slash position-absolute toggle-password"
+                                id="toggleCurrentPassword"
+                                style="top: 50%; right: 12px; transform: translateY(-50%); z-index: 10; pointer-events: auto;"></i>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">New Password:</label>
+                        <div class="position-relative">
+                            <input type="password" name="new_password" id="newPassword"
+                                class="form-control"
+                                style="padding-right: 2.5rem;"
+                                required minlength="8">
+                            <i class="fas fa-eye-slash position-absolute toggle-password"
+                                id="toggleNewPassword"
+                                style="top: 50%; right: 12px; transform: translateY(-50%); z-index: 10; pointer-events: auto;"></i>
+                        </div>
+                        <div id="passwordStrength" class="mt-1 small"></div>
+
+                        <!-- Password Rules -->
+                        <div id="passwordRules" class="mt-2 d-none">
+                            <small id="ruleLength" class="text-danger">✖ 8-20 characters</small>
+                            <small id="ruleLetter" class="text-danger">✖ Contains a letter</small>
+                            <small id="ruleNumber" class="text-danger">✖ Contains a number</small>
+                            <small id="ruleSpecial" class="text-danger">✖ Contains a special character</small>
+                            <small id="ruleNoSpaces" class="text-danger">✖ No spaces allowed</small>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Confirm Password:</label>
+                        <div class="position-relative">
+                            <input type="password" name="new_password_confirmation" id="confirmPassword"
+                                class="form-control"
+                                style="padding-right: 2.5rem;"
+                                required>
+                            <i class="fas fa-eye-slash position-absolute toggle-password"
+                                id="toggleConfirmPassword"
+                                style="top: 50%; right: 12px; transform: translateY(-50%); z-index: 10; pointer-events: auto;"></i>
+                        </div>
+                        <div id="passwordMatch" class="mt-1 small"></div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-light" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" id="saveAccountBtn" class="btn btn-primary-custom">Save Password</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
 <script>
     document.addEventListener('DOMContentLoaded', function() {
+        // Sidebar toggle
+        const toggle = document.getElementById('sidebarToggle');
+        if (toggle) {
+            toggle.addEventListener('click', function() {
+                document.body.classList.toggle('sidebar-shrink');
+            });
+        }
+
         function validateLRN(inputId, errorId, successId, submitBtnId) {
             const lrnInput = document.getElementById(inputId);
             const errorMsg = document.getElementById(errorId);
@@ -825,218 +1101,409 @@
             "mobileReplacePreviewImg",
             ".mobile-profile-img"
         );
-        // Password change functionality for mobile
-        const mobileChangePasswordBtn = document.getElementById('mobileChangePasswordBtn');
-        const mobilePasswordFields = document.getElementById('mobilePasswordChangeFields');
+        const desktopChangeBtn = document.getElementById('desktopChangePasswordBtn');
+        const mobileChangeBtn = document.getElementById('mobileChangePasswordBtn');
+        const otpModal = new bootstrap.Modal(document.getElementById('otpModal'));
+        const changePasswordModal = new bootstrap.Modal(document.getElementById('changePasswordModal'));
 
-        if (mobileChangePasswordBtn && mobilePasswordFields) {
-            mobileChangePasswordBtn.addEventListener('click', function() {
-                if (mobilePasswordFields.classList.contains('d-none')) {
-                    mobilePasswordFields.classList.remove('d-none');
-                    mobileChangePasswordBtn.innerHTML = '<i class="fas fa-times me-1"></i>Cancel';
-                    mobileChangePasswordBtn.classList.remove('btn-outline-secondary');
-                    mobileChangePasswordBtn.classList.add('btn-outline-danger');
+        const verifyOtpBtn = document.getElementById('verifyOtpBtn');
+        const otpFeedback = document.getElementById('otpFeedback');
+
+        // --- Step 1: Send OTP on button click (ERROR HANDLERS FIXED) ---
+        [desktopChangeBtn, mobileChangeBtn].forEach(btn => {
+            if (btn) {
+                btn.addEventListener('click', async () => {
+                    btn.disabled = true;
+                    btn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Sending OTP...';
+
+                    try {
+                        const response = await fetch('{{ route("student.password.sendOtp", $studInfo->id) }}', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                            },
+                            body: JSON.stringify({})
+                        });
+
+                        const data = await response.json();
+                        if (data.success) {
+                            // Show success notification with button AND auto-close
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Notice!',
+                                text: data.message || 'OTP has been sent to your email address.',
+                                confirmButtonColor: '#1dd3b0',
+                                confirmButtonText: 'OK',
+                                background: '#1F2937',
+                                color: '#fff',
+                                timer: 3000,
+                                timerProgressBar: true
+                            });
+
+                            // Show the OTP modal
+                            otpModal.show();
+                        } else {
+                            // Show error notification (user needs to read this)
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Notice!',
+                                text: data.message || 'Failed to send OTP.',
+                                confirmButtonColor: '#1dd3b0',
+                                background: '#1F2937',
+                                color: '#fff',
+                            });
+                        }
+                    } catch (error) {
+                        // Show error notification for network issues (user needs to read this)
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Notice!',
+                            text: 'Error sending OTP. Please try again.',
+                            confirmButtonColor: '#1dd3b0',
+                            background: '#1F2937',
+                            color: '#fff',
+                        });
+                    } finally {
+                        btn.disabled = false;
+                        btn.innerHTML = '<i class="fas fa-key me-2"></i>Change Password';
+                    }
+                });
+            }
+        });
+
+        // --- Step 2: Verify OTP ---
+        verifyOtpBtn.addEventListener('click', async () => {
+            const code = document.getElementById('otpCode').value.trim();
+            otpFeedback.textContent = '';
+
+            if (!code) {
+                otpFeedback.textContent = 'Please enter the OTP code.';
+                otpFeedback.style.color = '#f87171';
+                return;
+            }
+
+            verifyOtpBtn.disabled = true;
+            verifyOtpBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Verifying...';
+
+            try {
+                const response = await fetch('{{ route("student.password.verifyOtp", $studInfo->id) }}', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                    },
+                    body: JSON.stringify({
+                        otp: code
+                    })
+                });
+
+                const data = await response.json();
+                if (data.verified) {
+                    // Show success notification with button AND auto-close
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Verified!',
+                        text: 'OTP verified successfully. You can now change your password.',
+                        confirmButtonColor: '#1dd3b0',
+                        confirmButtonText: 'OK',
+                        background: '#1F2937',
+                        color: '#fff',
+                        timer: 3000,
+                        timerProgressBar: true
+                    });
+
+                    // Hide OTP modal and show password change modal
+                    otpModal.hide();
+                    changePasswordModal.show();
                 } else {
-                    mobilePasswordFields.classList.add('d-none');
-                    mobileChangePasswordBtn.innerHTML = '<i class="fas fa-key me-1"></i>Change Password';
-                    mobileChangePasswordBtn.classList.remove('btn-outline-danger');
-                    mobileChangePasswordBtn.classList.add('btn-outline-secondary');
-                    mobilePasswordFields.querySelector('input[name="new_password"]').value = '';
-                    mobilePasswordFields.querySelector('input[name="password_confirmation"]').value = '';
+                    // Show error notification
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Verification Failed',
+                        text: data.message || 'Invalid or expired OTP.',
+                        confirmButtonColor: '#1dd3b0',
+                        background: '#1F2937',
+                        color: '#fff',
+                    });
+
+                    otpFeedback.textContent = data.message || 'Invalid or expired OTP.';
+                    otpFeedback.style.color = '#f87171';
                 }
-            });
-        }
+            } catch (error) {
+                // Show error notification for network issues
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'Error verifying OTP. Please try again.',
+                    confirmButtonColor: '#1dd3b0',
+                    background: '#1F2937',
+                    color: '#fff',
+                });
 
-        // Password change functionality for desktop
-        const desktopChangePasswordBtn = document.getElementById('desktopChangePasswordBtn');
-        const desktopPasswordFields = document.getElementById('desktopPasswordChangeFields');
+                otpFeedback.textContent = 'Error verifying OTP.';
+                otpFeedback.style.color = '#f87171';
+            } finally {
+                verifyOtpBtn.disabled = false;
+                verifyOtpBtn.innerHTML = 'Verify OTP';
+            }
+        });
 
-        if (desktopChangePasswordBtn && desktopPasswordFields) {
-            desktopChangePasswordBtn.addEventListener('click', function() {
-                if (desktopPasswordFields.classList.contains('d-none')) {
-                    desktopPasswordFields.classList.remove('d-none');
-                    desktopChangePasswordBtn.innerHTML = '<i class="fas fa-times me-1"></i>Cancel';
-                    desktopChangePasswordBtn.classList.remove('btn-outline-secondary');
-                    desktopChangePasswordBtn.classList.add('btn-outline-danger');
+        // --- Step 3: Update Password (CONVERTED TO SWAL) ---
+        const changePasswordForm = document.getElementById('changePasswordForm');
+
+        changePasswordForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const saveBtn = document.getElementById('saveAccountBtn');
+
+            // Get values directly from inputs
+            const currentPassword = document.querySelector('[name="current_password"]').value;
+            const newPassword = document.querySelector('[name="new_password"]').value;
+            const passwordConfirmation = document.querySelector('[name="new_password_confirmation"]').value;
+
+            // Clear previous errors
+            document.querySelectorAll('.invalid-feedback').forEach(el => el.remove());
+            document.querySelectorAll('.is-invalid').forEach(el => el.classList.remove('is-invalid'));
+
+            saveBtn.disabled = true;
+            saveBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Saving...';
+
+            try {
+                const payload = {
+                    current_password: currentPassword,
+                    new_password: newPassword,
+                    new_password_confirmation: passwordConfirmation
+                };
+
+                const response = await fetch('{{ route("student.password.update", $studInfo->id) }}', {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                        'Accept': 'application/json',
+                    },
+                    body: JSON.stringify(payload)
+                });
+
+                const data = await response.json();
+
+                if (response.ok && data.success) {
+                    changePasswordModal.hide();
+
+                    // Show success notification with button AND auto-close
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Success!',
+                        text: data.message || 'Password updated successfully!',
+                        confirmButtonColor: '#1dd3b0',
+                        confirmButtonText: 'OK',
+                        background: '#1F2937',
+                        color: '#fff',
+                        timer: 3000,
+                        timerProgressBar: true
+                    });
+
+                    changePasswordForm.reset();
                 } else {
-                    desktopPasswordFields.classList.add('d-none');
-                    desktopChangePasswordBtn.innerHTML = '<i class="fas fa-key me-1"></i>Change Password';
-                    desktopChangePasswordBtn.classList.remove('btn-outline-danger');
-                    desktopChangePasswordBtn.classList.add('btn-outline-secondary');
-                    desktopPasswordFields.querySelector('input[name="new_password"]').value = '';
-                    desktopPasswordFields.querySelector('input[name="password_confirmation"]').value = '';
+                    if (data.errors) {
+                        Object.keys(data.errors).forEach(field => {
+                            const input = document.querySelector(`[name="${field}"]`);
+                            if (input) {
+                                input.classList.add('is-invalid');
+                                const errorDiv = document.createElement('div');
+                                errorDiv.className = 'invalid-feedback d-block';
+                                errorDiv.textContent = data.errors[field][0];
+                                input.parentElement.appendChild(errorDiv);
+                            }
+                        });
+                    } else {
+                        // Show error with SweetAlert
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: data.message || 'An error occurred.',
+                            confirmButtonColor: '#1dd3b0',
+                            background: '#1F2937',
+                            color: '#fff',
+                        });
+                    }
                 }
-            });
+            } catch (error) {
+                console.error('Error:', error);
+
+                // Show error with SweetAlert
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'Error updating password. Please try again.',
+                    confirmButtonColor: '#1dd3b0',
+                    background: '#1F2937',
+                    color: '#fff',
+                });
+            } finally {
+                saveBtn.disabled = false;
+                saveBtn.innerHTML = 'Save Password';
+            }
+        });
+
+        // Toggle password visibility function
+        function togglePasswordVisibility(inputId, iconId) {
+            const input = document.getElementById(inputId);
+            const icon = document.getElementById(iconId);
+
+            if (!input || !icon) return;
+
+            if (input.type === 'password') {
+                input.type = 'text';
+                icon.classList.remove('fa-eye-slash');
+                icon.classList.add('fa-eye');
+            } else {
+                input.type = 'password';
+                icon.classList.remove('fa-eye');
+                icon.classList.add('fa-eye-slash');
+            }
         }
 
-        // Sidebar toggle
-        const toggle = document.getElementById('sidebarToggle');
-        if (toggle) {
-            toggle.addEventListener('click', function() {
-                document.body.classList.toggle('sidebar-shrink');
-            });
-        }
+        // Use event delegation for eye icons - attach to document
+        document.addEventListener('click', function(e) {
+            // Check if clicked element is one of the toggle icons
+            if (e.target && e.target.id === 'toggleCurrentPassword') {
+                togglePasswordVisibility('currentPassword', 'toggleCurrentPassword');
+            }
+            if (e.target && e.target.id === 'toggleNewPassword') {
+                togglePasswordVisibility('newPassword', 'toggleNewPassword');
+            }
+            if (e.target && e.target.id === 'toggleConfirmPassword') {
+                togglePasswordVisibility('confirmPassword', 'toggleConfirmPassword');
+            }
+        });
+
         // Password strength checker
         function checkPasswordStrength(password) {
             let strength = 0;
-            if (/[a-z]/.test(password) && /[A-Z]/.test(password)) strength++; // lowercase
-            if (/[0-9]/.test(password) && password.length >= 8) strength++; // numbers
-            if (/[^A-Za-z0-9]/.test(password)) strength++; // special char
+            if (/[a-z]/.test(password) && /[A-Z]/.test(password)) strength++;
+            if (/[0-9]/.test(password) && password.length >= 8) strength++;
+            if (/[^A-Za-z0-9]/.test(password)) strength++;
 
             if (strength === 0) return {
-                text: "Password Strength: None",
-                staticText: "Password Strength: ",
-                dynamicText: "None",
-                color: "white",
+                text: 'None',
+                color: '#f1f5f9',
                 level: 0
             };
-            if (strength <= 1) return {
-                text: "Password Strength: Weak",
-                staticText: "Password Strength: ",
-                dynamicText: "Weak",
-                color: "#f87171",
+            if (strength === 1) return {
+                text: 'Weak',
+                color: '#f87171',
                 level: 1
-            }; // light red
+            };
             if (strength === 2) return {
-                text: "Password Strength: Medium",
-                staticText: "Password Strength: ",
-                dynamicText: "Medium",
-                color: "#facc15",
+                text: 'Medium',
+                color: '#facc15',
                 level: 2
-            }; // yellow
-            if (strength >= 3) return {
-                text: "Password Strength: Strong",
-                staticText: "Password Strength: ",
-                dynamicText: "Strong",
-                color: "#4ade80",
+            };
+            return {
+                text: 'Strong',
+                color: '#4ade80',
                 level: 3
-            }; // light green
+            };
         }
 
-        // Validate all conditions and enable/disable Save button
-        function validateForm(form) {
+        // Validate password rules
+        function validatePasswordRules(password) {
+            const rules = {
+                length: password.length >= 8 && password.length <= 20,
+                letter: /[a-zA-Z]/.test(password),
+                number: /[0-9]/.test(password),
+                special: /[^A-Za-z0-9]/.test(password),
+                noSpaces: !/\s/.test(password)
+            };
+
+            // Update rule indicators
+            updateRuleIndicator('ruleLength', rules.length);
+            updateRuleIndicator('ruleLetter', rules.letter);
+            updateRuleIndicator('ruleNumber', rules.number);
+            updateRuleIndicator('ruleSpecial', rules.special);
+            updateRuleIndicator('ruleNoSpaces', rules.noSpaces);
+
+            return Object.values(rules).every(rule => rule);
+        }
+
+        function updateRuleIndicator(elementId, isValid) {
+            const element = document.getElementById(elementId);
+            if (isValid) {
+                element.style.color = '#4ade80';
+                element.innerHTML = element.innerHTML.replace('✖', '✓');
+            } else {
+                element.style.color = '#f87171';
+                element.innerHTML = element.innerHTML.replace('✓', '✖');
+            }
+        }
+
+        function validatePasswordForm(form) {
             const newPass = form.querySelector('input[name="new_password"]').value.trim();
-            const confirmPass = form.querySelector('input[name="password_confirmation"]').value.trim();
+            const confirmPass = form.querySelector('input[name="new_password_confirmation"]').value.trim();
             const saveBtn = form.querySelector('#saveAccountBtn');
             const strength = checkPasswordStrength(newPass);
 
             if (!saveBtn) return;
 
-            // Case 1: No password entered → button stays enabled
-            if (newPass === "" && confirmPass === "") {
+            if (newPass === '' && confirmPass === '') {
                 saveBtn.disabled = false;
                 return;
             }
 
-            // Case 2: Password entered but weak or not matching → disable
-            if (strength.level < 3 || confirmPass !== newPass) {
+            const rulesValid = validatePasswordRules(newPass);
+
+            if (strength.level < 3 || confirmPass !== newPass || !rulesValid) {
                 saveBtn.disabled = true;
-                return;
+            } else {
+                saveBtn.disabled = false;
+            }
+        }
+
+        const newPasswordInput = document.querySelector('input[name="new_password"]');
+        const confirmPasswordInput = document.querySelector('input[name="new_password_confirmation"]');
+        const strengthFeedback = document.getElementById('passwordStrength');
+        const matchFeedback = document.getElementById('passwordMatch');
+        const passwordRules = document.getElementById('passwordRules');
+
+        newPasswordInput.addEventListener('focus', function() {
+            passwordRules.classList.remove('d-none');
+        });
+
+        newPasswordInput.addEventListener('blur', function() {
+            if (this.value === '') {
+                passwordRules.classList.add('d-none');
+            }
+        });
+
+        newPasswordInput.addEventListener('input', function() {
+            const result = checkPasswordStrength(this.value);
+            strengthFeedback.innerHTML = `Password Strength: <span style="color:${result.color};">${result.text}</span>`;
+
+            if (this.value !== '') {
+                passwordRules.classList.remove('d-none');
+                validatePasswordRules(this.value);
+            } else {
+                passwordRules.classList.add('d-none');
             }
 
-            // Case 3: Strong password + match → enable
-            saveBtn.disabled = false;
-        }
-
-        const newPasswordInputs = document.querySelectorAll('input[name="new_password"]');
-        const confirmPasswordInputs = document.querySelectorAll('input[name="password_confirmation"]');
-
-        newPasswordInputs.forEach((input) => {
-            input.addEventListener('input', function() {
-                // Updated selector: look in the parent container that holds both the input div and feedback
-                const feedback = this.closest('.mb-3').querySelector('#passwordStrength') ||
-                    this.parentElement.parentElement.querySelector('#passwordStrength');
-                if (feedback) {
-                    const result = checkPasswordStrength(this.value);
-
-                    if (result.level === 0) {
-                        if (result.level === 0) {
-                            // Show "None" instead of clearing
-                            feedback.innerHTML = `<span style="color: #e2e8f0;">${result.staticText}</span><span style="color: ${result.color};">${result.dynamicText}</span>`;
-                        } else {
-                            // Show Weak / Medium / Strong
-                            feedback.innerHTML = `<span style="color: #e2e8f0;">${result.staticText}</span><span style="color: ${result.color};">${result.dynamicText}</span>`;
-                        }
-                    } else {
-                        // Create the display with static white text and colored dynamic text
-                        feedback.innerHTML = `<span style="color: #e2e8f0;">${result.staticText}</span><span style="color: ${result.color};">${result.dynamicText}</span>`;
-                    }
-                }
-                validateForm(this.closest('form'));
-            });
+            validatePasswordForm(this.closest('form'));
         });
 
-        // Confirm password matching
-        confirmPasswordInputs.forEach((input) => {
-            input.addEventListener('input', function() {
-                const newPass = this.closest('form').querySelector('input[name="new_password"]').value;
-                // Updated selector: look in the parent container that holds both the input div and feedback
-                const feedback = this.closest('.mb-3').querySelector('#passwordMatch') ||
-                    this.parentElement.parentElement.querySelector('#passwordMatch');
-                if (feedback) {
-                    if (this.value === "") {
-                        feedback.textContent = "";
-                    } else if (this.value !== newPass) {
-                        feedback.textContent = "Passwords do not match";
-                        feedback.style.color = "red";
-                    } else {
-                        feedback.textContent = "Passwords match";
-                        feedback.style.color = "#4ade80";
-                    }
-                }
-                validateForm(this.closest('form'));
-            });
+        confirmPasswordInput.addEventListener('input', function() {
+            const newPass = newPasswordInput.value;
+            if (this.value === '') {
+                matchFeedback.textContent = '';
+            } else if (this.value !== newPass) {
+                matchFeedback.textContent = 'Passwords do not match';
+                matchFeedback.style.color = '#f87171';
+            } else {
+                matchFeedback.textContent = 'Passwords match';
+                matchFeedback.style.color = '#4ade80';
+            }
+            validatePasswordForm(this.closest('form'));
         });
-
-        function setupPasswordToggle() {
-            // Handle both mobile and desktop password toggles
-            const passwordToggles = document.querySelectorAll('.mobile-password-toggle, .desktop-password-toggle');
-
-            passwordToggles.forEach(toggle => {
-                // Set initial state based on input type
-                const targetName = toggle.getAttribute('data-target');
-                const form = toggle.closest('form');
-                const passwordInput = form.querySelector(`input[name="${targetName}"]`);
-                const icon = toggle.querySelector('i');
-
-                if (passwordInput && icon) {
-                    // Set initial icon state
-                    if (passwordInput.type === 'password') {
-                        icon.classList.remove('fa-eye-slash');
-                        icon.classList.add('fa-eye');
-                        toggle.setAttribute('title', 'Show password');
-                    } else {
-                        icon.classList.remove('fa-eye');
-                        icon.classList.add('fa-eye-slash');
-                        toggle.setAttribute('title', 'Hide password');
-                    }
-                }
-
-                toggle.addEventListener('click', function() {
-                    const targetName = this.getAttribute('data-target');
-                    const form = this.closest('form');
-                    const passwordInput = form.querySelector(`input[name="${targetName}"]`);
-                    const icon = this.querySelector('i');
-
-                    if (passwordInput) {
-                        if (passwordInput.type === 'password') {
-                            passwordInput.type = 'text';
-                            icon.classList.remove('fa-eye');
-                            icon.classList.add('fa-eye-slash');
-                            this.setAttribute('title', 'Hide password');
-                        } else {
-                            passwordInput.type = 'password';
-                            icon.classList.remove('fa-eye-slash');
-                            icon.classList.add('fa-eye');
-                            this.setAttribute('title', 'Show password');
-                        }
-                    }
-                });
-            });
-        }
-
-        // Call the function after all your existing setup
-        setupPasswordToggle();
 
         // // On page load, disable all save buttons initially
         // document.querySelectorAll('form#accountUpdateForm button[type="submit"]').forEach((btn) => {

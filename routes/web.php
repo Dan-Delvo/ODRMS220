@@ -189,6 +189,11 @@ Route::group(['middleware' => 'userstudent'], function () {
     Route::post('/save-fcm-token', [AccountController::class, 'saveFcmToken'])->name('save.fcm.token');
     Route::get('/student/profile', [StudentInformationModelController::class, 'showProfile'])->name('student.profile');
     Route::put('/student/profile/{id}', [StudentInformationModelController::class, 'updateProfile'])->name('student.profile.update');
+
+    Route::post('/student/{id}/account/send-otp', [AccountController::class, 'accountSendOtp'])->name('student.password.sendOtp');
+    Route::post('/student/{id}/account/verify-otp', [AccountController::class, 'accountVerifyOtp'])->name('student.password.verifyOtp');
+    Route::put('/student/{id}/account/update-password', [AccountController::class, 'accountUpdatePassword'])->name('student.password.update');
+
     // Sends an Email Verification for updating profile
     Route::put('/student/profile/verify/{id}', [AccountController::class, 'verifyUpdateProfile'])->name('student.profile.verifyUpdate');
     // When clicking the Verify Email button
