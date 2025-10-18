@@ -56,7 +56,12 @@ class RoleController extends Controller
     {
         // Set current_user before DB update
         DB::connection()->getPdo()->exec("SET @current_user = " . DB::connection()->getPdo()->quote(Auth::check() ? Auth::user()->username : 'guest'));
-
+        request()->validate([
+            'role' => 'required|unique:role,name',
+        ],[
+            'role.required' => 'The role field is required.',
+            'role.unique' => 'The role name has already been taken.',
+        ]);
         $save = RolesModel::getSingle($id);
         $save->name = $request->role;
         $save->save();
@@ -68,12 +73,22 @@ class RoleController extends Controller
 
     public function delete($id)
     {
-        // Set current_user before DB delete
         DB::connection()->getPdo()->exec("SET @current_user = " . DB::connection()->getPdo()->quote(Auth::check() ? Auth::user()->username : 'guest'));
+        // Check if role has related users
+        $relatedUsersCount = DB::table('acc_users')
+            ->where('role_id', $id)
+            ->count();
+
+        // If there are related users, prevent deletion
+        if ($relatedUsersCount > 0) {
+            return redirect('panel/role')->with('error', "Cannot delete this role. It is currently assigned to {$relatedUsersCount} user(s). Please reassign or remove the users first.");
+        }
+
+        // Set current_user before DB delete
 
         $save = RolesModel::getSingle($id);
         $save->delete();
 
-        return redirect('panel/role')->with('danger', "Role Successfully deleted");
+        return redirect('panel/role')->with('danger', "Role successfully deleted");
     }
 }

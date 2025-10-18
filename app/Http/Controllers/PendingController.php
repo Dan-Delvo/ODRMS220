@@ -27,30 +27,40 @@ class PendingController extends Controller
         DB::connection()->getPdo()->exec("SET @current_user = " . DB::connection()->getPdo()->quote($username));
     }
 
-    public function index()
+    public function index(Request $request)
     {
+        // Check permission
         $PermissionPending = PermissionRoleModel::getPermission('pending', Auth::user()->role_id);
         if (empty($PermissionPending)) {
             abort(404);
         }
 
-        $data = PermissionRoleModel::getPermission('editPending', Auth::user()->role_id);
-        $data1 = PermissionRoleModel::getPermission('approvePending', Auth::user()->role_id);
+        // Get edit and approve permissions
+        $PermissionEdit = PermissionRoleModel::getPermission('editPending', Auth::user()->role_id);
+        $approvePending = PermissionRoleModel::getPermission('approvePending', Auth::user()->role_id);
 
-        $totalCount = DocumentRequestModel::where('status', 'pending')->count();
-        $DocRequests = DocumentRequestModel::where('status', 'pending')
-            ->with('claimer')
-            ->with('studentInformation')
-            ->orderBy('req_no', 'asc')
-            ->paginate(10);
+        // Prepare search options
+        $searchOptions = [
+            'search' => $request->get('search'),
+            'filter' => $request->get('filter', 'all'),
+            'sort' => $request->get('sort', 'default'),
+            'per_page' => 10
+        ];
+
+        // Get document requests with search/filter/sort
+        $DocRequests = DocumentRequestModel::getDocumentRequests('pending', $searchOptions);
+
+        // Get total count (unfiltered)
+        $totalCount = DocumentRequestModel::getStatusCount('pending');
 
         return view('requestTables.pending.pending', [
             'DocRequests' => $DocRequests,
             'totalCount' => $totalCount,
-            'PermissionEdit' => $data,
-            'approvePending' => $data1
+            'PermissionEdit' => $PermissionEdit,
+            'approvePending' => $approvePending
         ]);
     }
+
 
     public function create()
     {

@@ -5,9 +5,8 @@ namespace App\Models;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Notifications\Notifiable;
-use Illuminate\Contracts\Auth\MustVerifyEmail;
 
-class Account extends Authenticatable implements MustVerifyEmail
+class Account extends Authenticatable
 {
     use HasFactory, Notifiable;
     use Notifiable;
@@ -15,8 +14,6 @@ class Account extends Authenticatable implements MustVerifyEmail
     // Specify the table name
     protected $table = 'acc_users';
     public $timestamps = false;
-
-
 
     // Specify the primary key if not 'id'
     protected $primaryKey = 'user_account_id'; // The actual primary key in the table

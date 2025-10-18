@@ -327,6 +327,15 @@
             transform: translateY(0);
         }
     }
+    /* Fixed Width Cell for Release Mode */
+    .fixed-width-cell {
+        width: 150px;
+        min-width: 150px;
+        max-width: 150px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
 
     .custom-table tbody tr {
         animation: fadeInUp 0.6s ease forwards;
@@ -366,7 +375,6 @@
                         <table class="table table-sm custom-table">
                             <thead>
                                 <tr>
-                                    <th><i class="fas fa-hashtag me-1"></i>ID</th>
                                     <th><i class="fas fa-user me-1"></i>Claimer</th>
                                     <th><i class="fas fa-user-graduate me-1"></i>Student</th>
                                     <th><i class="fas fa-file-alt me-1"></i>Document</th>
@@ -379,7 +387,6 @@
                             <tbody>
                                 @foreach ($DocRequests as $item)
                                 <tr>
-                                    <td><strong>#{{ str_pad($item->id, 4, '0', STR_PAD_LEFT) }}</strong></td>
                                     <td>
                                         @if($item->claimer->full_name !== 'Blank Blank')
                                             {{ $item->claimer->full_name }}
@@ -399,7 +406,7 @@
                                             {{ $item->request_schl_entity }}
                                         </div>
                                     </td>
-                                    <td>
+                                    <td class="fixed-width-cell">
                                         <span class="release-mode-badge">{{ $item->release_mode }}</span>
                                     </td>
                                     <td>

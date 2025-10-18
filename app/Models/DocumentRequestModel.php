@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\DB;
 
 class DocumentRequestModel extends Model
 {
@@ -104,6 +105,91 @@ class DocumentRequestModel extends Model
             'status' => $data['status'],
         ]);
     }
+
+    public static function getDocumentRequests(string $status, array $options = [])
+    {
+        $query = self::where('status', $status)
+            ->with(['claimer', 'studentInformation', 'documents', 'receipt']);
+
+        // Apply search if provided
+        if (!empty($options['search'])) {
+            $searchTerm = $options['search'];
+            $filter = $options['filter'] ?? 'all';
+
+            $query->where(function($q) use ($searchTerm, $filter) {
+                switch ($filter) {
+                    case 'student':
+                        $q->whereHas('studentInformation', function($sq) use ($searchTerm) {
+                            $sq->where(DB::raw("CONCAT(FirstName, ' ', LastName)"), 'LIKE', "%{$searchTerm}%");
+                        });
+                        break;
+                    case 'document':
+                        $q->whereHas('documents', function($dq) use ($searchTerm) {
+                            $dq->where('DocType', 'LIKE', "%{$searchTerm}%");
+                        });
+                        break;
+
+                    case 'school':
+                        $q->where('request_schl_entity', 'LIKE', "%{$searchTerm}%");
+                        break;
+
+                    case 'reqno':
+                        $q->where('req_no', 'LIKE', "%{$searchTerm}%");
+                        break;
+
+                    case 'status':
+                        $q->where('status', 'LIKE', "%{$searchTerm}%");
+                        break;
+
+                    case 'all':
+                    default:
+                        // Search across all fields
+                        $q->where(function($subQuery) use ($searchTerm) {
+                            $subQuery->where('req_no', 'LIKE', "%{$searchTerm}%")
+                                ->orWhere('request_schl_entity', 'LIKE', "%{$searchTerm}%")
+                                ->orWhere('status', 'LIKE', "%{$searchTerm}%")
+                                ->orWhere('remarks', 'LIKE', "%{$searchTerm}%")
+                                ->orWhere('request_mode', 'LIKE', "%{$searchTerm}%")
+                                ->orWhere('release_mode', 'LIKE', "%{$searchTerm}%")
+                                ->orWhereHas('studentInformation', function($sq) use ($searchTerm) {
+                                    $sq->where(DB::raw("CONCAT(FirstName, ' ', LastName)"), 'LIKE', "%{$searchTerm}%");
+                                })
+                                ->orWhereHas('documents', function($dq) use ($searchTerm) {
+                                    $dq->where('DocType', 'LIKE', "%{$searchTerm}%");
+                                });
+                        });
+                        break;
+                }
+            });
+        }
+
+        // Apply sorting
+        $sort = $options['sort'] ?? 'default';
+        switch ($sort) {
+            case 'asc':
+                $query->orderBy('req_no', 'asc');
+                break;
+            case 'desc':
+                $query->orderBy('req_no', 'desc');
+                break;
+            case 'default':
+            default:
+                // Default ordering
+                $query->orderBy('req_no', 'desc');
+                break;
+        }
+
+        // Get per page from options or default to 10
+        $perPage = $options['per_page'] ?? 10;
+
+        return $query->paginate($perPage);
+    }
+
+    public static function getStatusCount(string $status)
+    {
+        return self::where('status', $status)->count();
+    }
+
 
 
 }

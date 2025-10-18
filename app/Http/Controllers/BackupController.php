@@ -11,6 +11,30 @@ class BackupController extends Controller
 {
     public function downloadBackup()
     {
+        $fileName = "backup-" . date('Y-m-d_H-i-s') . ".sql";
+
+        // Check if we've already logged this specific backup in this session
+        $sessionKey = 'backup_logged_' . $fileName;
+
+        if (!session()->has($sessionKey)) {
+            $user = Auth::user();
+
+            AuditTable::withoutEvents(function () use ($fileName, $user) {
+                AuditTable::create([
+                    'type'          => 'Back Up',
+                    'old_data'      => null,
+                    'new_data'      => json_encode(['File Name' => $fileName]),
+                    'time'          => now(),
+                    'changedBy'     => $user->studentInformation->full_name,
+                    'fromTableName' => 'Database Backup',
+                    'description'   => null
+                ]);
+            });
+
+            // Mark this backup as logged
+            session()->put($sessionKey, true);
+        }
+
         $database = env('DB_DATABASE');
         $tables = DB::select('SHOW TABLES');
         $tableKey = "Tables_in_{$database}";
@@ -18,42 +42,20 @@ class BackupController extends Controller
 
         foreach ($tables as $table) {
             $tableName = $table->$tableKey;
-
-            // Get table creation query safely
             $createTableRow = DB::select("SHOW CREATE TABLE {$tableName}")[0];
             $createTable = array_values((array) $createTableRow)[1];
-
             $sqlScript .= "\n\n" . $createTable . ";\n\n";
 
-            // Get table data
             $rows = DB::table($tableName)->get();
             foreach ($rows as $row) {
                 $values = array_map(function ($value) {
                     return isset($value) ? addslashes($value) : 'NULL';
                 }, (array) $row);
-
                 $values = "'" . implode("','", $values) . "'";
                 $sqlScript .= "INSERT INTO {$tableName} VALUES ({$values});\n";
             }
-
             $sqlScript .= "\n";
         }
-
-        $fileName = "backup-" . date('Y-m-d_H-i-s') . ".sql";
-        $user = Auth::user();
-
-        AuditTable::withoutEvents(function () use ($fileName, $user) {
-            AuditTable::create([
-                'type'          => 'Back Up',
-                'old_data'      => null,
-                'new_data'      => json_encode([
-                    'File Name' => $fileName,
-                ]),
-                'time'          => now(),
-                'changedBy'     => $user->studentInformation->full_name,
-                'fromTableName' => 'Database Backup'
-            ]);
-        });
 
         return response($sqlScript)
             ->header('Content-Type', 'application/sql')

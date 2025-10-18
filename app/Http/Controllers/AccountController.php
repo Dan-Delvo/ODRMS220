@@ -16,32 +16,73 @@ use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
-
-use Illuminate\Auth\Events\Registered;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Exception;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
+use Illuminate\Auth\Events\Registered;
 
 class AccountController extends Controller
 {
     // Show the account creation form
-    public function display()
+    public function display(Request $request)
     {
         $pdo = DB::connection()->getPdo();
         $pdo->exec("SET @current_user = " . $pdo->quote(Auth::check() ? Auth::user()->username : 'guest'));
+
         try {
             $PermissionAcc = PermissionRoleModel::getPermission('user', Auth::user()->role_id);
             if (empty($PermissionAcc)) {
                 abort(404);
             }
 
+            // Get search and sort parameters
+            $search = $request->input('search');
+            $sortBy = $request->input('sort_by', 'user_account_id');
+            $sortOrder = $request->input('sort_order', 'asc');
+
+            // Validate sort column to prevent SQL injection
+            $allowedSortColumns = ['user_account_id', 'username', 'email_address', 'role_id'];
+            if (!in_array($sortBy, $allowedSortColumns)) {
+                $sortBy = 'user_account_id';
+            }
+
+            // Validate sort order
+            if (!in_array($sortOrder, ['asc', 'desc'])) {
+                $sortOrder = 'asc';
+            }
+
+            // Build query with relationships
+            $query = Account::with(['roles', 'studentInformation']);
+
+            // Apply search filter
+            if ($search) {
+                $query->where(function($q) use ($search) {
+                    $q->where('user_account_id', 'like', '%' . $search . '%')
+                    ->orWhere('username', 'like', '%' . $search . '%')
+                    ->orWhere('email_address', 'like', '%' . $search . '%')
+                    ->orWhereHas('roles', function($roleQuery) use ($search) {
+                        $roleQuery->where('name', 'like', '%' . $search . '%');
+                    })
+                    ->orWhereHas('studentInformation', function($studentQuery) use ($search) {
+                        $studentQuery->whereRaw("CONCAT(FirstName, ' ', MiddleName, ' ', LastName) LIKE ?", ['%' . $search . '%'])
+                                    ->orWhereRaw("CONCAT(FirstName, ' ', LastName) LIKE ?", ['%' . $search . '%']);
+                    });
+                });
+            }
+
+            // Apply sorting
+            $query->orderBy($sortBy, $sortOrder);
+
+            // Paginate results (10 per page to match your original)
+            $user = $query->paginate(10);
+
+            // Get permissions
             $data = PermissionRoleModel::getPermission('userEdit', Auth::user()->role_id);
             $data1 = PermissionRoleModel::getPermission('userDelete', Auth::user()->role_id);
             $data2 = PermissionRoleModel::getPermission('userInfo', Auth::user()->role_id);
-            $user = Account::with('roles')->paginate(10);
 
             return view('maintenance.users', compact('user'))
                 ->with([
@@ -457,9 +498,10 @@ class AccountController extends Controller
             $requestTypes = [];
             $hasRequests = false;
 
-            // Check for document requests (corrected table name)
-            $documentRequests = DB::table('doc_requests')
-                ->where('std_students_id', $userId)
+            // Check for document requests
+            $documentRequests = DB::table('document_requests')
+                ->where('user_id', $userId)
+                ->whereNotIn('status', ['completed', 'cancelled', 'rejected'])
                 ->count();
 
             if ($documentRequests > 0) {
@@ -467,6 +509,39 @@ class AccountController extends Controller
                 $requestTypes[] = $documentRequests . ' pending document request(s)';
             }
 
+            // Check for service requests
+            $serviceRequests = DB::table('service_requests')
+                ->where('user_id', $userId)
+                ->whereNotIn('status', ['completed', 'cancelled', 'rejected'])
+                ->count();
+
+            if ($serviceRequests > 0) {
+                $hasRequests = true;
+                $requestTypes[] = $serviceRequests . ' pending service request(s)';
+            }
+
+            // Check for other types of requests (add more as needed)
+            // Example: Certificate requests
+            // $certificateRequests = DB::table('certificate_requests')
+            //                         ->where('user_id', $userId)
+            //                         ->whereNotIn('status', ['completed', 'cancelled', 'rejected'])
+            //                         ->count();
+
+            // if ($certificateRequests > 0) {
+            //     $hasRequests = true;
+            //     $requestTypes[] = $certificateRequests . ' pending certificate request(s)';
+            // }
+
+            // Check for any transactions or pending payments
+            $pendingTransactions = DB::table('transactions')
+                ->where('user_id', $userId)
+                ->whereIn('status', ['pending', 'processing', 'in_progress'])
+                ->count();
+
+            if ($pendingTransactions > 0) {
+                $hasRequests = true;
+                $requestTypes[] = $pendingTransactions . ' pending transaction(s)';
+            }
 
             return [
                 'hasRequests' => $hasRequests,
@@ -481,6 +556,7 @@ class AccountController extends Controller
             ];
         }
     }
+
     /**
      * Check if user has existing requests
      * Adjust this method based on your actual request tables

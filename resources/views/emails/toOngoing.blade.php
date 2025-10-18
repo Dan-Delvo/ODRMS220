@@ -59,7 +59,7 @@
             <p>We're currently processing your requested document. Our team is working to ensure everything is completed promptly and accurately.</p>
             <p>Please stay tuned for further updates. You will receive another notification once your document is ready for release.</p>
             <p style="text-align: center; margin-top: 20px;">
-                <a href="{{ url('https://odrms-ubnhs.bagsik-eis.site/') }}" style="
+                <a href="{{ url('http://127.0.0.1:8000/') }}" style="
                     display: inline-block;
                     padding: 10px 20px;
                     background-color: #ffc107;

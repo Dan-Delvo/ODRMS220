@@ -14,7 +14,7 @@
     </div>
     <div class="col-md-6 text-end">
         <h1 class="mt-4 text-dark">
-            <span class="badge" style="background-color:#1f2937; font-size: 2rem;">Total Records: {{ $totalCount }}</span>
+            <span class="badge" style="background-color:#1f2937; font-size: 2rem;">Total Records: {{ $auditTrail->total() }}</span>
         </h1>
     </div>
 </div>
@@ -23,116 +23,131 @@
     <div class="col-md-12">
 
         @if(session('Status'))
-        <div class="alert alert-success">
+        <div class="alert alert-success alert-dismissible fade show">
+            <i class="fas fa-check-circle me-2"></i>
             {{ session('Status') }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
         </div>
         @endif
 
         @if(session('Danger'))
-        <div class="alert alert-danger">
+        <div class="alert alert-danger alert-dismissible fade show">
+            <i class="fas fa-exclamation-triangle me-2"></i>
             {{ session('Danger') }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
         </div>
         @endif
 
+        <!-- Search and Filter Section -->
+        <div class="card shadow-sm border-0 mb-3">
+            <div class="card-body">
+                <form action="{{ route('audit.index') }}" method="GET" id="filterForm">
+                    <div class="row g-3">
+                        <!-- Search Input -->
+                        <div class="col-md-5">
+                            <label for="search" class="form-label fw-bold">
+                                <i class="fas fa-search me-1"></i>Search
+                            </label>
+                            <input type="text" name="search" id="search" class="form-control"
+                                placeholder="Search audit logs..."
+                                value="{{ request('search') }}">
+                        </div>
 
-        <div class="card shadow-lg border-0 rounded-lg mt-3">
-            <div class="card-header text-white d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center" style="background-color: #1f2937;">
-                <h5 class="mb-2 mb-md-0">System Audit Log</h5>
+                        <!-- Filter Type -->
+                        <div class="col-md-4">
+                            <label for="filter" class="form-label fw-bold">
+                                <i class="fas fa-filter me-1"></i>Search In
+                            </label>
+                            <select name="filter" id="filter" class="form-select">
+                                <option value="all" {{ request('filter', 'all') == 'all' ? 'selected' : '' }}>All Fields</option>
+                                <option value="type" {{ request('filter') == 'type' ? 'selected' : '' }}>Action Type</option>
+                                <option value="user" {{ request('filter') == 'user' ? 'selected' : '' }}>Changed By</option>
+                                <option value="table" {{ request('filter') == 'table' ? 'selected' : '' }}>Table Name</option>
+                                <option value="date" {{ request('filter') == 'date' ? 'selected' : '' }}>Date</option>
+                            </select>
+                        </div>
 
-                <!-- Search Bar -->
-                <div class="search-container d-flex gap-2 mt-2 mt-md-0">
-                    <div class="input-group" style="width: 300px;">
-                        <input type="text" id="searchInput" class="form-control form-control-sm" placeholder="Search audit logs..." style="border-radius: 0.375rem 0 0 0.375rem;">
-                        <button class="btn btn-outline-light btn-sm" type="button" id="clearSearch" title="Clear search">
-                            <i class="fas fa-times"></i>
-                        </button>
-                    </div>
-                    <div class="dropdown">
-                        <button class="btn btn-outline-light btn-sm dropdown-toggle" type="button" id="filterDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-                            <i class="fas fa-filter me-1"></i>Filter
-                        </button>
-                        <ul class="dropdown-menu" aria-labelledby="filterDropdown">
-                            <li><a class="dropdown-item filter-option active" href="#" data-filter="all">All Records</a></li>
-                            <li>
-                                <hr class="dropdown-divider">
-                            </li>
-                            <li><a class="dropdown-item filter-option" href="#" data-filter="type">Action Type</a></li>
-                            <li><a class="dropdown-item filter-option" href="#" data-filter="user">Changed By</a></li>
-                            <li><a class="dropdown-item filter-option" href="#" data-filter="table">Table Name</a></li>
-                            <li><a class="dropdown-item filter-option" href="#" data-filter="date">Date</a></li>
-                        </ul>
-                    </div>
+                        <!-- Action Type Filter -->
+                        <div class="col-md-3">
+                            <label for="action_type" class="form-label fw-bold">
+                                <i class="fas fa-tag me-1"></i>Action Type
+                            </label>
+                            <select name="action_type" id="action_type" class="form-select">
+                                <option value="">All Types</option>
+                                <option value="CREATE" {{ request('action_type') == 'CREATE' ? 'selected' : '' }}>Create</option>
+                                <option value="UPDATE" {{ request('action_type') == 'UPDATE' ? 'selected' : '' }}>Update</option>
+                                <option value="DELETE" {{ request('action_type') == 'DELETE' ? 'selected' : '' }}>Delete</option>
+                                <option value="LOGIN" {{ request('action_type') == 'LOGIN' ? 'selected' : '' }}>Login</option>
+                                <option value="BACKUP" {{ request('action_type') == 'BACKUP' ? 'selected' : '' }}>Back Up</option>
+                                <option value="RESTORE" {{ request('action_type') == 'RESTORE' ? 'selected' : '' }}>Restore</option>
+                            </select>
+                        </div>
 
-                    <!-- NEW: Table Name Filter Buttons -->
-                    <div class="dropdown">
-                        <button class="btn btn-outline-light btn-sm dropdown-toggle" type="button" id="tableFilterDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-                            <i class="fas fa-table me-1"></i>Table Filter
-                        </button>
-                        <ul class="dropdown-menu" aria-labelledby="tableFilterDropdown">
-                            <li><a class="dropdown-item table-filter-option active" href="#" data-table="all">All Tables</a></li>
-                            <li>
-                                <hr class="dropdown-divider">
-                            </li>
-                            <li><a class="dropdown-item table-filter-option" href="#" data-table="login">Login</a></li>
-                            <li><a class="dropdown-item table-filter-option" href="#" data-table="doc_requests">Document Requests</a></li>
-                            <li><a class="dropdown-item table-filter-option" href="#" data-table="permission_role">Permission Role</a></li>
-                            <li><a class="dropdown-item table-filter-option" href="#" data-table="acc_users">Account Users</a></li>
-                            <li><a class="dropdown-item table-filter-option" href="#" data-table="std_students">Students</a></li>
-                            <li><a class="dropdown-item table-filter-option" href="#" data-table="doc_categories">Document Categories</a></li>
-                        </ul>
+                        <!-- Filter Buttons -->
+                        <div class="col-md-12">
+                            <button type="submit" class="btn btn-primary me-2">
+                                <i class="fas fa-search me-1"></i> Search
+                            </button>
+                            <a href="{{ route('audit.index') }}" class="btn btn-secondary">
+                                <i class="fas fa-redo me-1"></i> Reset
+                            </a>
+                        </div>
                     </div>
-                </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Active Filters Display -->
+        @if(request('search') || request('filter') != 'all' || request('action_type'))
+        <div class="alert alert-info alert-dismissible fade show mb-3">
+            <i class="fas fa-info-circle me-2"></i>
+            <strong>Active Filters:</strong>
+            @if(request('search'))
+                <span class="badge bg-primary me-1">Search: "{{ request('search') }}"</span>
+            @endif
+            @if(request('filter') && request('filter') != 'all')
+                <span class="badge bg-success me-1">Search In: {{ ucfirst(request('filter')) }}</span>
+            @endif
+            @if(request('action_type'))
+                <span class="badge bg-warning text-dark me-1">Type: {{ request('action_type') }}</span>
+            @endif
+            <a href="{{ route('audit.index') }}" class="btn btn-sm btn-outline-info ms-2">Clear All</a>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+        @endif
+
+        <div class="card shadow-lg border-0 rounded-lg">
+            <div class="card-header text-white d-flex justify-content-between align-items-center" style="background-color: #1f2937;">
+                <h5 class="mb-0">System Audit Log</h5>
+                <span class="badge bg-light text-dark">
+                    @if($auditTrail->count() > 0)
+                        Showing {{ $auditTrail->firstItem() }} - {{ $auditTrail->lastItem() }} of {{ $auditTrail->total() }}
+                    @else
+                        No records
+                    @endif
+                </span>
             </div>
 
             <div class="card-body bg-light">
-                <div id="spinner" class="text-center my-4" style="display: none;">
-                    <div class="spinner-border text-primary" role="status">
-                        <span class="visually-hidden">Loading...</span>
-                    </div>
-                </div>
-
-                <!-- Search Results Info -->
-                <div id="searchInfo" class="mb-3" style="display: none;">
-                    <div class="alert alert-info mb-2 py-2">
-                        <small>
-                            <i class="fas fa-search me-1"></i>
-                            <span id="searchResultText">Showing all records</span>
-                            <span id="searchQuery" class="fw-bold"></span>
-                        </small>
-                    </div>
-                </div>
-
-                <div class="table-responsive" id="auditTable">
-                    @if($auditTrail->isEmpty())
-                    <div class="alert alert-warning text-center my-3">
-                        No audit trail records found.
-                    </div>
-                    @else
+                @if($auditTrail->count() > 0)
+                <div class="table-responsive">
                     <table class="table table-sm table-bordered table-hover align-middle text-nowrap" style="font-size: 0.85rem;">
                         <thead class="table-dark">
                             <tr>
-                                <th title="Audit ID">Audit No.</th>
-                                <th title="Action Type">Type</th>
-                                <th title="Description">Description</th>
-                                <th title="Changed By User">Changed By</th>
-                                <th title="Date and Time">Date/Time</th>
-                                <th title="Old Data">Old Data</th>
-                                <th title="New Data">New Data</th>
+                                <th>Audit No.</th>
+                                <th>Type</th>
+                                <th>Description</th>
+                                <th>Changed By</th>
+                                <th>Date/Time</th>
+                                <th>Old Data</th>
+                                <th>New Data</th>
                                 <th>Actions</th>
                             </tr>
                         </thead>
-                        <tbody id="tableBody">
+                        <tbody>
                             @foreach ($auditTrail as $item)
-                            <tr class="audit-row"
-                                data-id="{{ $item->id }}"
-                                data-type="{{ strtolower($item->type) }}"
-                                data-description="{{ strtolower($item->description) }}"
-                                data-user="{{ strtolower($item->changedBy) }}"
-                                data-date="{{ $item->time ? $item->time->format('Y-m-d') : '' }}"
-                                data-old-data="{{ strtolower($item->old_data ?? '') }}"
-                                data-new-data="{{ strtolower($item->new_data ?? '') }}">
-
-                                <td>{{ $loop->iteration + $auditTrail->firstItem() - 1 }}</td>
+                            <tr>
+                                <td>{{ $loop->iteration + ($auditTrail->currentPage() - 1) * $auditTrail->perPage() }}</td>
                                 <td>
                                     @switch($item->type)
                                     @case('CREATE')
@@ -144,11 +159,20 @@
                                     @case('DELETE')
                                     <span class="badge bg-danger px-2 py-1">{{ $item->type }}</span>
                                     @break
+                                    @case('LOGIN')
+                                    <span class="badge bg-info px-2 py-1">{{ $item->type }}</span>
+                                    @break
+                                    @case('BACKUP')
+                                    <span class="badge bg-primary px-2 py-1">{{ $item->type }}</span>
+                                    @break
+                                    @case('RESTORE')
+                                    <span class="badge bg-dark px-2 py-1">{{ $item->type }}</span>
+                                    @break
                                     @default
                                     <span class="badge bg-secondary px-2 py-1">{{ $item->type }}</span>
                                     @endswitch
                                 </td>
-                                <td> {{ $item->description }}</td>
+                                <td>{{ $item->description }}</td>
                                 <td>{{ $item->changedBy }}</td>
                                 <td>{{ $item->time ? $item->time->format('M d, Y - h:i A') : 'N/A' }}</td>
                                 <td>
@@ -169,8 +193,8 @@
                                     <span class="text-muted">N/A</span>
                                     @endif
                                 </td>
-                                <td class="text-nowrap">
-                                    <button class="btn btn-sm btn-details" data-bs-toggle="modal" data-bs-target="#detailModal{{ $item->id }}">
+                                <td>
+                                    <button class="btn btn-sm btn-info" data-bs-toggle="modal" data-bs-target="#detailModal{{ $item->id }}">
                                         <i class="fas fa-info-circle me-1"></i>Details
                                     </button>
                                 </td>
@@ -178,22 +202,28 @@
                             @endforeach
                         </tbody>
                     </table>
+                </div>
 
-                    <div class="d-flex flex-column justify-content-center align-items-center mt-3">
-                        {{ $auditTrail->links() }}
-                        <small class="text-muted">
-                            Showing {{ $auditTrail->firstItem() }} - {{ $auditTrail->lastItem() }} of {{ $auditTrail->total() }}
-                        </small>
-                    </div>
-
-                    <!-- No Results Message -->
-                    <div id="noResults" class="alert alert-warning text-center my-3" style="display: none;">
-                        <i class="fas fa-search me-2"></i>
-                        No records found matching your search criteria.
-                        <button class="btn btn-sm btn-outline-warning ms-2" onclick="clearSearch()">Clear Search</button>
-                    </div>
+                <!-- Pagination -->
+                <div class="d-flex flex-column justify-content-center align-items-center mt-3">
+                    {{ $auditTrail->appends(request()->query())->links() }}
+                    <small class="text-muted mt-2">
+                        Showing {{ $auditTrail->firstItem() }} - {{ $auditTrail->lastItem() }} of {{ $auditTrail->total() }} records
+                    </small>
+                </div>
+                @else
+                <div class="alert alert-info text-center">
+                    <i class="fas fa-info-circle me-2"></i>
+                    @if(request('search') || request('filter') != 'all' || request('action_type'))
+                        No audit trail records found matching your criteria.
+                    @else
+                        No audit trail records available.
+                    @endif
+                    @if(request('search') || request('filter') != 'all' || request('action_type'))
+                        <a href="{{ route('audit.index') }}" class="btn btn-sm btn-outline-info ms-2">Clear Filters</a>
                     @endif
                 </div>
+                @endif
 
                 <!-- Data Modals -->
                 @foreach ($auditTrail as $item)
@@ -307,7 +337,7 @@
                                                 <i class="fas fa-tag text-primary mb-2" style="font-size: 1.5rem;"></i>
                                                 <h6 class="card-title">Action Type</h6>
                                                 @switch($item->type)
-                                                @case('INSERT')
+                                                @case('CREATE')
                                                 <span class="badge bg-success px-3 py-2">{{ $item->type }}</span>
                                                 @break
                                                 @case('UPDATE')
@@ -315,6 +345,15 @@
                                                 @break
                                                 @case('DELETE')
                                                 <span class="badge bg-danger px-3 py-2">{{ $item->type }}</span>
+                                                @break
+                                                @case('LOGIN')
+                                                <span class="badge bg-info px-3 py-2">{{ $item->type }}</span>
+                                                @break
+                                                @case('BACKUP')
+                                                <span class="badge bg-primary px-3 py-2">{{ $item->type }}</span>
+                                                @break
+                                                @case('RESTORE')
+                                                <span class="badge bg-dark px-3 py-2">{{ $item->type }}</span>
                                                 @break
                                                 @default
                                                 <span class="badge bg-secondary px-3 py-2">{{ $item->type }}</span>
@@ -327,7 +366,7 @@
                                             <div class="card-body text-center">
                                                 <i class="fas fa-user text-info mb-2" style="font-size: 1.5rem;"></i>
                                                 <h6 class="card-title">Changed By</h6>
-                                                <p class="card-text fs-5">{{ $item->changedBy }}</p>
+                                                <p class="card-text fs-6">{{ $item->changedBy }}</p>
                                             </div>
                                         </div>
                                     </div>
@@ -335,8 +374,8 @@
                                         <div class="card border-0 shadow-sm h-100">
                                             <div class="card-body text-center">
                                                 <i class="fas fa-table text-warning mb-2" style="font-size: 1.5rem;"></i>
-                                                <h6 class="card-title">Description</h6>
-                                                <p class="card-text fs-5">{{ $item->description }}</p>
+                                                <h6 class="card-title">Table</h6>
+                                                <p class="card-text fs-6">{{ $item->fromTableName }}</p>
                                             </div>
                                         </div>
                                     </div>
@@ -345,7 +384,19 @@
                                             <div class="card-body text-center">
                                                 <i class="fas fa-clock text-success mb-2" style="font-size: 1.5rem;"></i>
                                                 <h6 class="card-title">Date & Time</h6>
-                                                <p class="card-text fs-5">{{ $item->time ? $item->time->format('M d, Y') : 'N/A' }}<br>{{ $item->time ? $item->time->format('h:i A') : '' }}</p>
+                                                <p class="card-text" style="font-size: 0.85rem;">{{ $item->time ? $item->time->format('M d, Y') : 'N/A' }}<br>{{ $item->time ? $item->time->format('h:i A') : '' }}</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Description -->
+                                <div class="row mb-3">
+                                    <div class="col-12">
+                                        <div class="card border-0 shadow-sm">
+                                            <div class="card-body">
+                                                <h6 class="text-secondary mb-2"><i class="fas fa-file-alt me-2"></i>Description:</h6>
+                                                <p class="mb-0">{{ $item->description }}</p>
                                             </div>
                                         </div>
                                     </div>
@@ -411,8 +462,6 @@
     </div>
 </div>
 
-
-
 <div class="row mb-3 mt-5">
     <div class="col-12">
         <h4 class="fw-bold text-dark mb-3">
@@ -430,274 +479,62 @@
             <i class="fas fa-download me-2"></i> Backup Database
         </button>
     </div>
-
-    <!-- Restore Form -->
-    <div class="col-md-6 mb-3">
-        <form action="{{ route('backup.restore') }}" method="POST" enctype="multipart/form-data">
-            @csrf
-            <div class="input-group">
-                <input type="file" name="backup_file" class="form-control" accept=".sql,.txt" required>
-                <button type="submit" class="btn btn-lg" style="background-color: #1f2937; border-color: #1f2937; color: white;">
-                    <i class="fas fa-upload me-2"></i> Restore
-                </button>
-            </div>
-        </form>
-    </div>
 </div>
 
-
-{{-- Enhanced JavaScript with loading spinners and search functionality --}}
+<!-- Auto-submit and keyboard shortcuts -->
 <script>
-    // Fixed JavaScript for search and filter functionality
-    document.addEventListener("DOMContentLoaded", function() {
-        // Initial page load spinner
-        const spinner = document.getElementById("spinner");
-        const table = document.getElementById("auditTable");
+document.addEventListener("DOMContentLoaded", function() {
+    const filterForm = document.getElementById('filterForm');
+    const filterSelect = document.getElementById('filter');
+    const actionTypeSelect = document.getElementById('action_type');
+    const searchInput = document.getElementById('search');
 
-        if (spinner && table) {
-            spinner.style.display = "block";
-            table.style.display = "none";
+    // Auto-submit when filter dropdowns change
+    filterSelect.addEventListener('change', function() {
+        filterForm.submit();
+    });
 
-            setTimeout(() => {
-                spinner.style.display = "none";
-                table.style.display = "block";
-            }, 600);
-        }
+    actionTypeSelect.addEventListener('change', function() {
+        filterForm.submit();
+    });
 
-        // Search functionality
-        const searchInput = document.getElementById('searchInput');
-        const clearSearchBtn = document.getElementById('clearSearch');
-        const searchInfo = document.getElementById('searchInfo');
-        const searchResultText = document.getElementById('searchResultText');
-        const searchQuery = document.getElementById('searchQuery');
-        const noResults = document.getElementById('noResults');
-        const tableRows = document.querySelectorAll('.audit-row');
-        const filterDropdown = document.getElementById('filterDropdown');
-        const tableFilterDropdown = document.getElementById('tableFilterDropdown');
-
-        let currentFilter = 'all';
-        let currentTableFilter = 'all';
-        let totalRows = tableRows.length;
-
-        // Check if required elements exist
-        if (!searchInput || !tableRows.length) {
-            console.warn('Search elements not found');
-            return;
-        }
-
-        // Search input event listener with debouncing
-        let searchTimeout;
-        searchInput.addEventListener('input', function() {
-            clearTimeout(searchTimeout);
-            searchTimeout = setTimeout(() => {
-                performSearch();
-            }, 300); // 300ms debounce
-        });
-
-        // Clear search button
-        if (clearSearchBtn) {
-            clearSearchBtn.addEventListener('click', function() {
-                clearSearch();
-            });
-        }
-
-        // Filter dropdown options
-        const filterOptions = document.querySelectorAll('.filter-option');
-        filterOptions.forEach(option => {
-            option.addEventListener('click', function(e) {
-                e.preventDefault();
-                currentFilter = this.getAttribute('data-filter');
-
-                // Update dropdown button text
-                if (filterDropdown) {
-                    filterDropdown.innerHTML = '<i class="fas fa-filter me-1"></i>' + this.textContent + ' <i class="fas fa-chevron-down ms-1"></i>';
-                }
-
-                // Update active state
-                filterOptions.forEach(opt => opt.classList.remove('active'));
-                this.classList.add('active');
-
-                performSearch();
-            });
-        });
-
-        // Table filter dropdown options
-        const tableFilterOptions = document.querySelectorAll('.table-filter-option');
-        tableFilterOptions.forEach(option => {
-            option.addEventListener('click', function(e) {
-                e.preventDefault();
-                currentTableFilter = this.getAttribute('data-table');
-
-                // Update dropdown button text
-                if (tableFilterDropdown) {
-                    const buttonText = currentTableFilter === 'all' ? 'Table Filter' : this.textContent;
-                    tableFilterDropdown.innerHTML = '<i class="fas fa-table me-1"></i>' + buttonText + ' <i class="fas fa-chevron-down ms-1"></i>';
-                }
-
-                // Update active state
-                tableFilterOptions.forEach(opt => opt.classList.remove('active'));
-                this.classList.add('active');
-
-                performSearch();
-            });
-        });
-
-        // Perform search function
-        function performSearch() {
-            const query = searchInput.value.toLowerCase().trim();
-            let visibleCount = 0;
-
-            tableRows.forEach(row => {
-                let shouldShow = false;
-
-                // First apply table filter
-                let passesTableFilter = true;
-                if (currentTableFilter !== 'all') {
-                    const tableData = row.getAttribute('data-table');
-                    passesTableFilter = tableData && tableData === currentTableFilter.toLowerCase();
-                }
-
-                // Then apply search filter only if table filter passes
-                if (passesTableFilter) {
-                    if (query === '') {
-                        shouldShow = true;
-                    } else {
-                        // Search based on current filter
-                        switch (currentFilter) {
-                            case 'all':
-                                shouldShow = searchAllColumns(row, query);
-                                break;
-                            case 'type':
-                                const typeData = row.getAttribute('data-type');
-                                shouldShow = typeData && typeData.includes(query);
-                                break;
-                            case 'user':
-                                const userData = row.getAttribute('data-user');
-                                shouldShow = userData && userData.includes(query);
-                                break;
-                            case 'table':
-                                const tableData = row.getAttribute('data-table');
-                                shouldShow = tableData && tableData.includes(query);
-                                break;
-                            case 'date':
-                                const dateData = row.getAttribute('data-date');
-                                shouldShow = dateData && dateData.includes(query);
-                                break;
-                            default:
-                                shouldShow = searchAllColumns(row, query);
-                        }
-                    }
-                }
-
-                if (shouldShow) {
-                    row.style.display = '';
-                    visibleCount++;
-                } else {
-                    row.style.display = 'none';
-                }
-            });
-
-            // Update search info and results
-            updateSearchInfo(query, visibleCount);
-        }
-
-        // Search all columns function - improved
-        function searchAllColumns(row, query) {
-            // Search in visible text content of the row
-            const rowText = row.textContent.toLowerCase();
-            if (rowText.includes(query)) {
-                return true;
-            }
-
-            // Also search in data attributes
-            const searchableAttributes = [
-                'data-type', 'data-user', 'data-table', 'data-date',
-                'data-old-data', 'data-new-data'
-            ];
-
-            return searchableAttributes.some(attr => {
-                const value = row.getAttribute(attr);
-                return value && value.includes(query);
-            });
-        }
-
-        // Update search info
-        function updateSearchInfo(query, visibleCount) {
-            if (!searchInfo || !searchResultText) return;
-
-            if (query === '') {
-                searchInfo.style.display = 'none';
-                if (noResults) noResults.style.display = 'none';
-            } else {
-                searchInfo.style.display = 'block';
-                if (searchQuery) searchQuery.textContent = `"${query}"`;
-
-                if (visibleCount === 0) {
-                    searchResultText.textContent = 'No records found for';
-                    if (noResults) noResults.style.display = 'block';
-                } else {
-                    searchResultText.textContent = `Found ${visibleCount} of ${totalRows} records for`;
-                    if (noResults) noResults.style.display = 'none';
-                }
-            }
-        }
-
-        // Clear search function
-        window.clearSearch = function() {
-            searchInput.value = '';
-            currentFilter = 'all';
-            currentTableFilter = 'all';
-
-            if (filterDropdown) {
-                filterDropdown.innerHTML = '<i class="fas fa-filter me-1"></i>Filter <i class="fas fa-chevron-down ms-1"></i>';
-            }
-            if (tableFilterDropdown) {
-                tableFilterDropdown.innerHTML = '<i class="fas fa-table me-1"></i>Table Filter <i class="fas fa-chevron-down ms-1"></i>';
-            }
-
-            // Reset active states
-            const allFilterOptions = document.querySelectorAll('.filter-option, .table-filter-option');
-            allFilterOptions.forEach(opt => opt.classList.remove('active'));
-
-            // Set default active states
-            const defaultFilterOption = document.querySelector('.filter-option[data-filter="all"]');
-            const defaultTableOption = document.querySelector('.table-filter-option[data-table="all"]');
-            if (defaultFilterOption) defaultFilterOption.classList.add('active');
-            if (defaultTableOption) defaultTableOption.classList.add('active');
-
-            performSearch();
-            searchInput.focus();
-        }
-
-        // Add keyboard shortcuts
-        document.addEventListener('keydown', function(e) {
-            // Ctrl/Cmd + F to focus search
-            if ((e.ctrlKey || e.metaKey) && e.key === 'f') {
-                e.preventDefault();
-                searchInput.focus();
-            }
-            // Escape to clear search
-            if (e.key === 'Escape' && searchInput.value !== '') {
-                clearSearch();
-            }
-        });
-
-        // Modal loading states
-        const modalButtons = document.querySelectorAll('[data-bs-toggle="modal"]');
-        modalButtons.forEach(button => {
-            button.addEventListener('click', function() {
-                this.classList.add('loading');
-                setTimeout(() => {
-                    this.classList.remove('loading');
-                }, 200);
-            });
-        });
-
-        // Initialize search on page load if there's a value
-        if (searchInput.value.trim() !== '') {
-            performSearch();
+    // Submit on Enter key in search field
+    searchInput.addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            filterForm.submit();
         }
     });
+
+    // Keyboard shortcut: Ctrl+F to focus search
+    document.addEventListener('keydown', function(e) {
+        if ((e.ctrlKey || e.metaKey) && e.key === 'f') {
+            e.preventDefault();
+            searchInput.focus();
+        }
+        // ESC to clear search and focus
+        if (e.key === 'Escape' && searchInput.value !== '') {
+            e.preventDefault();
+            searchInput.value = '';
+            searchInput.focus();
+        }
+    });
+});
 </script>
+
+<style>
+    .form-label {
+        margin-bottom: 0.5rem;
+        color: #1f2937;
+    }
+
+    .table td {
+        vertical-align: middle;
+    }
+
+    .badge {
+        font-weight: 500;
+    }
+</style>
 
 @endsection

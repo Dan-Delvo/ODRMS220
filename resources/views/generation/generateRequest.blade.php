@@ -132,10 +132,25 @@
                         <i class="fas fa-sort me-1"></i>Sort
                     </button>
                     <ul class="dropdown-menu" aria-labelledby="sortDropdown">
-                        <li><a class="dropdown-item sort-option" href="#" data-sort="default">Default Order</a></li>
+                        <li>
+                            <a class="dropdown-item {{ request('sort') == 'default' || !request('sort') ? 'active' : '' }}"
+                            href="{{ route('generateReports.display', array_merge(request()->query(), ['sort' => 'default'])) }}">
+                                Default Order
+                            </a>
+                        </li>
                         <li><hr class="dropdown-divider"></li>
-                        <li><a class="dropdown-item sort-option" href="#" data-sort="req-asc"><i class="fas fa-sort-numeric-down me-2"></i>Req No. (A-Z)</a></li>
-                        <li><a class="dropdown-item sort-option" href="#" data-sort="req-desc"><i class="fas fa-sort-numeric-up me-2"></i>Req No. (Z-A)</a></li>
+                        <li>
+                            <a class="dropdown-item {{ request('sort') == 'asc' ? 'active' : '' }}"
+                            href="{{ route('generateReports.display', array_merge(request()->query(), ['sort' => 'asc'])) }}">
+                                <i class="fas fa-sort-numeric-down me-2"></i>Req No. (Low to High)
+                            </a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item {{ request('sort') == 'desc' ? 'active' : '' }}"
+                            href="{{ route('generateReports.display', array_merge(request()->query(), ['sort' => 'desc'])) }}">
+                                <i class="fas fa-sort-numeric-up me-2"></i>Req No. (High to Low)
+                            </a>
+                        </li>
                     </ul>
                 </div>
             </div>
@@ -266,11 +281,6 @@
 
     document.addEventListener('DOMContentLoaded', function() {
     // Existing code for alerts and date filters...
-
-    // Sorting functionality for Req #
-    const sortOptions = document.querySelectorAll('.sort-option');
-    const tableBody = document.getElementById('tableBody');
-    const originalRows = Array.from(tableBody.querySelectorAll('.table-row')); // Preserve initial order
 
     sortOptions.forEach(option => {
             option.addEventListener('click', function(e) {
