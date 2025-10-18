@@ -15,4 +15,6 @@ class BulkStudent extends Model
     {
         return $this->belongsTo(BulkRequest::class, 'Request_ID', 'Request_ID');
     }
+
+
 }
