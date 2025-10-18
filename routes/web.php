@@ -32,7 +32,7 @@ use Illuminate\Support\Facades\Http;
 
 Route::middleware(['web'])->group(function () {
     Route::get('/back-to-login', function () {
-        session()->forget(['otp', 'expiry', 'otp_attempts', 'lockout_until', 'email_entered', 'otp_requested', 'otp_verified', 'password_reset_step']); 
+        session()->forget(['otp', 'expiry', 'otp_attempts', 'lockout_until', 'email_entered', 'otp_requested', 'otp_verified', 'password_reset_step']);
         return redirect()->route('login');
     })->name('otp.back');
     Route::get('/', [AuthController::class, 'login'])->name('login');
@@ -88,7 +88,13 @@ Route::group(['middleware' => 'useradmin'], function () {
     Route::resource('claimed-documents', ClaimedDocumentController::class);
     Route::get('/declined-documents', [declinedController::class, 'index'])->name('declined-documents.index');
 
-    Route::get('/bulk-request', [BulkRequest::class, 'index'])->name('bulk_request.index');
+    Route::prefix('bulk-request')->group(function() {
+        Route::get('/', [BulkRequest::class, 'index'])->name('bulk_request.index');
+        Route::put('/moveToProcessing/{Request_ID}', [BulkRequest::class, 'moveToProcessing'])->name('bulk_request.moveToProcessing');
+        Route::put('/moveToForRelease/{Request_ID}', [BulkRequest::class, 'moveToForRelease'])->name('bulk_request.moveToForRelease');
+        Route::put('/moveToClaimed/{Request_ID}', [BulkRequest::class, 'moveToClaimed'])->name('bulk_request.moveToClaimed');
+    });
+
 
     // Additional custom routes for specific functionality
     Route::prefix('claimed-documents')->group(function () {

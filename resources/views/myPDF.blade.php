@@ -41,7 +41,7 @@
 
         /* Header */
         .school-header {
-            margin-bottom: 30px;
+            margin-bottom: 5px;
         }
 
         .school-header table {
@@ -75,7 +75,7 @@
         /* Title */
         .header {
             text-align: center;
-            margin-bottom: 30px;
+            margin-bottom: 10px;
             padding-bottom: 15px;
             border-bottom: 1px solid #dee2e6;
         }
@@ -93,11 +93,11 @@
 
         /* Filters */
         .filters {
-            padding: 15px;
+            padding: 10px;
             border: 1px solid #dee2e6;
             border-radius: 5px;
             background-color: #f8f9fa;
-            margin-bottom: 20px;
+            margin-bottom: 10px;
         }
 
         .filters h3 {
@@ -122,29 +122,57 @@
         }
 
         /* Table */
+
         table {
-            width: 100%;
+            font-family: 'Poppins', sans-serif;
+            font-size: 0.95rem;
+            color: #2e2e2e;
             border-collapse: collapse;
-            margin-top: 20px;
+            width: 100%;
+            border: 2px solid #444; /* darker border for better contrast */
         }
 
-        th, td {
-            font-size: 9px;
-            border: 1px solid #000;
-            padding: 4px 6px;
-            vertical-align: top;
-        }
-
-        th {
-            background-color: #1f2937;
-            color: white;
-            font-size: 10px;
-            text-align: left;
-        }
-
-        tr:nth-child(even) {
+        thead th {
+            font-weight: 600;
+            font-size: 1rem;
+            text-align: center;
             background-color: #f8f9fa;
+            border: 2px solid #444; /* darker border for headers */
+            padding: 8px;
+            color: #222;
         }
+
+        tbody td {
+            font-size: 0.95rem;
+            padding: 10px 8px;
+            vertical-align: middle;
+            border: 1.5px solid #444; /* darker table borders */
+            text-align: center;
+        }
+
+        tbody tr:hover {
+            background-color: #f3f3f3;
+        }
+
+        /* Uppercase names and text where needed */
+        .uppercase {
+            text-transform: uppercase;
+        }
+
+        /* Status badge styles */
+        .status-badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            color: #fff;
+        }
+        .status-pending { background-color: #ffc107; }
+        .status-processing { background-color: #17a2b8; }
+        .status-for-release { background-color: #28a745; }
+        .status-claimed { background-color: #6f42c1; }
+        .status-default { background-color: #6c757d; }
 
         /* Status badges */
         .status-badge {
@@ -184,31 +212,31 @@
 </head>
 <body>
     <!-- Logos + School Info -->
-    <div class="school-header">
-    <table style="width: 100%; border: none; border-collapse: collapse;">
-        <tr>
-            <!-- Left Logo -->
-            <td style="width: 20%; text-align: left; border: none; padding-left: 70px;">
-                <img src="{{ $ubnhsLogo }}" alt="UBNHS Logo" style="width: 94px; height: 94px;">
-            </td>
+<div class="school-header">
+        <table style="width: 100%; border: none; border-collapse: collapse;">
+            <tr>
+                <!-- Left Logo -->
+                <td style="width: 20%; text-align: left; border: none; padding-left: 70px;">
+                    <img src="{{ $ubnhsLogo }}" alt="UBNHS Logo" style="width: 80px; height: 80px;">
+                </td>
 
-            <!-- Center Info -->
-            <td style="width: 60%; text-align: center; border: none;">
-                <div class="republic-info">Republic of the Philippines</div>
-                <div class="deped-info">DepEd - National Capital Region</div>
-                <div class="deped-info">Division of Taguig City and Pateros</div>
-                <div class="deped-info">City of Taguig</div>
-                <div class="school-name">Upper Bicutan National High School</div>
-                <div class="school-address">General Santos Avenue, Central Bicutan, Taguig City</div>
-            </td>
+                <!-- Center Info -->
+                <td style="width: 60%; text-align: center; border: none;">
+                    <div class="republic-info" style="font-size: 12px; font-weight: 600; margin-bottom: 2px;">Republic of the Philippines</div>
+                    <div class="deped-info" style="font-size: 12px; font-weight: 500; margin-bottom: 2px;">DepEd - National Capital Region</div>
+                    <div class="deped-info" style="font-size: 12px; font-weight: 500; margin-bottom: 2px;">Division of Taguig City and Pateros</div>
+                    <div class="deped-info" style="font-size: 12px; font-weight: 500; margin-bottom: 4px;">City of Taguig</div>
+                    <div class="school-name">Upper Bicutan National High School</div>
+                    <div class="school-address">General Santos Avenue, Central Bicutan, Taguig City</div>
+                </td>
 
-            <!-- Right Logo -->
-            <td style="width: 20%; text-align: right; border: none; padding-right: 70px;">
-                <img src="{{ $depedLogo }}" alt="DepEd Logo" style="width: 94px; height: 94px;">
-            </td>
-        </tr>
-    </table>
-</div>
+                <!-- Right Logo -->
+                <td style="width: 20%; text-align: right; border: none; padding-right: 70px;">
+                    <img src="{{ $depedLogo }}" alt="DepEd Logo" style="width: 80px; height: 80px;">
+                </td>
+            </tr>
+        </table>
+    </div>
 
 
     <!-- Report Header -->
@@ -224,20 +252,18 @@
         <div class="filter-item">
             Status: {{ $status_filter == 'all' ? 'All Status' : $status_filter }}
         </div>
+        <div class="filter-item">Total Records: {{ $totalCount }}</div>
     </div>
-
-    <!-- Summary -->
-    <div class="summary">Total Records: {{ $totalCount }}</div>
 
     <!-- Table -->
     @if($totalCount > 0)
-    <table>
+    <table class="table table-bordered table-striped text-center align-middle">
         <thead>
             <tr>
                 <th style="width: 4%;">Req #</th>
                 <th style="width: 12%;">Student</th>
-                <th style="width: 10%;">Doc</th>
-                <th style="width: 10%;">School</th>
+                <th style="width: 5%;">Doc</th>
+                <th style="width: 15%;">School/Entity</th>
                 <th style="width: 6%;">Via</th>
                 <th style="width: 6%;">Rel Mode</th>
                 <th style="width: 12%;">Remarks</th>
@@ -250,32 +276,32 @@
         </thead>
         <tbody>
             @foreach ($DocRequests as $item)
-            <tr>
-                <td>{{ $item->req_no ?? 'N/A' }}</td>
-                <td>{{ $item->studentInformation->full_name ?? 'N/A' }}</td>
-                <td>{{ $item->documents->DocType ?? 'N/A' }}</td>
-                <td>{{ $item->request_schl_entity ?? 'N/A' }}</td>
-                <td>{{ $item->request_mode ?? 'N/A' }}</td>
-                <td>{{ $item->release_mode ?? 'N/A' }}</td>
-                <td>{{ $item->remarks ?? 'N/A' }}</td>
-                <td>
-                    @php
-                        $status = $item->status ?? 'Unknown';
-                        $statusClass = match($status) {
-                            'Pending' => 'status-pending',
-                            'Processing' => 'status-processing',
-                            'For Release' => 'status-for-release',
-                            'Claimed' => 'status-claimed',
-                            default => 'status-default'
-                        };
-                    @endphp
-                    <span class="status-badge {{ $statusClass }}">{{ $status }}</span>
-                </td>
-                <td>{{ $item->request_date ? \Carbon\Carbon::parse($item->request_date)->format('m/d/Y') : 'N/A' }}</td>
-                <td>{{ $item->approve_date ? \Carbon\Carbon::parse($item->approve_date)->format('m/d/Y') : 'N/A' }}</td>
-                <td>{{ $item->forRelease_date ? \Carbon\Carbon::parse($item->forRelease_date)->format('m/d/Y') : 'N/A' }}</td>
-                <td>{{ $item->claimed_date ? \Carbon\Carbon::parse($item->claimed_date)->format('m/d/Y') : 'N/A' }}</td>
-            </tr>
+                <tr>
+                    <td>{{ $item->req_no ?? 'N/A' }}</td>
+                    <td class="uppercase">{{ $item->studentInformation->full_name ?? 'N/A' }}</td>
+                    <td class="uppercase">{{ $item->documents->DocType ?? 'N/A' }}</td>
+                    <td class="uppercase">{{ $item->request_schl_entity ?? 'N/A' }}</td>
+                    <td>{{ $item->request_mode ?? 'N/A' }}</td>
+                    <td>{{ $item->release_mode ?? 'N/A' }}</td>
+                    <td>{{ $item->remarks ?? 'N/A' }}</td>
+                    <td>
+                        @php
+                            $status = $item->status ?? 'Unknown';
+                            $statusClass = match($status) {
+                                'Pending' => 'status-pending',
+                                'Processing' => 'status-processing',
+                                'For Release' => 'status-for-release',
+                                'Claimed' => 'status-claimed',
+                                default => 'status-default'
+                            };
+                        @endphp
+                        <span class="status-badge {{ $statusClass }}">{{ $status }}</span>
+                    </td>
+                    <td>{{ $item->request_date ? \Carbon\Carbon::parse($item->request_date)->format('m/d/Y') : 'N/A' }}</td>
+                    <td>{{ $item->approve_date ? \Carbon\Carbon::parse($item->approve_date)->format('m/d/Y') : 'N/A' }}</td>
+                    <td>{{ $item->forRelease_date ? \Carbon\Carbon::parse($item->forRelease_date)->format('m/d/Y') : 'N/A' }}</td>
+                    <td>{{ $item->claimed_date ? \Carbon\Carbon::parse($item->claimed_date)->format('m/d/Y') : 'N/A' }}</td>
+                </tr>
             @endforeach
         </tbody>
     </table>

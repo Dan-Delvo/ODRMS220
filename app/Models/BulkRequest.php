@@ -3,6 +3,8 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\QueryException;
+use Illuminate\Support\Facades\Log;
 
 class BulkRequest extends Model
 {
@@ -30,4 +32,18 @@ class BulkRequest extends Model
     {
         return self::withCount('students')->get();
     }
+
+    public static function moveRequest(string $status, int $id) {
+        try{
+
+            self::where('Request_ID', $id)->update(['Status' => $status]);
+            Log::info('Success');
+
+        } catch (QueryException $e) {
+
+            Log::error($e->getMessage());
+
+        }
+    }
+
 }
