@@ -28,7 +28,12 @@ use App\Http\Controllers\FcmController;
 use App\Http\Controllers\forgotpassword;
 use Illuminate\Support\Facades\Http;
 
+
 Route::middleware(['web'])->group(function () {
+    Route::get('/back-to-login', function () {
+        session()->forget(['otp', 'expiry', 'otp_attempts', 'lockout_until', 'email_entered', 'otp_requested', 'otp_verified', 'password_reset_step']); 
+        return redirect()->route('login');
+    })->name('otp.back');
     Route::get('/', [AuthController::class, 'login'])->name('login');
     Route::post('/', [AuthController::class, 'auth_login'])->name('login.post');
     Route::get('logout', [AuthController::class, 'logout']);

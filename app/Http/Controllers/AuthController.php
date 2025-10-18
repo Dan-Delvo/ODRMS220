@@ -49,7 +49,6 @@ class AuthController extends Controller
     }
 
     // Handle login logic with validation
-    // Handle login logic with validation
     public function auth_login(Request $request)
     {
         $request->validate([

@@ -46,10 +46,16 @@
                         <a href="#" id="resend-btn" style="color: #1dd3b0; text-decoration: underline;">Resend OTP</a>
                     </div>
                 </div>
-                <div class="ms-auto">
+
+                <div class="d-flex ms-auto gap-2">
+                    <!-- ✅ Back Button -->
+                    <a href="{{ route('otp.back') }}" class="btn btn-outline-light">Back</a>
+
+                    <!-- ✅ Verify Button -->
                     <button type="submit" id="verify-btn" class="btn btn-outline-custom">Verify</button>
                 </div>
             </div>
+
         </form>
     </div>
 </div>
