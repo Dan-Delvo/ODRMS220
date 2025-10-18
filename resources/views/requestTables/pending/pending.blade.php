@@ -148,14 +148,17 @@
                                 <td class="text-nowrap">
                                     <!-- Accept and Decline buttons moved here -->
                                     @if(!empty($approvePending))
-                                    <form action="{{ route('pending.decline', $item->id) }}" method="POST" class="d-inline decline-form">
+                                    <form action="{{ route('pending.decline', $item->id) }}" method="POST" class="d-inline decline-form" data-swal-loading="true" data-swal-delete="true">
                                         @csrf
                                         @method('DELETE')
                                         <input type="hidden" name="remarks" class="decline-reason">
                                         <button type="button" class="btn btn-sm btn-danger mb-1 decline-btn">Decline</button>
                                     </form>
 
-                                    <form action="{{ route('document-request.complete', $item->id) }}" method="POST" class="d-inline accept-form">
+                                    <form action="{{ route('document-request.complete', $item->id) }}" method="POST" class="d-inline accept-form"
+                                        data-swal-loading="true"
+                                        data-swal-title="Accepting Request"
+                                        data-swal-text="This may take a few seconds...">
                                         @csrf
                                         @method('PUT')
                                         <button type="submit" class="btn btn-sm btn-success mb-1 accept-btn" data-original-text="Accept">Accept</button>
