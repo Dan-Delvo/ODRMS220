@@ -41,7 +41,8 @@
 
         /* Header */
         .school-header {
-            margin-bottom: 5px;
+            margin-bottom: 3px;
+            margin-top: -5px;
         }
 
         .school-header table {
@@ -55,19 +56,19 @@
         }
 
         .school-header img {
-            width: 75px;
-            height: 75px;
+            width: 70px;
+            height: 70px;
         }
 
         .school-header .republic-info,
         .school-header .deped-info,
         .school-header .school-name,
         .school-header .school-address {
-            margin: 2px 0;
+            margin: 1px 0;
         }
 
         .school-header .school-name {
-            font-size: 20px;
+            font-size: 18px;
             font-weight: bold;
             text-transform: uppercase;
         }
@@ -75,33 +76,33 @@
         /* Title */
         .header {
             text-align: center;
-            margin-bottom: 10px;
-            padding-bottom: 15px;
+            margin-bottom: 8px;
+            padding-bottom: 8px;
             border-bottom: 1px solid #dee2e6;
         }
 
         .header h1 {
             margin: 0;
-            font-size: 24px;
+            font-size: 22px;
             color: #1f2937;
         }
 
         .header .info {
-            margin-top: 10px;
+            margin-top: 5px;
             color: #666;
         }
 
         /* Filters */
         .filters {
-            padding: 10px;
+            padding: 8px;
             border: 1px solid #dee2e6;
             border-radius: 5px;
             background-color: #f8f9fa;
-            margin-bottom: 10px;
+            margin-bottom: 8px;
         }
 
         .filters h3 {
-            margin: 0 0 10px;
+            margin: 0 0 8px;
             font-size: 14px;
             color: #1f2937;
         }
@@ -201,7 +202,7 @@
 
         /* Pagination */
         @page {
-            margin: 15mm;
+            margin: 10mm 15mm 15mm 15mm;
             @bottom-right {
                 content: "Page " counter(page) " of " counter(pages);
                 font-size: 10px;
@@ -217,22 +218,22 @@
             <tr>
                 <!-- Left Logo -->
                 <td style="width: 20%; text-align: left; border: none; padding-left: 70px;">
-                    <img src="{{ $ubnhsLogo }}" alt="UBNHS Logo" style="width: 80px; height: 80px;">
+                    <img src="{{ $ubnhsLogo }}" alt="UBNHS Logo" style="width: 70px; height: 70px;">
                 </td>
 
                 <!-- Center Info -->
                 <td style="width: 60%; text-align: center; border: none;">
-                    <div class="republic-info" style="font-size: 12px; font-weight: 600; margin-bottom: 2px;">Republic of the Philippines</div>
-                    <div class="deped-info" style="font-size: 12px; font-weight: 500; margin-bottom: 2px;">DepEd - National Capital Region</div>
-                    <div class="deped-info" style="font-size: 12px; font-weight: 500; margin-bottom: 2px;">Division of Taguig City and Pateros</div>
-                    <div class="deped-info" style="font-size: 12px; font-weight: 500; margin-bottom: 4px;">City of Taguig</div>
+                    <div class="republic-info" style="font-size: 11px; font-weight: 600; margin-bottom: 1px;">Republic of the Philippines</div>
+                    <div class="deped-info" style="font-size: 11px; font-weight: 500; margin-bottom: 1px;">DepEd - National Capital Region</div>
+                    <div class="deped-info" style="font-size: 11px; font-weight: 500; margin-bottom: 1px;">Division of Taguig City and Pateros</div>
+                    <div class="deped-info" style="font-size: 11px; font-weight: 500; margin-bottom: 2px;">City of Taguig</div>
                     <div class="school-name">Upper Bicutan National High School</div>
-                    <div class="school-address">General Santos Avenue, Central Bicutan, Taguig City</div>
+                    <div class="school-address" style="font-size: 11px;">General Santos Avenue, Central Bicutan, Taguig City</div>
                 </td>
 
                 <!-- Right Logo -->
                 <td style="width: 20%; text-align: right; border: none; padding-right: 70px;">
-                    <img src="{{ $depedLogo }}" alt="DepEd Logo" style="width: 80px; height: 80px;">
+                    <img src="{{ $depedLogo }}" alt="DepEd Logo" style="width: 70px; height: 70px;">
                 </td>
             </tr>
         </table>
@@ -278,8 +279,8 @@
             @foreach ($DocRequests as $item)
                 <tr>
                     <td>{{ $item->req_no ?? 'N/A' }}</td>
-                    <td class="uppercase">{{ $item->studentInformation->full_name ?? 'N/A' }}</td>
-                    <td class="uppercase">{{ $item->documents->DocType ?? 'N/A' }}</td>
+                    <td class="uppercase">{{ $item->full_name ?? 'N/A' }}</td>
+                    <td class="uppercase">{{ $item->DocType ?? 'N/A' }}</td>
                     <td class="uppercase">{{ $item->request_schl_entity ?? 'N/A' }}</td>
                     <td>{{ $item->request_mode ?? 'N/A' }}</td>
                     <td>{{ $item->release_mode ?? 'N/A' }}</td>

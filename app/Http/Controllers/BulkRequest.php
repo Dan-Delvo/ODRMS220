@@ -6,8 +6,10 @@ use App\Http\Requests\StoreBulkRequestFormRequest;
 use App\Mail\RequestApprovedMail;
 use App\Models\BulkRequest as ModelsBulkRequest;
 use App\Models\BulkStudent;
+use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Log;
 
 class BulkRequest extends Controller
 {
@@ -52,12 +54,17 @@ class BulkRequest extends Controller
 
         ModelsBulkRequest::moveRequest('Processing', $Request_ID);
 
+        $this->emailNotif($Request_ID, 'emails.bulk_requests.to_approved');
+
         return redirect('/bulk-request')->with('Success', 'Moved Successfully');
     }
 
     public function moveToForRelease($Request_ID) {
 
         ModelsBulkRequest::moveRequest('For Release', $Request_ID);
+
+        $this->emailNotif($Request_ID, 'emails.bulk_requests.to_for_release');
+
 
         return redirect('/bulk-request')->with('Success', 'Moved Successfully');
     }
@@ -66,7 +73,23 @@ class BulkRequest extends Controller
 
         ModelsBulkRequest::moveRequest('Claimed', $Request_ID);
 
+        $this->emailNotif($Request_ID, 'emails.bulk_requests.to_claimed');
+
         return redirect('/bulk-request')->with('Success', 'Moved Successfully');
+    }
+
+    public function emailNotif($Request_ID, string $view) {
+        try{
+            $bulkRequest = ModelsBulkRequest::findOrFail($Request_ID);
+
+            $name = $bulkRequest->School_Name;
+            $email = $bulkRequest->School_Email;
+            $subject = "Request Status Update";
+
+            Mail::to($email)->queue(new RequestApprovedMail($name, $subject, $view));
+        } catch (Exception $e){
+            Log::error($e->getMessage());
+        }
     }
 
 }
