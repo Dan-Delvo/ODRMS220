@@ -25,11 +25,10 @@ class RequestApprovedMail extends Mailable implements ShouldQueue
     public function build()
     {
         return $this->subject($this->subjectLine)
-                    ->view($this->view)
-                    ->with([
-                        'name' => $this->name,
-                        'subject' => $this->subjectLine, // 👈 send to Blade
-                    ]);
+            ->view($this->view)
+            ->with([
+                'name' => $this->name,
+                'subject' => $this->subjectLine, // 👈 send to Blade
+            ]);
     }
 }
-

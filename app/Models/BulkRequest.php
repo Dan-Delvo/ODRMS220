@@ -46,4 +46,21 @@ class BulkRequest extends Model
         }
     }
 
+    public static function createWithStudents(array $data, array $students): self
+    {
+        // $latestId = self::max('Request_ID'); // Replace 'id' with your actual PK column name
+        // $nextId = $latestId ? $latestId + 1 : 1;
+        // Create the bulk request
+        $bulkRequest = self::create([
+            // 'Request_ID' => $nextId,
+            'School_Name' => $data['school_name'],
+            'School_Email' => $data['email'],
+            'Doc_Type' => 'Form 137',
+        ]);
+
+        // Let BulkStudent model handle its own insertion
+        BulkStudent::createBulkStudents($bulkRequest->Request_ID, $students);
+
+        return $bulkRequest;
+    }
 }

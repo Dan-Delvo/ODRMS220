@@ -93,6 +93,8 @@ Route::group(['middleware' => 'useradmin'], function () {
         Route::put('/moveToProcessing/{Request_ID}', [BulkRequest::class, 'moveToProcessing'])->name('bulk_request.moveToProcessing');
         Route::put('/moveToForRelease/{Request_ID}', [BulkRequest::class, 'moveToForRelease'])->name('bulk_request.moveToForRelease');
         Route::put('/moveToClaimed/{Request_ID}', [BulkRequest::class, 'moveToClaimed'])->name('bulk_request.moveToClaimed');
+        Route::get('/bulk-request-add', [BulkRequest::class, 'show'])->name('bulk_request_add.show');
+        Route::post('/bulk-request-add', [BulkRequest::class, 'store'])->name('bulk_request_add.store');
     });
 
 
