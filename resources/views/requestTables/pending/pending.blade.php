@@ -140,7 +140,7 @@
                         <td>{{ $item->req_no }}</td>
                         <td>{{ strtoupper(optional($item->studentInformation)->full_name) }}</td>
                         <td>{{ $item->documents->DocType }}</td>
-                        <td>{{ $item->request_schl_entity }}</td>
+                        <td>{{ strtoupper($item->request_schl_entity) }}</td>
                         <td>{{ $item->remarks }}</td>
                         <td><span class="badge bg-warning text-dark">{{ $item->status }}</span></td>
                         <td>{{ $item->request_date }}</td>

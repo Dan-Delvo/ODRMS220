@@ -161,7 +161,7 @@
                                 <td>{{ $item->req_no }}</td>
                                 <td>{{ $item->studentInformation->full_name }}</td>
                                 <td>{{ $item->documents->DocType }}</td>
-                                <td>{{ $item->request_schl_entity }}</td>
+                                <td>{{ strtoupper($item->request_schl_entity) }}</td>
                                 <td>{{ $item->request_mode }}</td>
                                 <td>{{ $item->release_mode }}</td>
                                 <td>{{ $item->remarks }}</td>

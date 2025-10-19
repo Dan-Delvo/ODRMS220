@@ -153,7 +153,7 @@
                             <td>{{ $item->req_no }}</td>
                             <td>{{ strtoupper(optional($item->studentInformation)->full_name) }}</td>
                             <td>{{ $item->documents->DocType }}</td>
-                            <td>{{ $item->request_schl_entity }}</td>
+                            <td>{{ strtoupper($item->request_schl_entity)}}</td>
                             <td>{{ ($item->claimer->Fname ?? '') . ' ' . ($item->claimer->Lname ?? '') }}</td>
                             <td>{{ $item->claimer->contact_no ?? 'N/A' }}</td>
                             <td>{{ $item->remarks }}</td>
