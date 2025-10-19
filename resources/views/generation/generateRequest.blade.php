@@ -91,23 +91,83 @@
     </div>
 </div>
 
-<!-- Status Filter for Table Display -->
+<!-- Search and Status Filter -->
 <div class="row mb-3">
     <div class="col-md-12">
-        <form action="{{ route('generateReports.display') }}" method="GET" class="d-flex align-items-center" id="statusFilterForm">
-            <label for="table_status_filter" class="me-2 text-dark">Filter Table by Status:</label>
-            <select id="table_status_filter" name="status" class="form-select me-3" style="width: auto;" onchange="this.form.submit()">
-                <option value="all" {{ request('status') == 'all' ? 'selected' : '' }}>All Status</option>
-                <option value="Pending" {{ request('status') == 'Pending' ? 'selected' : '' }}>Pending</option>
-                <option value="Processing" {{ request('status') == 'Processing' ? 'selected' : '' }}>Processing</option>
-                <option value="For Release" {{ request('status') == 'For Release' ? 'selected' : '' }}>For Release</option>
-                <option value="Claimed" {{ request('status') == 'Claimed' ? 'selected' : '' }}>Claimed</option>
-            </select>
-            <!-- Keep the button but make it optional/hidden -->
-            <button type="submit" class="btn text-white d-none" style="background-color: #1dd3b0;">Filter</button>
-        </form>
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <form action="{{ route('generateReports.display') }}" method="GET" class="row g-3">
+                    <!-- Search Input -->
+                    <div class="col-md-6">
+                        <label for="search" class="form-label text-dark">Search:</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="fas fa-search"></i></span>
+                            <input type="text" id="search" name="search" class="form-control"
+                                   placeholder="Search by Req#, Student, Document, School, Mode, or Remarks..."
+                                   value="{{ request('search') }}">
+                            @if(request('search'))
+                            <a href="{{ route('generateReports.display', array_merge(request()->except('search'), ['status' => request('status'), 'sort' => request('sort')])) }}"
+                               class="btn btn-outline-secondary" title="Clear search">
+                                <i class="fas fa-times"></i>
+                            </a>
+                            @endif
+                        </div>
+                    </div>
+
+                    <!-- Status Filter -->
+                    <div class="col-md-4">
+                        <label for="table_status_filter" class="form-label text-dark">Filter by Status:</label>
+                        <select id="table_status_filter" name="status" class="form-select">
+                            <option value="all" {{ request('status') == 'all' ? 'selected' : '' }}>All Status</option>
+                            <option value="Pending" {{ request('status') == 'Pending' ? 'selected' : '' }}>Pending</option>
+                            <option value="Processing" {{ request('status') == 'Processing' ? 'selected' : '' }}>Processing</option>
+                            <option value="For Release" {{ request('status') == 'For Release' ? 'selected' : '' }}>For Release</option>
+                            <option value="Claimed" {{ request('status') == 'Claimed' ? 'selected' : '' }}>Claimed</option>
+                        </select>
+                    </div>
+
+                    <!-- Sort (hidden input to preserve sort state) -->
+                    <input type="hidden" name="sort" value="{{ request('sort', 'default') }}">
+
+                    <!-- Search Button -->
+                    <div class="col-md-2 d-flex align-items-end">
+                        <button type="submit" class="btn text-white w-100" style="background-color: #1dd3b0;">
+                            <i class="fas fa-filter"></i> Apply
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
     </div>
 </div>
+
+<!-- Active Filters Display -->
+@if(request('search') || (request('status') && request('status') != 'all'))
+<div class="row mb-3">
+    <div class="col-md-12">
+        <div class="d-flex align-items-center gap-2">
+            <span class="text-muted">Active Filters:</span>
+            @if(request('search'))
+            <span class="badge bg-info">
+                Search: "{{ request('search') }}"
+                <a href="{{ route('generateReports.display', array_merge(request()->except('search'), ['status' => request('status'), 'sort' => request('sort')])) }}"
+                   class="text-white ms-1" style="text-decoration: none;">×</a>
+            </span>
+            @endif
+            @if(request('status') && request('status') != 'all')
+            <span class="badge bg-warning text-dark">
+                Status: {{ request('status') }}
+                <a href="{{ route('generateReports.display', array_merge(request()->except('status'), ['search' => request('search'), 'sort' => request('sort')])) }}"
+                   class="text-dark ms-1" style="text-decoration: none;">×</a>
+            </span>
+            @endif
+            <a href="{{ route('generateReports.display') }}" class="btn btn-sm btn-outline-secondary ms-2">
+                <i class="fas fa-redo"></i> Clear All
+            </a>
+        </div>
+    </div>
+</div>
+@endif
 
 <!-- Requests Table -->
 <div class="row">
@@ -120,11 +180,15 @@
                     @if(request('status') && request('status') != 'all')
                     <span class="badge bg-light text-dark ms-2">{{ request('status') }}</span>
                     @endif
-
                 </h4>
 
                 <div class="text-end">
-                    <small>Showing {{ $DocRequests->count() }} of {{ $totalCount }} total requests</small>
+                    <small>Showing {{ $DocRequests->count() }} of {{ $DocRequests->total() }}
+                        @if(request('search') || (request('status') && request('status') != 'all'))
+                            filtered
+                        @endif
+                        requests
+                    </small>
                 </div>
 
                 <div class="dropdown ms-3 text-start">
@@ -155,8 +219,6 @@
                 </div>
             </div>
 
-
-
             <div class="card-body">
                 @if($DocRequests->count() > 0)
                 <div class="table-responsive">
@@ -179,25 +241,13 @@
                         </thead>
                         <tbody id="tableBody">
                             @foreach ($DocRequests as $item)
-                            <tr class="table-row"
-                                data-req-no="{{ strtolower($item->req_no) }}"
-                                data-student="{{ strtolower($item->studentInformation->full_name ?? '') }}"
-                                data-document="{{ strtolower($item->documents->DocType ?? '') }}"
-                                data-school="{{ strtolower($item->request_schl_entity ?? '') }}"
-                                data-via="{{ strtolower($item->request_mode ?? '') }}"
-                                data-release-mode="{{ strtolower($item->release_mode ?? '') }}"
-                                data-remarks="{{ strtolower($item->remarks ?? '') }}"
-                                data-status="{{ strtolower($item->status ?? '') }}"
-                                data-request-date="{{ $item->request_date ?? '' }}"
-                                data-approve-date="{{ $item->approve_date ?? '' }}"
-                                data-release-date="{{ $item->forRelease_date ?? '' }}"
-                                data-claimed-date="{{ $item->claimed_date ?? '' }}">
+                            <tr class="table-row">
                                 <td>{{ $item->req_no ?? 'N/A' }}</td>
-                                <td>{{ $item->studentInformation->full_name ?? 'N/A' }}</td>
-                                <td>{{ $item->documents->DocType ?? 'N/A' }}</td>
+                                <td>{{ Str::upper($item->full_name)  ?? 'N/A' }}</td>
+                                <td>{{ $item->DocType ?? 'N/A' }}</td>
                                 <td>{{ $item->request_schl_entity ?? 'N/A' }}</td>
-                                <td>{{ $item->request_mode ?? 'N/A' }}</td>
-                                <td>{{ $item->release_mode ?? 'N/A' }}</td>
+                                <td>{{ $item->request_mode ?? 'Bulk Request' }}</td>
+                                <td>{{ $item->release_mode ?? 'Walk In' }}</td>
                                 <td>{{ $item->remarks ?? 'N/A' }}</td>
                                 <td>
                                     @switch($item->status)
@@ -237,12 +287,19 @@
                     <i class="fas fa-inbox fa-3x text-muted mb-3"></i>
                     <h5 class="text-muted">No requests found</h5>
                     <p class="text-muted">
-                        @if(request('status') && request('status') != 'all')
+                        @if(request('search'))
+                        No requests matching "{{ request('search') }}" found.
+                        @elseif(request('status') && request('status') != 'all')
                         No requests with status "{{ request('status') }}" found.
                         @else
                         No requests available at the moment.
                         @endif
                     </p>
+                    @if(request('search') || (request('status') && request('status') != 'all'))
+                    <a href="{{ route('generateReports.display') }}" class="btn btn-outline-primary">
+                        <i class="fas fa-redo me-2"></i>Clear Filters
+                    </a>
+                    @endif
                 </div>
                 @endif
             </div>
@@ -277,40 +334,40 @@
         document.getElementById('end_date').addEventListener('change', function() {
             document.getElementById('start_date').setAttribute('max', this.value);
         });
-    });
 
-    document.addEventListener('DOMContentLoaded', function() {
-    // Existing code for alerts and date filters...
-
-    sortOptions.forEach(option => {
-            option.addEventListener('click', function(e) {
-                e.preventDefault();
-                const sortType = this.getAttribute('data-sort');
-
-                let rows = Array.from(tableBody.querySelectorAll('.table-row'));
-
-                if (sortType === 'req-asc') {
-                    rows.sort((a, b) => {
-                        const reqA = a.getAttribute('data-req-no');
-                        const reqB = b.getAttribute('data-req-no');
-                        return reqA.localeCompare(reqB, undefined, { numeric: true });
-                    });
-                } else if (sortType === 'req-desc') {
-                    rows.sort((a, b) => {
-                        const reqA = a.getAttribute('data-req-no');
-                        const reqB = b.getAttribute('data-req-no');
-                        return reqB.localeCompare(reqA, undefined, { numeric: true });
-                    });
-                } else if (sortType === 'default') {
-                    rows = [...originalRows];
-                }
-
-                // Update table with sorted rows
-                tableBody.innerHTML = '';
-                rows.forEach(row => tableBody.appendChild(row));
+        // Auto-submit on status change (optional)
+        const statusFilter = document.getElementById('table_status_filter');
+        if (statusFilter) {
+            statusFilter.addEventListener('change', function() {
+                // Optional: auto-submit when status changes
+                // this.form.submit();
             });
-        });
-    });
+        }
 
+        // Focus search input on Ctrl+F or Cmd+F
+        document.addEventListener('keydown', function(e) {
+            if ((e.ctrlKey || e.metaKey) && e.key === 'f') {
+                e.preventDefault();
+                document.getElementById('search').focus();
+            }
+        });
+
+        // Initialize Bootstrap dropdown manually if needed
+        const sortDropdownEl = document.getElementById('sortDropdown');
+        if (sortDropdownEl && typeof bootstrap !== 'undefined') {
+            new bootstrap.Dropdown(sortDropdownEl);
+            console.log('Dropdown initialized');
+        } else {
+            console.error('Bootstrap is not loaded or dropdown element not found');
+        }
+
+        // Debug: Check if dropdown button is clickable
+        if (sortDropdownEl) {
+            sortDropdownEl.addEventListener('click', function(e) {
+                console.log('Sort button clicked');
+                e.stopPropagation();
+            });
+        }
+    });
 </script>
 @endpush

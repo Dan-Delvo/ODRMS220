@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
 
 class BulkStudent extends Model
 {
@@ -19,7 +20,7 @@ class BulkStudent extends Model
     public static function getStudent(){
         return self::all();
     }
-    
+
     public static function createBulkStudents(int $requestId, array $studentNames): void
     {
         $studentsData = [];
@@ -33,4 +34,26 @@ class BulkStudent extends Model
 
         self::insert($studentsData);
     }
+
+    public static function unionStudentTable()
+    {
+        return self::query()
+            ->join('bulk_requests', 'bulk_students.Request_ID', '=', 'bulk_requests.Request_ID')
+            ->select(
+                'bulk_students.Student_ID as id',
+                'bulk_students.Request_ID as req_no',
+                'bulk_students.Student_Name as full_name',
+                'bulk_requests.Doc_Type as DocType',
+                'bulk_requests.School_Name as request_schl_entity',
+                DB::raw("'Bulk Request' as request_mode"),
+                DB::raw("'Walk In' as release_mode"),
+                DB::raw("NULL as remarks"),
+                'bulk_requests.Status as status',
+                'bulk_requests.request_date as request_date',
+                'bulk_requests.approve_date as approve_date',
+                'bulk_requests.forRelease_date as forRelease_date',
+                'bulk_requests.claimed_date as claimed_date'
+            );
+    }
+
 }

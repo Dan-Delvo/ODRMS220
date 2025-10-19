@@ -190,6 +190,28 @@ class DocumentRequestModel extends Model
         return self::where('status', $status)->count();
     }
 
+    public static function unionDocumentReqTable() {
+        return self::query()
+            ->join('clm_claimers', 'doc_requests.clm_claimers_id', '=', 'clm_claimers.id')
+            ->join('std_students', 'doc_requests.std_students_id', '=', 'std_students.id')
+            ->join('doc_categories', 'doc_requests.doc_categories_id', '=', 'doc_categories.id')
+            ->select(
+                'doc_requests.id as id',
+                'doc_requests.req_no as req_no',
+                DB::raw("CONCAT(std_students.FirstName, ' ', std_students.LastName) as full_name"),
+                'doc_categories.DocType as DocType',
+                'doc_requests.request_schl_entity as request_schl_entity',
+                'doc_requests.request_mode as request_mode',
+                'doc_requests.release_mode as release_mode',
+                'doc_requests.remarks as remarks',
+                'doc_requests.status',
+                'doc_requests.request_date',
+                'doc_requests.approve_date',
+                'doc_requests.forRelease_date',
+                'doc_requests.claimed_date'
+            );
+    }
+
 
 
 }

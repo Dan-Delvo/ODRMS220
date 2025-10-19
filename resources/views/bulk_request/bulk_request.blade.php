@@ -65,7 +65,6 @@
         <div class="card" style="width: auto;">
             <div class="card-header">
                 <h4 style="font-family: 'Poppins', sans-serif;"> PROCESSING </h4>
-                <h4 style="font-family: 'Poppins', sans-serif;"> PROCESSING </h4>
             </div>
             <div class="card-body">
 
@@ -105,7 +104,6 @@
     <div class="col-md-3">
         <div class="card" style="width: auto;">
             <div class="card-header">
-                <h4 style="font-family: 'Poppins', sans-serif;"> FOR RELEASE </h4>
                 <h4 style="font-family: 'Poppins', sans-serif;"> FOR RELEASE </h4>
             </div>
             <div class="card-body">
@@ -147,7 +145,6 @@
     <div class="col-md-3">
         <div class="card" style="width: auto;">
             <div class="card-header">
-                <h4 style="font-family: 'Poppins', sans-serif;">CLAIMED</h4>
                 <h4 style="font-family: 'Poppins', sans-serif;">CLAIMED</h4>
             </div>
             <div class="card-body">

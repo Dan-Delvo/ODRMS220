@@ -36,7 +36,17 @@ class BulkRequest extends Model
     public static function moveRequest(string $status, int $id) {
         try{
 
-            self::where('Request_ID', $id)->update(['Status' => $status]);
+            $data = ['Status' => $status];
+
+            if ($status === 'Processing') {
+                $data['approve_date'] = now();
+            } elseif ($status === 'For Release') {
+                $data['forRelease_date'] = now();
+            } elseif ($status === 'Claimed') {
+                $data['claimed_date'] = now();
+            }
+
+            self::where('Request_ID', $id)->update($data);
             Log::info('Success');
 
         } catch (QueryException $e) {
