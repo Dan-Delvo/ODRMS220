@@ -7,6 +7,7 @@ use App\Mail\ResetPasswordMail;
 use App\Mail\VerifyAccountUpdateMail;
 use App\Mail\VerifyMail;
 use App\Models\Account;
+use App\Models\DocumentRequestModel;
 use App\Models\RolesModel;
 use App\Models\StudentInformationModel;
 use App\Models\PermissionRoleModel;
@@ -59,17 +60,17 @@ class AccountController extends Controller
 
             // Apply search filter
             if ($search) {
-                $query->where(function($q) use ($search) {
+                $query->where(function ($q) use ($search) {
                     $q->where('user_account_id', 'like', '%' . $search . '%')
-                    ->orWhere('username', 'like', '%' . $search . '%')
-                    ->orWhere('email_address', 'like', '%' . $search . '%')
-                    ->orWhereHas('roles', function($roleQuery) use ($search) {
-                        $roleQuery->where('name', 'like', '%' . $search . '%');
-                    })
-                    ->orWhereHas('studentInformation', function($studentQuery) use ($search) {
-                        $studentQuery->whereRaw("CONCAT(FirstName, ' ', MiddleName, ' ', LastName) LIKE ?", ['%' . $search . '%'])
-                                    ->orWhereRaw("CONCAT(FirstName, ' ', LastName) LIKE ?", ['%' . $search . '%']);
-                    });
+                        ->orWhere('username', 'like', '%' . $search . '%')
+                        ->orWhere('email_address', 'like', '%' . $search . '%')
+                        ->orWhereHas('roles', function ($roleQuery) use ($search) {
+                            $roleQuery->where('name', 'like', '%' . $search . '%');
+                        })
+                        ->orWhereHas('studentInformation', function ($studentQuery) use ($search) {
+                            $studentQuery->whereRaw("CONCAT(FirstName, ' ', MiddleName, ' ', LastName) LIKE ?", ['%' . $search . '%'])
+                                ->orWhereRaw("CONCAT(FirstName, ' ', LastName) LIKE ?", ['%' . $search . '%']);
+                        });
                 });
             }
 
@@ -438,6 +439,7 @@ class AccountController extends Controller
     {
         $pdo = DB::connection()->getPdo();
         $pdo->exec("SET @current_user = " . $pdo->quote(Auth::check() ? Auth::user()->username : 'guest'));
+
         try {
             if (!is_numeric($id) || $id <= 0) {
                 return redirect('panel/user')->with('Danger', 'Invalid user ID provided.');
@@ -487,10 +489,12 @@ class AccountController extends Controller
         }
     }
 
-
     /**
-     * Check if user has existing requests with detailed information
-     * Returns array with hasRequests boolean and requestTypes array
+     * Check if user has existing requests that block deletion
+     * Users can only be deleted if all their requests have 'Claimed' status or they have no requests
+     * 
+     * @param int $userId
+     * @return array ['hasRequests' => bool, 'requestTypes' => array]
      */
     private function checkUserHasRequests($userId)
     {
@@ -498,49 +502,28 @@ class AccountController extends Controller
             $requestTypes = [];
             $hasRequests = false;
 
-            // Check for document requests
-            $documentRequests = DB::table('document_requests')
-                ->where('user_id', $userId)
-                ->whereNotIn('status', ['completed', 'cancelled', 'rejected'])
+            // Check for document requests with statuses that block deletion
+            // Only 'Claimed' status allows deletion
+            $blockingRequests = DocumentRequestModel::where('std_students_id', $userId)
+                ->whereIn('status', ['Declined', 'Pending', 'Processing', 'For Release'])
                 ->count();
 
-            if ($documentRequests > 0) {
+            if ($blockingRequests > 0) {
                 $hasRequests = true;
-                $requestTypes[] = $documentRequests . ' pending document request(s)';
-            }
 
-            // Check for service requests
-            $serviceRequests = DB::table('service_requests')
-                ->where('user_id', $userId)
-                ->whereNotIn('status', ['completed', 'cancelled', 'rejected'])
-                ->count();
+                // Get breakdown of blocking statuses for detailed message
+                $statusCounts = DocumentRequestModel::where('std_students_id', $userId)
+                    ->whereIn('status', ['Declined', 'Pending', 'Processing', 'For Release'])
+                    ->selectRaw('status, COUNT(*) as count')
+                    ->groupBy('status')
+                    ->get();
 
-            if ($serviceRequests > 0) {
-                $hasRequests = true;
-                $requestTypes[] = $serviceRequests . ' pending service request(s)';
-            }
+                $statusDetails = [];
+                foreach ($statusCounts as $statusCount) {
+                    $statusDetails[] = $statusCount->count . ' ' . $statusCount->status;
+                }
 
-            // Check for other types of requests (add more as needed)
-            // Example: Certificate requests
-            // $certificateRequests = DB::table('certificate_requests')
-            //                         ->where('user_id', $userId)
-            //                         ->whereNotIn('status', ['completed', 'cancelled', 'rejected'])
-            //                         ->count();
-
-            // if ($certificateRequests > 0) {
-            //     $hasRequests = true;
-            //     $requestTypes[] = $certificateRequests . ' pending certificate request(s)';
-            // }
-
-            // Check for any transactions or pending payments
-            $pendingTransactions = DB::table('transactions')
-                ->where('user_id', $userId)
-                ->whereIn('status', ['pending', 'processing', 'in_progress'])
-                ->count();
-
-            if ($pendingTransactions > 0) {
-                $hasRequests = true;
-                $requestTypes[] = $pendingTransactions . ' pending transaction(s)';
+                $requestTypes[] = 'Document request(s): ' . implode(', ', $statusDetails);
             }
 
             return [

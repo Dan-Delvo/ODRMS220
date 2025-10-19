@@ -3,70 +3,6 @@
 @section ('content')
 
 @include('layout.partials.message')
-<!-- Consolidated Notification System -->
-<div class="row mb-4">
-    <div class="col-md-12">
-        {{-- Enhanced notification system --}}
-        @if(session('warning'))
-            <div class="alert alert-warning alert-dismissible fade show" role="alert">
-                <i class="fas fa-exclamation-triangle me-2"></i>
-                <strong>Warning!</strong> {{ session('warning') }}
-                @if(session('warning_details'))
-                    <br><small>{{ session('warning_details') }}</small>
-                @endif
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-            </div>
-        @endif
-
-        @if(session('success'))
-            <div class="alert alert-success alert-dismissible fade show" role="alert">
-                <i class="fas fa-check-circle me-2"></i>
-                <strong>Success!</strong> {{ session('success') }}
-                @if(session('success_details'))
-                    <br><small>{{ session('success_details') }}</small>
-                @endif
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-            </div>
-        @endif
-
-        @if(session('error'))
-            <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                <i class="fas fa-times-circle me-2"></i>
-                <strong>Error!</strong> {{ session('error') }}
-                @if(session('error_details'))
-                    <br><small>{{ session('error_details') }}</small>
-                @endif
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-            </div>
-        @endif
-
-        {{-- Legacy notification system for backward compatibility --}}
-        @if(session('Status'))
-            <div class="alert alert-success alert-dismissible fade show" role="alert">
-                <i class="fas fa-check-circle me-2"></i>
-                {{ session('Status') }}
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-            </div>
-        @endif
-
-        @if(session('Danger'))
-            <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                <i class="fas fa-exclamation-triangle me-2"></i>
-                {{ session('Danger') }}
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-            </div>
-        @endif
-
-        {{-- Success message from controller update method --}}
-        @if(session('Success'))
-            <div class="alert alert-success alert-dismissible fade show" role="alert">
-                <i class="fas fa-check-circle me-2"></i>
-                {{ session('Success') }}
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-            </div>
-        @endif
-    </div>
-</div>
 
 <!-- Title and Breadcrumb -->
 <div class="row mb-4">
@@ -185,7 +121,6 @@
 
                                     @if(!empty($PermissionDelete))
                                     <form action="{{ route('user.delete', $item->user_account_id) }}" method="POST" class="d-inline" data-swal-loading="true" data-swal-delete="true">
-                                    <form action="{{ route('user.delete', $item->user_account_id) }}" method="POST" class="d-inline" onsubmit="return confirm('Are you sure you want to delete this user?')">
                                         @csrf
                                         @method('DELETE')
                                         <button type="button" class="btn btn-danger btn-delete me-2">Delete</button>
