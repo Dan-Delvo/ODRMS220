@@ -15,4 +15,18 @@ class BulkStudent extends Model
     {
         return $this->belongsTo(BulkRequest::class, 'Request_ID', 'Request_ID');
     }
+
+    public static function createBulkStudents(int $requestId, array $studentNames): void
+    {
+        $studentsData = [];
+
+        foreach ($studentNames as $studentName) {
+            $studentsData[] = [
+                'Request_ID' => $requestId,
+                'Student_Name' => $studentName,
+            ];
+        }
+
+        self::insert($studentsData);
+    }
 }

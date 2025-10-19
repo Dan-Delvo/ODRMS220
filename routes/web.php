@@ -89,6 +89,8 @@ Route::group(['middleware' => 'useradmin'], function () {
     Route::get('/declined-documents', [declinedController::class, 'index'])->name('declined-documents.index');
 
     Route::get('/bulk-request', [BulkRequest::class, 'index'])->name('bulk_request.index');
+    Route::get('/bulk-request-add', [BulkRequest::class, 'show'])->name('bulk_request_add.show');
+    Route::post('/bulk-request-add', [BulkRequest::class, 'store'])->name('bulk_request_add.store');
 
     // Additional custom routes for specific functionality
     Route::prefix('claimed-documents')->group(function () {
