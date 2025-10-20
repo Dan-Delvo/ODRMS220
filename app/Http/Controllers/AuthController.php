@@ -64,7 +64,7 @@ class AuthController extends Controller
         $lockKey = "locked:$clientIp";
         $attemptKey = "login_attempts:$clientIp";
         $maxAttempts = 3;
-        $lockoutMinutes = 15;
+        $lockoutMinutes = 1;
 
         // 🔒 Check if already locked (middleware will also catch this)
         if (Cache::has($lockKey)) {

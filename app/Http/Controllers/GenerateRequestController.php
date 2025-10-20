@@ -213,6 +213,8 @@ class GenerateRequestController extends Controller
                 return redirect()->back()->with('error', 'No requests found for the selected date range and status.');
             }
 
+            set_time_limit(300);
+
             $data = [
                 'title' => 'Document Requests Report',
                 'date' => Carbon::now()->format('F d, Y'),
