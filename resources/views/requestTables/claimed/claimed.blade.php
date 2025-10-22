@@ -138,7 +138,6 @@
                             <th>Doc</th>
                             <th>School</th>
                             <th>Claimer</th>
-                            <th>Contact</th>
                             <th>Remarks</th>
                             <th>Req Date</th>
                             <th>App Date</th>
@@ -155,7 +154,6 @@
                             <td>{{ $item->documents->DocType }}</td>
                             <td>{{ strtoupper($item->request_schl_entity)}}</td>
                             <td>{{ ($item->claimer->Fname ?? '') . ' ' . ($item->claimer->Lname ?? '') }}</td>
-                            <td>{{ $item->claimer->contact_no ?? 'N/A' }}</td>
                             <td>{{ $item->remarks }}</td>
                             <td>{{ $item->request_date }}</td>
                             <td>{{ $item->approve_date }}</td>
