@@ -39,6 +39,7 @@ class Account extends Authenticatable
 
     // Hide sensitive fields
     protected $hidden = [
+        'email_address',
         'password',
         'remember_token',
     ];

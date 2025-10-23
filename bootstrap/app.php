@@ -8,6 +8,7 @@ use App\Http\Middleware\CheckLockout;
 use App\Http\Middleware\ForgotPasswordFlow;
 use App\Http\Middleware\StudentUserMiddleware;
 use App\Http\Middleware\EnsureSessionStarted;
+use App\Http\Middleware\SanitizeRequestBody;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
@@ -22,9 +23,11 @@ return Application::configure(basePath: dirname(__DIR__))
             'userstudent' => StudentUserMiddleware::class,  // Alias for student middleware
             'forgotpassword' => ForgotPasswordFlow::class, // Alias for forgot password middleware
             'lockout' => CheckLockout::class,
+            'sanitize' => SanitizeRequestBody::class,
         ]));
         // apply globally
         $middleware->append(CheckLockout::class);
+        $middleware->append(SanitizeRequestBody::class);
     })
     ->withExceptions(function (Exceptions $exceptions) {
         //

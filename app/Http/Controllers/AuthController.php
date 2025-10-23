@@ -23,7 +23,6 @@ class AuthController extends Controller
         // Check if a user is already logged in and redirect accordingly
         if (Auth::check()) {
             if (Auth::user()->roles->name === 'student') {
-                // dd("hello world");
                 return redirect('stpage');
             }
 
@@ -31,7 +30,6 @@ class AuthController extends Controller
             if (empty($PermissionDashboard)) {
                 return redirect('/walkin/form');
             } else {
-
                 return redirect('/dashboard');
             }
         }
@@ -49,7 +47,7 @@ class AuthController extends Controller
             ->header('Expires', '0');
     }
 
-    // Handle login logic with validation
+    // Handle login logic with validation (AJAX-enabled)
     public function auth_login(Request $request)
     {
         $request->validate([
@@ -67,13 +65,25 @@ class AuthController extends Controller
         $maxAttempts = 3;
         $lockoutMinutes = 1;
 
-        // 🔒 Check if already locked (middleware will also catch this)
+        // 🔒 Check if already locked
         if (Cache::has($lockKey)) {
             $lockedUntil = Cache::get($lockKey);
             $remainingMinutes = ceil(($lockedUntil - time()) / 60);
             $remainingSeconds = $lockedUntil - time();
 
-            // Return lockout page directly
+            // Check if AJAX request
+            if ($request->expectsJson() || $request->ajax()) {
+                return response()->json([
+                    'success' => false,
+                    'locked' => true,
+                    'message' => "Too many failed attempts. Account is locked.",
+                    'remaining_minutes' => $remainingMinutes,
+                    'remaining_seconds' => $remainingSeconds,
+                    'locked_until' => $lockedUntil
+                ], 403);
+            }
+
+            // Return lockout page for non-AJAX requests
             return response()->view('auth.lockout', [
                 'remaining_minutes' => $remainingMinutes,
                 'remaining_seconds' => $remainingSeconds,
@@ -109,7 +119,20 @@ class AuthController extends Controller
                 ]);
 
                 $PermissionDashboard = PermissionRoleModel::getPermission('dashboard', $user->role_id);
-                return empty($PermissionDashboard) ? redirect('/walkin/form') : redirect('/dashboard');
+                $redirectUrl = empty($PermissionDashboard) ? '/walkin/form' : '/dashboard';
+
+                // Return JSON for AJAX requests
+                if ($request->expectsJson() || $request->ajax()) {
+                    return response()->json([
+                        'success' => true,
+                        'message' => 'Login successful',
+                        'redirect' => $redirectUrl,
+                        'user_type' => 'admin'
+                    ]);
+                }
+
+                return redirect($redirectUrl);
+
             } elseif ($user->roles->name === 'student') {
                 AuditTable::create([
                     'type'          => 'User Logged In',
@@ -125,6 +148,16 @@ class AuthController extends Controller
                     'description' => 'A Student has logged In'
                 ]);
 
+                // Return JSON for AJAX requests
+                if ($request->expectsJson() || $request->ajax()) {
+                    return response()->json([
+                        'success' => true,
+                        'message' => 'Login successful',
+                        'redirect' => '/stpage',
+                        'user_type' => 'student'
+                    ]);
+                }
+
                 return redirect('/stpage');
             }
         }
@@ -134,7 +167,7 @@ class AuthController extends Controller
         Cache::put($attemptKey, $attempts, now()->addMinutes($lockoutMinutes));
 
         if ($attempts >= $maxAttempts) {
-            // Lock the account for 15 minutes
+            // Lock the account
             $lockedUntil = time() + ($lockoutMinutes * 60);
             Cache::put($lockKey, $lockedUntil, now()->addMinutes($lockoutMinutes));
 
@@ -148,7 +181,19 @@ class AuthController extends Controller
                 'locked_until' => date('Y-m-d H:i:s', $lockedUntil)
             ]);
 
-            // Return lockout page directly
+            // Return JSON for AJAX requests
+            if ($request->expectsJson() || $request->ajax()) {
+                return response()->json([
+                    'success' => false,
+                    'locked' => true,
+                    'message' => "Too many failed attempts. Account is locked for {$lockoutMinutes} minute(s).",
+                    'remaining_minutes' => $lockoutMinutes,
+                    'remaining_seconds' => $lockoutMinutes * 60,
+                    'locked_until' => $lockedUntil
+                ], 403);
+            }
+
+            // Return lockout page for non-AJAX requests
             return response()->view('auth.lockout', [
                 'remaining_minutes' => $lockoutMinutes,
                 'remaining_seconds' => $lockoutMinutes * 60,
@@ -158,10 +203,19 @@ class AuthController extends Controller
 
         // Show remaining attempts
         $remainingAttempts = $maxAttempts - $attempts;
-        return redirect()->route('login')->with(
-            'error',
-            "Invalid email or password. You have {$remainingAttempts} attempt(s) remaining."
-        );
+        $errorMessage = "Invalid email or password. You have {$remainingAttempts} attempt(s) remaining.";
+
+        // Return JSON for AJAX requests
+        if ($request->expectsJson() || $request->ajax()) {
+            return response()->json([
+                'success' => false,
+                'locked' => false,
+                'message' => $errorMessage,
+                'remaining_attempts' => $remainingAttempts
+            ], 401);
+        }
+
+        return redirect()->route('login')->with('error', $errorMessage);
     }
 
     // Logout the authenticated user
