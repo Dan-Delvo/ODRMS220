@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Models\AuditTable;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 
 class BackupController extends Controller
 {
@@ -120,75 +121,106 @@ class BackupController extends Controller
 
     public function restoreBackup(Request $request)
     {
-        $request->validate([
-            'backup_file' => 'required|file|mimes:zip'
-        ]);
+        try {
+            Log::info('Restore backup started');
 
-        $zipPassword = config('app.backup_password');
-        $zip = new \ZipArchive;
-        $zipPath = $request->file('backup_file')->getRealPath();
+            $request->validate([
+                'backup_file' => 'required|file|mimes:zip'
+            ]);
 
-        if ($zip->open($zipPath) !== true) {
-            return back()->with('error', 'Could not open backup archive.');
-        }
+            $zipPassword = config('app.backup_password');
+            $zip = new \ZipArchive;
+            $uploadedFile = $request->file('backup_file');
 
-        if ($zip->numFiles === 0) {
+            if (!$uploadedFile) {
+                Log::error('No file uploaded');
+                return back()->with('error', 'No backup file was uploaded.');
+            }
+
+            $zipPath = $uploadedFile->getRealPath();
+            Log::info('Processing ZIP file: ' . $uploadedFile->getClientOriginalName());
+
+            if ($zip->open($zipPath) !== true) {
+                Log::error('Could not open ZIP file');
+                return back()->with('error', 'Could not open backup archive.');
+            }
+
+            if ($zip->numFiles === 0) {
+                $zip->close();
+                Log::error('ZIP file is empty');
+                return back()->with('error', 'The ZIP file is empty.');
+            }
+
+            // Ensure password is set
+            if (!$zip->setPassword($zipPassword)) {
+                $zip->close();
+                Log::error('Failed to set ZIP password');
+                return back()->with('error', 'Failed to decrypt backup file.');
+            }
+
+            $extractPath = storage_path("app/temp/restore_" . time());
+            if (!is_dir($extractPath)) {
+                mkdir($extractPath, 0755, true);
+            }
+
+            // Extract all files
+            if (!$zip->extractTo($extractPath)) {
+                $zip->close();
+                Log::error('Failed to extract ZIP contents');
+                return back()->with('error', 'Incorrect password or corrupted backup file.');
+            }
+
             $zip->close();
-            return back()->with('error', 'The ZIP file is empty.');
-        }
+            Log::info('ZIP extracted to: ' . $extractPath);
 
-        // Ensure password is set
-        if (!$zip->setPassword($zipPassword)) {
-            $zip->close();
-            return back()->with('error', 'The ZIP file must be password protected.');
-        }
-
-        $extractPath = storage_path("app/temp");
-        if (!is_dir($extractPath)) mkdir($extractPath, 0755, true);
-
-        // Extract all files
-        if (!$zip->extractTo($extractPath)) {
-            $zip->close();
-            return back()->with('error', 'Incorrect password or corrupted backup file.');
-        }
-
-        $zip->close();
-
-        // Find first .sql file in extracted folder (handles subfolders)
-        $sqlFiles = glob($extractPath . '/*.sql');
-        if (empty($sqlFiles)) {
-            // If no .sql file in root, check subfolders
-            $subFolders = glob($extractPath . '/*', GLOB_ONLYDIR);
-            foreach ($subFolders as $folder) {
-                $subSql = glob($folder . '/*.sql');
-                if (!empty($subSql)) {
-                    $sqlFiles = $subSql;
-                    break;
+            // Find first .sql file in extracted folder (handles subfolders)
+            $sqlFiles = glob($extractPath . '/*.sql');
+            if (empty($sqlFiles)) {
+                // If no .sql file in root, check subfolders
+                $subFolders = glob($extractPath . '/*', GLOB_ONLYDIR);
+                foreach ($subFolders as $folder) {
+                    $subSql = glob($folder . '/*.sql');
+                    if (!empty($subSql)) {
+                        $sqlFiles = $subSql;
+                        break;
+                    }
                 }
             }
-        }
 
-        if (empty($sqlFiles)) {
-            return back()->with('error', 'No SQL file found in the backup.');
-        }
+            if (empty($sqlFiles)) {
+                Log::error('No SQL file found in backup');
+                $this->cleanupDirectory($extractPath);
+                return back()->with('error', 'No SQL file found in the backup.');
+            }
 
-        $sqlFilePath = $sqlFiles[0];
+            $sqlFilePath = $sqlFiles[0];
+            Log::info('Found SQL file: ' . basename($sqlFilePath));
 
-        if (!file_exists($sqlFilePath)) {
-            return back()->with('error', 'Failed to locate SQL file in the backup.');
-        }
+            if (!file_exists($sqlFilePath)) {
+                Log::error('SQL file does not exist: ' . $sqlFilePath);
+                $this->cleanupDirectory($extractPath);
+                return back()->with('error', 'Failed to locate SQL file in the backup.');
+            }
 
-        $sqlContent = file_get_contents($sqlFilePath);
+            $sqlContent = file_get_contents($sqlFilePath);
 
-        try {
+            if (empty($sqlContent)) {
+                Log::error('SQL file is empty');
+                $this->cleanupDirectory($extractPath);
+                return back()->with('error', 'The SQL backup file is empty.');
+            }
+
+            Log::info('Starting database restore...');
+
             // Set MariaDB-specific settings for restore
-            DB::statement("SET FOREIGN_KEY_CHECKS=0;");
-            DB::statement("SET SQL_MODE='NO_AUTO_VALUE_ON_ZERO';");
-            DB::statement("SET AUTOCOMMIT=0;");
+            DB::statement("SET FOREIGN_KEY_CHECKS=0");
+            DB::statement("SET SQL_MODE='NO_AUTO_VALUE_ON_ZERO'");
+            DB::statement("SET AUTOCOMMIT=0");
             DB::beginTransaction();
 
             // Split SQL content by semicolons (respecting multi-line statements)
             $queries = $this->splitSqlQueries($sqlContent);
+            $executedCount = 0;
 
             foreach ($queries as $query) {
                 $query = trim($query);
@@ -199,36 +231,53 @@ class BackupController extends Controller
                 }
 
                 DB::statement($query);
+                $executedCount++;
             }
 
             DB::commit();
-            DB::statement("SET AUTOCOMMIT=1;");
-            DB::statement("SET FOREIGN_KEY_CHECKS=1;");
+            DB::statement("SET AUTOCOMMIT=1");
+            DB::statement("SET FOREIGN_KEY_CHECKS=1");
 
-            unlink($sqlFilePath);
+            Log::info("Database restore completed. Executed {$executedCount} queries.");
+
+            // Cleanup
+            $this->cleanupDirectory($extractPath);
+
+            // Log restore in audit table
+            $user = Auth::user();
+            AuditTable::withoutEvents(function () use ($sqlFilePath, $user) {
+                AuditTable::create([
+                    'type' => 'Restore',
+                    'old_data' => null,
+                    'new_data' => json_encode(['File Name' => basename($sqlFilePath)]),
+                    'time' => now(),
+                    'changedBy' => $user->studentInformation->full_name,
+                    'fromTableName' => 'Database Restore',
+                    'description' => null
+                ]);
+            });
+
+            Log::info('Restore process completed successfully');
+            return redirect()->back()->with('success', 'Database restored successfully! (' . $executedCount . ' queries executed)');
 
         } catch (\Exception $e) {
-            DB::rollBack();
-            DB::statement("SET AUTOCOMMIT=1;");
-            DB::statement("SET FOREIGN_KEY_CHECKS=1;");
+            Log::error('Restore failed: ' . $e->getMessage());
+            Log::error('Stack trace: ' . $e->getTraceAsString());
 
-            return back()->with('error', 'Restore failed: ' . $e->getMessage());
+            if (isset($extractPath) && is_dir($extractPath)) {
+                $this->cleanupDirectory($extractPath);
+            }
+
+            try {
+                DB::rollBack();
+                DB::statement("SET AUTOCOMMIT=1");
+                DB::statement("SET FOREIGN_KEY_CHECKS=1");
+            } catch (\Exception $cleanupEx) {
+                Log::error('Cleanup after error failed: ' . $cleanupEx->getMessage());
+            }
+
+            return redirect()->back()->with('error', 'Restore failed: ' . $e->getMessage());
         }
-
-        // Log restore in audit table
-        $user = Auth::user();
-        AuditTable::withoutEvents(function () use ($sqlFilePath, $user) {
-            AuditTable::create([
-                'type' => 'Restore',
-                'old_data' => null,
-                'new_data' => json_encode(['File Name' => basename($sqlFilePath)]),
-                'time' => now(),
-                'changedBy' => $user->studentInformation->full_name,
-                'fromTableName' => 'Database Restore'
-            ]);
-        });
-
-        return back()->with('success', 'Database restored successfully.');
     }
 
     /**
@@ -289,5 +338,22 @@ class BackupController extends Controller
         }
 
         return $queries;
+    }
+
+    /**
+     * Recursively delete directory and its contents
+     */
+    private function cleanupDirectory($dir)
+    {
+        if (!is_dir($dir)) {
+            return;
+        }
+
+        $files = array_diff(scandir($dir), ['.', '..']);
+        foreach ($files as $file) {
+            $path = $dir . '/' . $file;
+            is_dir($path) ? $this->cleanupDirectory($path) : unlink($path);
+        }
+        rmdir($dir);
     }
 }
