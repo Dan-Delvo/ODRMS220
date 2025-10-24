@@ -47,26 +47,50 @@ class BackupController extends Controller
         $database = DB::getDatabaseName();
         $tableKey = "Tables_in_{$database}";
         $sqlScript = "SET FOREIGN_KEY_CHECKS=0;\n";
+        $sqlScript .= "SET SQL_MODE='NO_AUTO_VALUE_ON_ZERO';\n\n";
 
         foreach ($tables as $table) {
             $tableName = $table->$tableKey;
 
-            // Table structure
-            $create = DB::select("SHOW CREATE TABLE `$tableName`")[0]->{'Create Table'};
-            $sqlScript .= "\nDROP TABLE IF EXISTS `$tableName`;\n$create;\n";
+            // Table structure - MariaDB compatible
+            $createResult = DB::select("SHOW CREATE TABLE `$tableName`");
+            $createTable = $createResult[0]->{'Create Table'};
+
+            $sqlScript .= "\n-- Table: $tableName\n";
+            $sqlScript .= "DROP TABLE IF EXISTS `$tableName`;\n";
+            $sqlScript .= $createTable . ";\n\n";
 
             // Table data
             $rows = DB::table($tableName)->get();
-            foreach ($rows as $row) {
-                $row = (array) $row;
-                $values = implode(',', array_map(fn($v) =>
-                    is_null($v) ? 'NULL' : DB::getPdo()->quote($v), $row
-                ));
-                $sqlScript .= "INSERT INTO `$tableName` VALUES ($values);\n";
+
+            if ($rows->count() > 0) {
+                $sqlScript .= "-- Data for table: $tableName\n";
+
+                foreach ($rows as $row) {
+                    $row = (array) $row;
+                    $columns = array_keys($row);
+
+                    // Escape column names with backticks
+                    $columnNames = implode('`, `', $columns);
+
+                    // Prepare values with proper escaping
+                    $values = array_map(function($value) {
+                        if (is_null($value)) {
+                            return 'NULL';
+                        }
+                        // Use PDO quote for proper escaping in MariaDB
+                        return DB::connection()->getPdo()->quote($value);
+                    }, $row);
+
+                    $valueString = implode(', ', $values);
+                    $sqlScript .= "INSERT INTO `$tableName` (`$columnNames`) VALUES ($valueString);\n";
+                }
+
+                $sqlScript .= "\n";
             }
         }
 
-        $sqlScript .= "\nSET FOREIGN_KEY_CHECKS=1;\n";
+        $sqlScript .= "SET FOREIGN_KEY_CHECKS=1;\n";
 
         // Save SQL to temp folder
         $tempDir = storage_path('app/temp');
@@ -154,25 +178,40 @@ class BackupController extends Controller
             return back()->with('error', 'Failed to locate SQL file in the backup.');
         }
 
-        $sqlLines = file($sqlFilePath, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+        $sqlContent = file_get_contents($sqlFilePath);
 
         try {
+            // Set MariaDB-specific settings for restore
             DB::statement("SET FOREIGN_KEY_CHECKS=0;");
+            DB::statement("SET SQL_MODE='NO_AUTO_VALUE_ON_ZERO';");
+            DB::statement("SET AUTOCOMMIT=0;");
+            DB::beginTransaction();
 
-            $query = '';
-            foreach ($sqlLines as $line) {
-                if (str_starts_with(trim($line), '--')) continue;
-                $query .= $line;
-                if (str_ends_with(trim($line), ';')) {
-                    DB::statement($query);
-                    $query = '';
+            // Split SQL content by semicolons (respecting multi-line statements)
+            $queries = $this->splitSqlQueries($sqlContent);
+
+            foreach ($queries as $query) {
+                $query = trim($query);
+
+                // Skip empty queries and comments
+                if (empty($query) || str_starts_with($query, '--') || str_starts_with($query, '/*')) {
+                    continue;
                 }
+
+                DB::statement($query);
             }
 
+            DB::commit();
+            DB::statement("SET AUTOCOMMIT=1;");
             DB::statement("SET FOREIGN_KEY_CHECKS=1;");
+
             unlink($sqlFilePath);
 
         } catch (\Exception $e) {
+            DB::rollBack();
+            DB::statement("SET AUTOCOMMIT=1;");
+            DB::statement("SET FOREIGN_KEY_CHECKS=1;");
+
             return back()->with('error', 'Restore failed: ' . $e->getMessage());
         }
 
@@ -192,6 +231,63 @@ class BackupController extends Controller
         return back()->with('success', 'Database restored successfully.');
     }
 
+    /**
+     * Split SQL content into individual queries
+     * Handles multi-line statements and string literals properly
+     */
+    private function splitSqlQueries($sql)
+    {
+        $queries = [];
+        $currentQuery = '';
+        $inString = false;
+        $stringChar = '';
+        $lines = explode("\n", $sql);
 
+        foreach ($lines as $line) {
+            $line = rtrim($line);
 
+            // Skip comment lines
+            if (preg_match('/^\s*(--|#)/', $line)) {
+                continue;
+            }
+
+            // Remove inline comments
+            $line = preg_replace('/\s+--.*$/', '', $line);
+
+            if (empty(trim($line))) {
+                continue;
+            }
+
+            for ($i = 0; $i < strlen($line); $i++) {
+                $char = $line[$i];
+
+                // Handle string literals
+                if (($char === '"' || $char === "'") && ($i === 0 || $line[$i - 1] !== '\\')) {
+                    if (!$inString) {
+                        $inString = true;
+                        $stringChar = $char;
+                    } elseif ($char === $stringChar) {
+                        $inString = false;
+                    }
+                }
+
+                $currentQuery .= $char;
+
+                // End of query
+                if ($char === ';' && !$inString) {
+                    $queries[] = trim($currentQuery);
+                    $currentQuery = '';
+                }
+            }
+
+            $currentQuery .= "\n";
+        }
+
+        // Add any remaining query
+        if (!empty(trim($currentQuery))) {
+            $queries[] = trim($currentQuery);
+        }
+
+        return $queries;
+    }
 }

@@ -169,10 +169,6 @@ class DocumentRequestController extends Controller
                 'Lname' => $claimerData['Lname'],
             ], $claimerData);
 
-            // If it already existed, make sure we update the claimed_date
-            if (!$claimer->wasRecentlyCreated) {
-                $claimer->update(['claimed_date' => $request->claimer_date]);
-            }
             // --- END CLAIMER LOGIC ---
 
 
