@@ -53,7 +53,6 @@
                     <table class="table table-striped table-bordered bg-white text-dark">
                         <thead class="bg-dark text-white">
                             <tr>
-                                <th>ID</th>
                                 <th>Role</th>
                                 <th>Actions</th>
                             </tr>
@@ -61,7 +60,6 @@
                         <tbody>
                             @foreach ($roles as $item)
                             <tr>
-                                <td>{{ $item->id }}</td>
                                 <td>{{ $item->name }}</td>
                                 <td>
                                     <a href="{{ route('role.edit', ['id' => $item->id]) }}" class="btn btn-success">Edit</a>
@@ -71,6 +69,8 @@
                                         @method('DELETE')
                                         <button type="button" class="btn btn-danger btn-delete">Delete</button>
                                     </form>
+                                    @elseif(in_array($item->id, [1, 2, 4]))
+                                    <button type="button" class="btn btn-danger" disabled>Delete</button>
                                     @endif
                                 </td>
                             </tr>

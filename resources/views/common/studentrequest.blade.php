@@ -1,6 +1,7 @@
 @extends('layout.studentpage')
 
 @section('content')
+@extends('layout.partials.studentMessage')
 
 <style>
     :root {
@@ -199,6 +200,35 @@
         background-color: #38d9a9;
     }
 
+    .btn-submit.loading {
+        position: relative;
+        color: transparent;
+    }
+
+    .btn-submit.loading::after {
+        content: '';
+        position: absolute;
+        width: 20px;
+        height: 20px;
+        top: 50%;
+        left: 50%;
+        margin-top: -10px;
+        margin-left: -10px;
+        border: 3px solid rgba(30, 41, 59, 0.3);
+        border-top-color: #1e293b;
+        border-radius: 50%;
+        animation: button-loading-spinner 1s ease infinite;
+    }
+
+    @keyframes button-loading-spinner {
+        from {
+            transform: rotate(0turn);
+        }
+        to {
+            transform: rotate(1turn);
+        }
+    }
+
     .text-warning-link {
         color: #1dd3b0;
         text-decoration: none;
@@ -226,6 +256,16 @@
 <!-- Sidebar Toggle Script -->
 <script>
     document.addEventListener('DOMContentLoaded', function() {
+        // Form submission handling
+        const form = document.getElementById('requestForm');
+        const submitButton = form.querySelector('.btn-submit');
+
+        form.addEventListener('submit', function(e) {
+            // Disable the submit button and show loading animation
+            submitButton.disabled = true;
+            submitButton.classList.add('loading');
+        });
+
         const toggle = document.getElementById('sidebarToggle');
         if (toggle) {
             toggle.addEventListener('click', function() {
@@ -295,7 +335,7 @@
         </div>
         @endif
 
-        <form action="{{ route('studentrequest.store') }}" method="POST" enctype="multipart/form-data">
+        <form action="{{ route('studentrequest.store') }}" method="POST" enctype="multipart/form-data" id="requestForm">
             @csrf
 
             <div class="row">
@@ -310,7 +350,7 @@
                     <div class="form-floating mb-3">
                         <select class="form-select" id="document_id" name="document_id">
                             @foreach($DocType as $doc)
-                            <option value="{{ $doc->id }}" 
+                            <option value="{{ $doc->id }}"
                                 @if($doc->DocType === "Form 137" && $DocRequests->contains('DocType', 'Form 137')) disabled @endif>
                             <!-- @if($DocRequests->contains('id', $doc->id)) disabled @endif>  -->
                                 {{ $doc->DocType }}

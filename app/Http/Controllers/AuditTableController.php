@@ -24,6 +24,7 @@ class AuditTableController extends Controller
         if (empty($PermissionAudit)) {
             abort(404);
         }
+
         $query = AuditTable::query(); // Replace AuditTable with your actual model name
 
         // Get filter parameters from request

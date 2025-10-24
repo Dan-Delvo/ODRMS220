@@ -178,6 +178,9 @@ class GenerateRequestController extends Controller
                 'doc_requests.forRelease_date',
                 'doc_requests.claimed_date'
             );
+            if ($statusFilter && $statusFilter !== 'all') {
+                $individualQuery->where('doc_requests.status', $statusFilter);
+            }
 
             // Build bulk requests query with filters
             $bulkQuery = BulkStudent::query()
@@ -197,6 +200,11 @@ class GenerateRequestController extends Controller
                     'bulk_requests.forRelease_date as forRelease_date',
                     'bulk_requests.claimed_date as claimed_date'
                 );
+
+            if ($statusFilter && $statusFilter !== 'all') {
+                $bulkQuery->where('bulk_requests.Status', $statusFilter); // Note the capital 'S'
+            }
+
             // Build query
             $query = $individualQuery->union($bulkQuery)
                 ->whereBetween('request_date', [$startDate, $endDate]);
@@ -263,13 +271,54 @@ class GenerateRequestController extends Controller
 
         try {
             // Build query
-            $query = DocumentRequestModel::with(['claimer', 'studentInformation', 'documents'])
-                ->whereBetween('request_date', [$startDate, $endDate]);
-
-            // Apply status filter
+            $individualQuery = DocumentRequestModel::query()
+            ->join('clm_claimers', 'doc_requests.clm_claimers_id', '=', 'clm_claimers.id')
+            ->join('std_students', 'doc_requests.std_students_id', '=', 'std_students.id')
+            ->join('doc_categories', 'doc_requests.doc_categories_id', '=', 'doc_categories.id')
+            ->select(
+                'doc_requests.id as id',
+                'doc_requests.req_no as req_no',
+                DB::raw("CONCAT(std_students.FirstName, ' ', std_students.LastName) as full_name"),
+                'doc_categories.DocType as DocType',
+                'doc_requests.request_schl_entity as request_schl_entity',
+                'doc_requests.request_mode as request_mode',
+                'doc_requests.release_mode as release_mode',
+                'doc_requests.remarks as remarks',
+                'doc_requests.status',
+                'doc_requests.request_date',
+                'doc_requests.approve_date',
+                'doc_requests.forRelease_date',
+                'doc_requests.claimed_date'
+            );
             if ($statusFilter && $statusFilter !== 'all') {
-                $query->where('status', $statusFilter);
+                $individualQuery->where('doc_requests.status', $statusFilter);
             }
+
+            // Build bulk requests query with filters
+            $bulkQuery = BulkStudent::query()
+                ->join('bulk_requests', 'bulk_students.Request_ID', '=', 'bulk_requests.Request_ID')
+                ->select(
+            'bulk_students.Student_ID as id',
+                    'bulk_students.Request_ID as req_no',
+                    'bulk_students.Student_Name as full_name',
+                    'bulk_requests.Doc_Type as DocType',
+                    'bulk_requests.School_Name as request_schl_entity',
+                    DB::raw("'Bulk Request' as request_mode"),
+                    DB::raw("'Walk In' as release_mode"),
+                    DB::raw("NULL as remarks"),
+                    'bulk_requests.Status as status',
+                    'bulk_requests.request_date as request_date',
+                    'bulk_requests.approve_date as approve_date',
+                    'bulk_requests.forRelease_date as forRelease_date',
+                    'bulk_requests.claimed_date as claimed_date'
+                );
+
+            if ($statusFilter && $statusFilter !== 'all') {
+                $bulkQuery->where('bulk_requests.Status', $statusFilter); // Note the capital 'S'
+            }
+
+            $query = $individualQuery->union($bulkQuery)
+            ->whereBetween('request_date', [$startDate, $endDate]);
 
             $DocRequests = $query->orderBy('req_no', 'desc')->get();
 
@@ -280,9 +329,9 @@ class GenerateRequestController extends Controller
             // Transform data for Excel export - Updated to match new column structure
             $filteredData = $DocRequests->map(function ($item) {
                 return [
-                    $item->req_no ?? 'N/A',                                                    // Req #
+                    $item->req_no ?? 'N/A',                                                  // Req #
                     $item->studentInformation->full_name ?? 'N/A',                           // Student
-                    $item->documents->DocType ?? 'N/A',                                      // Doc
+                    $item->DocType ?? 'N/A',                                                 // Doc
                     $item->request_schl_entity ?? 'N/A',                                     // School
                     $item->request_mode ?? 'N/A',                                            // Via
                     $item->release_mode ?? 'N/A',                                            // Rel Mode
