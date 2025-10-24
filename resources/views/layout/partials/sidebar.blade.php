@@ -19,6 +19,8 @@
             $PermissionClaimed = App\Models\PermissionRoleModel::getPermission('claimed', $roleId);
             $PermissionAudit = App\Models\PermissionRoleModel::getPermission('auditTrail', $roleId);
             $PermissionDeclined = App\Models\PermissionRoleModel::getPermission('declined', $roleId);
+            $PermissionBulkRequest = App\Models\PermissionRoleModel::getPermission('bulkRequest', $roleId);
+            $PermissionAddBulkRequest = App\Models\PermissionRoleModel::getPermission('addBulkRequest', $roleId);
             @endphp
 
             {{-- Admin Group --}}
@@ -136,17 +138,25 @@
             @endif
             @endif
 
+            @if(!empty($PermissionBulkRequest) || !empty($PermissionAddBulkRequest))
+
+            @if(!empty($PermissionBulkRequest))
             <div class="sb-sidenav-menu-heading text-uppercase text-light fw-bold mt-3">Bulk Requests</div>
             <a class="nav-link text-light sidebar-item" href="{{ route('bulk_request.index') }}">
                 <div class="sb-nav-link-icon"><i class="fas fa-check-circle"></i></div>
                 Bulk Requests
             </a>
+            @endif
 
+            @if(!empty($PermissionAddBulkRequest))
             <a class="nav-link text-light sidebar-item" href="{{ route('bulk_request_add.show') }}">
                 <div class="sb-nav-link-icon"><i class="fas fa-check-circle"></i></div>
                 Add Bulk Requests
             </a>
-            
+            @endif
+
+            @endif
+
 
         </div>
     </div>

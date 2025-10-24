@@ -2,13 +2,40 @@
     Options +FollowSymLinks
     RewriteEngine On
 
-    # Exclude the /push/ directory from being rewritten
-    RewriteCond %{REQUEST_URI} !^/push/
+    # ✅ Block access to sensitive directories FIRST
+    RewriteRule ^(storage|bootstrap|config|database|resources|routes|tests|vendor|app)/.* - [F,L]
 
+    # ✅ Exclude uploads folder from being rewritten
+    RewriteCond %{REQUEST_URI} ^/uploads/ [NC]
+    RewriteRule ^ - [L]
+
+    # ✅ Exclude push folder from being rewritten
+    RewriteCond %{REQUEST_URI} ^/push/ [NC]
+    RewriteRule ^ - [L]
+
+    # Rewrite everything else into public/
     RewriteCond %{REQUEST_FILENAME} !-d
     RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteRule ^(.*)$ public/$1 [L]
 
-    RewriteRule ^(.*)$ /public/$1 [L]
-
+    # Default to Laravel's index.php
     RewriteRule ^(/)?$ public/index.php [L]
 </IfModule>
+
+<IfModule mod_headers.c>
+    Header unset X-Powered-By
+</IfModule>
+
+# Block direct access to .env
+<FilesMatch "^\.env.*">
+    Require all denied
+</FilesMatch>
+
+# Block access to log files
+<FilesMatch "\.(log)$">
+    Require all denied
+</FilesMatch>
+
+# DO NOT REMOVE THIS LINE AND THE LINES BELOW ERRORPAGEID:miPLdWejhf
+ErrorDocument 404 /404.html
+# DO NOT REMOVE THIS LINE AND THE LINES ABOVE miPLdWejhf:ERRORPAGEID
