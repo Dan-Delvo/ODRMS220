@@ -40,7 +40,7 @@
                                 </span>
                             </label>
                             <input type="text" name="claimer_id" id="claimer_id" class="form-control"
-                                value="{{ $pending->claimer->full_name }}">
+                                value="{{ $pending->claimer->full_name }} " readonly>
                             <small id="claimerHelp" class="text-muted" style="display: none;">
                                 🔒 This field is locked while the request is pending.
                             </small>
@@ -97,7 +97,7 @@
                                     <i class="fas fa-lock"></i>
                                 </span>
                             </label>
-                            <input type="text" id="status" name="status" class="form-control" value="{{ $pending->status }}">
+                            <input type="text" id="status" name="status" class="form-control" value="{{ $pending->status }}" readonly>
                             <small id="statusHelp" class="text-muted" style="display: none;">
                                 🔒 This field is locked.
                             </small>

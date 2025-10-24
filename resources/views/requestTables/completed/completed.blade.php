@@ -20,7 +20,7 @@
     </div>
     <div class="col-md-6 text-end">
         <h1 class="mt-4 text-dark">
-            <span class="badge" style="background-color:#1f2937; font-size: 2rem;">Total For Release: {{ $totalCount }}</span>
+            <span class="badge" style="background-color: #1f2937; font-size: 2rem;">Total For Release: {{ $totalCount }}</span>
         </h1>
     </div>
 </div>
@@ -143,7 +143,7 @@
                     @foreach ($DocRequests as $item)
                     <tr>
                         <td>{{ $item->req_no }}</td>
-                        <td>{{ $item->studentInformation->full_name }}</td>
+                        <td>{{ strtoupper($item->studentInformation->full_name) }}</td>
                         <td>{{ $item->documents->DocType }}</td>
                         <td>{{ strtoupper($item->request_schl_entity) }}</td>
                         <td>{{ $item->remarks }}</td>
@@ -164,13 +164,13 @@
                             <a href="{{ route('tables.edit', $item->id) }}" class="btn btn-sm btn-warning mb-1">Edit</a>
                             @endif
 
-                            @if(!empty($deleteCompleted))
+                            <!-- @if(!empty($deleteCompleted))
                             <form action="{{ route('tables.destroy', $item->id) }}" method="POST" class="d-inline delete-form" data-swal-loading="true" data-swal-delete="true">
                                 @csrf
                                 @method('DELETE')
                                 <button type="submit" class="btn btn-sm btn-danger mb-1 delete-btn">Delete</button>
                             </form>
-                            @endif
+                            @endif -->
                         </td>
                     </tr>
                     @endforeach
@@ -195,7 +195,7 @@
 <div class="modal fade" id="claimerModal" tabindex="-1" aria-labelledby="claimerModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
-            <div class="modal-header bg-success text-white">
+            <div class="modal-header text-white" style="background-color: #1f2937;">
                 <h5 class="modal-title" id="claimerModalLabel">
                     <i class="fas fa-user-check me-2"></i>Document Claim Information
                 </h5>
@@ -260,10 +260,10 @@
 
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    <button type="button" class="btn text-white" style="background-color: #1f2937;" data-bs-dismiss="modal">
                         <i class="fas fa-times me-1"></i>Cancel
                     </button>
-                    <button type="submit" class="btn btn-success" id="submitClaimBtn">
+                    <button type="submit" class="btn text-white" style="background-color: #1dd3b0" id="submitClaimBtn">
                         <i class="fas fa-check me-1"></i>Mark as Claimed
                     </button>
                 </div>

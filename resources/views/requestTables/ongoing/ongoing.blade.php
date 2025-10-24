@@ -149,11 +149,11 @@
                         <td class="text-nowrap">
                             <div class="d-flex flex-wrap flex-md-nowrap gap-2 justify-content-center">
                                 @if(!empty($approveOngoing))
-                                <form action="{{ route('ongoing.destroy', $item->id) }}" method="POST" class="d-inline delete-form" data-swal-loading="true" data-swal-delete="true">
+                                <!-- <form action="{{ route('ongoing.destroy', $item->id) }}" method="POST" class="d-inline delete-form" data-swal-loading="true" data-swal-delete="true">
                                     @csrf
                                     @method('DELETE')
                                     <button type="submit" class="btn btn-danger btn-sm delete-btn">Delete</button>
-                                </form>
+                                </form> -->
 
                                 <form action="{{ route('document-request2.complete', $item->id) }}" method="POST" class="d-inline complete-form"
                                     data-swal-loading="true"
@@ -184,11 +184,13 @@
                                 </form>
                                 @endif
 
+                                @if($item->receipt)
                                 <button class="btn btn-info btn-sm"
                                     data-bs-toggle="modal"
                                     data-bs-target="#receiptModal{{ $item->id }}">
                                     Receipt
                                 </button>
+                                @endif
                             </div>
                         </td>
                     </tr>

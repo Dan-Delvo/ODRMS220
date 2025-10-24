@@ -220,7 +220,7 @@
                     placeholder="Enter reason for declining..." required></textarea>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn text-white" style="background-color: #1f2937;" data-bs-dismiss="modal">Cancel</button>
                 <button type="button" class="btn btn-danger" id="confirmDeclineBtn">Confirm Decline</button>
             </div>
         </div>
@@ -422,7 +422,7 @@
                 html: `You are about to decline with reason:<br><strong>${reason}</strong>`,
                 showCancelButton: true,
                 confirmButtonColor: '#dc3545',
-                cancelButtonColor: '#6c757d',
+                cancelButtonColor: '#1f2937',
                 confirmButtonText: 'Yes, decline it'
             }).then((result) => {
                 if (result.isConfirmed) {
@@ -434,13 +434,13 @@
         function submitDeclineForm(id, reason) {
             const form = document.createElement('form');
             form.method = 'POST';
-            form.action = `{{ url('pending') }}/${id}`;
+            form.action = `{{ url('pending/decline') }}/${id}`; // ✅ Updated route
 
             form.innerHTML = `
-            @csrf
-            @method('DELETE')
-            <input type="hidden" name="remarks" value="${reason}">
-        `;
+        @csrf
+        @method('DELETE')
+        <input type="hidden" name="remarks" value="${reason}">
+    `;
 
             Swal.fire({
                 title: 'Declining...',
@@ -452,6 +452,7 @@
             document.body.appendChild(form);
             form.submit();
         }
+
 
         // Accept form handling
         document.querySelectorAll('.accept-form').forEach(form => {

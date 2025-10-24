@@ -357,14 +357,14 @@ class DocumentRequestController extends Controller
             return redirect()->route('walkin.form')->with('Success', 'Document request submitted successfully!');
         }
 
-        $document = DocumentsModel::find($validated['document_id']);
-        $receipt = DocuPaymentFee::create([
-            "receipt_no" => random_int(10000, 99999),
-            'docu_categories_id' => $validated['document_id'],
-            'doc_amount' => $document->DocPrice,
-            'name_request' => Auth::user()->std_students_id,
-            'time_request' => Carbon::now()
-        ]);
+        // $document = DocumentsModel::find($validated['document_id']);
+        // $receipt = DocuPaymentFee::create([
+        //     "receipt_no" => random_int(10000, 99999),
+        //     'docu_categories_id' => $validated['document_id'],
+        //     'doc_amount' => $document->DocPrice,
+        //     'name_request' => Auth::user()->std_students_id,
+        //     'time_request' => Carbon::now()
+        // ]);
 
         $student = StudentInformationModel::create(
             [
