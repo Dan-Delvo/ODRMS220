@@ -321,10 +321,12 @@ class DocumentRequestController extends Controller
             'email_address' => 'required|string|max:100',
         ]);
 
-        $claimer = ClaimerModel::updateOrCreate(
+        $claimer = ClaimerModel::Create(
             ['Fname' => 'Blank', 'Lname' => 'Blank'],
             ['contact_no' => '000000']
         );
+
+        Log::info("Created account: " . $claimer);
 
         // Check if email address is unique
         if (Account::where('email_address', $request->email_address)->exists()) {
@@ -365,6 +367,16 @@ class DocumentRequestController extends Controller
         //     'name_request' => Auth::user()->std_students_id,
         //     'time_request' => Carbon::now()
         // ]);
+
+            $document = DocumentsModel::find($validated['document_id']);
+            $receipt = DocuPaymentFee::create([
+                "receipt_no" => random_int(10000, 99999),
+                'docu_categories_id' => $validated['document_id'],
+                'doc_amount' => $document->DocPrice,
+                'name_request' => Auth::user()->std_students_id,
+                'time_request' => Carbon::now()
+            ]);
+
 
         $student = StudentInformationModel::create(
             [
