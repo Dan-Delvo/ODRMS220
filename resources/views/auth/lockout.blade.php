@@ -78,6 +78,17 @@
             line-height: 1.6;
         }
 
+        .lock-type-badge {
+            display: inline-block;
+            background: #dc2626;
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            font-size: 0.9rem;
+            margin: 1rem 0;
+            font-weight: 600;
+        }
+
         .progress-bar-container {
             width: 100%;
             height: 8px;
@@ -92,6 +103,7 @@
             background: linear-gradient(90deg, #ef4444, #dc2626);
             border-radius: 4px;
             transition: width 1s linear;
+            width: 0%;
         }
 
         @media (max-width: 576px) {
@@ -141,8 +153,13 @@
     </div>
 
     <script>
+        // Get data from server
         let lockedUntil = {{ $locked_until }};
-        const totalLockTime = 15 * 60; // 15 minutes in seconds
+        const initialRemainingSeconds = {{ $remaining_seconds }};
+        
+        // Calculate the ACTUAL total lock time dynamically
+        // This works for 15 min, 30 min, 1 hour, or any duration
+        const totalLockTime = initialRemainingSeconds;
         
         function updateTimer() {
             const now = Math.floor(Date.now() / 1000);
@@ -161,9 +178,14 @@
             document.getElementById('minutes').textContent = String(minutes).padStart(2, '0');
             document.getElementById('seconds').textContent = String(seconds).padStart(2, '0');
             
-            // Update progress bar
-            const progress = ((totalLockTime - remaining) / totalLockTime) * 100;
-            document.getElementById('progressBar').style.width = progress + '%';
+            // Calculate progress dynamically based on actual total lock time
+            // Progress represents how much time has ELAPSED (fills up over time)
+            const timeElapsed = totalLockTime - remaining;
+            const progress = (timeElapsed / totalLockTime) * 100;
+            
+            // Ensure progress is between 0 and 100
+            const clampedProgress = Math.max(0, Math.min(100, progress));
+            document.getElementById('progressBar').style.width = clampedProgress + '%';
         }
         
         // Update immediately
