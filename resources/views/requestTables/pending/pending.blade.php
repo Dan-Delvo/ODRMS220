@@ -294,7 +294,7 @@
                 @endphp
 
                 @if(in_array($fileExtension, ['jpg', 'jpeg', 'png', 'gif', 'webp']))
-                <img src="/public/{{$documentPath}} }}"
+               <img src="/public/{{trim($documentPath)}}" target="_blank"
                     alt="Supporting Document"
                     class="img-fluid w-100"
                     style="max-height: 70vh; object-fit: contain;">
@@ -334,7 +334,7 @@
                 </div>
             </div>
             <div class="modal-footer" style="background-color: #1f2937;">
-                <a href="/public/{{$documentPath}} }}" target="_blank" class="btn btn-outline-primary btn-sm">
+                <a href="/public/{{trim($documentPath)}}" target="_blank" class="btn btn-outline-primary btn-sm">
                     <i class="fas fa-external-link-alt me-1"></i> Open in New Tab
                 </a>
                 <button type="button" class="btn btn-outline-light btn-sm" data-bs-dismiss="modal">
