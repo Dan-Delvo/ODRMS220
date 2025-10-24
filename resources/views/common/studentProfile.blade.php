@@ -214,7 +214,7 @@
     }
 </style>
 
-<div class="main-content" style="background-color: #0f172a; min-height: 100vh;">
+<div class="main-content mt-4" style="background-color: #0f172a; min-height: 100vh;">
     <div class="container-fluid py-4 text-light">
 
         <!-- Page Header -->
@@ -929,6 +929,11 @@
                 document.body.classList.toggle('sidebar-shrink');
             });
         }
+        window.addEventListener('resize', () => {
+            if (window.innerWidth <= 1024) {
+                document.body.classList.remove('sidebar-shrink');
+            }
+        });
 
         function validateLRN(inputId, errorId, successId, submitBtnId) {
             const lrnInput = document.getElementById(inputId);

@@ -136,6 +136,12 @@
                                 @error('lrn')
                                 <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
+                                <div id="lrn-error-desktop" class="text-danger mt-1" style="font-size: 0.875rem; display: none;">
+                                    <i class="fas fa-exclamation-circle me-1"></i>LRN must be exactly 12 digits
+                                </div>
+                                <div id="lrn-success-desktop" class="text-success mt-1" style="font-size: 0.875rem; display: none;">
+                                    <i class="fas fa-check-circle me-1"></i>Valid LRN
+                                </div>
                             </div>
                         </div>
 
@@ -216,11 +222,11 @@
 
     <div class="col-lg-4 mt-3 d-none d-lg-block">
         <div class="card" style="width: 18rem;">
-        <img src="{{ asset('images/qrCode.png') }}" class="card-img-top" alt="ubnhsLogo">
-        <div class="card-body">
-            <p class="card-text">Thank you for using our Online Document Request and Management System! After completing your request,
-                                Please scan the Qr Code to answer a quick survey and help us improve the system for our research.</p>
-        </div>
+            <img src="{{ asset('images/qrCode.png') }}" class="card-img-top" alt="ubnhsLogo">
+            <div class="card-body">
+                <p class="card-text">Thank you for using our Online Document Request and Management System! After completing your request,
+                    Please scan the Qr Code to answer a quick survey and help us improve the system for our research.</p>
+            </div>
         </div>
     </div>
 
@@ -228,6 +234,56 @@
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {
+
+        const errorLrnMessage = document.getElementById('lrn-error-desktop')
+        const successLrnMessage = document.getElementById('lrn-success-desktop')
+        const lrnInput = document.getElementById('inputLRN')
+        const submitLrn = document.getElementById('submitButton')
+
+        if (!lrnInput) return;
+
+        lrnInput.addEventListener('input', function(e) {
+            this.value = this.value.replace(/\D/g, '');
+
+            // Limit input to 12 digits
+            if (this.value.length > 12) {
+                this.value = this.value.slice(0, 12);
+            }
+            const value = this.value
+            const isValid = /^\d{12}$/.test(value);
+
+            if (value.length === 0) {
+                errorLrnMessage.style.display = 'none'
+                successLrnMessage.style.display = 'none'
+                lrnInput.classList.remove('is-invalid', 'is-valid');
+                submitLrn.disabled = false;
+            } else if (isValid) {
+                errorLrnMessage.style.display = 'none'
+                successLrnMessage.style.display = 'block'
+                lrnInput.classList.remove('is-invalid');
+                lrnInput.classList.add('is-valid');
+                submitLrn.disabled = false;
+            } else {
+                errorLrnMessage.style.display = 'block'
+                successLrnMessage.style.display = 'none'
+                lrnInput.classList.remove('is-valid');
+                lrnInput.classList.add('is-invalid');
+                submitLrn.disabled = true;
+            }
+        });
+        const form = lrnInput.closest('form');
+        if (form) {
+            form.addEventListener('submit', function(e) {
+                const value = lrnInput.value;
+                if (value.length > 0 && !/^\d{12}$/.test(value)) {
+                    e.preventDefault();
+                    errorLrnMessage.style.display = 'block'
+                    lrnInput.classList.add('is-invalid');
+                    lrnInput.focus();
+                }
+            })
+        }
+
         var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
         tooltipTriggerList.forEach(function(tooltipTriggerEl) {
             new bootstrap.Tooltip(tooltipTriggerEl);

@@ -172,7 +172,7 @@ class DocumentRequestController extends Controller
 
             // If it already existed, make sure we update the claimed_date
             if (!$claimer->wasRecentlyCreated) {
-                 $claimer->update(['claimed_date' => $request->claimer_date]);
+                $claimer->update(['claimed_date' => $request->claimer_date]);
             }
             // --- END CLAIMER LOGIC ---
 
@@ -240,7 +240,6 @@ class DocumentRequestController extends Controller
 
             return redirect()->route('tables.index')
                 ->with('Status', 'Document marked as claimed successfully!');
-
         } catch (\Illuminate\Validation\ValidationException $e) {
             Log::error('Validation Error in completeRequest: ' . json_encode($e->errors()), ['request_id' => $id]);
 
@@ -256,7 +255,6 @@ class DocumentRequestController extends Controller
                 ->withErrors($e->errors())
                 ->withInput()
                 ->with('Danger', 'Validation failed. Please check your input.');
-
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             Log::error('Document Request Not Found: ' . $e->getMessage(), ['request_id' => $id]);
 
@@ -269,7 +267,6 @@ class DocumentRequestController extends Controller
 
             return redirect()->route('tables.index')
                 ->with('Danger', 'Document request not found.');
-
         } catch (\Exception $e) {
             Log::error('completeRequest Error: ' . $e->getMessage(), [
                 'request_id' => $id,
@@ -360,6 +357,14 @@ class DocumentRequestController extends Controller
             return redirect()->route('walkin.form')->with('Success', 'Document request submitted successfully!');
         }
 
+        $document = DocumentsModel::find($validated['document_id']);
+        $receipt = DocuPaymentFee::create([
+            "receipt_no" => random_int(10000, 99999),
+            'docu_categories_id' => $validated['document_id'],
+            'doc_amount' => $document->DocPrice,
+            'name_request' => Auth::user()->std_students_id,
+            'time_request' => Carbon::now()
+        ]);
 
         $student = StudentInformationModel::create(
             [
@@ -403,6 +408,7 @@ class DocumentRequestController extends Controller
             'remarks' => 'Pending',
             'status' => 'Pending',
             'request_mode' => 'Online',
+            'receipt_no' => $receipt->receipt_no
         ]);
 
 

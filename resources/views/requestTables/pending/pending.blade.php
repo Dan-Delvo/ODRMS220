@@ -170,11 +170,14 @@
                                 class="btn btn-sm btn-warning">Edit</a>
                             @endif
 
+
+                            @if($item->receipt)
                             <button class="btn btn-sm btn-info"
                                 data-bs-toggle="modal"
                                 data-bs-target="#receiptModal{{ $item->id }}">
                                 Receipt
                             </button>
+                            @endif
 
                             @if($item->supporting_document)
                             <button type="button"
