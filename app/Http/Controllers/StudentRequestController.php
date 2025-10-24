@@ -94,13 +94,13 @@ class StudentRequestController extends Controller
         $document = DocumentsModel::find($validatedData['document_id']);
 
         // Step 6: Create payment receipt
-        $receipt = DocuPaymentFee::create([
-            "receipt_no" => random_int(10000, 99999),
-            'docu_categories_id' => $validatedData['document_id'],
-            'doc_amount' => $document->DocPrice,
-            'name_request' => Auth::user()->std_students_id,
-            'time_request' => Carbon::now()
-        ]);
+        // $receipt = DocuPaymentFee::create([
+        //     "receipt_no" => random_int(10000, 99999),
+        //     'docu_categories_id' => $validatedData['document_id'],
+        //     'doc_amount' => $document->DocPrice,
+        //     'name_request' => Auth::user()->std_students_id,
+        //     'time_request' => Carbon::now()
+        // ]);
 
         // Step 7: Create document request
         DocumentRequestModel::create([
@@ -116,7 +116,7 @@ class StudentRequestController extends Controller
             'supporting_document' => $supportingDocumentPath,
             'remarks' => "Pending",
             'status' => "Pending",
-            'receipt_no' => $receipt->receipt_no
+            // 'receipt_no' => $receipt->receipt_no
         ]);
 
         // Step 8: Redirect with success message
