@@ -215,8 +215,6 @@ class BackupController extends Controller
             // Set MariaDB-specific settings for restore
             DB::statement("SET FOREIGN_KEY_CHECKS=0");
             DB::statement("SET SQL_MODE='NO_AUTO_VALUE_ON_ZERO'");
-            DB::statement("SET AUTOCOMMIT=0");
-            DB::beginTransaction();
 
             // Split SQL content by semicolons (respecting multi-line statements)
             $queries = $this->splitSqlQueries($sqlContent);
@@ -234,8 +232,6 @@ class BackupController extends Controller
                 $executedCount++;
             }
 
-            DB::commit();
-            DB::statement("SET AUTOCOMMIT=1");
             DB::statement("SET FOREIGN_KEY_CHECKS=1");
 
             Log::info("Database restore completed. Executed {$executedCount} queries.");
@@ -270,7 +266,11 @@ class BackupController extends Controller
 
             try {
                 DB::rollBack();
-                DB::statement("SET AUTOCOMMIT=1");
+            } catch (\Exception $rollbackEx) {
+                // Ignore rollback errors if no transaction
+            }
+
+            try {
                 DB::statement("SET FOREIGN_KEY_CHECKS=1");
             } catch (\Exception $cleanupEx) {
                 Log::error('Cleanup after error failed: ' . $cleanupEx->getMessage());
