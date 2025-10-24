@@ -16,6 +16,10 @@ use App\Models\DocumentsModel;
 class ClaimedDocumentController extends Controller
 {
     public function index(Request $request){
+        $PermissionClaimed = PermissionRoleModel::getPermission('claimed', Auth::user()->role_id);
+        if (empty($PermissionClaimed)) {
+            abort(404);
+        }
         // Start the base query for Claimed documents
         $query = DocumentRequestModel::where('status', 'Claimed')
             ->with('claimer')

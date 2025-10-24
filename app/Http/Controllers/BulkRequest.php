@@ -6,8 +6,10 @@ use App\Http\Requests\StoreBulkRequestFormRequest;
 use App\Mail\RequestApprovedMail;
 use App\Models\BulkRequest as ModelsBulkRequest;
 use App\Models\BulkStudent;
+use App\Models\PermissionRoleModel;
 use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Log;
 
@@ -17,6 +19,11 @@ class BulkRequest extends Controller
     //
     public function index()
     {
+        $PermissionBulkRequest = PermissionRoleModel::getPermission('bulkRequest', Auth::user()->role_id);
+        if (empty($PermissionBulkRequest)) {
+            abort(404);
+        }
+
         $bulk = ModelsBulkRequest::getBulkRequest();
 
         $requests = ModelsBulkRequest::getBulkRequest();
@@ -30,6 +37,10 @@ class BulkRequest extends Controller
 
     public function show()
     {
+        $PermissionAddBulkRequest = PermissionRoleModel::getPermission('addBulkRequest', Auth::user()->role_id);
+        if (empty($PermissionAddBulkRequest)) {
+            abort(404);
+        }
         return view('bulk_request.bulk_request_add');
     }
 

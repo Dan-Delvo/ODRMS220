@@ -7,13 +7,19 @@ use Carbon\Carbon;
 use App\Models\DocumentRequestModel;
 use App\Models\DocumentsModel;
 use App\Models\DocuPaymentFee;
+use App\Models\PermissionRoleModel;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class AnalyticsController extends Controller
 {
 
     public function index(Request $request)
     {
+        $PermissionAnalytics = PermissionRoleModel::getPermission('analytics', Auth::user()->role_id);
+        if (empty($PermissionAnalytics)) {
+            abort(404);
+        }
         $startDate = $request->input('start_date') ?? Carbon::now()->startOfYear()->toDateString();
         $endDate = $request->input('end_date') ?? Carbon::now()->endOfYear()->toDateString();
 

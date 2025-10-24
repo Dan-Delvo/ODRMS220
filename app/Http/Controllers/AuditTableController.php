@@ -4,7 +4,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\AuditTable;
-
+use App\Models\PermissionRoleModel;
+use Illuminate\Support\Facades\Auth;
 
 class AuditTableController extends Controller
 {
@@ -19,6 +20,10 @@ class AuditTableController extends Controller
  */
     public function index(Request $request)
     {
+        $PermissionAudit = PermissionRoleModel::getPermission('auditTrail', Auth::user()->role_id);
+        if (empty($PermissionAudit)) {
+            abort(404);
+        }
         $query = AuditTable::query(); // Replace AuditTable with your actual model name
 
         // Get filter parameters from request
