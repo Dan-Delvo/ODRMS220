@@ -171,13 +171,13 @@
                             @endif
 
 
-                            @if($item->receipt)
+                            {{-- @if($item->receipt)
                             <button class="btn btn-sm btn-info"
                                 data-bs-toggle="modal"
                                 data-bs-target="#receiptModal{{ $item->id }}">
                                 Receipt
                             </button>
-                            @endif
+                            @endif --}}
 
                             @if($item->supporting_document)
                             <button type="button"
