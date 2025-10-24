@@ -29,14 +29,14 @@ class CheckLockout
             $lockedUntil = Cache::get($lockKey);
             $remainingMinutes = ceil(($lockedUntil - time()) / 60);
             $remainingSeconds = $lockedUntil - time();
-            
+
             // Return lockout page - blocking all access
             $response = response()->view('auth.lockout', [
                 'remaining_minutes' => $remainingMinutes,
                 'remaining_seconds' => $remainingSeconds,
                 'locked_until' => $lockedUntil
             ], 403);
-            
+
             // Add headers to prevent caching and back button access
             return $this->addNoCacheHeaders($response);
         }
@@ -65,8 +65,10 @@ class CheckLockout
      */
     protected function addNoCacheHeaders($response)
     {
-        return $response->header('Cache-Control', 'no-cache, no-store, must-revalidate, max-age=0')
-                        ->header('Pragma', 'no-cache')
-                        ->header('Expires', 'Sat, 01 Jan 2000 00:00:00 GMT');
+        $response->headers->set('Cache-Control', 'no-cache, no-store, must-revalidate, max-age=0');
+        $response->headers->set('Pragma', 'no-cache');
+        $response->headers->set('Expires', 'Sat, 01 Jan 2000 00:00:00 GMT');
+
+        return $response;
     }
 }
