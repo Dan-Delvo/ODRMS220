@@ -160,7 +160,6 @@ class DocumentRequestController extends Controller
             $claimerData = [
                 'Fname'        => $request->claimer_first_name,
                 'Lname'        => $request->claimer_last_name,
-                'claimed_date' => $request->claimer_date,
                 'contact_no'   => $request->input('claimer_contact_no', 'N/A'), // Use a default if not collected in modal
             ];
 
