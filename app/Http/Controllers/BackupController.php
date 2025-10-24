@@ -12,6 +12,7 @@ class BackupController extends Controller
     public function downloadBackup()
     {
         $fileName = "backup-" . date('Y-m-d_H-i-s') . ".sql";
+        $zipFileName = "backup-" . date('Y-m-d_H-i-s') . ".zip";
 
         // Check if we've already logged this specific backup in this session
         $sessionKey = 'backup_logged_' . $fileName;
@@ -57,9 +58,32 @@ class BackupController extends Controller
             $sqlScript .= "\n";
         }
 
-        return response($sqlScript)
-            ->header('Content-Type', 'application/sql')
-            ->header('Content-Disposition', "attachment; filename={$fileName}");
+        // Create a temporary file for the SQL
+        $tempSqlPath = storage_path('app/temp/' . $fileName);
+        $tempZipPath = storage_path('app/temp/' . $zipFileName);
+
+        // Ensure temp directory exists
+        if (!file_exists(storage_path('app/temp'))) {
+            mkdir(storage_path('app/temp'), 0755, true);
+        }
+
+        // Save SQL to temporary file
+        file_put_contents($tempSqlPath, $sqlScript);
+
+        // Create password-protected ZIP
+        $zip = new \ZipArchive();
+        if ($zip->open($tempZipPath, \ZipArchive::CREATE | \ZipArchive::OVERWRITE) === true) {
+            $zip->addFile($tempSqlPath, $fileName);
+            $zip->setPassword('ubnhsregistrarpass');
+            $zip->setEncryptionName($fileName, \ZipArchive::EM_AES_256);
+            $zip->close();
+        }
+
+        // Delete temporary SQL file
+        unlink($tempSqlPath);
+
+        // Return the ZIP file and delete after sending
+        return response()->download($tempZipPath, $zipFileName)->deleteFileAfterSend(true);
     }
 
 
