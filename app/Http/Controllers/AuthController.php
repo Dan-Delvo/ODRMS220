@@ -81,7 +81,7 @@ class AuthController extends Controller
         $deviceLockoutTimestampKey = "lockout_timestamp:device:{$deviceId}";
 
         $maxAttempts = 3;
-        $baseLockoutMinutes = 1; // First lockout: 15 minutes
+        $baseLockoutMinutes = 15; // First lockout: 15 minutes
         $maxLockoutMinutes = 1440; // 24 hours max
 
         // 🔄 Reset lockout counts if 24 hours have passed
