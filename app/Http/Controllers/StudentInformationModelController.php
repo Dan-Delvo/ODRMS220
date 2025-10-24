@@ -78,6 +78,8 @@ class StudentInformationModelController extends Controller
 
     public function edit($id)
     {
+                DB::connection()->getPdo()->exec("SET @current_user = " .
+            DB::connection()->getPdo()->quote(Auth::check() ? Auth::user()->username : 'guest'));
         $student = StudentInformationModel::find($id);
         $gradeLevels = ['7', '8', '9', '10', '11', '12']; // Example grade levels
 

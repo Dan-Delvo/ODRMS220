@@ -479,6 +479,21 @@
             <i class="fas fa-download me-2"></i> Backup Database
         </button>
     </div>
+
+    <!-- Restore Form -->
+    <div class="col-md-6 mb-3">
+        <form action="{{ route('backup.restore') }}" method="POST" enctype="multipart/form-data">
+            @csrf
+            <div class="mb-3">
+                <label for="backup_file" class="form-label fw-bold">Select Backup File</label>
+                <input type="file" name="backup_file" id="backup_file" class="form-control" accept=".zip" required>
+            </div>
+            <button type="submit" class="btn btn-lg w-100"
+                style="background-color: #dc3545; border-color: #dc3545; color: white;">
+                <i class="fas fa-upload me-2"></i> Restore Database
+            </button>
+        </form>
+    </div>
 </div>
 
 <!-- Auto-submit and keyboard shortcuts -->

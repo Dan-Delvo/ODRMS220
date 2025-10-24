@@ -11,117 +11,187 @@ class BackupController extends Controller
 {
     public function downloadBackup()
     {
-        $fileName = "backup-" . date('Y-m-d_H-i-s') . ".sql";
-        $zipFileName = "backup-" . date('Y-m-d_H-i-s') . ".zip";
+        $fileName = "backup-" . now()->format('Y-m-d_H-i-s') . ".sql";
+        $zipFileName = $fileName . ".zip";
+        $zipPassword = config('app.backup_password');
 
-        // Check if we've already logged this specific backup in this session
-        $sessionKey = 'backup_logged_' . $fileName;
+        $user = Auth::user();
+        // Session key: ensures only one log per user per backup
+        $sessionKey = 'backup_logged_' . Auth::id() . '_' . now()->format('Y-m-d_H-i');
 
         if (!session()->has($sessionKey)) {
-            $user = Auth::user();
+            // Prevent double insert in audit table
+            if (!AuditTable::where('type', 'Back Up')
+                    ->where('changedBy', $user->studentInformation->full_name)
+                    ->where('new_data', json_encode(['File Name' => $fileName]))
+                    ->exists())
+            {
+                AuditTable::withoutEvents(function () use ($fileName, $user) {
+                    AuditTable::create([
+                        'type'          => 'Back Up',
+                        'old_data'      => null,
+                        'new_data'      => json_encode(['File Name' => $fileName]),
+                        'time'          => now(),
+                        'changedBy'     => $user->studentInformation->full_name,
+                        'fromTableName' => 'Database Backup',
+                        'description'   => null
+                    ]);
+                });
+            }
 
-            AuditTable::withoutEvents(function () use ($fileName, $user) {
-                AuditTable::create([
-                    'type'          => 'Back Up',
-                    'old_data'      => null,
-                    'new_data'      => json_encode(['File Name' => $fileName]),
-                    'time'          => now(),
-                    'changedBy'     => $user->studentInformation->full_name,
-                    'fromTableName' => 'Database Backup',
-                    'description'   => null
-                ]);
-            });
-
-            // Mark this backup as logged
             session()->put($sessionKey, true);
         }
 
-        $database = env('DB_DATABASE');
+        // Get tables
         $tables = DB::select('SHOW TABLES');
+        $database = DB::getDatabaseName();
         $tableKey = "Tables_in_{$database}";
-        $sqlScript = "";
+        $sqlScript = "SET FOREIGN_KEY_CHECKS=0;\n";
 
         foreach ($tables as $table) {
             $tableName = $table->$tableKey;
-            $createTableRow = DB::select("SHOW CREATE TABLE {$tableName}")[0];
-            $createTable = array_values((array) $createTableRow)[1];
-            $sqlScript .= "\n\n" . $createTable . ";\n\n";
 
+            // Table structure
+            $create = DB::select("SHOW CREATE TABLE `$tableName`")[0]->{'Create Table'};
+            $sqlScript .= "\nDROP TABLE IF EXISTS `$tableName`;\n$create;\n";
+
+            // Table data
             $rows = DB::table($tableName)->get();
             foreach ($rows as $row) {
-                $values = array_map(function ($value) {
-                    return isset($value) ? addslashes($value) : 'NULL';
-                }, (array) $row);
-                $values = "'" . implode("','", $values) . "'";
-                $sqlScript .= "INSERT INTO {$tableName} VALUES ({$values});\n";
+                $row = (array) $row;
+                $values = implode(',', array_map(fn($v) =>
+                    is_null($v) ? 'NULL' : DB::getPdo()->quote($v), $row
+                ));
+                $sqlScript .= "INSERT INTO `$tableName` VALUES ($values);\n";
             }
-            $sqlScript .= "\n";
         }
 
-        // Create a temporary file for the SQL
-        $tempSqlPath = storage_path('app/temp/' . $fileName);
-        $tempZipPath = storage_path('app/temp/' . $zipFileName);
+        $sqlScript .= "\nSET FOREIGN_KEY_CHECKS=1;\n";
 
-        // Ensure temp directory exists
-        if (!file_exists(storage_path('app/temp'))) {
-            mkdir(storage_path('app/temp'), 0755, true);
-        }
+        // Save SQL to temp folder
+        $tempDir = storage_path('app/temp');
+        if (!is_dir($tempDir)) mkdir($tempDir, 0755, true);
 
-        // Save SQL to temporary file
-        file_put_contents($tempSqlPath, $sqlScript);
+        $sqlPath = "$tempDir/$fileName";
+        $zipPath = "$tempDir/$zipFileName";
 
-        // Create password-protected ZIP
+        file_put_contents($sqlPath, $sqlScript);
+
+        // Create encrypted ZIP
         $zip = new \ZipArchive();
-        if ($zip->open($tempZipPath, \ZipArchive::CREATE | \ZipArchive::OVERWRITE) === true) {
-            $zip->addFile($tempSqlPath, $fileName);
-            $zip->setPassword('ubnhsregistrarpass');
+        if ($zip->open($zipPath, \ZipArchive::CREATE | \ZipArchive::OVERWRITE)) {
+            $zip->addFile($sqlPath, $fileName);
+            $zip->setPassword($zipPassword);
             $zip->setEncryptionName($fileName, \ZipArchive::EM_AES_256);
             $zip->close();
         }
 
-        // Delete temporary SQL file
-        unlink($tempSqlPath);
+        // Delete SQL temp file
+        unlink($sqlPath);
 
-        // Return the ZIP file and delete after sending
-        return response()->download($tempZipPath, $zipFileName)->deleteFileAfterSend(true);
+        // Return ZIP to user and delete after send
+        return response()->download($zipPath, $zipFileName)->deleteFileAfterSend(true);
     }
 
 
     public function restoreBackup(Request $request)
     {
         $request->validate([
-            'backup_file' => 'required|file|mimes:sql,txt'
+            'backup_file' => 'required|file|mimes:zip'
         ]);
 
-        $sql = file_get_contents($request->file('backup_file')->getRealPath());
+        $zipPassword = config('app.backup_password');
+        $zip = new \ZipArchive;
+        $zipPath = $request->file('backup_file')->getRealPath();
 
-        // Split queries by semicolon
-        $queries = array_filter(array_map('trim', explode(";", $sql)));
+        if ($zip->open($zipPath) !== true) {
+            return back()->with('error', 'Could not open backup archive.');
+        }
 
-        foreach ($queries as $query) {
-            try {
-                DB::statement($query);
-            } catch (\Exception $e) {
-                // Ignore errors like duplicate keys etc.
+        if ($zip->numFiles === 0) {
+            $zip->close();
+            return back()->with('error', 'The ZIP file is empty.');
+        }
+
+        // Ensure password is set
+        if (!$zip->setPassword($zipPassword)) {
+            $zip->close();
+            return back()->with('error', 'The ZIP file must be password protected.');
+        }
+
+        $extractPath = storage_path("app/temp");
+        if (!is_dir($extractPath)) mkdir($extractPath, 0755, true);
+
+        // Extract all files
+        if (!$zip->extractTo($extractPath)) {
+            $zip->close();
+            return back()->with('error', 'Incorrect password or corrupted backup file.');
+        }
+
+        $zip->close();
+
+        // Find first .sql file in extracted folder (handles subfolders)
+        $sqlFiles = glob($extractPath . '/*.sql');
+        if (empty($sqlFiles)) {
+            // If no .sql file in root, check subfolders
+            $subFolders = glob($extractPath . '/*', GLOB_ONLYDIR);
+            foreach ($subFolders as $folder) {
+                $subSql = glob($folder . '/*.sql');
+                if (!empty($subSql)) {
+                    $sqlFiles = $subSql;
+                    break;
+                }
             }
         }
 
-        $fileName = $request->file('backup_file')->getClientOriginalName();
+        if (empty($sqlFiles)) {
+            return back()->with('error', 'No SQL file found in the backup.');
+        }
+
+        $sqlFilePath = $sqlFiles[0];
+
+        if (!file_exists($sqlFilePath)) {
+            return back()->with('error', 'Failed to locate SQL file in the backup.');
+        }
+
+        $sqlLines = file($sqlFilePath, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+
+        try {
+            DB::statement("SET FOREIGN_KEY_CHECKS=0;");
+
+            $query = '';
+            foreach ($sqlLines as $line) {
+                if (str_starts_with(trim($line), '--')) continue;
+                $query .= $line;
+                if (str_ends_with(trim($line), ';')) {
+                    DB::statement($query);
+                    $query = '';
+                }
+            }
+
+            DB::statement("SET FOREIGN_KEY_CHECKS=1;");
+            unlink($sqlFilePath);
+
+        } catch (\Exception $e) {
+            return back()->with('error', 'Restore failed: ' . $e->getMessage());
+        }
+
+        // Log restore in audit table
         $user = Auth::user();
-        AuditTable::withoutEvents(function () use ($fileName, $user) {
+        AuditTable::withoutEvents(function () use ($sqlFilePath, $user) {
             AuditTable::create([
-                'type'          => 'Restore',
-                'old_data'      => null,
-                'new_data'      => json_encode([
-                    'File Name' => $fileName,
-                ]),
-                'time'          => now(),
-                'changedBy'     => $user->studentInformation->full_name,
+                'type' => 'Restore',
+                'old_data' => null,
+                'new_data' => json_encode(['File Name' => basename($sqlFilePath)]),
+                'time' => now(),
+                'changedBy' => $user->studentInformation->full_name,
                 'fromTableName' => 'Database Restore'
             ]);
         });
 
-        return back()->with('success', 'Database restored successfully!');
+        return back()->with('success', 'Database restored successfully.');
     }
+
+
 
 }
