@@ -59,27 +59,55 @@ class AuthController extends Controller
         $clientIp = $request->ip();
         $sessionId = $request->session()->getId();
 
-        // Unified lockout system (same as OTP)
-        $lockKey = "locked:$clientIp";
-        $attemptKey = "login_attempts:$clientIp";
-        $maxAttempts = 3;
-        $lockoutMinutes = 1;
+        // 🔐 Generate Device Fingerprint
+        $deviceId = $this->getDeviceFingerprint($request);
 
-        // 🔒 Check if already locked
-        if (Cache::has($lockKey)) {
-            $lockedUntil = Cache::get($lockKey);
-            $remainingMinutes = ceil(($lockedUntil - time()) / 60);
-            $remainingSeconds = $lockedUntil - time();
+        // Multi-layer lockout system - tracks THREE separate lockouts
+        $emailLockKey = "locked:email:{$email}";
+        $ipLockKey = "locked:ip:{$clientIp}";
+        $deviceLockKey = "locked:device:{$deviceId}";
+
+        $emailAttemptKey = "attempts:email:{$email}";
+        $ipAttemptKey = "attempts:ip:{$clientIp}";
+        $deviceAttemptKey = "attempts:device:{$deviceId}";
+
+        $emailLockoutCountKey = "lockout_count:email:{$email}";
+        $ipLockoutCountKey = "lockout_count:ip:{$clientIp}";
+        $deviceLockoutCountKey = "lockout_count:device:{$deviceId}";
+
+        // Timestamp keys for tracking when lockout count was last set
+        $emailLockoutTimestampKey = "lockout_timestamp:email:{$email}";
+        $ipLockoutTimestampKey = "lockout_timestamp:ip:{$clientIp}";
+        $deviceLockoutTimestampKey = "lockout_timestamp:device:{$deviceId}";
+
+        $maxAttempts = 3;
+        $baseLockoutMinutes = 1; // First lockout: 15 minutes
+        $maxLockoutMinutes = 1440; // 24 hours max
+
+        // 🔄 Reset lockout counts if 24 hours have passed
+        $this->resetExpiredLockoutCounts($emailLockoutCountKey, $emailLockoutTimestampKey);
+        $this->resetExpiredLockoutCounts($ipLockoutCountKey, $ipLockoutTimestampKey);
+        $this->resetExpiredLockoutCounts($deviceLockoutCountKey, $deviceLockoutTimestampKey);
+
+        // 🔒 Check ALL three lockout types - if ANY are locked, deny access
+        $lockoutInfo = $this->checkAllLockouts($emailLockKey, $ipLockKey, $deviceLockKey);
+
+        if ($lockoutInfo['locked']) {
+            $remainingMinutes = $lockoutInfo['remaining_minutes'];
+            $remainingSeconds = $lockoutInfo['remaining_seconds'];
+            $lockedUntil = $lockoutInfo['locked_until'];
+            $lockType = $lockoutInfo['lock_type'];
 
             // Check if AJAX request
             if ($request->expectsJson() || $request->ajax()) {
                 return response()->json([
                     'success' => false,
                     'locked' => true,
-                    'message' => "Too many failed attempts. Account is locked.",
+                    'message' => "Access denied. Your {$lockType} has been locked due to too many failed attempts.",
                     'remaining_minutes' => $remainingMinutes,
                     'remaining_seconds' => $remainingSeconds,
-                    'locked_until' => $lockedUntil
+                    'locked_until' => $lockedUntil,
+                    'lock_type' => $lockType
                 ], 403);
             }
 
@@ -87,7 +115,8 @@ class AuthController extends Controller
             return response()->view('auth.lockout', [
                 'remaining_minutes' => $remainingMinutes,
                 'remaining_seconds' => $remainingSeconds,
-                'locked_until' => $lockedUntil
+                'locked_until' => $lockedUntil,
+                'lock_type' => $lockType
             ], 403);
         }
 
@@ -96,12 +125,27 @@ class AuthController extends Controller
 
         // Attempt login
         if (Auth::attempt($credentials, $remember)) {
-            // ✅ Success — clear attempts
-            Cache::forget($attemptKey);
+            // ✅ Success — clear ALL attempt counters AND lockout counts (RESET TO ZERO)
+            Cache::forget($emailAttemptKey);
+            Cache::forget($ipAttemptKey);
+            Cache::forget($deviceAttemptKey);
+
+            // 🔄 RESET lockout counts to zero on successful login
+            Cache::forget($emailLockoutCountKey);
+            Cache::forget($ipLockoutCountKey);
+            Cache::forget($deviceLockoutCountKey);
+
+            // 🔄 RESET lockout timestamps
+            Cache::forget($emailLockoutTimestampKey);
+            Cache::forget($ipLockoutTimestampKey);
+            Cache::forget($deviceLockoutTimestampKey);
 
             $user = Auth::user();
-            $browser = request()->header('User-Agent');
-            $ipAddress = request()->ip();
+            $browser = $request->header('User-Agent');
+            $ipAddress = $request->ip();
+
+            // Store device ID in cookie for future requests (1 year expiry)
+            cookie()->queue('device_id', $deviceId, 525600, '/', null, true, true);
 
             if ($user->roles->id > 1) {
                 AuditTable::create([
@@ -111,6 +155,7 @@ class AuthController extends Controller
                         'ip_address' => $ipAddress,
                         'session_id' => $sessionId,
                         'browser'    => $browser,
+                        'device_id'  => $deviceId,
                     ]),
                     'time'          => now(),
                     'changedBy'     => $user->studentInformation->full_name,
@@ -132,7 +177,6 @@ class AuthController extends Controller
                 }
 
                 return redirect($redirectUrl);
-
             } elseif ($user->roles->name === 'student') {
                 AuditTable::create([
                     'type'          => 'User Logged In',
@@ -141,6 +185,7 @@ class AuthController extends Controller
                         'ip_address' => $ipAddress,
                         'session_id' => $sessionId,
                         'browser'    => $browser,
+                        'device_id'  => $deviceId,
                     ]),
                     'time'          => now(),
                     'changedBy'     => $user->studentInformation->full_name,
@@ -162,23 +207,92 @@ class AuthController extends Controller
             }
         }
 
-        // ❌ Failed attempt
-        $attempts = Cache::get($attemptKey, 0) + 1;
-        Cache::put($attemptKey, $attempts, now()->addMinutes($lockoutMinutes));
+        // ❌ Failed attempt - increment ALL three counters
+        $emailAttempts = Cache::get($emailAttemptKey, 0) + 1;
+        $ipAttempts = Cache::get($ipAttemptKey, 0) + 1;
+        $deviceAttempts = Cache::get($deviceAttemptKey, 0) + 1;
 
-        if ($attempts >= $maxAttempts) {
-            // Lock the account
-            $lockedUntil = time() + ($lockoutMinutes * 60);
-            Cache::put($lockKey, $lockedUntil, now()->addMinutes($lockoutMinutes));
+        Cache::put($emailAttemptKey, $emailAttempts, now()->addMinutes($baseLockoutMinutes));
+        Cache::put($ipAttemptKey, $ipAttempts, now()->addMinutes($baseLockoutMinutes));
+        Cache::put($deviceAttemptKey, $deviceAttempts, now()->addMinutes($baseLockoutMinutes));
 
-            // Clear attempts counter
-            Cache::forget($attemptKey);
+        // Check if any of the three reached max attempts
+        $lockedLayers = [];
+
+        // Check EMAIL lockout
+        if ($emailAttempts >= $maxAttempts) {
+            $emailLockoutCount = Cache::get($emailLockoutCountKey, 0) + 1;
+            $emailLockoutMinutes = min($baseLockoutMinutes * pow(2, $emailLockoutCount - 1), $maxLockoutMinutes);
+            $emailLockedUntil = time() + ($emailLockoutMinutes * 60);
+
+            Cache::put($emailLockKey, $emailLockedUntil, now()->addMinutes($emailLockoutMinutes));
+            Cache::put($emailLockoutCountKey, $emailLockoutCount, now()->addDays(1)); // Store for 1 day
+            Cache::put($emailLockoutTimestampKey, time(), now()->addDays(1)); // Track when count was set
+            Cache::forget($emailAttemptKey);
+
+            $lockedLayers[] = [
+                'type' => 'email',
+                'minutes' => $emailLockoutMinutes,
+                'until' => $emailLockedUntil,
+                'count' => $emailLockoutCount
+            ];
+        }
+
+        // Check IP lockout
+        if ($ipAttempts >= $maxAttempts) {
+            $ipLockoutCount = Cache::get($ipLockoutCountKey, 0) + 1;
+            $ipLockoutMinutes = min($baseLockoutMinutes * pow(2, $ipLockoutCount - 1), $maxLockoutMinutes);
+            $ipLockedUntil = time() + ($ipLockoutMinutes * 60);
+
+            Cache::put($ipLockKey, $ipLockedUntil, now()->addMinutes($ipLockoutMinutes));
+            Cache::put($ipLockoutCountKey, $ipLockoutCount, now()->addDays(1)); // Store for 1 day
+            Cache::put($ipLockoutTimestampKey, time(), now()->addDays(1)); // Track when count was set
+            Cache::forget($ipAttemptKey);
+
+            $lockedLayers[] = [
+                'type' => 'IP address',
+                'minutes' => $ipLockoutMinutes,
+                'until' => $ipLockedUntil,
+                'count' => $ipLockoutCount
+            ];
+        }
+
+        // Check DEVICE lockout
+        if ($deviceAttempts >= $maxAttempts) {
+            $deviceLockoutCount = Cache::get($deviceLockoutCountKey, 0) + 1;
+            $deviceLockoutMinutes = min($baseLockoutMinutes * pow(2, $deviceLockoutCount - 1), $maxLockoutMinutes);
+            $deviceLockedUntil = time() + ($deviceLockoutMinutes * 60);
+
+            Cache::put($deviceLockKey, $deviceLockedUntil, now()->addMinutes($deviceLockoutMinutes));
+            Cache::put($deviceLockoutCountKey, $deviceLockoutCount, now()->addDays(1)); // Store for 1 day
+            Cache::put($deviceLockoutTimestampKey, time(), now()->addDays(1)); // Track when count was set
+            Cache::forget($deviceAttemptKey);
+
+            $lockedLayers[] = [
+                'type' => 'device',
+                'minutes' => $deviceLockoutMinutes,
+                'until' => $deviceLockedUntil,
+                'count' => $deviceLockoutCount
+            ];
+        }
+
+        // If any layer got locked, return lockout response
+        if (!empty($lockedLayers)) {
+            // Use the longest lockout duration
+            usort($lockedLayers, fn($a, $b) => $b['minutes'] <=> $a['minutes']);
+            $primaryLock = $lockedLayers[0];
+
+            $lockTypes = implode(', ', array_column($lockedLayers, 'type'));
+            $durationMessage = $this->formatLockoutDuration($primaryLock['minutes']);
 
             // Log the lockout event
-            Log::warning("Account locked due to failed login attempts", [
+            Log::warning("Multi-layer lockout triggered", [
                 'ip' => $clientIp,
                 'email' => $email,
-                'locked_until' => date('Y-m-d H:i:s', $lockedUntil)
+                'device_id' => $deviceId,
+                'locked_layers' => $lockTypes,
+                'primary_duration_minutes' => $primaryLock['minutes'],
+                'locked_until' => date('Y-m-d H:i:s', $primaryLock['until'])
             ]);
 
             // Return JSON for AJAX requests
@@ -186,23 +300,31 @@ class AuthController extends Controller
                 return response()->json([
                     'success' => false,
                     'locked' => true,
-                    'message' => "Too many failed attempts. Account is locked for {$lockoutMinutes} minute(s).",
-                    'remaining_minutes' => $lockoutMinutes,
-                    'remaining_seconds' => $lockoutMinutes * 60,
-                    'locked_until' => $lockedUntil
+                    'message' => "Too many failed attempts. Your {$lockTypes} locked for {$durationMessage}.",
+                    'remaining_minutes' => $primaryLock['minutes'],
+                    'remaining_seconds' => $primaryLock['minutes'] * 60,
+                    'locked_until' => $primaryLock['until'],
+                    'locked_layers' => $lockedLayers
                 ], 403);
             }
 
             // Return lockout page for non-AJAX requests
             return response()->view('auth.lockout', [
-                'remaining_minutes' => $lockoutMinutes,
-                'remaining_seconds' => $lockoutMinutes * 60,
-                'locked_until' => $lockedUntil
+                'remaining_minutes' => $primaryLock['minutes'],
+                'remaining_seconds' => $primaryLock['minutes'] * 60,
+                'locked_until' => $primaryLock['until'],
+                'duration_message' => $durationMessage,
+                'locked_layers' => $lockedLayers
             ], 403);
         }
 
-        // Show remaining attempts
-        $remainingAttempts = $maxAttempts - $attempts;
+        // Show remaining attempts (use the minimum across all three)
+        $remainingAttempts = min(
+            $maxAttempts - $emailAttempts,
+            $maxAttempts - $ipAttempts,
+            $maxAttempts - $deviceAttempts
+        );
+
         $errorMessage = "Invalid email or password. You have {$remainingAttempts} attempt(s) remaining.";
 
         // Return JSON for AJAX requests
@@ -216,6 +338,116 @@ class AuthController extends Controller
         }
 
         return redirect()->route('login')->with('error', $errorMessage);
+    }
+
+    private function resetExpiredLockoutCounts($lockoutCountKey, $timestampKey)
+    {
+        if (Cache::has($timestampKey)) {
+            $timestamp = Cache::get($timestampKey);
+            $hoursPassed = (time() - $timestamp) / 3600;
+
+            // If 24 hours have passed, reset the count
+            if ($hoursPassed >= 24) {
+                Cache::forget($lockoutCountKey);
+                Cache::forget($timestampKey);
+            }
+        }
+    }
+
+    private function checkAllLockouts($emailLockKey, $ipLockKey, $deviceLockKey)
+    {
+        $locks = [];
+
+        // Check email lock
+        if (Cache::has($emailLockKey)) {
+            $lockedUntil = Cache::get($emailLockKey);
+            if ($lockedUntil > time()) {
+                $locks[] = [
+                    'type' => 'email',
+                    'until' => $lockedUntil
+                ];
+            } else {
+                Cache::forget($emailLockKey);
+            }
+        }
+
+        // Check IP lock
+        if (Cache::has($ipLockKey)) {
+            $lockedUntil = Cache::get($ipLockKey);
+            if ($lockedUntil > time()) {
+                $locks[] = [
+                    'type' => 'IP address',
+                    'until' => $lockedUntil
+                ];
+            } else {
+                Cache::forget($ipLockKey);
+            }
+        }
+
+        // Check device lock
+        if (Cache::has($deviceLockKey)) {
+            $lockedUntil = Cache::get($deviceLockKey);
+            if ($lockedUntil > time()) {
+                $locks[] = [
+                    'type' => 'device',
+                    'until' => $lockedUntil
+                ];
+            } else {
+                Cache::forget($deviceLockKey);
+            }
+        }
+
+        // If any lock exists, return the longest one
+        if (!empty($locks)) {
+            usort($locks, fn($a, $b) => $b['until'] <=> $a['until']);
+            $primaryLock = $locks[0];
+
+            return [
+                'locked' => true,
+                'lock_type' => $primaryLock['type'],
+                'locked_until' => $primaryLock['until'],
+                'remaining_seconds' => $primaryLock['until'] - time(),
+                'remaining_minutes' => ceil(($primaryLock['until'] - time()) / 60)
+            ];
+        }
+
+        return ['locked' => false];
+    }
+
+    private function getDeviceFingerprint(Request $request)
+    {
+        // Check if device already has a stored ID in cookie
+        $existingDeviceId = $request->cookie('device_id');
+
+        if ($existingDeviceId) {
+            return $existingDeviceId;
+        }
+
+        // Generate new device fingerprint from multiple sources
+        $userAgent = $request->header('User-Agent') ?? 'unknown';
+        $acceptLanguage = $request->header('Accept-Language') ?? 'unknown';
+        $acceptEncoding = $request->header('Accept-Encoding') ?? 'unknown';
+
+        // Create a unique hash from device characteristics (without IP for more persistence)
+        $fingerprint = hash('sha256', implode('|', [
+            $userAgent,
+            $acceptLanguage,
+            $acceptEncoding,
+        ]));
+
+        return $fingerprint;
+    }
+
+    private function formatLockoutDuration($minutes)
+    {
+        if ($minutes < 60) {
+            return "{$minutes} minute(s)";
+        } elseif ($minutes < 1440) {
+            $hours = round($minutes / 60, 1);
+            return "{$hours} hour(s)";
+        } else {
+            return "24 hours";
+        }
     }
 
     // Logout the authenticated user
