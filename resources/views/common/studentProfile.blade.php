@@ -255,7 +255,7 @@
                             @if(!empty($studInfo->Id_image))
                             <div class="mx-auto text-center" style="max-width: 220px;">
                                 <div style="padding: 8px; background:#334155; border-radius: 12px;">
-                                    <img src="{{ asset($studInfo->Id_image) }}"
+                                    <img src="/public/{{trim($studInfo->Id_image)}}"
                                         alt="Student Image"
                                         class="mobile-profile-img"
                                         style="width: 100%; height: auto; object-fit: cover; border-radius: 8px;">
@@ -533,7 +533,7 @@
                                         @if(!empty($studInfo->Id_image))
                                         <div class="mx-auto text-center" style="max-width: 220px;">
                                             <div style="background:#334155; border-radius: 12px;">
-                                                <img src="{{ asset($studInfo->Id_image) }}"
+                                                <img src="/public/{{trim($studInfo->Id_image)}}"
                                                     alt="Student Image"
                                                     class="desktop-profile-img"
                                                     style="width: 100%; height: auto; object-fit: cover; border-radius: 8px;">
