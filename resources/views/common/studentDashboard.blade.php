@@ -434,7 +434,7 @@
                 <div class="mb-3 mt-4">
                     @if(in_array($fileExtension, ['jpg','jpeg','png','gif','webp']))
                     <!-- IMAGE PREVIEW -->
-                    <img src="{{ asset($documentPath) }}"
+                    <img src="/public/{{trim($documentPath)}}"
                         alt="Supporting Document for {{ $item->req_no }}"
                         class="img-fluid w-100 mb-2"
                         style="max-height: 70vh; object-fit: contain;"
@@ -445,7 +445,7 @@
                         <i class="fas fa-file-pdf text-danger" style="font-size: 4rem;"></i>
                         <h5 class="mt-2">PDF Document</h5>
                         <p class="text-muted">{{ basename($item->supporting_document) }}</p>
-                        <iframe src="{{ asset($documentPath) }}" width="100%" height="400px" style="border: 1px solid #ddd;"></iframe>
+                        <iframe src="/public/{{trim($documentPath)}}" width="100%" height="400px" style="border: 1px solid #ddd;"></iframe>
                     </div>
                     @else
                     <!-- OTHER FILE TYPES -->
@@ -472,12 +472,12 @@
 
                         <!-- ✅ Download & Open Buttons -->
                         <div class="mt-3">
-                            <a href="{{ asset($documentPath) }}"
+                            <a href="/public/{{trim($documentPath)}}"
                                 class="btn btn-sm btn-primary me-2"
                                 download>
                                 <i class="fas fa-download me-1"></i> Download
                             </a>
-                            <a href="{{ asset($documentPath) }}"
+                            <a href="/public/{{trim($documentPath)}}"
                                 class="btn btn-sm btn-outline-secondary"
                                 target="_blank">
                                 <i class="fas fa-external-link-alt me-1"></i> Open in New Tab
