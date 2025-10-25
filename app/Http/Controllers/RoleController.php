@@ -8,6 +8,7 @@ use App\Models\PermissionRoleModel;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\Rule;
 
 class RoleController extends Controller
 {
@@ -56,11 +57,16 @@ class RoleController extends Controller
     {
         // Set current_user before DB update
         DB::connection()->getPdo()->exec("SET @current_user = " . DB::connection()->getPdo()->quote(Auth::check() ? Auth::user()->username : 'guest'));
-        request()->validate([
-            'role' => 'required',
-        ],[
+        $request->validate([
+            'role' => [
+                'required',
+                Rule::unique('role', 'name')->ignore($id),
+            ],
+        ], [
             'role.required' => 'The role field is required.',
+            'role.unique' => 'This role name already exists.',
         ]);
+
         $save = RolesModel::getSingle($id);
         $save->name = $request->role;
         $save->save();
