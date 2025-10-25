@@ -184,13 +184,13 @@
                                 </form>
                                 @endif
 
-                                @if($item->receipt)
+                                <!-- @if($item->receipt)
                                 <button class="btn btn-info btn-sm"
                                     data-bs-toggle="modal"
                                     data-bs-target="#receiptModal{{ $item->id }}">
                                     Receipt
                                 </button>
-                                @endif
+                                @endif -->
                             </div>
                         </td>
                     </tr>

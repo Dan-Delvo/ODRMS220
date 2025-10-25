@@ -330,7 +330,7 @@ class GenerateRequestController extends Controller
             $filteredData = $DocRequests->map(function ($item) {
                 return [
                     $item->req_no ?? 'N/A',                                                  // Req #
-                    $item->studentInformation->full_name ?? 'N/A',                           // Student
+                    $item->full_name ?? 'N/A',                                               // Student
                     $item->DocType ?? 'N/A',                                                 // Doc
                     $item->request_schl_entity ?? 'N/A',                                     // School
                     $item->request_mode ?? 'N/A',                                            // Via
