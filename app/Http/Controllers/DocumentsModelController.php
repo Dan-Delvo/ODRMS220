@@ -10,6 +10,7 @@ use PhpOffice\PhpWord\TemplateProcessor;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\Rule;
 
 class DocumentsModelController extends Controller
 {
@@ -48,7 +49,7 @@ class DocumentsModelController extends Controller
         // Validate the request data
         $request->validate([
             'DocType' => 'required|string|max:255|unique:doc_categories,DocType',
-        ],[
+        ], [
             'DocType.unique' => 'This document type already exists.',
         ]);
 
@@ -67,7 +68,12 @@ class DocumentsModelController extends Controller
         $pdo->exec("SET @current_user = " . $pdo->quote(Auth::check() ? Auth::user()->username : 'guest'));
 
         $request->validate([
-            'DocType' => 'required|string|max:255|unique:doc_categories,DocType',
+            'DocType' => [
+                'required',
+                'string',
+                'max:255',
+                Rule::unique('doc_categories', 'DocType')->ignore($id), // change 'DocID' to your actual primary key column
+            ],
         ]);
 
         $document = DocumentsModel::findOrFail($id);
