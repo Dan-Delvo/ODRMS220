@@ -6,11 +6,11 @@
 <div class="row">
     <div class="col-md-6">
         <h1 class="mt-4">
-            <span class="badge" style="background-color: #1dd3b0; font-size: 2rem;">Processing Requests</span>
+            <span class="badge" style="background-color: #1dd3b0; font-size: 2rem;">Pending Requests</span>
         </h1>
         <ol class="breadcrumb mb-4">
             <li class="breadcrumb-item"><a href="{{ route('dashboard') }}" class="text-dark">Dashboard</a></li>
-            <li class="breadcrumb-item active">Processing Requests</li>
+            <li class="breadcrumb-item active">Pending Requests</li>
         </ol>
     </div>
     <div class="col-md-6 text-end">
@@ -20,33 +20,15 @@
     </div>
 </div>
 
-<ul class="nav nav-tabs" data-bs-theme="dark">
-  <li class="nav-item">
-    <a class="nav-link text-dark " href="{{ route('pending.index') }}">Pending</a>
-  </li>
-  <li class="nav-item">
-    <a class="nav-link active" href="{{ route('ongoing.index') }}">Processing</a>
-  </li>
-  <li class="nav-item">
-    <a class="nav-link  text-dark" href="{{ route('tables.index') }}">For Release</a>
-  </li>
-  <li class="nav-item">
-    <a class="nav-link  text-dark" href="{{ route('claimed-documents.index') }}">Claimed</a>
-  </li>
-  <li class="nav-item">
-    <a class="nav-link  text-dark" href="{{ route('declined-documents.index') }}">Declined</a>
-  </li>
-</ul>
-
 {{-- Main Card --}}
 <div class="card shadow-lg border-0 rounded-lg mt-3">
     {{-- Card Header with Search/Filter Controls --}}
     <div class="card-header text-white d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center"
         style="background-color: #1f2937;">
-        <h5 class="mb-2 mb-md-0">Processing Document Requests</h5>
+        <h5 class="mb-2 mb-md-0">Pending Document Requests</h5>
 
         {{-- Search/Filter Form --}}
-        <form method="GET" action="{{ route('ongoing.index') }}" id="searchForm">
+        <form method="GET" action="{{ route('pending.index') }}" id="searchForm">
             <div class="d-flex gap-2 mt-2 mt-md-0 flex-wrap" id="tableControls">
                 {{-- Search Input --}}
                 <div class="input-group" style="width: 300px;">
@@ -103,7 +85,7 @@
                 @if(request('sort') != 'default')
                 - Sorted by <strong>Request No. ({{ request('sort') == 'asc' ? 'A-Z' : 'Z-A' }})</strong>
                 @endif
-                <a href="{{ route('ongoing.index') }}" class="btn btn-sm btn-outline-info ms-2">Clear All</a>
+                <a href="{{ route('pending.index') }}" class="btn btn-sm btn-outline-info ms-2">Clear All</a>
             </small>
         </div>
         @endif
@@ -120,10 +102,10 @@
             @if($DocRequests->isEmpty())
             <div class="alert alert-warning text-center my-3">
                 @if(request('search'))
-                No processing document requests found matching your search criteria.
-                <a href="{{ route('ongoing.index') }}" class="btn btn-sm btn-outline-warning ms-2">Clear Search</a>
+                No pending document requests found matching your search criteria.
+                <a href="{{ route('pending.index') }}" class="btn btn-sm btn-outline-warning ms-2">Clear Search</a>
                 @else
-                No processing document requests found.
+                No pending document requests found.
                 @endif
             </div>
             @else
@@ -131,7 +113,7 @@
                 <thead class="table-dark">
                     <tr>
                         <th>
-                            <a href="{{ route('ongoing.index', array_merge(request()->all(), ['sort' => request('sort') == 'asc' ? 'desc' : 'asc'])) }}"
+                            <a href="{{ route('pending.index', array_merge(request()->all(), ['sort' => request('sort') == 'asc' ? 'desc' : 'asc'])) }}"
                                 class="text-white text-decoration-none">
                                 Req #
                                 @if(request('sort') == 'asc')
@@ -149,7 +131,6 @@
                         <th>Remarks</th>
                         <th>Status</th>
                         <th>Req Date</th>
-                        <th>App Date</th>
                         <th>Action</th>
                     </tr>
                 </thead>
@@ -163,53 +144,49 @@
                         <td>{{ $item->remarks }}</td>
                         <td><span class="badge bg-warning text-dark">{{ $item->status }}</span></td>
                         <td>{{ $item->request_date }}</td>
-                        <td>{{ $item->approve_date }}</td>
                         <td class="text-nowrap">
-                            <div class="d-flex flex-wrap flex-md-nowrap gap-2 justify-content-center">
-                                @if(!empty($approveOngoing))
-                                <!-- <form action="{{ route('ongoing.destroy', $item->id) }}" method="POST" class="d-inline delete-form" data-swal-loading="true" data-swal-delete="true">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="submit" class="btn btn-danger btn-sm delete-btn">Delete</button>
-                                </form> -->
-
-                                <form action="{{ route('document-request2.complete', $item->id) }}" method="POST" class="d-inline complete-form"
-                                    data-swal-loading="true"
-                                    data-swal-title="Completing Document Request"
-                                    data-swal-text="This may take a few seconds...">
-                                    @csrf
-                                    @method('PUT')
-                                    <button type="submit" class="btn btn-success btn-sm complete-btn">Complete</button>
-                                </form>
-
-                                @if($item->documents->DocType == 'Good Moral')
-                                <form action="{{ route('doc.print', $item->id) }}" method="POST" class="d-inline print-form">
-                                    @csrf
-                                    <button type="submit" class="btn btn-info btn-sm print-btn">Print</button>
-                                </form>
-                                @endif
-                                @endif
-
-                                @if(!empty($PermissionEdit))
-                                <a href="{{ route('ongoing.edit', $item->id) }}" class="btn btn-warning btn-sm">Edit</a>
-                                @endif
-
-                                @if(!empty($deleteCompleted))
-                                <form action="{{ route('ongoing.destroy', $item->id) }}" method="POST" class="d-inline delete2-form">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="submit" class="btn btn-danger btn-sm delete2-btn">Delete</button>
-                                </form>
-                                @endif
-
-                                <!-- @if($item->receipt)
-                                <button class="btn btn-info btn-sm"
-                                    data-bs-toggle="modal"
-                                    data-bs-target="#receiptModal{{ $item->id }}">
-                                    Receipt
+                            @if(!empty($approvePending))
+                            <button type="button"
+                                class="btn btn-sm btn-danger decline-btn"
+                                data-id="{{ $item->id }}">
+                                Decline
+                            </button>
+                            <form action="{{ route('document-request.complete', $item->id) }}"
+                                method="POST"
+                                class="d-inline accept-form"
+                                data-swal-loading="true"
+                                data-swal-title="Accepting Document Request"
+                                data-swal-text="This may take a few seconds...">
+                                @csrf
+                                @method('PUT')
+                                <button type="submit" class="btn btn-sm btn-success accept-btn">
+                                    Accept
                                 </button>
-                                @endif -->
-                            </div>
+                            </form>
+                            @endif
+
+                            @if(!empty($PermissionEdit))
+                            <a href="{{ route('pending.edit', $item->id) }}"
+                                class="btn btn-sm btn-warning">Edit</a>
+                            @endif
+
+
+                            {{-- @if($item->receipt)
+                            <button class="btn btn-sm btn-info"
+                                data-bs-toggle="modal"
+                                data-bs-target="#receiptModal{{ $item->id }}">
+                                Receipt
+                            </button>
+                            @endif --}}
+
+                            @if($item->supporting_document)
+                            <button type="button"
+                                class="btn btn-sm btn-primary"
+                                data-bs-toggle="modal"
+                                data-bs-target="#documentModal{{ $item->id }}">
+                                <i class="fas fa-file-alt"></i> View Doc
+                            </button>
+                            @endif
                         </td>
                     </tr>
                     @endforeach
@@ -230,8 +207,29 @@
     </div>
 </div>
 
-{{-- Receipt Modals --}}
+{{-- Decline Reason Modal --}}
+<div class="modal fade" id="reasonModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header" style="background-color: #1f2937;">
+                <h5 class="modal-title" style="color: #1dd3b0;">Decline Reason</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <textarea class="form-control" id="reasonInput" rows="3"
+                    placeholder="Enter reason for declining..." required></textarea>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn text-white" style="background-color: #1f2937;" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-danger" id="confirmDeclineBtn">Confirm Decline</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+{{-- All your existing modals (Receipt & Document) go here unchanged --}}
 @foreach ($DocRequests as $item)
+{{-- Receipt Modal --}}
 @if ($item->receipt)
 <div class="modal fade" id="receiptModal{{ $item->id }}" tabindex="-1">
     <div class="modal-dialog modal-dialog-centered modal-md">
@@ -276,6 +274,77 @@
     </div>
 </div>
 @endif
+
+{{-- Supporting Document Modal --}}
+@if($item->supporting_document)
+<div class="modal fade" id="documentModal{{ $item->id }}" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content border-0 shadow-sm">
+            <div class="modal-header text-white" style="background-color: #1f2937;">
+                <h5 class="modal-title" style="color: #1dd3b0;">
+                    <i class="fas fa-file-alt me-2"></i>
+                    Supporting Document - Request No. {{ $item->req_no }}
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body p-0 text-center bg-light">
+                @php
+                $fileExtension = strtolower(pathinfo($item->supporting_document, PATHINFO_EXTENSION));
+                $documentPath = $item->supporting_document;
+                @endphp
+
+                @if(in_array($fileExtension, ['jpg', 'jpeg', 'png', 'gif', 'webp']))
+               <img src="/public/{{trim($documentPath)}}" target="_blank"
+                    alt="Supporting Document"
+                    class="img-fluid w-100"
+                    style="max-height: 70vh; object-fit: contain;">
+                @elseif($fileExtension === 'pdf')
+                <div class="p-4">
+                    <iframe src="{{ asset($documentPath) }}"
+                        width="100%"
+                        height="400px"
+                        style="border: 1px solid #ddd;"></iframe>
+                </div>
+                @else
+                <div class="p-5 text-center">
+                    <i class="fas fa-file text-muted" style="font-size: 4rem;"></i>
+                    <h5 class="mt-3">{{ strtoupper($fileExtension) }} Document</h5>
+                    <p class="text-muted">{{ basename($item->supporting_document) }}</p>
+                    <a href="{{ asset($documentPath) }}" class="btn btn-primary" download>
+                        <i class="fas fa-download me-1"></i> Download
+                    </a>
+                </div>
+                @endif
+
+                <div class="p-3 bg-white border-top">
+                    <div class="row text-start">
+                        <div class="col-md-4">
+                            <small class="text-muted">Student:</small><br>
+                            <strong>{{ $item->studentInformation->full_name }}</strong>
+                        </div>
+                        <div class="col-md-4">
+                            <small class="text-muted">Document Type:</small><br>
+                            <strong>{{ $item->documents->DocType }}</strong>
+                        </div>
+                        <div class="col-md-4">
+                            <small class="text-muted">File Type:</small><br>
+                            <strong>{{ strtoupper($fileExtension) }}</strong>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer" style="background-color: #1f2937;">
+                <a href="/public/{{trim($documentPath)}}" target="_blank" class="btn btn-outline-primary btn-sm">
+                    <i class="fas fa-external-link-alt me-1"></i> Open in New Tab
+                </a>
+                <button type="button" class="btn btn-outline-light btn-sm" data-bs-dismiss="modal">
+                    <i class="fas fa-times me-1"></i> Close
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+@endif
 @endforeach
 
 {{-- JavaScript --}}
@@ -287,7 +356,11 @@
         const clearSearchBtn = document.getElementById('clearSearch');
         const filterSelect = document.getElementById('filterSelect');
         const sortSelect = document.getElementById('sortSelect');
+        const reasonModal = new bootstrap.Modal(document.getElementById('reasonModal'));
+        const reasonInput = document.getElementById('reasonInput');
+        const confirmDeclineBtn = document.getElementById('confirmDeclineBtn');
 
+        let pendingDeclineId = null;
         let searchTimeout = null;
 
         // Auto-submit form on filter/sort change
@@ -301,7 +374,7 @@
 
         // Clear search button
         clearSearchBtn?.addEventListener('click', function() {
-            window.location.href = '{{ route("ongoing.index") }}';
+            window.location.href = '{{ route("pending.index") }}';
         });
 
         // Auto-search with debounce (optional - remove if you want manual search only)
@@ -320,60 +393,75 @@
             document.getElementById('tableContainer').style.opacity = '0.5';
         });
 
-        // Handle Complete button clicks with loading spinner
-        document.querySelectorAll('.complete-form').forEach(form => {
-            form.addEventListener('submit', function(e) {
-                e.preventDefault();
-                const btn = this.querySelector('.complete-btn');
-
-                btn.disabled = true;
-                btn.innerHTML = '<span class="spinner-border spinner-border-sm me-1"></span>Processing...';
-
-                // Disable other buttons in the same row
-                const row = this.closest('tr');
-                row.querySelectorAll('button, a.btn').forEach(b => {
-                    if (b !== btn) {
-                        b.disabled = true;
-                        b.style.opacity = '0.5';
-                    }
-                });
-
-                setTimeout(() => this.submit(), 100);
+        // Decline workflow
+        document.querySelectorAll('.decline-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                pendingDeclineId = this.dataset.id;
+                reasonInput.value = '';
+                reasonModal.show();
             });
         });
 
-        // Handle Delete button clicks with confirmation
-        document.querySelectorAll('.delete-form, .delete2-form').forEach(form => {
-            form.addEventListener('submit', function(e) {
-                e.preventDefault();
-                const btn = this.querySelector('.delete-btn, .delete2-btn');
+        confirmDeclineBtn?.addEventListener('click', function() {
+            const reason = reasonInput.value.trim();
 
-                if (confirm('Are you sure you want to delete this request?')) {
-                    btn.disabled = true;
-                    btn.innerHTML = '<span class="spinner-border spinner-border-sm me-1"></span>Deleting...';
+            if (!reason) {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Please enter a reason',
+                    confirmButtonColor: '#1dd3b0'
+                });
+                return;
+            }
 
-                    // Disable other buttons in the same row
-                    const row = this.closest('tr');
-                    row.querySelectorAll('button, a.btn').forEach(b => {
-                        if (b !== btn) {
-                            b.disabled = true;
-                            b.style.opacity = '0.5';
-                        }
-                    });
+            reasonModal.hide();
 
-                    setTimeout(() => this.submit(), 100);
+            Swal.fire({
+                icon: 'warning',
+                title: 'Are you sure?',
+                html: `You are about to decline with reason:<br><strong>${reason}</strong>`,
+                showCancelButton: true,
+                confirmButtonColor: '#dc3545',
+                cancelButtonColor: '#1f2937',
+                confirmButtonText: 'Yes, decline it'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    submitDeclineForm(pendingDeclineId, reason);
                 }
             });
         });
 
-        // Handle Print button clicks with loading spinner
-        document.querySelectorAll('.print-form').forEach(form => {
+        function submitDeclineForm(id, reason) {
+            const form = document.createElement('form');
+            form.method = 'POST';
+            form.action = `{{ url('pending/decline') }}/${id}`; // ✅ Updated route
+
+            form.innerHTML = `
+        @csrf
+        @method('DELETE')
+        <input type="hidden" name="remarks" value="${reason}">
+    `;
+
+            Swal.fire({
+                title: 'Declining...',
+                text: 'Please wait',
+                allowOutsideClick: false,
+                didOpen: () => Swal.showLoading()
+            });
+
+            document.body.appendChild(form);
+            form.submit();
+        }
+
+
+        // Accept form handling
+        document.querySelectorAll('.accept-form').forEach(form => {
             form.addEventListener('submit', function(e) {
                 e.preventDefault();
-                const btn = this.querySelector('.print-btn');
+                const btn = this.querySelector('.accept-btn');
 
                 btn.disabled = true;
-                btn.innerHTML = '<span class="spinner-border spinner-border-sm me-1"></span>Printing...';
+                btn.innerHTML = '<span class="spinner-border spinner-border-sm me-1"></span>Processing...';
 
                 // Disable other buttons in the same row
                 const row = this.closest('tr');
@@ -399,17 +487,9 @@
         // Re-enable buttons on page show (back button)
         window.addEventListener('pageshow', function(event) {
             if (event.persisted) {
-                document.querySelectorAll('.complete-btn, .delete-btn, .delete2-btn, .print-btn').forEach(btn => {
+                document.querySelectorAll('.accept-btn').forEach(btn => {
                     btn.disabled = false;
-                    btn.style.opacity = '1';
-
-                    if (btn.classList.contains('complete-btn')) {
-                        btn.innerHTML = 'Complete';
-                    } else if (btn.classList.contains('delete-btn') || btn.classList.contains('delete2-btn')) {
-                        btn.innerHTML = 'Delete';
-                    } else if (btn.classList.contains('print-btn')) {
-                        btn.innerHTML = 'Print';
-                    }
+                    btn.innerHTML = 'Accept';
                 });
             }
         });
@@ -485,14 +565,6 @@
         font-size: 0.75rem;
     }
 
-    /* Ensure buttons maintain their size during loading */
-    .complete-btn,
-    .delete-btn,
-    .delete2-btn,
-    .print-btn {
-        min-width: 70px;
-    }
-
     /* Prevent table data from wrapping & allow full-width expansion */
     #tableContainer {
         overflow-x: auto;
@@ -500,20 +572,25 @@
 
     #requestsTable {
         width: max-content;
+        /* table expands to fit content */
         min-width: 100%;
         table-layout: auto;
+        /* columns adjust naturally */
     }
 
     #requestsTable th,
     #requestsTable td {
         white-space: nowrap;
+        /* keep data on one line */
         padding: 0.5rem 1rem;
+        /* more space inside cells */
     }
 
     /* Make remarks column wider and allow wrapping only there */
     #requestsTable th:nth-child(7),
     #requestsTable td:nth-child(7) {
         white-space: normal;
+        /* allow wrapping in Remarks only */
         min-width: 100px;
     }
 </style>

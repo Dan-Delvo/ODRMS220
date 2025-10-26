@@ -25,6 +25,25 @@
     </div>
 </div>
 
+<ul class="nav nav-tabs" data-bs-theme="dark">
+  <li class="nav-item">
+    <a class="nav-link text-dark " href="{{ route('pending.index') }}">Pending</a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link  text-dark" href="{{ route('ongoing.index') }}">Processing</a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link active" aria-current="page" href="{{ route('tables.index') }}">For Release</a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link  text-dark" href="{{ route('claimed-documents.index') }}">Claimed</a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link  text-dark" href="{{ route('declined-documents.index') }}">Declined</a>
+  </li>
+</ul>
+
+
 {{-- Main Card --}}
 <div class="card shadow-lg border-0 rounded-lg mt-3">
     {{-- Card Header with Search/Filter Controls --}}
