@@ -26,7 +26,7 @@
 
         <div class="text-center mb-4">
           <h2 class="font-weight-bold" style="color: #1dd3b0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;">
-            Login - Testing
+            Login
           </h2>
         </div>
 
@@ -49,14 +49,14 @@
             <input class="form-control rounded-3" name="email_address" id="inputEmail" type="email"
                    placeholder="name@example.com" required
                    style="background: #2d3748; border: none; color: #e2e8f0;" />
-            <label for="inputEmail" style="color: #a0aec0;">Email address Test</label>
+            <label for="inputEmail" style="color: #a0aec0;">Email address</label>
           </div>
 
           <div class="form-floating mb-3 position-relative">
             <input class="form-control rounded-3" name="password" id="inputPassword" type="password"
                    placeholder="Password" required
                    style="background: #2d3748; border: none; color: #e2e8f0;" />
-            <label for="inputPassword" style="color: #a0aec0;">Password Test</label>
+            <label for="inputPassword" style="color: #a0aec0;">Password</label>
 
             <button type="button" class="btn btn-sm btn-link position-absolute top-50 end-0 translate-middle-y me-3 text-white"
                     id="togglePassword" tabindex="-1" aria-label="Toggle password visibility" style="z-index: 10;">
