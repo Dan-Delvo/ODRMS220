@@ -47,8 +47,9 @@ class DocumentsModelController extends Controller
 
         // Validate the request data
         $request->validate([
-            'DocType' => 'required|string|max:255|unique:doc_categories,DocType',
-        ],[
+            'Type' => 'required|string|max:255|unique:doc_categories,DocType',
+            'Price' => 'required|numeric|min:0',
+        ], [
             'DocType.unique' => 'This document type already exists.',
         ]);
 
@@ -66,14 +67,17 @@ class DocumentsModelController extends Controller
         $pdo = DB::connection()->getPdo();
         $pdo->exec("SET @current_user = " . $pdo->quote(Auth::check() ? Auth::user()->username : 'guest'));
 
-        $request->validate([
-            'DocType' => 'required|string|max:255|unique:doc_categories,DocType',
+        $validated = $request->validate([
+            'Type' => 'required|string|max:255|unique:doc_categories,DocType,' . $id,
+            'Price' => 'required|numeric|min:0',
+        ], [
+            'DocType.unique' => 'This document type already exists.',
         ]);
 
         $document = DocumentsModel::findOrFail($id);
         $document->update([
-            'DocType' => $request->input('DocType'),
-            'DocPrice' => $request->input('DocPrice'),
+            'DocType' => $validated['Type'],
+            'DocPrice' => $validated['Price'],
         ]);
 
         return redirect()->route('doc')->with('success', 'Document updated successfully.');

@@ -129,6 +129,14 @@ class AccountController extends Controller
         $pdo = DB::connection()->getPdo();
         $pdo->exec("SET @current_user = " . $pdo->quote(Auth::check() ? Auth::user()->username : 'guest'));
 
+        if ($request->std_students_id !== $id && $request->user_account_id !== $id) {
+            // Return with a SweetAlert flash message instead of abort(403)
+            return redirect()->back()->with([
+                'swal_error_title' => 'Unauthorized Action',
+                'swal_error_text' => 'You are not allowed to modify the Student ID or Account ID.',
+                'swal_error_icon' => 'error'
+            ]);
+        }
         try {
             if (!is_numeric($id) || $id <= 0) {
                 return redirect()->route('user')->with('Danger', 'Invalid user ID provided.');
@@ -646,7 +654,7 @@ class AccountController extends Controller
             'FirstName' => 'required|string|max:255',
             'LastName' => 'required|string|max:255',
             'MiddleName' => 'nullable|string|max:255',
-            'LRN' => 'sometimes|required_if:role,1|string|max:12',
+            'LRN' => 'sometimes|required_if:role,1|string|max:12|unique:std_students,LRN',
             'Grade_level' => 'sometimes|required_if:role,1|string|max:50',
             'Std_status' => 'sometimes|required_if:role,1|string|max:50',
             'Last_sy_attended' => 'sometimes|required_if:role,1|string|max:9',
@@ -661,7 +669,7 @@ class AccountController extends Controller
             'FirstName.required' => 'Please enter your first name.',
             'LastName.required' => 'Please enter your last name.',
             'LRN.digits' => 'LRN must be exactly 12 digits.',
-            'LRN.unique' => 'LRN must be unique',
+            'LRN.unique' => 'This LRN already exists',
             'role.required' => 'Please select a role.',
             'Last_sy_attended.digits' => 'Last school year must be 4 digits (e.g. 2024).',
             'email_address.unique' => 'This email already exists',

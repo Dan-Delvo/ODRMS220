@@ -471,6 +471,7 @@
                 });
         }
     </script>
+    @include('layout.partials.statusCode')
     @include('layout.partials.swal-loading')
     @stack('scripts')
 </body>

@@ -43,14 +43,14 @@ class StudentInformationModelController extends Controller
 
         // Apply search filter
         if ($search) {
-            $query->where(function($q) use ($search) {
+            $query->where(function ($q) use ($search) {
                 $q->where('LastName', 'like', '%' . $search . '%')
-                  ->orWhere('FirstName', 'like', '%' . $search . '%')
-                  ->orWhere('MiddleName', 'like', '%' . $search . '%')
-                  ->orWhere('LRN', 'like', '%' . $search . '%')
-                  ->orWhere('Grade_level', 'like', '%' . $search . '%')
-                  ->orWhere('Std_status', 'like', '%' . $search . '%')
-                  ->orWhere('Last_sy_attended', 'like', '%' . $search . '%');
+                    ->orWhere('FirstName', 'like', '%' . $search . '%')
+                    ->orWhere('MiddleName', 'like', '%' . $search . '%')
+                    ->orWhere('LRN', 'like', '%' . $search . '%')
+                    ->orWhere('Grade_level', 'like', '%' . $search . '%')
+                    ->orWhere('Std_status', 'like', '%' . $search . '%')
+                    ->orWhere('Last_sy_attended', 'like', '%' . $search . '%');
             });
         }
 
@@ -78,7 +78,7 @@ class StudentInformationModelController extends Controller
 
     public function edit($id)
     {
-                DB::connection()->getPdo()->exec("SET @current_user = " .
+        DB::connection()->getPdo()->exec("SET @current_user = " .
             DB::connection()->getPdo()->quote(Auth::check() ? Auth::user()->username : 'guest'));
         $student = StudentInformationModel::find($id);
         $gradeLevels = ['7', '8', '9', '10', '11', '12']; // Example grade levels
@@ -96,6 +96,14 @@ class StudentInformationModelController extends Controller
         DB::connection()->getPdo()->exec("SET @current_user = " .
             DB::connection()->getPdo()->quote(Auth::check() ? Auth::user()->username : 'guest'));
 
+        if ($request->id != $id) {
+            // Return with a SweetAlert flash message instead of abort(403)
+            return redirect()->back()->with([
+                'swal_error_title' => 'Unauthorized Action',
+                'swal_error_text' => 'You are not allowed to modify the Student ID or Account ID.',
+                'swal_error_icon' => 'error'
+            ]);
+        }
         // Find the student record
         $student = StudentInformationModel::find($id);
 
@@ -298,4 +306,3 @@ class StudentInformationModelController extends Controller
         }
     }
 }
-

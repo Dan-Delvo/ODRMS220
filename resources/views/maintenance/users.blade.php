@@ -58,10 +58,10 @@
 
                         <!-- Filter Buttons -->
                         <div class="col-md-12">
-                            <button type="submit" class="btn btn-primary me-2">
+                            <button type="submit" class="btn text-white me-2" style="background-color: #1dd3b0;">
                                 <i class="fas fa-filter me-1"></i> Apply Filters
                             </button>
-                            <a href="{{ url()->current() }}" class="btn btn-secondary">
+                            <a href="{{ url()->current() }}" class="btn text-white" style="background-color: #1f2937;">
                                 <i class="fas fa-redo me-1"></i> Reset
                             </a>
                         </div>
@@ -80,7 +80,7 @@
                 <h4 class="mb-0" style="color: #e2e8f0;">
                     Users
                 </h4>
-                <a href="{{ route('userStud.add') }}" class="btn text-black fw-semibold" style="background-color: #1dd3b0; box-shadow: 0 4px 10px rgba(29, 211, 176, 0.5);">
+                <a href="{{ route('userStud.add') }}" class="btn text-black fw-semibold" style="background-color: #1dd3b0;">
                     Add User
                 </a>
             </div>

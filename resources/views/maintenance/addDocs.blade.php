@@ -22,7 +22,7 @@
                 <h4 class="mb-0">Add Document Type</h4>
                 <a href="{{ route('doc') }}"
                     class="btn text-black fw-semibold"
-                    style="background-color: #1dd3b0; box-shadow: 0 4px 10px rgba(29, 211, 176, 0.5);">
+                    style="background-color: #1dd3b0;">
                     Back
                 </a>
             </div>
@@ -36,22 +36,26 @@
 
                     <!-- Document Type Input -->
                     <div class="mb-3">
-                        <label for="DocType" class="form-label">Document Type</label>
-                        <input type="text" name="DocType" id="DocType" class="form-control" value="{{ old('DocType') }}">
-                        @error('DocType')
+                        <label for="Type" class="form-label">Document Type</label>
+                        <input type="text" name="Type" id="DocType"
+                            class="form-control @error('Type') is-invalid @enderror"
+                            value="{{ $errors->has('Type') ? '' : old('Type') }}">
+                        @error('Type')
                         <small class="text-danger">{{ $message }}</small>
                         @enderror
                     </div>
 
                     <!-- Document Price Input -->
                     <div class="mb-3">
-                        <label for="DocPrice" class="form-label">Document Price</label>
+                        <label for="Price" class="form-label">Document Price</label>
                         <div class="input-group">
                             <span class="input-group-text">₱</span>
-                            <input type="text" name="DocPrice" id="DocPrice" class="form-control" value="0">
+                            <input type="text" name="Price" id="DocPrice"
+                                class="form-control @error('Price') is-invalid @enderror"
+                                value="{{ $errors->has('Price') ? '0' : old('Price')}}">
                         </div>
                         <small id="priceHelp" class="text-muted small">❌ Only numbers allowed</small>
-                        @error('DocPrice')
+                        @error('Price')
                         <small class="text-danger d-block">{{ $message }}</small>
                         @enderror
                     </div>
@@ -59,7 +63,7 @@
                     <!-- Submit Button -->
                     <div>
                         <button type="submit" class="btn fw-semibold text-white float-end"
-                            style="background-color: #1dd3b0; box-shadow: 0 4px 10px rgba(29, 211, 176, 0.5);">
+                            style="background-color: #1dd3b0;">
                             Add
                         </button>
                     </div>
