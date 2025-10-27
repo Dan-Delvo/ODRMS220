@@ -344,7 +344,7 @@
 
                     <div class="form-floating mb-3">
                         <input type="text" class="form-control" id="request_schl_entity" name="request_schl_entity" placeholder="Requesting Entity">
-                        <label for="request_schl_entity">Requesting School/Entity</label>
+                        <label for="request_schl_entity" class ="text-white">Requesting School/Entity</label>
                     </div>
 
                     <div class="form-floating mb-3">
@@ -357,13 +357,13 @@
                             </option>
                             @endforeach
                         </select>
-                        <label for="document_id">Requested Document</label>
+                        <label for="document_id" class ="text-white">Requested Document</label>
                     </div>
 
 
                     <div class="form-floating mb-3">
                         <input type="text" class="form-control" id="release_mode" name="release_mode" placeholder="Release Mode" value="Pick Up" readonly>
-                        <label for="release_mode">Release Mode</label>
+                        <label for="release_mode" class ="text-white">Release Mode</label>
                     </div>
                 </div>
 
