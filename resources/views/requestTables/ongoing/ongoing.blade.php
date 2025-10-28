@@ -22,7 +22,7 @@
 
 <ul class="nav nav-tabs" data-bs-theme="dark">
   <li class="nav-item">
-    <a class="nav-link text-dark " href="{{ route('pending.index') }}">Pending</a>
+    <a class="nav-link text-dark" href="{{ route('pending.index') }}">Pending</a>
   </li>
   <li class="nav-item">
     <a class="nav-link active" href="{{ route('ongoing.index') }}">Processing</a>
