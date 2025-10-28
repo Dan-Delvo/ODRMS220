@@ -184,7 +184,7 @@ Route::group(['middleware' => 'useradmin'], function () {
 });
 
 
-Route::middleware(['guest', 'forgotpassword', 'lockout'])->group(function () {
+Route::middleware(['forgotpassword', 'lockout'])->group(function () {
     Route::get('/forgotpassword', [forgotpassword::class, 'index'])->name('forgot');
     Route::post('/forgotpassword', [forgotpassword::class, 'forgotpost'])->name('forgot.submit');
     Route::get('/verifyotp', [forgotpassword::class, 'showVerifyOTP'])->name('verifyotp');

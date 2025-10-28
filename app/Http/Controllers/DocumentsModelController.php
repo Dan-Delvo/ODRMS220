@@ -93,7 +93,7 @@ class DocumentsModelController extends Controller
         $document = DocumentsModel::findOrFail($id);
         $document->delete();
 
-        return redirect()->route('doc')->with('Danger', 'Document deleted successfully.');
+        return redirect()->route('doc')->with('success', 'Document deleted successfully.');
     }
 
     public function generateCertificate($id)

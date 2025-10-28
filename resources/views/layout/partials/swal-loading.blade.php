@@ -29,7 +29,7 @@
                         text: form.dataset.swalDeleteText || "You won't be able to revert this!",
                         icon: "warning",
                         showCancelButton: true,
-                        confirmButtonColor: '#1dd3b0',
+                        confirmButtonColor: '#d33',
                         cancelButtonColor: '#1f2937',
                         confirmButtonText: form.dataset.swalDeleteConfirm || "Yes, delete it!"
                     }).then((result) => {

@@ -489,7 +489,7 @@ class AccountController extends Controller
 
             // Redirect back with success message
             return redirect('panel/user')
-                ->with('Status', "User {$user->username} has been successfully deleted.");
+                ->with('success', "User {$user->username} has been successfully deleted.");
         } catch (Exception $e) {
             DB::rollback();
             Log::error('Error in delete method: ' . $e->getMessage());

@@ -2,8 +2,6 @@
 @extends('layout.blankpage')
 
 @section ('content')
-@include ('layout.partials.message')
-@include('layout.partials.swal-loading')
 
 <!-- Page Title and Breadcrumbs -->
 <div class="row mb-4">

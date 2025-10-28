@@ -12,9 +12,9 @@
 <div class="container-fluid px-4">
     <!-- Page Header -->
     <h1 class="mt-4 text-dark"><span class="badge" style="background-color: #1dd3b0; font-size: 2rem;">Dashboard</span></h1>
-    <ol class="breadcrumb mb-4">
+    <!-- <ol class="breadcrumb mb-4">
         <li class="breadcrumb-item active text-dark"><a href="{{ route('dashboard') }}" class="text-dark">Dashboard</a></li>
-    </ol>
+    </ol> -->
 
     <!-- Dashboard Summary (Total Requests) -->
     <div class="row mb-4">
