@@ -27,7 +27,6 @@ use Illuminate\Auth\Events\Registered;
 
 class AccountController extends Controller
 {
-    // Show the account creation form
     public function display(Request $request)
     {
         $pdo = DB::connection()->getPdo();
@@ -77,22 +76,86 @@ class AccountController extends Controller
             // Apply sorting
             $query->orderBy($sortBy, $sortOrder);
 
-            // Paginate results (10 per page to match your original)
+            // Paginate results
             $user = $query->paginate(10);
 
             // Get permissions
-            $data = PermissionRoleModel::getPermission('userEdit', Auth::user()->role_id);
-            $data1 = PermissionRoleModel::getPermission('userDelete', Auth::user()->role_id);
-            $data2 = PermissionRoleModel::getPermission('userInfo', Auth::user()->role_id);
+            $PermissionEdit = PermissionRoleModel::getPermission('userEdit', Auth::user()->role_id);
+            $PermissionDelete = PermissionRoleModel::getPermission('userDelete', Auth::user()->role_id);
+            $PermissionInfo = PermissionRoleModel::getPermission('userInfo', Auth::user()->role_id);
+
+            // Define table columns for dynamic table
+            $tableColumns = [
+                [
+                    'label' => 'Account ID',
+                    'field' => 'user_account_id'
+                ],
+                [
+                    'label' => 'Name',
+                    'field' => 'studentInformation.full_name',
+                    'callback' => function ($item) {
+                        return $item->studentInformation
+                            ? $item->studentInformation->full_name
+                            : '<span class="text-danger">No Student Info</span>';
+                    }
+                ],
+                [
+                    'label' => 'Role',
+                    'field' => 'roles.name'
+                ],
+                [
+                    'label' => 'Email',
+                    'field' => 'email_address'
+                ],
+                [
+                    'label' => 'Username',
+                    'field' => 'username'
+                ]
+            ];
+
+            // Check if it's an AJAX request
+            if ($request->ajax()) {
+                return response()->json([
+                    'success' => true,
+                    'html' => view('maintenance.table', [
+                        'items' => $user,
+                        'columns' => $tableColumns,
+                        'routePrefix' => 'user',
+                        'primaryKey' => 'user_account_id',
+                        'permissions' => [
+                            'edit' => $PermissionEdit,
+                            'delete' => $PermissionDelete,
+                            'info' => $PermissionInfo
+                        ],
+                        'emptyMessage' => 'No users found matching your search criteria.'
+                    ])->render(),
+                    'pagination' => view('maintenance.pagination', ['items' => $user])->render(),
+                    'total' => $user->total(),
+                    'showing' => [
+                        'from' => $user->firstItem(),
+                        'to' => $user->lastItem(),
+                        'total' => $user->total()
+                    ]
+                ]);
+            }
 
             return view('maintenance.users', compact('user'))
                 ->with([
-                    'PermissionEdit' => $data,
-                    'PermissionDelete' => $data1,
-                    'PermissionInfo' => $data2,
+                    'PermissionEdit' => $PermissionEdit,
+                    'PermissionDelete' => $PermissionDelete,
+                    'PermissionInfo' => $PermissionInfo,
+                    'tableColumns' => $tableColumns
                 ]);
         } catch (Exception $e) {
             Log::error('Error in display method: ' . $e->getMessage());
+
+            if ($request->ajax()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'An error occurred while loading users.'
+                ], 500);
+            }
+
             return redirect()->back()->with('Danger', 'An error occurred while loading users.');
         }
     }

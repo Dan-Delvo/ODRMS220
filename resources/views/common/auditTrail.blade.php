@@ -85,10 +85,10 @@
 
                         <!-- Filter Buttons -->
                         <div class="col-md-12">
-                            <button type="submit" class="btn btn-primary me-2">
+                            <button type="submit" class="btn me-2 text-white" style="background-color: #1dd3b0;">
                                 <i class="fas fa-search me-1"></i> Search
                             </button>
-                            <a href="{{ route('audit.index') }}" class="btn btn-secondary">
+                            <a href="{{ route('audit.index') }}" class="btn text-white" style="background-color: #1f2937;">
                                 <i class="fas fa-redo me-1"></i> Reset
                             </a>
                         </div>
@@ -103,13 +103,13 @@
             <i class="fas fa-info-circle me-2"></i>
             <strong>Active Filters:</strong>
             @if(request('search'))
-                <span class="badge bg-primary me-1">Search: "{{ request('search') }}"</span>
+            <span class="badge bg-primary me-1">Search: "{{ request('search') }}"</span>
             @endif
             @if(request('filter') && request('filter') != 'all')
-                <span class="badge bg-success me-1">Search In: {{ ucfirst(request('filter')) }}</span>
+            <span class="badge bg-success me-1">Search In: {{ ucfirst(request('filter')) }}</span>
             @endif
             @if(request('action_type'))
-                <span class="badge bg-warning text-dark me-1">Type: {{ request('action_type') }}</span>
+            <span class="badge bg-warning text-dark me-1">Type: {{ request('action_type') }}</span>
             @endif
             <a href="{{ route('audit.index') }}" class="btn btn-sm btn-outline-info ms-2">Clear All</a>
             <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
@@ -121,9 +121,9 @@
                 <h5 class="mb-0">System Audit Log</h5>
                 <span class="badge bg-light text-dark">
                     @if($auditTrail->count() > 0)
-                        Showing {{ $auditTrail->firstItem() }} - {{ $auditTrail->lastItem() }} of {{ $auditTrail->total() }}
+                    Showing {{ $auditTrail->firstItem() }} - {{ $auditTrail->lastItem() }} of {{ $auditTrail->total() }}
                     @else
-                        No records
+                    No records
                     @endif
                 </span>
             </div>
@@ -215,12 +215,12 @@
                 <div class="alert alert-info text-center">
                     <i class="fas fa-info-circle me-2"></i>
                     @if(request('search') || request('filter') != 'all' || request('action_type'))
-                        No audit trail records found matching your criteria.
+                    No audit trail records found matching your criteria.
                     @else
-                        No audit trail records available.
+                    No audit trail records available.
                     @endif
                     @if(request('search') || request('filter') != 'all' || request('action_type'))
-                        <a href="{{ route('audit.index') }}" class="btn btn-sm btn-outline-info ms-2">Clear Filters</a>
+                    <a href="{{ route('audit.index') }}" class="btn btn-sm btn-outline-info ms-2">Clear Filters</a>
                     @endif
                 </div>
                 @endif
@@ -299,13 +299,37 @@
                                 </div>
                                 <hr>
                                 <h6 class="text-info mb-3">Current Data:</h6>
-                                <div class="bg-white p-3 border rounded">
-                                    <ul class="mb-0" style="font-size: 0.9rem;">
-                                        @foreach(explode(',', $item->new_data) as $value)
-                                        <li>{{ trim($value) }}</li>
+                                <div class="bg-white p-3 border rounded shadow-sm">
+                                    @php
+                                    $data = json_decode($item->new_data, true);
+
+                                    // Fallback: handle plain text format (e.g., "Key: Value, Key2: Value2")
+                                    if (!is_array($data)) {
+                                    $data = [];
+                                    $pairs = explode(',', $item->new_data);
+                                    foreach ($pairs as $pair) {
+                                    if (strpos($pair, ':') !== false) {
+                                    [$key, $value] = explode(':', $pair, 2);
+                                    $data[trim($key)] = trim($value);
+                                    }
+                                    }
+                                    }
+                                    @endphp
+
+                                    @if(!empty($data))
+                                    <ul class="list-unstyled mb-0" style="font-size: 0.9rem;">
+                                        @foreach($data as $key => $value)
+                                        <li class="mb-1">
+                                            <strong class="text-dark">{{ ucfirst(str_replace('_', ' ', $key)) }}:</strong>
+                                            <span class="text-secondary">{{ $value }}</span>
+                                        </li>
                                         @endforeach
                                     </ul>
+                                    @else
+                                    <p class="text-muted mb-0">No data available</p>
+                                    @endif
                                 </div>
+
                             </div>
                             <div class="modal-footer" style="background-color: #f8f9fa;">
                                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
@@ -404,40 +428,93 @@
 
                                 <!-- Data Comparison -->
                                 <div class="row">
+                                    {{-- Previous Data --}}
                                     @if($item->old_data)
                                     <div class="col-md-6">
                                         <div class="card border-0 shadow-sm h-100">
                                             <div class="card-header bg-secondary text-white">
-                                                <h6 class="mb-0"><i class="fas fa-arrow-left me-2"></i>Previous Data</h6>
+                                                <h6 class="mb-0">
+                                                    <i class="fas fa-arrow-left me-2"></i>Previous Data
+                                                </h6>
                                             </div>
                                             <div class="card-body bg-white">
-                                                <ul class="mb-0" style="font-size: 0.9rem;">
-                                                    @foreach(explode(',', $item->old_data) as $value)
-                                                    <li>{{ trim($value) }}</li>
+                                                @php
+                                                $oldData = json_decode($item->old_data, true);
+
+                                                // Fallback for plain text (e.g., "Key: Value, Key2: Value2")
+                                                if (!is_array($oldData)) {
+                                                $oldData = [];
+                                                $pairs = explode(',', $item->old_data);
+                                                foreach ($pairs as $pair) {
+                                                if (strpos($pair, ':') !== false) {
+                                                [$key, $value] = explode(':', $pair, 2);
+                                                $oldData[trim($key)] = trim($value);
+                                                }
+                                                }
+                                                }
+                                                @endphp
+
+                                                @if(!empty($oldData))
+                                                <ul class="list-unstyled mb-0" style="font-size: 0.9rem;">
+                                                    @foreach($oldData as $key => $value)
+                                                    <li class="mb-1">
+                                                        <strong class="text-dark">{{ ucfirst(str_replace('_', ' ', $key)) }}:</strong>
+                                                        <span class="text-secondary">{{ $value }}</span>
+                                                    </li>
                                                     @endforeach
                                                 </ul>
+                                                @else
+                                                <p class="text-muted mb-0">No previous data available</p>
+                                                @endif
                                             </div>
                                         </div>
                                     </div>
                                     @endif
 
+                                    {{-- Current Data --}}
                                     @if($item->new_data)
                                     <div class="col-md-{{ $item->old_data ? '6' : '12' }}">
                                         <div class="card border-0 shadow-sm h-100">
                                             <div class="card-header bg-info text-white">
-                                                <h6 class="mb-0"><i class="fas fa-arrow-right me-2"></i>Current Data</h6>
+                                                <h6 class="mb-0">
+                                                    <i class="fas fa-arrow-right me-2"></i>Current Data
+                                                </h6>
                                             </div>
                                             <div class="card-body bg-white">
-                                                <ul class="mb-0" style="font-size: 0.9rem;">
-                                                    @foreach(explode(',', $item->new_data) as $value)
-                                                    <li>{{ trim($value) }}</li>
+                                                @php
+                                                $newData = json_decode($item->new_data, true);
+
+                                                // Fallback for plain text (e.g., "Key: Value, Key2: Value2")
+                                                if (!is_array($newData)) {
+                                                $newData = [];
+                                                $pairs = explode(',', $item->new_data);
+                                                foreach ($pairs as $pair) {
+                                                if (strpos($pair, ':') !== false) {
+                                                [$key, $value] = explode(':', $pair, 2);
+                                                $newData[trim($key)] = trim($value);
+                                                }
+                                                }
+                                                }
+                                                @endphp
+
+                                                @if(!empty($newData))
+                                                <ul class="list-unstyled mb-0" style="font-size: 0.9rem;">
+                                                    @foreach($newData as $key => $value)
+                                                    <li class="mb-1">
+                                                        <strong class="text-dark">{{ ucfirst(str_replace('_', ' ', $key)) }}:</strong>
+                                                        <span class="text-secondary">{{ $value }}</span>
+                                                    </li>
                                                     @endforeach
                                                 </ul>
+                                                @else
+                                                <p class="text-muted mb-0">No current data available</p>
+                                                @endif
                                             </div>
                                         </div>
                                     </div>
                                     @endif
 
+                                    {{-- No Data --}}
                                     @if(!$item->old_data && !$item->new_data)
                                     <div class="col-12">
                                         <div class="alert alert-info text-center">
@@ -447,6 +524,7 @@
                                     </div>
                                     @endif
                                 </div>
+
                             </div>
                             <div class="modal-footer" style="background-color: #1f2937;">
                                 <button type="button" class="btn btn-outline-light" data-bs-dismiss="modal">
@@ -498,43 +576,43 @@
 
 <!-- Auto-submit and keyboard shortcuts -->
 <script>
-document.addEventListener("DOMContentLoaded", function() {
-    const filterForm = document.getElementById('filterForm');
-    const filterSelect = document.getElementById('filter');
-    const actionTypeSelect = document.getElementById('action_type');
-    const searchInput = document.getElementById('search');
+    document.addEventListener("DOMContentLoaded", function() {
+        const filterForm = document.getElementById('filterForm');
+        const filterSelect = document.getElementById('filter');
+        const actionTypeSelect = document.getElementById('action_type');
+        const searchInput = document.getElementById('search');
 
-    // Auto-submit when filter dropdowns change
-    filterSelect.addEventListener('change', function() {
-        filterForm.submit();
-    });
-
-    actionTypeSelect.addEventListener('change', function() {
-        filterForm.submit();
-    });
-
-    // Submit on Enter key in search field
-    searchInput.addEventListener('keypress', function(e) {
-        if (e.key === 'Enter') {
-            e.preventDefault();
+        // Auto-submit when filter dropdowns change
+        filterSelect.addEventListener('change', function() {
             filterForm.submit();
-        }
-    });
+        });
 
-    // Keyboard shortcut: Ctrl+F to focus search
-    document.addEventListener('keydown', function(e) {
-        if ((e.ctrlKey || e.metaKey) && e.key === 'f') {
-            e.preventDefault();
-            searchInput.focus();
-        }
-        // ESC to clear search and focus
-        if (e.key === 'Escape' && searchInput.value !== '') {
-            e.preventDefault();
-            searchInput.value = '';
-            searchInput.focus();
-        }
+        actionTypeSelect.addEventListener('change', function() {
+            filterForm.submit();
+        });
+
+        // Submit on Enter key in search field
+        searchInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                filterForm.submit();
+            }
+        });
+
+        // Keyboard shortcut: Ctrl+F to focus search
+        document.addEventListener('keydown', function(e) {
+            if ((e.ctrlKey || e.metaKey) && e.key === 'f') {
+                e.preventDefault();
+                searchInput.focus();
+            }
+            // ESC to clear search and focus
+            if (e.key === 'Escape' && searchInput.value !== '') {
+                e.preventDefault();
+                searchInput.value = '';
+                searchInput.focus();
+            }
+        });
     });
-});
 </script>
 
 <style>

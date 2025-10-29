@@ -14,24 +14,11 @@
         </ol>
     </div>
     <div class="col-md-6 text-end">
-        <h1 class="mt-4 text-dark"><span class="badge" style="background-color:#1f2937; font-size: 2rem;">Students Total: {{ $user->total() }}</span></h1>
-    </div>
-</div>
-
-<!-- Status Alerts -->
-<div class="row mb-4">
-    <div class="col-md-12">
-        @if(session('Status'))
-        <div class="alert alert-success">
-            {{ session('Status') }}
-        </div>
-        @endif
-
-        @if(session('Danger'))
-        <div class="alert alert-danger">
-            {{ session('Danger') }}
-        </div>
-        @endif
+        <h1 class="mt-4 text-dark">
+            <span class="badge" style="background-color:#1f2937; font-size: 2rem;" id="students-total-badge">
+                Students Total: {{ $user->total() }}
+            </span>
+        </h1>
     </div>
 </div>
 
@@ -40,7 +27,7 @@
     <div class="col-md-12">
         <div class="card shadow-sm border-0">
             <div class="card-body">
-                <form action="{{ url()->current() }}" method="GET" id="filterForm">
+                <form id="filterForm">
                     <div class="row g-3">
                         <!-- Search Input -->
                         <div class="col-md-6">
@@ -80,14 +67,24 @@
                             <button type="submit" class="btn me-2 text-white" style="background-color: #1dd3b0;">
                                 <i class="fas fa-filter me-1"></i> Apply Filters
                             </button>
-                            <a href="{{ url()->current() }}" class="btn text-white"  style="background-color: #1f2937;">
+                            <button type="button" id="resetBtn" class="btn text-white" style="background-color: #1f2937;">
                                 <i class="fas fa-redo me-1"></i> Reset
-                            </a>
+                            </button>
                         </div>
                     </div>
                 </form>
             </div>
         </div>
+    </div>
+</div>
+
+<!-- Loading Indicator -->
+<div id="loading-indicator" style="display: none;">
+    <div class="text-center my-4">
+        <div class="spinner-border text-primary" role="status">
+            <span class="visually-hidden">Loading...</span>
+        </div>
+        <p class="mt-2">Loading students...</p>
     </div>
 </div>
 
@@ -102,98 +99,175 @@
                 </span>
             </div>
 
-            <div class="card-body">
-                @if($user->count() > 0)
-                <div class="table-responsive">
-                    <table class="table table-striped table-bordered bg-white text-dark">
-                        <thead class="bg-dark text-white">
-                            <tr>
-                                <th>Last Name</th>
-                                <th>First Name</th>
-                                <th>Middle Name</th>
-                                <th>Suffix</th>
-                                <th>LRN</th>
-                                <th>Grade Level</th>
-                                <th>Status</th>
-                                <th>Last SY Attended</th>
-                                <th>Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach ($user as $item)
-                            <tr>
-                                <td>{{ $item->LastName }}</td>
-                                <td>{{ $item->FirstName }}</td>
-                                <td>{{ $item->MiddleName }}</td>
-                                <td>{{ $item->Suffix }}</td>
-                                <td>{{ $item->LRN }}</td>
-                                <td>{{ $item->Grade_level }}</td>
-                                <td>{{ $item->Std_status}}</td>
-                                <td>{{ $item->Last_sy_attended }}</td>
-                                <td class="d-flex align-items-center">
-                                    @if(!empty($PermissionEdit))
-                                    <a href="{{ route('student.edit', ['id' => $item->id]) }}" class="btn btn-success me-2">Edit</a>
-                                    @endif
+            <div class="card-body" id="table-container">
+                @include('maintenance.table', [
+                    'items' => $user,
+                    'columns' => $tableColumns,
+                    'routePrefix' => 'student',
+                    'primaryKey' => 'id',
+                    'permissions' => [
+                        'edit' => $PermissionEdit,
+                        'delete' => $PermissionDelete,
+                        'info' => $PermissionInfo
+                    ],
+                    'emptyMessage' => 'No students found matching your search criteria.'
+                ])
+            </div>
 
-                                    @if(!empty($PermissionDelete))
-                                    <form action="{{ route('student.delete', $item->id) }}" method="POST" class="mb-0" data-swal-loading="true" data-swal-delete="true">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="submit" class="btn btn-danger btb-delete me-2">Delete</button>
-                                    </form>
-                                    @endif
-
-                                    @if(!empty($PermissionInfo))
-                                    <a href="{{ route('student.show', ['id' => $item->id]) }}" class="btn btn-info">Info</a>
-                                    @endif
-                                </td>
-                            </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
-                </div>
-
-                <!-- Pagination -->
-                <div class="d-flex flex-column justify-content-center align-items-center mt-3">
-                    {{ $user->appends(request()->query())->links() }}
-                    <small class="text-muted mt-2">
-                        Showing {{ $user->firstItem() }} - {{ $user->lastItem() }} of {{ $user->total() }} results
-                    </small>
-                </div>
-                @else
-                <div class="alert alert-info text-center">
-                    <i class="fas fa-info-circle me-2"></i>
-                    No students found matching your search criteria.
-                </div>
-                @endif
+            <!-- Pagination Container -->
+            <div id="pagination-container">
+                @include('maintenance.pagination', ['items' => $user])
             </div>
         </div>
     </div>
 </div>
 
-<!-- Auto-submit on select change (Optional) -->
 <script>
     document.addEventListener("DOMContentLoaded", function() {
+        const filterForm = document.getElementById('filterForm');
+        const searchInput = document.getElementById('search');
         const sortBy = document.getElementById('sort_by');
         const sortOrder = document.getElementById('sort_order');
-        const filterForm = document.getElementById('filterForm');
+        const resetBtn = document.getElementById('resetBtn');
+        const tableContainer = document.getElementById('table-container');
+        const paginationContainer = document.getElementById('pagination-container');
+        const loadingIndicator = document.getElementById('loading-indicator');
+        const studentsTotalBadge = document.getElementById('students-total-badge');
+
+        let searchTimer;
+
+        // AJAX function to load students
+        function loadStudents(url = null) {
+            const formData = new FormData(filterForm);
+            const params = new URLSearchParams(formData);
+            const requestUrl = url || '{{ route('student') }}?' + params.toString();
+
+            // Show loading indicator
+            loadingIndicator.style.display = 'block';
+            tableContainer.style.opacity = '0.5';
+
+            fetch(requestUrl, {
+                method: 'GET',
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'Accept': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || ''
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Update table
+                    tableContainer.innerHTML = data.html;
+                    tableContainer.style.opacity = '1';
+                    
+                    // Update pagination
+                    paginationContainer.innerHTML = data.pagination;
+                    
+                    // Update total count
+                    studentsTotalBadge.textContent = 'Students Total: ' + data.total;
+                    
+                    // Hide loading
+                    loadingIndicator.style.display = 'none';
+                    
+                    // Update URL without reload
+                    window.history.pushState({}, '', requestUrl);
+                    
+                    // Re-attach delete button handlers
+                    attachDeleteHandlers();
+                }
+            })
+            .catch(error => {
+                console.error('Error loading students:', error);
+                loadingIndicator.style.display = 'none';
+                tableContainer.style.opacity = '1';
+                
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'Failed to load students. Please try again.'
+                });
+            });
+        }
+
+        // Handle form submission
+        filterForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            loadStudents();
+        });
 
         // Auto-submit when sort options change
         sortBy.addEventListener('change', function() {
-            filterForm.submit();
+            loadStudents();
         });
 
         sortOrder.addEventListener('change', function() {
-            filterForm.submit();
+            loadStudents();
         });
 
-        // Optional: Submit on Enter key in search field
-        document.getElementById('search').addEventListener('keypress', function(e) {
+        // Search as you type with debounce
+        searchInput.addEventListener('input', function() {
+            clearTimeout(searchTimer);
+            searchTimer = setTimeout(() => {
+                loadStudents();
+            }, 300);
+        });
+
+        // Submit on Enter key in search field
+        searchInput.addEventListener('keypress', function(e) {
             if (e.key === 'Enter') {
                 e.preventDefault();
-                filterForm.submit();
+                clearTimeout(searchTimer);
+                loadStudents();
             }
         });
+
+        // Reset button
+        resetBtn.addEventListener('click', function() {
+            searchInput.value = '';
+            sortBy.value = 'id';
+            sortOrder.value = 'asc';
+            loadStudents('{{ route('student') }}');
+        });
+
+        // Handle pagination clicks
+        document.addEventListener('click', function(e) {
+            if (e.target.matches('.pagination a') || e.target.closest('.pagination a')) {
+                e.preventDefault();
+                const link = e.target.matches('.pagination a') ? e.target : e.target.closest('.pagination a');
+                const url = link.getAttribute('href');
+                if (url) {
+                    loadStudents(url);
+                }
+            }
+        });
+
+        // Delete confirmation function
+        function attachDeleteHandlers() {
+            document.querySelectorAll(".btn-delete").forEach(button => {
+                button.addEventListener("click", function(e) {
+                    let form = this.closest("form");
+
+                    Swal.fire({
+                        title: "Are you sure?",
+                        text: "This student record will be permanently deleted!",
+                        icon: "warning",
+                        showCancelButton: true,
+                        confirmButtonColor: "#d33",
+                        cancelButtonColor: "#1f2937",
+                        confirmButtonText: "Yes, delete it!",
+                        cancelButtonText: "Cancel"
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            form.submit();
+                        }
+                    });
+                });
+            });
+        }
+
+        // Initial attachment of delete handlers
+        attachDeleteHandlers();
     });
 </script>
 
@@ -205,6 +279,11 @@
 
     .table td {
         vertical-align: middle;
+    }
+
+    #loading-indicator {
+        position: relative;
+        z-index: 10;
     }
 </style>
 
