@@ -94,6 +94,6 @@ class RoleController extends Controller
         $save = RolesModel::getSingle($id);
         $save->delete();
 
-        return redirect('panel/role')->with('danger', "Role successfully deleted");
+        return redirect('panel/role')->with('success', "Role successfully deleted");
     }
 }

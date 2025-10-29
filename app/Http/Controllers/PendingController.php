@@ -150,7 +150,7 @@ class PendingController extends Controller
             'remarks' => $reason
         ]);
 
-        return redirect('/pending')->with('Danger', 'Declined Successfully');
+        return redirect('/pending')->with('success', 'Declined Successfully');
     }
 
     public function completeRequest(Request $request, $id)
