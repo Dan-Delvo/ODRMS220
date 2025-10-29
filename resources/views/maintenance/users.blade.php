@@ -37,6 +37,9 @@
                                 <input type="text" name="search" id="search" class="form-control"
                                     placeholder="Search by name, email, username, or account ID..."
                                     value="{{ request('search') }}">
+                                <button class="btn btn-outline-secondary" type="button" id="clearSearch" style="display: none;">
+                                    <i class="fas fa-times"></i>
+                                </button>
                             </div>
                         </div>
 
@@ -62,9 +65,9 @@
 
                         <!-- Filter Buttons -->
                         <div class="col-md-12">
-                            <button type="submit" class="btn text-white me-2" style="background-color: #1dd3b0;">
+                            <!-- <button type="submit" class="btn text-white me-2" style="background-color: #1dd3b0;">
                                 <i class="fas fa-filter me-1"></i> Apply Filters
-                            </button>
+                            </button> -->
                             <button type="button" id="resetBtn" class="btn text-white" style="background-color: #1f2937;">
                                 <i class="fas fa-redo me-1"></i> Reset
                             </button>
@@ -133,8 +136,30 @@
         const paginationContainer = document.getElementById('pagination-container');
         const loadingIndicator = document.getElementById('loading-indicator');
         const usersTotalBadge = document.getElementById('users-total-badge');
+        const clearSearch = document.getElementById('clearSearch');
 
         let searchTimer;
+
+        searchInput.addEventListener('input', function () {
+            if (this.value.trim().length > 0) {
+                clearSearch.style.display = 'block';
+            } else {
+                clearSearch.style.display = 'none';
+            }
+        });
+
+        clearSearch.addEventListener('click', function () {
+            searchInput.value = '';
+            clearSearch.style.display = 'none';
+            sortBy.value = 'id';
+            sortOrder.value = 'asc';
+            loadUsers('{{ route('user') }}');
+        });
+
+        // Show ❌ button if the input is pre-filled from request()
+        if (searchInput.value.trim().length > 0) {
+            clearSearch.style.display = 'block';
+        }
 
         // AJAX function to load users
         function loadUsers(url = null) {
