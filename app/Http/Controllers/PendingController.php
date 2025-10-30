@@ -172,7 +172,7 @@ class PendingController extends Controller
         Mail::to($email)->queue(new RequestApprovedMail($name, $subject, $view));
 
         $documentRequest->update([
-            'remarks' => 'Proessing',
+            'remarks' => 'Processing',
             'status' => 'Processing',
             'approve_date' => Carbon::now(),
         ]);

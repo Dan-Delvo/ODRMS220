@@ -65,14 +65,24 @@ class GenerateRequestController extends Controller
 
         // Apply search filter to individual requests
         if ($search) {
-            $individualQuery->where(function($q) use ($search) {
+            $individualQuery->where(function ($q) use ($search) {
                 $q->where('doc_requests.req_no', 'like', '%' . $search . '%')
-                ->orWhere(DB::raw("CONCAT(std_students.FirstName, ' ', std_students.LastName)"), 'like', '%' . $search . '%')
-                ->orWhere('doc_categories.DocType', 'like', '%' . $search . '%')
-                ->orWhere('doc_requests.request_schl_entity', 'like', '%' . $search . '%')
-                ->orWhere('doc_requests.request_mode', 'like', '%' . $search . '%')
-                ->orWhere('doc_requests.release_mode', 'like', '%' . $search . '%')
-                ->orWhere('doc_requests.remarks', 'like', '%' . $search . '%');
+                    ->orWhere(DB::raw("CONCAT(std_students.FirstName, ' ', std_students.LastName)"), 'like', '%' . $search . '%')
+                    ->orWhere('doc_categories.DocType', 'like', '%' . $search . '%')
+                    ->orWhere('doc_requests.request_schl_entity', 'like', '%' . $search . '%')
+                    ->orWhere('doc_requests.request_mode', 'like', '%' . $search . '%')
+                    ->orWhere('doc_requests.release_mode', 'like', '%' . $search . '%')
+                    ->orWhere('doc_requests.remarks', 'like', '%' . $search . '%')
+                    // Search dates using DATE_FORMAT for flexible matching
+                    ->orWhereRaw("DATE_FORMAT(doc_requests.request_date, '%M %d, %Y') like ?", ['%' . $search . '%'])
+                    ->orWhereRaw("DATE_FORMAT(doc_requests.approve_date, '%M %d, %Y') like ?", ['%' . $search . '%'])
+                    ->orWhereRaw("DATE_FORMAT(doc_requests.forRelease_date, '%M %d, %Y') like ?", ['%' . $search . '%'])
+                    ->orWhereRaw("DATE_FORMAT(doc_requests.claimed_date, '%M %d, %Y') like ?", ['%' . $search . '%'])
+                    // Also search raw date format (YYYY-MM-DD)
+                    ->orWhere('doc_requests.request_date', 'like', '%' . $search . '%')
+                    ->orWhere('doc_requests.approve_date', 'like', '%' . $search . '%')
+                    ->orWhere('doc_requests.forRelease_date', 'like', '%' . $search . '%')
+                    ->orWhere('doc_requests.claimed_date', 'like', '%' . $search . '%');
             });
         }
 
@@ -102,11 +112,11 @@ class GenerateRequestController extends Controller
 
         // Apply search filter to bulk requests
         if ($search) {
-            $bulkQuery->where(function($q) use ($search) {
+            $bulkQuery->where(function ($q) use ($search) {
                 $q->where('bulk_students.Request_ID', 'like', '%' . $search . '%')
-                ->orWhere('bulk_students.Student_Name', 'like', '%' . $search . '%')
-                ->orWhere('bulk_requests.Doc_Type', 'like', '%' . $search . '%')
-                ->orWhere('bulk_requests.School_Name', 'like', '%' . $search . '%');
+                    ->orWhere('bulk_students.Student_Name', 'like', '%' . $search . '%')
+                    ->orWhere('bulk_requests.Doc_Type', 'like', '%' . $search . '%')
+                    ->orWhere('bulk_requests.School_Name', 'like', '%' . $search . '%');
             });
         }
 
@@ -139,6 +149,112 @@ class GenerateRequestController extends Controller
         // Get paginated results
         $DocRequests = $query->paginate(10)->appends($request->except('page'));
 
+        // Check if AJAX request
+        if ($request->ajax() || $request->wantsJson()) {
+            // Generate HTML for table
+            $html = '';
+
+            if ($DocRequests->count() > 0) {
+                $html .= '<div class="table-responsive">';
+                $html .= '<table class="table table-striped table-bordered table-hover">';
+                $html .= '<thead class="table-dark"><tr>';
+                $html .= '<th title="Request Number">Req #</th>';
+                $html .= '<th>Student</th>';
+                $html .= '<th>Doc</th>';
+                $html .= '<th title="School/Entity">School</th>';
+                $html .= '<th title="Requested Via">Via</th>';
+                $html .= '<th title="Release Mode">Rel Mode</th>';
+                $html .= '<th>Remarks</th>';
+                $html .= '<th>Status</th>';
+                $html .= '<th title="Request Date">Req Date</th>';
+                $html .= '<th title="Approved Date">App Date</th>';
+                $html .= '<th title="For Release Date">Rel Date</th>';
+                $html .= '<th title="Claimed Date">Clm Date</th>';
+                $html .= '</tr></thead>';
+                $html .= '<tbody id="tableBody">';
+
+                foreach ($DocRequests as $item) {
+                    $html .= '<tr class="table-row">';
+                    $html .= '<td>' . ($item->req_no ?? 'N/A') . '</td>';
+                    $html .= '<td>' . strtoupper($item->full_name ?? 'N/A') . '</td>';
+                    $html .= '<td>' . ($item->DocType ?? 'N/A') . '</td>';
+                    $html .= '<td>' . ($item->request_schl_entity ?? 'N/A') . '</td>';
+                    $html .= '<td>' . ($item->request_mode ?? 'Bulk Request') . '</td>';
+                    $html .= '<td>' . ($item->release_mode ?? 'Walk In') . '</td>';
+                    $html .= '<td>' . ($item->remarks ?? 'N/A') . '</td>';
+
+                    // Status badge
+                    $html .= '<td>';
+                    switch ($item->status) {
+                        case 'Pending':
+                            $html .= '<span class="badge bg-warning text-dark">' . $item->status . '</span>';
+                            break;
+                        case 'Processing':
+                            $html .= '<span class="badge bg-info">' . $item->status . '</span>';
+                            break;
+                        case 'For Release':
+                            $html .= '<span class="badge bg-primary">' . $item->status . '</span>';
+                            break;
+                        case 'Claimed':
+                            $html .= '<span class="badge bg-success">' . $item->status . '</span>';
+                            break;
+                        default:
+                            $html .= '<span class="badge bg-danger">' . ($item->status ?? 'Unknown') . '</span>';
+                    }
+                    $html .= '</td>';
+
+                    // Dates
+                    $html .= '<td>' . ($item->request_date ? \Carbon\Carbon::parse($item->request_date)->format('M d, Y') : 'N/A') . '</td>';
+                    $html .= '<td>' . ($item->approve_date ? \Carbon\Carbon::parse($item->approve_date)->format('M d, Y') : 'N/A') . '</td>';
+                    $html .= '<td>' . ($item->forRelease_date ? \Carbon\Carbon::parse($item->forRelease_date)->format('M d, Y') : 'N/A') . '</td>';
+                    $html .= '<td>' . ($item->claimed_date ? \Carbon\Carbon::parse($item->claimed_date)->format('M d, Y') : 'N/A') . '</td>';
+
+                    $html .= '</tr>';
+                }
+
+                $html .= '</tbody></table></div>';
+
+                // Pagination
+                $html .= '<div class="d-flex flex-column justify-content-center align-items-center mt-3">';
+                $html .= $DocRequests->appends($request->query())->links()->toHtml();
+                $html .= '<small class="text-muted">Showing ' . $DocRequests->firstItem() . ' - ' . $DocRequests->lastItem() . ' of ' . $DocRequests->total() . '</small>';
+                $html .= '</div>';
+            } else {
+                // No results
+                $html .= '<div class="text-center py-5">';
+                $html .= '<i class="fas fa-inbox fa-3x text-muted mb-3"></i>';
+                $html .= '<h5 class="text-muted">No requests found</h5>';
+                $html .= '<p class="text-muted">';
+
+                if ($search) {
+                    $html .= 'No requests matching "' . htmlspecialchars($search) . '" found.';
+                } elseif ($statusFilter && $statusFilter !== 'all') {
+                    $html .= 'No requests with status "' . htmlspecialchars($statusFilter) . '" found.';
+                } else {
+                    $html .= 'No requests available at the moment.';
+                }
+
+                $html .= '</p>';
+
+                if ($search || ($statusFilter && $statusFilter !== 'all')) {
+                    $html .= '<a href="#" id="clearFiltersBtn" class="btn btn-outline-primary">';
+                    $html .= '<i class="fas fa-redo me-2"></i>Clear Filters';
+                    $html .= '</a>';
+                }
+
+                $html .= '</div>';
+            }
+
+            return response()->json([
+                'html' => $html,
+                'showing' => $DocRequests->count(),
+                'total' => $DocRequests->total(),
+                'totalCount' => $totalCount,
+                'currentPage' => $DocRequests->currentPage(),
+                'lastPage' => $DocRequests->lastPage()
+            ]);
+        }
+
         return view('generation.generateRequest', compact('DocRequests', 'totalCount', 'statusFilter'));
     }
     /**
@@ -160,24 +276,24 @@ class GenerateRequestController extends Controller
         try {
 
             $individualQuery = DocumentRequestModel::query()
-            ->join('clm_claimers', 'doc_requests.clm_claimers_id', '=', 'clm_claimers.id')
-            ->join('std_students', 'doc_requests.std_students_id', '=', 'std_students.id')
-            ->join('doc_categories', 'doc_requests.doc_categories_id', '=', 'doc_categories.id')
-            ->select(
-                'doc_requests.id as id',
-                'doc_requests.req_no as req_no',
-                DB::raw("CONCAT(std_students.FirstName, ' ', std_students.LastName) as full_name"),
-                'doc_categories.DocType as DocType',
-                'doc_requests.request_schl_entity as request_schl_entity',
-                'doc_requests.request_mode as request_mode',
-                'doc_requests.release_mode as release_mode',
-                'doc_requests.remarks as remarks',
-                'doc_requests.status',
-                'doc_requests.request_date',
-                'doc_requests.approve_date',
-                'doc_requests.forRelease_date',
-                'doc_requests.claimed_date'
-            );
+                ->join('clm_claimers', 'doc_requests.clm_claimers_id', '=', 'clm_claimers.id')
+                ->join('std_students', 'doc_requests.std_students_id', '=', 'std_students.id')
+                ->join('doc_categories', 'doc_requests.doc_categories_id', '=', 'doc_categories.id')
+                ->select(
+                    'doc_requests.id as id',
+                    'doc_requests.req_no as req_no',
+                    DB::raw("CONCAT(std_students.FirstName, ' ', std_students.LastName) as full_name"),
+                    'doc_categories.DocType as DocType',
+                    'doc_requests.request_schl_entity as request_schl_entity',
+                    'doc_requests.request_mode as request_mode',
+                    'doc_requests.release_mode as release_mode',
+                    'doc_requests.remarks as remarks',
+                    'doc_requests.status',
+                    'doc_requests.request_date',
+                    'doc_requests.approve_date',
+                    'doc_requests.forRelease_date',
+                    'doc_requests.claimed_date'
+                );
             if ($statusFilter && $statusFilter !== 'all') {
                 $individualQuery->where('doc_requests.status', $statusFilter);
             }
@@ -244,7 +360,6 @@ class GenerateRequestController extends Controller
                 ->setOptions(['isHtml5ParserEnabled' => true, 'isRemoteEnabled' => true]);
 
             return $pdf->download($filename);
-
         } catch (\Exception $e) {
             return redirect()->back()->with('error', 'Error generating PDF: ' . $e->getMessage());
         }
@@ -254,8 +369,8 @@ class GenerateRequestController extends Controller
      * Export Excel report with date range and status filtering
      */
     /**
- * Export Excel report with date range and status filtering
- */
+     * Export Excel report with date range and status filtering
+     */
     public function exportExcel(Request $request)
     {
         // Validate date inputs
@@ -272,24 +387,24 @@ class GenerateRequestController extends Controller
         try {
             // Build query
             $individualQuery = DocumentRequestModel::query()
-            ->join('clm_claimers', 'doc_requests.clm_claimers_id', '=', 'clm_claimers.id')
-            ->join('std_students', 'doc_requests.std_students_id', '=', 'std_students.id')
-            ->join('doc_categories', 'doc_requests.doc_categories_id', '=', 'doc_categories.id')
-            ->select(
-                'doc_requests.id as id',
-                'doc_requests.req_no as req_no',
-                DB::raw("CONCAT(std_students.FirstName, ' ', std_students.LastName) as full_name"),
-                'doc_categories.DocType as DocType',
-                'doc_requests.request_schl_entity as request_schl_entity',
-                'doc_requests.request_mode as request_mode',
-                'doc_requests.release_mode as release_mode',
-                'doc_requests.remarks as remarks',
-                'doc_requests.status',
-                'doc_requests.request_date',
-                'doc_requests.approve_date',
-                'doc_requests.forRelease_date',
-                'doc_requests.claimed_date'
-            );
+                ->join('clm_claimers', 'doc_requests.clm_claimers_id', '=', 'clm_claimers.id')
+                ->join('std_students', 'doc_requests.std_students_id', '=', 'std_students.id')
+                ->join('doc_categories', 'doc_requests.doc_categories_id', '=', 'doc_categories.id')
+                ->select(
+                    'doc_requests.id as id',
+                    'doc_requests.req_no as req_no',
+                    DB::raw("CONCAT(std_students.FirstName, ' ', std_students.LastName) as full_name"),
+                    'doc_categories.DocType as DocType',
+                    'doc_requests.request_schl_entity as request_schl_entity',
+                    'doc_requests.request_mode as request_mode',
+                    'doc_requests.release_mode as release_mode',
+                    'doc_requests.remarks as remarks',
+                    'doc_requests.status',
+                    'doc_requests.request_date',
+                    'doc_requests.approve_date',
+                    'doc_requests.forRelease_date',
+                    'doc_requests.claimed_date'
+                );
             if ($statusFilter && $statusFilter !== 'all') {
                 $individualQuery->where('doc_requests.status', $statusFilter);
             }
@@ -298,7 +413,7 @@ class GenerateRequestController extends Controller
             $bulkQuery = BulkStudent::query()
                 ->join('bulk_requests', 'bulk_students.Request_ID', '=', 'bulk_requests.Request_ID')
                 ->select(
-            'bulk_students.Student_ID as id',
+                    'bulk_students.Student_ID as id',
                     'bulk_students.Request_ID as req_no',
                     'bulk_students.Student_Name as full_name',
                     'bulk_requests.Doc_Type as DocType',
@@ -318,7 +433,7 @@ class GenerateRequestController extends Controller
             }
 
             $query = $individualQuery->union($bulkQuery)
-            ->whereBetween('request_date', [$startDate, $endDate]);
+                ->whereBetween('request_date', [$startDate, $endDate]);
 
             $DocRequests = $query->orderBy('req_no', 'desc')->get();
 
@@ -351,7 +466,6 @@ class GenerateRequestController extends Controller
             $filename .= '.xlsx';
 
             return Excel::download(new ExportRequest($filteredData), $filename);
-
         } catch (\Exception $e) {
             return redirect()->back()->with('error', 'Error generating Excel: ' . $e->getMessage());
         }
