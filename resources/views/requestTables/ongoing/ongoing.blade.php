@@ -3,19 +3,19 @@
     @include('layout.partials.message')
 
     {{-- Header Section --}}
-    <div class="row">
-        <div class="col-md-6">
+    <div class="row align-items-center">
+        <div class="col-12 col-md-6 mb-3 mb-md-0">
             <h1 class="mt-4">
-                <span class="badge" style="background-color: #1dd3b0; font-size: 2rem;">Processing Requests</span>
+                <span class="badge page-title-badge">Processing Requests</span>
             </h1>
-            <ol class="breadcrumb mb-4">
+            <ol class="breadcrumb mb-0">
                 <li class="breadcrumb-item"><a href="{{ route('dashboard') }}" class="text-dark">Dashboard</a></li>
                 <li class="breadcrumb-item active">Processing Requests</li>
             </ol>
         </div>
-        <div class="col-md-6 text-end">
-            <h1 class="mt-4 text-dark">
-                <span class="badge" style="background-color:#1f2937; font-size: 2rem;">Total: {{ $totalCount }}</span>
+        <div class="col-12 col-md-6 text-md-end">
+            <h1 class="mt-md-4">
+                <span class="badge count-badge">Total: {{ $totalCount }}</span>
             </h1>
         </div>
     </div>
@@ -24,45 +24,46 @@
 
 
     {{-- Main Card --}}
+        {{-- Main Card --}}
+        {{-- Main Card --}}
+        {{-- Main Card --}}
     <div class="card shadow-lg border-0 rounded-lg mt-3">
         {{-- Card Header with Search/Filter Controls --}}
-        <div class="card-header text-white d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center"
-            style="background-color: #1f2937;">
-            <h5 class="mb-2 mb-md-0">Processing Document Requests</h5>
+        <div class="card-header card-header-custom">
+            <h5 class="mb-0">Processing Document Requests</h5>
 
             {{-- Search/Filter Form --}}
-            <form method="GET" action="{{ route('ongoing.index') }}" id="searchForm">
-                <div class="d-flex gap-2 mt-2 mt-md-0 flex-wrap" id="tableControls">
+            <form method="GET" action="{{ route('ongoing.index') }}" id="searchForm" class="w-100 w-md-auto">
+                <div class="search-controls">
                     {{-- Search Input --}}
-                    <div class="input-group" style="width: 300px;">
+                    <div class="input-group search-input-group">
                         <input type="text" name="search" id="searchInput" class="form-control form-control-sm"
-                            placeholder="Search requests..." value="{{ request('search') }}">
-                        <button class="btn btn-outline-light btn-sm" type="button" id="clearSearch" title="Clear search">
+                            placeholder="Search..." value="{{ request('search') }}">
+                        <button class="btn btn-outline-light btn-sm px-2" type="button" id="clearSearch" title="Clear">
                             <i class="fas fa-times"></i>
                         </button>
                     </div>
 
                     {{-- Filter Dropdown --}}
-                    <select name="filter" id="filterSelect" class="form-select form-select-sm" style="width: auto;">
-                        <option value="all" {{ request('filter') == 'all' ? 'selected' : '' }}>All Fields</option>
-                        <option value="student" {{ request('filter') == 'student' ? 'selected' : '' }}>Student Name</option>
-                        <option value="document" {{ request('filter') == 'document' ? 'selected' : '' }}>Document Type
-                        </option>
-                        <option value="school" {{ request('filter') == 'school' ? 'selected' : '' }}>School/Entity</option>
-                        <option value="reqno" {{ request('filter') == 'reqno' ? 'selected' : '' }}>Request No.</option>
+                    <select name="filter" id="filterSelect" class="form-select form-select-sm filter-select">
+                        <option value="all" {{ request('filter') == 'all' ? 'selected' : '' }}>All</option>
+                        <option value="student" {{ request('filter') == 'student' ? 'selected' : '' }}>Student</option>
+                        <option value="document" {{ request('filter') == 'document' ? 'selected' : '' }}>Document</option>
+                        <option value="school" {{ request('filter') == 'school' ? 'selected' : '' }}>School</option>
+                        <option value="reqno" {{ request('filter') == 'reqno' ? 'selected' : '' }}>Req No.</option>
                         <option value="status" {{ request('filter') == 'status' ? 'selected' : '' }}>Status</option>
                     </select>
 
                     {{-- Sort Dropdown --}}
-                    <select name="sort" id="sortSelect" class="form-select form-select-sm" style="width: auto;">
-                        <option value="default" {{ request('sort') == 'default' ? 'selected' : '' }}>Default Order</option>
-                        <option value="asc" {{ request('sort') == 'asc' ? 'selected' : '' }}>Req No. (A-Z)</option>
-                        <option value="desc" {{ request('sort') == 'desc' ? 'selected' : '' }}>Req No. (Z-A)</option>
+                    <select name="sort" id="sortSelect" class="form-select form-select-sm sort-select">
+                        <option value="default" {{ request('sort') == 'default' ? 'selected' : '' }}>Sort</option>
+                        <option value="asc" {{ request('sort') == 'asc' ? 'selected' : '' }}>A-Z</option>
+                        <option value="desc" {{ request('sort') == 'desc' ? 'selected' : '' }}>Z-A</option>
                     </select>
 
                     {{-- Search Button --}}
-                    <button type="submit" class="btn btn-light btn-sm">
-                        <i class="fas fa-search"></i> Search
+                    <button type="submit" class="btn btn-light btn-sm search-btn px-2">
+                        <i class="fas fa-search"></i>
                     </button>
                 </div>
             </form>
@@ -110,10 +111,10 @@
                     <table class="table table-bordered table-hover align-middle" id="requestsTable">
                         <thead class="table-dark">
                             <tr>
-                                <th>
+                                <th class="sortable-header">
                                     <a href="{{ route('ongoing.index', array_merge(request()->all(), ['sort' => request('sort') == 'asc' ? 'desc' : 'asc'])) }}"
-                                        class="text-white text-decoration-none">
-                                        Req #
+                                        class="text-white text-decoration-none d-flex align-items-center gap-1">
+                                        <span>Req #</span>
                                         @if (request('sort') == 'asc')
                                             <i class="fas fa-sort-up"></i>
                                         @elseif(request('sort') == 'desc')
@@ -130,52 +131,50 @@
                                 <th>Status</th>
                                 <th>Req Date</th>
                                 <th>App Date</th>
-                                <th>Action</th>
+                                <th class="action-column">Action</th>
                             </tr>
                         </thead>
                         <tbody>
                             @foreach ($DocRequests as $item)
                                 <tr>
-                                    <td>{{ $item->req_no }}</td>
+                                    <td class="fw-semibold">{{ $item->req_no }}</td>
                                     <td>{{ strtoupper(optional($item->studentInformation)->full_name) }}</td>
                                     <td>{{ $item->documents->DocType }}</td>
                                     <td>{{ strtoupper($item->request_schl_entity) }}</td>
                                     <td>{{ $item->remarks }}</td>
-                                    <td><span class="badge bg-warning text-dark">{{ $item->status }}</span></td>
+                                    <td><span class="badge bg-warning text-dark status-badge">{{ $item->status }}</span></td>
                                     <td>{{ $item->request_date }}</td>
                                     <td>{{ $item->approve_date }}</td>
-                                    <td class="text-nowrap">
-                                        <div class="d-flex flex-wrap flex-md-nowrap gap-2 justify-content-center">
+                                    <td class="action-column">
+                                        <div class="btn-group-vertical btn-group-sm d-md-inline" role="group">
                                             @if (!empty($approveOngoing))
-                                                <!-- <form action="{{ route('ongoing.destroy', $item->id) }}" method="POST" class="d-inline delete-form" data-swal-loading="true" data-swal-delete="true">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="submit" class="btn btn-danger btn-sm delete-btn">Delete</button>
-                                    </form> -->
-
                                                 <form action="{{ route('document-request2.complete', $item->id) }}"
                                                     method="POST" class="d-inline complete-form" data-swal-loading="true"
                                                     data-swal-title="Completing Document Request"
                                                     data-swal-text="This may take a few seconds...">
                                                     @csrf
                                                     @method('PUT')
-                                                    <button type="submit"
-                                                        class="btn btn-success btn-sm complete-btn">Complete</button>
+                                                    <button type="submit" class="btn btn-success btn-sm complete-btn mb-1">
+                                                        <i class="fas fa-check me-1"></i>Complete
+                                                    </button>
                                                 </form>
 
                                                 @if ($item->documents->DocType == 'Good Moral')
                                                     <form action="{{ route('doc.print', $item->id) }}" method="POST"
                                                         class="d-inline print-form">
                                                         @csrf
-                                                        <button type="submit"
-                                                            class="btn btn-info btn-sm print-btn">Print</button>
+                                                        <button type="submit" class="btn btn-info btn-sm print-btn mb-1">
+                                                            <i class="fas fa-print me-1"></i>Print
+                                                        </button>
                                                     </form>
                                                 @endif
                                             @endif
 
                                             @if (!empty($PermissionEdit))
                                                 <a href="{{ route('ongoing.edit', $item->id) }}"
-                                                    class="btn btn-warning btn-sm">Edit</a>
+                                                    class="btn btn-warning btn-sm mb-1">
+                                                    <i class="fas fa-edit me-1"></i>Edit
+                                                </a>
                                             @endif
 
                                             @if (!empty($deleteCompleted))
@@ -183,18 +182,11 @@
                                                     class="d-inline delete2-form">
                                                     @csrf
                                                     @method('DELETE')
-                                                    <button type="submit"
-                                                        class="btn btn-danger btn-sm delete2-btn">Delete</button>
+                                                    <button type="submit" class="btn btn-danger btn-sm delete2-btn mb-1">
+                                                        <i class="fas fa-trash me-1"></i>Delete
+                                                    </button>
                                                 </form>
                                             @endif
-
-                                            <!-- @if ($item->receipt)
-    <button class="btn btn-info btn-sm"
-                                        data-bs-toggle="modal"
-                                        data-bs-target="#receiptModal{{ $item->id }}">
-                                        Receipt
-                                    </button>
-    @endif -->
                                         </div>
                                     </td>
                                 </tr>
@@ -411,104 +403,249 @@
     </script>
 
     <style>
-        /* Core table styles */
-        #requestsTable {
-            font-size: 0.85rem;
+        /* ===== CORE VARIABLES ===== */
+        :root {
+            --primary-color: #1dd3b0;
+            --secondary-color: #1f2937;
+            --success-color: #28a745;
+            --warning-color: #ffc107;
+            --danger-color: #dc3545;
+            --info-color: #17a2b8;
         }
 
-        #requestsTable thead th a {
+        /* ===== HEADER BADGES ===== */
+        .page-title-badge {
+            background-color: var(--primary-color);
+            font-size: clamp(1.25rem, 4vw, 2rem);
+            padding: 0.5rem 1rem;
+        }
+
+        .count-badge {
+            background-color: var(--secondary-color);
+            font-size: clamp(1rem, 3vw, 2rem);
+            padding: 0.5rem 1rem;
+        }
+
+        /* ===== CARD HEADER ===== */
+        .card-header-custom {
+            background-color: var(--secondary-color);
+            color: white;
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+            padding: 0.75rem 1rem;
+        }
+
+        @media (min-width: 768px) {
+            .card-header-custom {
+                flex-direction: row;
+                justify-content: space-between;
+                align-items: center;
+            }
+        }
+
+        /* ===== SEARCH CONTROLS ===== */
+        .search-controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.4rem;
+            width: 100%;
+            justify-content: flex-end;
+            margin-left: auto;
+        }
+
+        @media (min-width: 768px) {
+            .search-controls {
+                width: auto;
+                flex-wrap: nowrap;
+                flex: 0 0 auto;
+                justify-content: flex-end;
+            }
+        }
+
+        .search-input-group {
+            flex: 1 1 auto;
+            min-width: 150px;
+            max-width: 250px;
+        }
+
+        @media (min-width: 768px) {
+            .search-input-group {
+                width: 180px;
+                flex: 0 0 180px;
+            }
+        }
+
+        .filter-select,
+        .sort-select {
+            flex: 1 1 auto;
+            min-width: 80px;
+            max-width: 120px;
+        }
+
+        @media (min-width: 768px) {
+            .filter-select,
+            .sort-select {
+                width: 100px;
+                flex: 0 0 100px;
+            }
+        }
+
+        .search-btn {
+            flex: 0 0 auto;
+            min-width: 38px;
+        }
+
+        /* ===== FORM CONTROLS ===== */
+        #searchInput:focus,
+        .form-select:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 0.2rem rgba(29, 211, 176, 0.25);
+        }
+
+        /* ===== TABLE STYLES ===== */
+        #requestsTable {
+            font-size: 0.8rem;
+            margin-bottom: 0;
+        }
+
+        #requestsTable thead th {
+            white-space: nowrap;
+            vertical-align: middle;
+            font-weight: 600;
+            padding: 0.3rem 0.3rem;
+            font-size: 0.8rem;
+            line-height: 1;
+        }
+
+        #requestsTable tbody td {
+            vertical-align: middle;
+            padding: 0.3rem 0.3rem;
+            font-size: 0.8rem;
+            line-height: 1;
+        }
+
+        .sortable-header a {
             transition: opacity 0.2s;
         }
 
-        #requestsTable thead th a:hover {
+        .sortable-header a:hover {
             opacity: 0.8;
         }
 
-        /* Search controls */
-        #tableControls {
-            gap: 0.5rem;
+        /* ===== ACTION COLUMN ===== */
+        .action-column {
+            min-width: 200px !important;
+            max-width: 200px !important;
+            width: 200px !important;
+            white-space: normal !important;
         }
 
-        #searchInput:focus {
-            border-color: #1dd3b0;
-            box-shadow: 0 0 0 0.2rem rgba(29, 211, 176, 0.25);
+        .btn-group-vertical {
+            display: flex !important;
+            flex-direction: row !important;
+            flex-wrap: wrap !important;
+            gap: 0.15rem !important;
+            width: 100% !important;
         }
 
-        .form-select:focus {
-            border-color: #1dd3b0;
-            box-shadow: 0 0 0 0.2rem rgba(29, 211, 176, 0.25);
+        .action-column .btn {
+            padding: 0.25rem 0.5rem !important;
+            font-size: 0.75rem !important;
+            width: 95px !important;
+            min-width: 95px !important;
+            max-width: 95px !important;
+            display: inline-block !important;
+            text-align: center !important;
+            margin-bottom: 0 !important;
         }
 
-        /* Button states */
+        .action-column .btn i {
+            font-size: 0.75rem !important;
+        }
+
+        /* ===== STATUS BADGE ===== */
+        .status-badge {
+            font-size: 0.7rem;
+            padding: 0.25rem 0.5rem;
+            white-space: nowrap;
+        }
+
+        /* ===== BUTTON STATES ===== */
         .btn:disabled {
             cursor: not-allowed;
+            opacity: 0.65;
+        }
+
+        .btn-sm {
+            font-size: 0.75rem;
+            padding: 0.25rem 0.5rem;
         }
 
         .spinner-border-sm {
             width: 0.875rem;
             height: 0.875rem;
+            border-width: 0.125rem;
         }
 
-        /* Loading state */
+        /* ===== LOADING STATE ===== */
         #tableContainer {
-            transition: opacity 0.3s;
+            transition: opacity 0.3s ease;
             overflow-x: auto;
         }
 
-        /* Responsive */
-        @media (max-width: 768px) {
-            #tableControls {
-                width: 100%;
-            }
+        /* ===== ALERT STYLES ===== */
+        .alert-info {
+            background-color: #e3f2fd;
+            border-color: #1976d2;
+            color: #1565c0;
+        }
 
-            #tableControls .input-group,
-            #tableControls select {
-                width: 100% !important;
-                margin-bottom: 0.5rem;
-            }
+        /* ===== MODAL STYLES ===== */
+        .modal-dialog {
+            max-width: 600px;
+        }
 
-            .table-responsive {
+        .modal-header {
+            border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+        }
+
+        /* ===== RESPONSIVE TABLE ===== */
+        .table-responsive {
+            border-radius: 0.25rem;
+        }
+
+        @media (max-width: 576px) {
+            #requestsTable {
                 font-size: 0.75rem;
             }
+
+            #requestsTable th,
+            #requestsTable td {
+                padding: 0.25rem 0.25rem;
+            }
+
+            .btn-sm {
+                font-size: 0.65rem;
+                padding: 0.2rem 0.3rem;
+            }
         }
 
-        /* Action buttons */
-        .table td.text-nowrap .btn-sm {
-            margin: 1px;
-            padding: 0.25rem 0.5rem;
-            font-size: 0.75rem;
+        /* ===== PAGINATION ===== */
+        .pagination {
+            margin-bottom: 0;
         }
 
-        /* Ensure buttons maintain their size during loading */
-        .complete-btn,
-        .delete-btn,
-        .delete2-btn,
-        .print-btn {
-            min-width: 70px;
+        /* ===== SMOOTH TRANSITIONS ===== */
+        .btn,
+        .form-control,
+        .form-select {
+            transition: all 0.2s ease-in-out;
         }
 
-        /* Prevent table data from wrapping & allow full-width expansion */
-        #tableContainer {
-            overflow-x: auto;
-        }
-
-        #requestsTable {
-            width: max-content;
-            min-width: 100%;
-            table-layout: auto;
-        }
-
-        #requestsTable th,
-        #requestsTable td {
-            white-space: nowrap;
-            padding: 0.5rem 1rem;
-        }
-
-        /* Make remarks column wider and allow wrapping only there */
-        #requestsTable th:nth-child(7),
-        #requestsTable td:nth-child(7) {
-            white-space: normal;
-            min-width: 100px;
+        /* ===== UTILITY CLASSES ===== */
+        .fw-semibold {
+            font-weight: 600;
         }
     </style>
 

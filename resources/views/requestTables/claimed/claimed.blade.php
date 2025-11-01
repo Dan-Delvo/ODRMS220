@@ -7,19 +7,19 @@
 @section('content')
 
     {{-- Header Section --}}
-    <div class="row">
-        <div class="col-md-6">
+    <div class="row align-items-center">
+        <div class="col-12 col-md-6 mb-3 mb-md-0">
             <h1 class="mt-4">
-                <span class="badge" style="background-color: #28a745; font-size: 2rem;">Claimed Requests</span>
+                <span class="badge page-title-badge" style="background-color: #28a745;">Claimed Requests</span>
             </h1>
-            <ol class="breadcrumb mb-4">
+            <ol class="breadcrumb mb-0">
                 <li class="breadcrumb-item"><a href="{{ route('dashboard') }}" class="text-dark">Dashboard</a></li>
                 <li class="breadcrumb-item active">Claimed Requests</li>
             </ol>
         </div>
-        <div class="col-md-6 text-end">
-            <h1 class="mt-4 text-dark">
-                <span class="badge" style="background-color:#1f2937; font-size: 2rem;">Total: {{ $totalCount }}</span>
+        <div class="col-12 col-md-6 text-md-end">
+            <h1 class="mt-md-4">
+                <span class="badge count-badge">Total: {{ $totalCount }}</span>
             </h1>
         </div>
     </div>
@@ -28,54 +28,49 @@
 
 
     {{-- Main Card --}}
+        {{-- Main Card --}}
     <div class="card shadow-lg border-0 rounded-lg mt-3">
         {{-- Card Header with Search/Filter Controls --}}
-        <div class="card-header text-white d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center"
-            style="background-color: #1f2937;">
-            <h5 class="mb-2 mb-md-0">Claimed Document Requests</h5>
+        <div class="card-header card-header-custom">
+            <h5 class="mb-0">Claimed Document Requests</h5>
 
-            {{-- Search/Filter Form --}}
-            <div class="d-flex gap-2 flex-wrap align-items-center">
-                <button type="button" class="btn btn-outline-light btn-sm" data-bs-toggle="modal"
-                    data-bs-target="#reportModal">
-                    <i class="fas fa-chart-bar me-1"></i>Generate Report
-                </button>
+            <div class="header-right-section">
+                {{-- Search/Filter Form --}}
+                <form method="GET" action="{{ route('claimed-documents.index') }}" id="searchForm" class="w-100 w-md-auto">
+                    <div class="search-controls">
+                        {{-- Search Input --}}
+                        <div class="input-group search-input-group">
+                            <input type="text" name="search" id="searchInput" class="form-control form-control-sm"
+                                placeholder="Search..." value="{{ request('search') }}">
+                            <button class="btn btn-outline-light btn-sm px-2" type="button" id="clearSearch" title="Clear">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
 
-                <form method="GET" action="{{ route('claimed-documents.index') }}" id="searchForm"
-                    class="d-flex gap-2 flex-wrap">
-                    {{-- Search Input --}}
-                    <div class="input-group" style="width: 300px;">
-                        <input type="text" name="search" id="searchInput" class="form-control form-control-sm"
-                            placeholder="Search claimed requests..." value="{{ request('search') }}">
-                        <button class="btn btn-outline-light btn-sm" type="button" id="clearSearch" title="Clear search">
-                            <i class="fas fa-times"></i>
+                        {{-- Filter Dropdown --}}
+                        <select name="filter" id="filterSelect" class="form-select form-select-sm filter-select">
+                            <option value="all" {{ request('filter') == 'all' ? 'selected' : '' }}>All</option>
+                            <option value="student" {{ request('filter') == 'student' ? 'selected' : '' }}>Student</option>
+                            <option value="document" {{ request('filter') == 'document' ? 'selected' : '' }}>Document</option>
+                            <option value="school" {{ request('filter') == 'school' ? 'selected' : '' }}>School</option>
+                            <option value="reqno" {{ request('filter') == 'reqno' ? 'selected' : '' }}>Req No.</option>
+                            <option value="status" {{ request('filter') == 'status' ? 'selected' : '' }}>Status</option>
+                        </select>
+
+                        {{-- Sort Dropdown --}}
+                        <select name="sort" id="sortSelect" class="form-select form-select-sm sort-select">
+                            <option value="default" {{ request('sort') == 'default' ? 'selected' : '' }}>Sort</option>
+                            <option value="asc" {{ request('sort') == 'asc' ? 'selected' : '' }}>A-Z</option>
+                            <option value="desc" {{ request('sort') == 'desc' ? 'selected' : '' }}>Z-A</option>
+                        </select>
+
+                        {{-- Search Button --}}
+                        <button type="submit" class="btn btn-light btn-sm search-btn px-2">
+                            <i class="fas fa-search"></i>
                         </button>
                     </div>
-
-                    {{-- Filter Dropdown --}}
-                    <select name="filter" id="filterSelect" class="form-select form-select-sm" style="width: auto;">
-                        <option value="all" {{ request('filter') == 'all' ? 'selected' : '' }}>All Fields</option>
-                        <option value="student" {{ request('filter') == 'student' ? 'selected' : '' }}>Student Name</option>
-                        <option value="document" {{ request('filter') == 'document' ? 'selected' : '' }}>Document Type
-                        </option>
-                        <option value="school" {{ request('filter') == 'school' ? 'selected' : '' }}>School/Entity</option>
-                        <option value="reqno" {{ request('filter') == 'reqno' ? 'selected' : '' }}>Request No.</option>
-                        <option value="claimer" {{ request('filter') == 'claimer' ? 'selected' : '' }}>Claimer</option>
-                    </select>
-
-                    {{-- Sort Dropdown --}}
-                    <select name="sort" id="sortSelect" class="form-select form-select-sm" style="width: auto;">
-                        <option value="default" {{ request('sort', 'default') == 'default' ? 'selected' : '' }}>Default
-                            Order</option>
-                        <option value="asc" {{ request('sort') == 'asc' ? 'selected' : '' }}>Req No. (A-Z)</option>
-                        <option value="desc" {{ request('sort') == 'desc' ? 'selected' : '' }}>Req No. (Z-A)</option>
-                    </select>
-
-                    {{-- Search Button --}}
-                    <button type="submit" class="btn btn-light btn-sm">
-                        <i class="fas fa-search"></i> Search
-                    </button>
                 </form>
+
             </div>
         </div>
 
@@ -122,10 +117,10 @@
                     <table class="table table-bordered table-hover align-middle" id="requestsTable">
                         <thead class="table-dark">
                             <tr>
-                                <th>
+                                <th class="sortable-header">
                                     <a href="{{ route('claimed-documents.index', array_merge(request()->all(), ['sort' => request('sort') == 'asc' ? 'desc' : 'asc'])) }}"
-                                        class="text-white text-decoration-none">
-                                        Req #
+                                        class="text-white text-decoration-none d-flex align-items-center gap-1">
+                                        <span>Req #</span>
                                         @if (request('sort') == 'asc')
                                             <i class="fas fa-sort-up"></i>
                                         @elseif(request('sort') == 'desc')
@@ -144,13 +139,13 @@
                                 <th>App Date</th>
                                 <th>Rel Date</th>
                                 <th>Claimed Date</th>
-                                <th>Action</th>
+                                <th class="action-column">Action</th>
                             </tr>
                         </thead>
                         <tbody>
                             @foreach ($DocRequests as $item)
                                 <tr>
-                                    <td>{{ $item->req_no }}</td>
+                                    <td class="fw-semibold">{{ $item->req_no }}</td>
                                     <td>{{ strtoupper(optional($item->studentInformation)->full_name) }}</td>
                                     <td>{{ $item->documents->DocType }}</td>
                                     <td>{{ strtoupper($item->request_schl_entity) }}</td>
@@ -161,36 +156,40 @@
                                     <td>{{ $item->forRelease_date }}</td>
                                     <td>
                                         @if ($item->claimed_date)
-                                            <span class="badge bg-success text-white">
+                                            <span class="badge bg-success text-white status-badge">
                                                 {{ \Carbon\Carbon::parse($item->claimed_date)->format('M d, Y') }}
                                             </span>
                                         @else
-                                            <span class="badge bg-secondary text-white">Not Claimed</span>
+                                            <span class="badge bg-secondary text-white status-badge">Not Claimed</span>
                                         @endif
                                     </td>
-                                    <td class="text-nowrap">
-                                        {{-- Revert Button --}}
-                                        <button type="button" class="btn btn-warning btn-sm revert-btn"
-                                            data-request-id="{{ $item->id }}" data-request-no="{{ $item->req_no }}"
-                                            data-student-name="{{ $item->studentInformation->full_name }}"
-                                            data-bs-toggle="modal" data-bs-target="#revertModal">
-                                            Revert
-                                        </button>
+                                    <td class="action-column">
+                                        <div class="btn-group-vertical btn-group-sm d-md-inline" role="group">
+                                            <button type="button" class="btn btn-warning btn-sm revert-btn mb-1"
+                                                data-request-id="{{ $item->id }}" data-request-no="{{ $item->req_no }}"
+                                                data-student-name="{{ $item->studentInformation->full_name }}"
+                                                data-bs-toggle="modal" data-bs-target="#revertModal">
+                                                <i class="fas fa-undo me-1"></i>Revert
+                                            </button>
 
-                                        @if (!empty($PermissionEdit))
-                                            <a href="{{ route('claimed-documents.edit', $item->id) }}"
-                                                class="btn btn-info btn-sm">Edit</a>
-                                        @endif
+                                            @if (!empty($PermissionEdit))
+                                                <a href="{{ route('claimed-documents.edit', $item->id) }}"
+                                                    class="btn btn-info btn-sm mb-1">
+                                                    <i class="fas fa-edit me-1"></i>Edit
+                                                </a>
+                                            @endif
 
-                                        @if (!empty($deleteClaimed))
-                                            <form action="{{ route('claimed-documents.destroy', $item->id) }}"
-                                                method="POST" class="d-inline delete-form">
-                                                @csrf
-                                                @method('DELETE')
-                                                <button type="submit"
-                                                    class="btn btn-danger btn-sm delete-btn">Delete</button>
-                                            </form>
-                                        @endif
+                                            @if (!empty($deleteClaimed))
+                                                <form action="{{ route('claimed-documents.destroy', $item->id) }}"
+                                                    method="POST" class="d-inline delete-form">
+                                                    @csrf
+                                                    @method('DELETE')
+                                                    <button type="submit" class="btn btn-danger btn-sm delete-btn mb-1">
+                                                        <i class="fas fa-trash me-1"></i>Delete
+                                                    </button>
+                                                </form>
+                                            @endif
+                                        </div>
                                     </td>
                                 </tr>
                             @endforeach
@@ -644,101 +643,214 @@
     </script>
 
     <style>
-        /* Core table styles */
-        #requestsTable {
-            font-size: 0.85rem;
+        /* ===== CORE VARIABLES ===== */
+        :root {
+            --primary-color: #1dd3b0;
+            --secondary-color: #1f2937;
+            --success-color: #28a745;
+            --warning-color: #ffc107;
+            --danger-color: #dc3545;
+            --info-color: #17a2b8;
         }
 
-        #requestsTable thead th a {
-            transition: opacity 0.2s;
+        /* ===== HEADER BADGES ===== */
+        .page-title-badge {
+            font-size: clamp(1.25rem, 4vw, 2rem);
+            padding: 0.5rem 1rem;
         }
 
-        #requestsTable thead th a:hover {
-            opacity: 0.8;
+        .count-badge {
+            background-color: var(--secondary-color);
+            font-size: clamp(1rem, 3vw, 2rem);
+            padding: 0.5rem 1rem;
         }
 
-        /* Search controls */
+        /* ===== CARD HEADER ===== */
+        .card-header-custom {
+            background-color: var(--secondary-color);
+            color: white;
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+            padding: 0.75rem 1rem;
+        }
+
+        @media (min-width: 768px) {
+            .card-header-custom {
+                flex-direction: row;
+                justify-content: space-between;
+                align-items: center;
+            }
+        }
+
+        .header-right-section {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            width: 100%;
+        }
+
+        @media (min-width: 768px) {
+            .header-right-section {
+                width: auto;
+            }
+        }
+
+        /* ===== SEARCH CONTROLS ===== */
+        .search-controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.4rem;
+            width: 100%;
+            justify-content: flex-end;
+            margin-left: auto;
+        }
+
+        @media (min-width: 768px) {
+            .search-controls {
+                width: auto;
+                flex-wrap: nowrap;
+                flex: 0 0 auto;
+                justify-content: flex-end;
+            }
+        }
+
+        .search-input-group {
+            flex: 1 1 auto;
+            min-width: 150px;
+            max-width: 250px;
+        }
+
+        @media (min-width: 768px) {
+            .search-input-group {
+                width: 180px;
+                flex: 0 0 180px;
+            }
+        }
+
+        .filter-select,
+        .sort-select {
+            flex: 1 1 auto;
+            min-width: 80px;
+            max-width: 120px;
+        }
+
+        @media (min-width: 768px) {
+            .filter-select,
+            .sort-select {
+                width: 100px;
+                flex: 0 0 100px;
+            }
+        }
+
+        .search-btn {
+            flex: 0 0 auto;
+            min-width: 38px;
+        }
+
+        /* ===== FORM CONTROLS ===== */
         #searchInput:focus {
-            border-color: #28a745;
+            border-color: var(--success-color);
             box-shadow: 0 0 0 0.2rem rgba(40, 167, 69, 0.25);
         }
 
         .form-select:focus {
-            border-color: #1dd3b0;
+            border-color: var(--primary-color);
             box-shadow: 0 0 0 0.2rem rgba(29, 211, 176, 0.25);
         }
 
-        /* Button states */
+        /* ===== TABLE STYLES ===== */
+        #requestsTable {
+            font-size: 0.8rem;
+            margin-bottom: 0;
+        }
+
+        #requestsTable thead th {
+            white-space: nowrap;
+            vertical-align: middle;
+            font-weight: 600;
+            padding: 0.3rem 0.3rem;
+            font-size: 0.8rem;
+            line-height: 1;
+        }
+
+        #requestsTable tbody td {
+            vertical-align: middle;
+            padding: 0.3rem 0.3rem;
+            font-size: 0.8rem;
+            line-height: 1;
+        }
+
+        .sortable-header a {
+            transition: opacity 0.2s;
+        }
+
+        .sortable-header a:hover {
+            opacity: 0.8;
+        }
+
+        /* ===== ACTION COLUMN ===== */
+        .action-column {
+            min-width: 200px !important;
+            max-width: 200px !important;
+            width: 200px !important;
+            white-space: normal !important;
+        }
+
+        .btn-group-vertical {
+            display: flex !important;
+            flex-direction: row !important;
+            flex-wrap: wrap !important;
+            gap: 0.15rem !important;
+            width: 100% !important;
+        }
+
+        .action-column .btn {
+            padding: 0.25rem 0.5rem !important;
+            font-size: 0.75rem !important;
+            width: 95px !important;
+            min-width: 95px !important;
+            max-width: 95px !important;
+            display: inline-block !important;
+            text-align: center !important;
+            margin-bottom: 0 !important;
+        }
+
+        .action-column .btn i {
+            font-size: 0.75rem !important;
+        }
+
+        /* ===== STATUS BADGE ===== */
+        .status-badge {
+            font-size: 0.7rem;
+            padding: 0.25rem 0.5rem;
+            white-space: nowrap;
+        }
+
+        /* ===== BUTTON STATES ===== */
         .btn:disabled {
             cursor: not-allowed;
+            opacity: 0.65;
+        }
+
+        .btn-sm {
+            font-size: 0.75rem;
+            padding: 0.25rem 0.5rem;
         }
 
         .spinner-border-sm {
             width: 0.875rem;
             height: 0.875rem;
+            border-width: 0.125rem;
         }
 
-        /* Loading state */
+        /* ===== LOADING STATE ===== */
         #tableContainer {
-            transition: opacity 0.3s;
+            transition: opacity 0.3s ease;
             overflow-x: auto;
         }
 
-        /* Action buttons */
-        .table td.text-nowrap .btn-sm {
-            margin: 1px;
-            padding: 0.25rem 0.5rem;
-            font-size: 0.75rem;
-        }
-
-        .delete-btn,
-        .revert-btn {
-            min-width: 70px;
-        }
-
-        /* Table layout */
-        #requestsTable {
-            width: max-content;
-            min-width: 100%;
-            table-layout: auto;
-        }
-
-        #requestsTable th,
-        #requestsTable td {
-            white-space: nowrap;
-            padding: 0.5rem 1rem;
-        }
-
-        /* Make remarks column wider */
-        #requestsTable th:nth-child(9),
-        #requestsTable td:nth-child(9) {
-            white-space: normal;
-            min-width: 100px;
-        }
-
-        /* Modal styling */
-        .modal-dialog {
-            max-width: 600px;
-        }
-
-        .modal-header {
-            border-bottom: 2px solid rgba(255, 255, 255, 0.1);
-        }
-
-        .form-label {
-            font-weight: 600;
-            color: #495057;
-        }
-
-        .form-control:focus {
-            border-color: #28a745;
-            box-shadow: 0 0 0 0.2rem rgba(40, 167, 69, 0.25);
-        }
-
-        .text-danger {
-            font-weight: bold;
-        }
-
+        /* ===== ALERT STYLES ===== */
         .alert-info {
             background-color: #e3f2fd;
             border-color: #1976d2;
@@ -751,12 +863,40 @@
             color: #856404;
         }
 
+        /* ===== MODAL STYLES ===== */
+        .modal-dialog {
+            max-width: 600px;
+        }
+
+        .modal-header {
+            border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .modal-header.bg-info {
+            background-color: var(--info-color) !important;
+        }
+
+        .form-label {
+            font-weight: 600;
+            color: #495057;
+        }
+
+        .form-control:focus {
+            border-color: var(--success-color);
+            box-shadow: 0 0 0 0.2rem rgba(40, 167, 69, 0.25);
+        }
+
+        input[type="date"]:focus {
+            border-color: var(--info-color);
+            box-shadow: 0 0 0 0.2rem rgba(23, 162, 184, 0.25);
+        }
+
         .was-validated .form-control:invalid {
-            border-color: #dc3545;
+            border-color: var(--danger-color);
         }
 
         .was-validated .form-control:valid {
-            border-color: #28a745;
+            border-color: var(--success-color);
         }
 
         .invalid-feedback {
@@ -764,52 +904,33 @@
             width: 100%;
             margin-top: 0.25rem;
             font-size: 0.875em;
-            color: #dc3545;
+            color: var(--danger-color);
         }
 
-        /* Textarea styling */
         #revertReason {
             resize: vertical;
             min-height: 80px;
             max-height: 200px;
         }
 
-        /* Badge styling */
-        .badge.bg-success,
-        .badge.bg-secondary {
-            font-size: 0.75rem;
-            padding: 0.375rem 0.75rem;
+        /* ===== RESPONSIVE TABLE ===== */
+        .table-responsive {
+            border-radius: 0.25rem;
         }
 
-        /* Report modal */
-        .modal-header.bg-info {
-            background-color: #17a2b8 !important;
-        }
-
-        input[type="date"]:focus {
-            border-color: #17a2b8;
-            box-shadow: 0 0 0 0.2rem rgba(23, 162, 184, 0.25);
-        }
-
-        /* Responsive */
-        @media (max-width: 768px) {
-            .card-header .d-flex {
-                flex-direction: column;
-                gap: 0.5rem;
-            }
-
-            #searchForm {
-                width: 100%;
-            }
-
-            #searchForm .input-group,
-            #searchForm select {
-                width: 100% !important;
-                margin-bottom: 0.5rem;
-            }
-
-            .table-responsive {
+        @media (max-width: 576px) {
+            #requestsTable {
                 font-size: 0.75rem;
+            }
+
+            #requestsTable th,
+            #requestsTable td {
+                padding: 0.25rem 0.25rem;
+            }
+
+            .btn-sm {
+                font-size: 0.65rem;
+                padding: 0.2rem 0.3rem;
             }
 
             .btn-outline-light {
@@ -817,29 +938,24 @@
             }
         }
 
-        /* Smooth transitions */
+        /* ===== PAGINATION ===== */
+        .pagination {
+            margin-bottom: 0;
+        }
+
+        /* ===== SMOOTH TRANSITIONS ===== */
+        .btn,
+        .form-control,
+        .form-select,
         .modal-body input,
         .modal-body select,
         .modal-body textarea {
-            transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+            transition: all 0.2s ease-in-out;
         }
 
-        /* Dropdown menu */
-        .dropdown-menu {
-            max-height: 200px;
-            overflow-y: auto;
-            z-index: 1050;
-        }
-
-        .filter-option:hover,
-        .sort-option:hover {
-            background-color: #f8f9fa;
-        }
-
-        .filter-option.active,
-        .sort-option.active {
-            background-color: #28a745;
-            color: white;
+        /* ===== UTILITY CLASSES ===== */
+        .fw-semibold {
+            font-weight: 600;
         }
     </style>
 
