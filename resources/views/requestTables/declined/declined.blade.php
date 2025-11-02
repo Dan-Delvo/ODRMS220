@@ -34,23 +34,23 @@
         </div>
         @endif
 
-<ul class="nav nav-tabs" data-bs-theme="dark">
-  <li class="nav-item">
-    <a class="nav-link text-dark" href="{{ route('pending.index') }}">Pending</a>
-  </li>
-  <li class="nav-item">
-    <a class="nav-link  text-dark" href="{{ route('ongoing.index') }}">Processing</a>
-  </li>
-  <li class="nav-item">
-    <a class="nav-link  text-dark" href="{{ route('tables.index') }}">For Release</a>
-  </li>
-  <li class="nav-item">
-    <a class="nav-link  text-dark" href="{{ route('claimed-documents.index') }}">Claimed</a>
-  </li>
-  <li class="nav-item">
-    <a class="nav-link active" aria-current="page" href="{{ route('declined-documents.index') }}">Declined</a>
-  </li>
-</ul>
+        <ul class="nav nav-tabs" data-bs-theme="dark">
+            <li class="nav-item">
+                <a class="nav-link text-dark" href="{{ route('pending.index') }}">Pending</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link  text-dark" href="{{ route('ongoing.index') }}">Processing</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link  text-dark" href="{{ route('tables.index') }}">For Release</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link  text-dark" href="{{ route('claimed-documents.index') }}">Claimed</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link active" aria-current="page" href="{{ route('declined-documents.index') }}">Declined</a>
+            </li>
+        </ul>
         <div class="card shadow-lg border-0 rounded-lg mt-3">
             {{-- START: Updated Card Header with Search/Filter Controls --}}
             <div class="card-header text-white d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center" style="background-color: #1f2937;">
@@ -62,21 +62,21 @@
                         {{-- Search Input --}}
                         <div class="input-group" style="width: 300px;">
                             <input type="text"
-                                   name="search"
-                                   id="searchInput"
-                                   class="form-control form-control-sm"
-                                   placeholder="Search requests..."
-                                   value="{{ request('search') }}"
-                                   style="border-radius: 0.375rem 0 0 0.375rem;">
+                                name="search"
+                                id="searchInput"
+                                class="form-control form-control-sm"
+                                placeholder="Search requests..."
+                                value="{{ request('search') }}"
+                                style="border-radius: 0.375rem 0 0 0.375rem;">
                             <button class="btn btn-outline-light btn-sm"
-                                    type="button"
-                                    id="clearSearch"
-                                    title="Clear search">
+                                type="button"
+                                id="clearSearch"
+                                title="Clear search">
                                 <i class="fas fa-times"></i>
                             </button>
                         </div>
 
-                        {{-- Filter Dropdown (Now a select element) --}}
+                        {{-- Filter Dropdown --}}
                         <select name="filter" id="filterSelect" class="form-select form-select-sm" style="width: auto;">
                             <option value="all" {{ request('filter') == 'all' ? 'selected' : '' }}>All Fields</option>
                             <option value="student" {{ request('filter') == 'student' ? 'selected' : '' }}>Student Name</option>
@@ -86,16 +86,16 @@
                             <option value="status" {{ request('filter') == 'status' ? 'selected' : '' }}>Status</option>
                         </select>
 
-                        {{-- Sort Dropdown (Now a select element) --}}
+                        {{-- Sort Dropdown --}}
                         <select name="sort" id="sortSelect" class="form-select form-select-sm" style="width: auto;">
                             <option value="default" {{ request('sort') == 'default' ? 'selected' : '' }}>Default Order</option>
                             <option value="asc" {{ request('sort') == 'asc' ? 'selected' : '' }}>Req No. (A-Z)</option>
                             <option value="desc" {{ request('sort') == 'desc' ? 'selected' : '' }}>Req No. (Z-A)</option>
                         </select>
 
-                        {{-- Search Button --}}
-                        <button type="submit" class="btn btn-light btn-sm">
-                            <i class="fas fa-search"></i> Search
+                        {{-- Reset Button (replaces Search button) --}}
+                        <button type="button" id="resetBtn" class="btn btn-light btn-sm">
+                            <i class="fas fa-undo"></i> Reset
                         </button>
                     </div>
                 </form>
@@ -105,22 +105,11 @@
             <div class="card-body bg-light">
                 {{-- Search Info Banner - Copied from pending.blade.php --}}
                 @if(request('search') || request('filter') != 'all' || request('sort') != 'default')
-                <div class="alert alert-info mb-3 py-2">
+                <div class="alert alert-info mb-3 py-2" id="searchInfoAlert" style="display: none;">
                     <small>
                         <i class="fas fa-search me-1"></i>
-                        @if(request('search'))
-                            Showing results for: <strong>"{{ request('search') }}"</strong>
-                        @else
-                            Showing all records
-                        @endif
-                        @if(request('filter') != 'all')
-                            filtered by <strong>{{ ucfirst(request('filter')) }}</strong>
-                        @endif
-                        @if(request('sort') != 'default')
-                            - Sorted by <strong>Request No. ({{ request('sort') == 'asc' ? 'A-Z' : 'Z-A' }})</strong>
-                        @endif
-                        {{-- Assuming the route is 'declined.index' or similar for clearing --}}
-                        <a href="{{ url()->current() }}" class="btn btn-sm btn-outline-info ms-2">Clear All</a>
+                        <span id="alertContent"></span>
+                        <button type="button" id="clearAllBtn" class="btn btn-sm btn-outline-info ms-2">Clear All</button>
                     </small>
                 </div>
                 @endif
@@ -137,10 +126,10 @@
                     @if($DocRequests->isEmpty())
                     <div class="alert alert-warning text-center my-3">
                         @if(request('search'))
-                            No declined document requests found matching your search criteria.
-                            <a href="{{ url()->current() }}" class="btn btn-sm btn-outline-warning ms-2">Clear Search</a>
+                        No declined document requests found matching your search criteria.
+                        <a href="{{ url()->current() }}" class="btn btn-sm btn-outline-warning ms-2">Clear Search</a>
                         @else
-                            No declined document requests found.
+                        No declined document requests found.
                         @endif
                     </div>
                     @else
@@ -150,14 +139,14 @@
                                 {{-- Updated Req # to include server-side sort link --}}
                                 <th title="Request Number">
                                     <a href="{{ url()->current() . '?' . http_build_query(array_merge(request()->except(['sort', 'page']), ['sort' => request('sort') == 'asc' ? 'desc' : 'asc'])) }}"
-                                       class="text-white text-decoration-none">
+                                        class="text-white text-decoration-none">
                                         Req #
                                         @if(request('sort') == 'asc')
-                                            <i class="fas fa-sort-up"></i>
+                                        <i class="fas fa-sort-up"></i>
                                         @elseif(request('sort') == 'desc')
-                                            <i class="fas fa-sort-down"></i>
+                                        <i class="fas fa-sort-down"></i>
                                         @else
-                                            <i class="fas fa-sort"></i>
+                                        <i class="fas fa-sort"></i>
                                         @endif
                                     </a>
                                 </th>
@@ -394,21 +383,197 @@
         const clearSearchBtn = document.getElementById('clearSearch');
         const filterSelect = document.getElementById('filterSelect');
         const sortSelect = document.getElementById('sortSelect');
+        const resetBtn = document.getElementById('resetBtn');
+        const clearAllBtn = document.getElementById('clearAllBtn');
+        const spinner = document.getElementById("spinner");
+        const table = document.getElementById("requestTable");
+        const paginationContainer = document.getElementById("paginationContainer");
+        const searchInfoAlert = document.getElementById('searchInfoAlert');
 
-        // Step 1: Click decline → open reason modal (Original Logic)
+        // --- Hide X button and alert by default ---
+        if (clearSearchBtn) {
+            clearSearchBtn.style.visibility = 'hidden';
+            clearSearchBtn.style.opacity = '0';
+            clearSearchBtn.style.transition = 'opacity 0.2s ease, visibility 0.2s ease';
+        }
+
+        // --- AJAX SEARCH FUNCTION ---
+        function performAjaxSearch() {
+            const url = searchForm.getAttribute('action') || window.location.href;
+            const formData = new FormData(searchForm);
+            const params = new URLSearchParams(formData).toString();
+
+            spinner.style.display = "block";
+            table.style.opacity = "0.5";
+            if (paginationContainer) paginationContainer.style.opacity = "0.5";
+
+            fetch(`${url}?${params}`, {
+                headers: { 'X-Requested-With': 'XMLHttpRequest' }
+            })
+            .then(res => res.text())
+            .then(data => {
+                const parser = new DOMParser();
+                const doc = parser.parseFromString(data, 'text/html');
+                
+                // Update table
+                const newTable = doc.getElementById('requestTable');
+                if (newTable) {
+                    table.innerHTML = newTable.innerHTML;
+                }
+
+                // Update pagination
+                const newPagination = doc.getElementById('paginationContainer');
+                if (newPagination && paginationContainer) {
+                    paginationContainer.innerHTML = newPagination.innerHTML;
+                }
+
+                // Update or hide search info alert
+                const hasSearch = searchInput.value.trim().length > 0;
+                const hasFilter = filterSelect && filterSelect.value !== 'all';
+                const hasSort = sortSelect && sortSelect.value !== 'default';
+
+                if (searchInfoAlert) {
+                    if (hasSearch || hasFilter || hasSort) {
+                        // Update alert content
+                        let alertHTML = '<small><i class="fas fa-search me-1"></i>';
+                        
+                        if (hasSearch) {
+                            alertHTML += `Showing results for: <strong>"${searchInput.value}"</strong>`;
+                        } else {
+                            alertHTML += 'Showing all records';
+                        }
+                        
+                        if (hasFilter) {
+                            const filterText = filterSelect.options[filterSelect.selectedIndex].text;
+                            alertHTML += ` filtered by <strong>${filterText}</strong>`;
+                        }
+                        
+                        if (hasSort) {
+                            const sortText = sortSelect.value === 'asc' ? 'A-Z' : 'Z-A';
+                            alertHTML += ` - Sorted by <strong>Request No. (${sortText})</strong>`;
+                        }
+                        
+                        alertHTML += ' <button type="button" id="clearAllBtn" class="btn btn-sm btn-outline-info ms-2">Clear All</button></small>';
+                        
+                        searchInfoAlert.innerHTML = alertHTML;
+                        searchInfoAlert.style.display = 'block';
+                        
+                        // Re-attach clear all button event
+                        attachClearAllEvent();
+                    } else {
+                        searchInfoAlert.style.display = 'none';
+                    }
+                }
+
+                // Update URL without reload
+                const newUrl = params ? `${url}?${params}` : url;
+                window.history.pushState({}, '', newUrl);
+
+                spinner.style.display = "none";
+                table.style.opacity = "1";
+                if (paginationContainer) paginationContainer.style.opacity = "1";
+            })
+            .catch(err => {
+                console.error('AJAX Error:', err);
+                spinner.style.display = "none";
+                table.style.opacity = "1";
+                if (paginationContainer) paginationContainer.style.opacity = "1";
+            });
+        }
+
+        // --- CLEAR ALL BUTTON EVENT ---
+        function attachClearAllEvent() {
+            const newClearAllBtn = document.getElementById('clearAllBtn');
+            if (newClearAllBtn) {
+                newClearAllBtn.addEventListener('click', resetAllFilters);
+            }
+        }
+
+        function resetAllFilters() {
+            searchInput.value = '';
+            if (filterSelect) filterSelect.value = 'all';
+            if (sortSelect) sortSelect.value = 'default';
+            clearSearchBtn.style.visibility = 'hidden';
+            clearSearchBtn.style.opacity = '0';
+            performAjaxSearch();
+        }
+
+        // Attach initial clear all event
+        clearAllBtn?.addEventListener('click', resetAllFilters);
+
+        // --- RESET BUTTON ---
+        resetBtn?.addEventListener('click', resetAllFilters);
+
+        // --- SEARCH INPUT ---
+        let searchTimeout = null;
+        searchInput?.addEventListener('input', function() {
+            clearTimeout(searchTimeout);
+
+            // Toggle X button visibility
+            if (searchInput.value.trim().length > 0) {
+                clearSearchBtn.style.visibility = 'visible';
+                clearSearchBtn.style.opacity = '1';
+            } else {
+                clearSearchBtn.style.visibility = 'hidden';
+                clearSearchBtn.style.opacity = '0';
+            }
+
+            searchTimeout = setTimeout(() => {
+                performAjaxSearch();
+            }, 400);
+        });
+
+        // --- CLEAR (X) BUTTON ---
+        clearSearchBtn?.addEventListener('click', function() {
+            searchInput.value = '';
+            clearSearchBtn.style.visibility = 'hidden';
+            clearSearchBtn.style.opacity = '0';
+            performAjaxSearch();
+        });
+
+        // --- FILTER & SORT CHANGE ---
+        filterSelect?.addEventListener('change', performAjaxSearch);
+        sortSelect?.addEventListener('change', performAjaxSearch);
+
+        // Prevent default submit reload
+        searchForm?.addEventListener('submit', function(e) {
+            e.preventDefault();
+        });
+
+        // --- KEYBOARD SHORTCUTS ---
+        document.addEventListener('keydown', function(e) {
+            if ((e.ctrlKey || e.metaKey) && e.key === 'f') {
+                e.preventDefault();
+                searchInput.focus();
+            }
+            if (e.key === 'Escape' && searchInput.value !== '') {
+                searchInput.value = '';
+                clearSearchBtn.style.visibility = 'hidden';
+                clearSearchBtn.style.opacity = '0';
+                performAjaxSearch();
+            }
+        });
+
+        // --- INITIAL PAGE LOAD SPINNER ---
+        spinner.style.display = "block";
+        table.style.display = "none";
+        setTimeout(() => {
+            spinner.style.display = "none";
+            table.style.display = "block";
+        }, 600);
+
+        // --- DECLINE BUTTON LOGIC ---
         document.querySelectorAll('.decline-btn').forEach(function(btn) {
-            // Only attach event listener if the form is the DELETE form (the old logic used this for 'Delete')
             if (btn.closest('form').querySelector('input[name="_method"][value="DELETE"]')) {
                 btn.addEventListener('click', function(e) {
-                    e.preventDefault(); // Prevent immediate form submission
+                    e.preventDefault();
                     targetForm = btn.closest('form');
-                    document.getElementById('reasonInput').value = ''; // clear previous
+                    document.getElementById('reasonInput').value = '';
                     reasonModal.show();
                 });
             }
         });
 
-        // Step 2: After entering reason → show SweetAlert confirmation (Original Logic)
         document.getElementById('proceedToConfirmBtn').addEventListener('click', function() {
             const reason = document.getElementById('reasonInput').value.trim();
 
@@ -421,18 +586,15 @@
                 return;
             }
 
-            // Note: The original decline logic was a bit confusing as it used 'decline-reason' for a 'DELETE' form.
-            // We set the reason here, assuming the backend can read it for logging/auditing the deletion.
             const reasonInputHidden = targetForm.querySelector('.decline-reason');
             if (reasonInputHidden) {
-                 reasonInputHidden.value = reason;
+                reasonInputHidden.value = reason;
             } else {
-                 // Fallback if the hidden input isn't found (though it was added above)
-                 const newInput = document.createElement('input');
-                 newInput.type = 'hidden';
-                 newInput.name = 'decline_reason'; // Reusing old logic name
-                 newInput.value = reason;
-                 targetForm.appendChild(newInput);
+                const newInput = document.createElement('input');
+                newInput.type = 'hidden';
+                newInput.name = 'decline_reason';
+                newInput.value = reason;
+                targetForm.appendChild(newInput);
             }
 
             reasonModal.hide();
@@ -442,13 +604,12 @@
                 title: 'Are you sure?',
                 html: `You are about to delete this request with reason:<br><strong>${reason}</strong><br>You won't be able to revert this!`,
                 showCancelButton: true,
-                confirmButtonColor: '#dc3545', // Changed to match Delete color
+                confirmButtonColor: '#dc3545',
                 cancelButtonColor: '#1f2937',
                 confirmButtonText: 'Confirm Delete',
                 cancelButtonText: 'Cancel'
             }).then((result) => {
                 if (result.isConfirmed) {
-                    // Disable all buttons in the row and submit
                     const declineBtn = targetForm.querySelector(".decline-btn");
                     declineBtn.disabled = true;
                     declineBtn.innerHTML = `
@@ -464,77 +625,24 @@
                             }
                         });
                     }
-
                     targetForm.submit();
                 }
             });
         });
 
-        // --- New Search/Filter/Sort Logic from pending.blade.php ---
-
-        // Auto-submit form on filter/sort change
-        filterSelect?.addEventListener('change', function() {
-            searchForm.submit();
-        });
-
-        sortSelect?.addEventListener('change', function() {
-            searchForm.submit();
-        });
-
-        // Clear search button (redirects to clear all params)
-        clearSearchBtn?.addEventListener('click', function() {
-            window.location.href = '{{ url()->current() }}';
-        });
-
-        // Auto-search with debounce (simplified to manual search on form submit for consistency)
-        // Kept the keydown events for user experience
-        let searchTimeout = null;
-        searchInput?.addEventListener('input', function() {
-             clearTimeout(searchTimeout);
-             // Submits if 3+ characters are typed or if the input is cleared
-             searchTimeout = setTimeout(() => {
-                 if (searchInput.value.length >= 3 || searchInput.value.length === 0) {
-                     searchForm.submit();
-                 }
-             }, 500);
-        });
-
-        // Show loading spinner on form submit
-        searchForm?.addEventListener('submit', function() {
-            document.getElementById('spinner').style.display = 'block';
-            document.getElementById('requestTable').style.opacity = '0.5';
-        });
-
-        // Initial page load spinner (kept from original declined.blade.php)
-        const spinner = document.getElementById("spinner");
-        const table = document.getElementById("requestTable");
-
-        spinner.style.display = "block";
-        table.style.display = "none";
-
-        setTimeout(() => {
-            spinner.style.display = "none";
-            table.style.display = "block";
-        }, 600);
-
-        // --- Kept Accept Form Logic with Spinner ---
+        // --- ACCEPT FORM LOGIC ---
         const acceptForms = document.querySelectorAll('.accept-form');
         acceptForms.forEach(form => {
             let manualSubmit = false;
-
             form.addEventListener('submit', function(e) {
                 if (!manualSubmit) {
                     e.preventDefault();
-
                     const acceptBtn = form.querySelector('.accept-btn');
-                    const originalText = acceptBtn.getAttribute('data-original-text') || 'Accept';
-
                     acceptBtn.disabled = true;
                     acceptBtn.innerHTML = `
                         <span class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"></span>
                         Processing...
                     `;
-
                     const row = form.closest('tr');
                     if (row) {
                         const allButtons = row.querySelectorAll('button, a.btn');
@@ -545,34 +653,16 @@
                             }
                         });
                     }
-
-                    // allow next submission
                     manualSubmit = true;
-                    setTimeout(() => {
-                        form.submit();
-                    }, 100);
+                    setTimeout(() => form.submit(), 100);
                 }
             });
         });
 
-
-        // Add keyboard shortcuts (copied from original declined.blade.php)
-        document.addEventListener('keydown', function(e) {
-            // Ctrl/Cmd + F to focus search
-            if ((e.ctrlKey || e.metaKey) && e.key === 'f') {
-                e.preventDefault();
-                searchInput.focus();
-            }
-            // Escape to clear search (redirects to clear all params)
-            if (e.key === 'Escape' && searchInput.value !== '') {
-                 window.location.href = '{{ url()->current() }}';
-            }
-        });
-
-        // Re-enable buttons on page show (back button)
+        // --- Re-enable buttons when navigating back ---
         window.addEventListener('pageshow', function(event) {
             if (event.persisted) {
-                 document.querySelectorAll('.accept-btn').forEach(btn => {
+                document.querySelectorAll('.accept-btn').forEach(btn => {
                     btn.disabled = false;
                     btn.innerHTML = btn.getAttribute('data-original-text') || 'Accept';
                 });
@@ -584,6 +674,8 @@
         });
     });
 </script>
+
+
 
 {{-- Kept original styling, adapting it slightly for the new controls --}}
 <style>

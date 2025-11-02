@@ -21,21 +21,21 @@
 </div>
 
 <ul class="nav nav-tabs" data-bs-theme="dark">
-  <li class="nav-item">
-    <a class="nav-link text-dark " href="{{ route('pending.index') }}">Pending</a>
-  </li>
-  <li class="nav-item">
-    <a class="nav-link active" href="{{ route('ongoing.index') }}">Processing</a>
-  </li>
-  <li class="nav-item">
-    <a class="nav-link  text-dark" href="{{ route('tables.index') }}">For Release</a>
-  </li>
-  <li class="nav-item">
-    <a class="nav-link  text-dark" href="{{ route('claimed-documents.index') }}">Claimed</a>
-  </li>
-  <li class="nav-item">
-    <a class="nav-link  text-dark" href="{{ route('declined-documents.index') }}">Declined</a>
-  </li>
+    <li class="nav-item">
+        <a class="nav-link text-dark " href="{{ route('pending.index') }}">Pending</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link active" href="{{ route('ongoing.index') }}">Processing</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link  text-dark" href="{{ route('tables.index') }}">For Release</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link  text-dark" href="{{ route('claimed-documents.index') }}">Claimed</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link  text-dark" href="{{ route('declined-documents.index') }}">Declined</a>
+    </li>
 </ul>
 
 {{-- Main Card --}}
@@ -81,10 +81,6 @@
                     <option value="desc" {{ request('sort') == 'desc' ? 'selected' : '' }}>Req No. (Z-A)</option>
                 </select>
 
-                {{-- Search Button --}}
-                <button type="submit" class="btn btn-light btn-sm">
-                    <i class="fas fa-search"></i> Search
-                </button>
             </div>
         </form>
     </div>
@@ -121,7 +117,6 @@
             <div class="alert alert-warning text-center my-3">
                 @if(request('search'))
                 No processing document requests found matching your search criteria.
-                <a href="{{ route('ongoing.index') }}" class="btn btn-sm btn-outline-warning ms-2">Clear Search</a>
                 @else
                 No processing document requests found.
                 @endif
@@ -281,55 +276,174 @@
 {{-- JavaScript --}}
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        // Elements
-        const searchForm = document.getElementById('searchForm');
+        // ---- ELEMENTS ----
         const searchInput = document.getElementById('searchInput');
         const clearSearchBtn = document.getElementById('clearSearch');
         const filterSelect = document.getElementById('filterSelect');
         const sortSelect = document.getElementById('sortSelect');
+        const tableContainer = document.getElementById('tableContainer');
+        const loadingSpinner = document.getElementById('loadingSpinner');
+        const tableControls = document.getElementById('tableControls');
 
         let searchTimeout = null;
 
-        // Auto-submit form on filter/sort change
-        filterSelect?.addEventListener('change', function() {
-            searchForm.submit();
-        });
+        // ---- INITIAL STATE ----
+        toggleClearButton();
 
-        sortSelect?.addEventListener('change', function() {
-            searchForm.submit();
-        });
+        // Add Reset button (your style)
+        const resetBtn = document.createElement('button');
+        resetBtn.type = 'button';
+        resetBtn.className = 'btn btn-light btn-sm ms-2';
+        resetBtn.id = 'resetBtn';
+        resetBtn.innerHTML = '<i class="fas fa-redo"></i> Reset';
+        if (tableControls) tableControls.appendChild(resetBtn);
 
-        // Clear search button
-        clearSearchBtn?.addEventListener('click', function() {
-            window.location.href = '{{ route("ongoing.index") }}';
-        });
+        // ---- FUNCTIONS ----
+        function toggleClearButton() {
+            clearSearchBtn.style.display = searchInput.value.trim().length > 0 ? 'inline-block' : 'none';
+        }
 
-        // Auto-search with debounce (optional - remove if you want manual search only)
-        searchInput?.addEventListener('input', function() {
+        // AJAX search/filter/sort refresh
+        function performAjaxSearch() {
+            const search = searchInput.value.trim();
+            const filter = filterSelect.value;
+            const sort = sortSelect.value;
+
+            loadingSpinner.style.display = 'block';
+            tableContainer.style.opacity = '0.5';
+
+            const url = `{{ route('ongoing.index') }}?search=${encodeURIComponent(search)}&filter=${encodeURIComponent(filter)}&sort=${encodeURIComponent(sort)}`;
+
+            fetch(url, {
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest'
+                    }
+                })
+                .then(response => response.text())
+                .then(html => {
+                    const parser = new DOMParser();
+                    const doc = parser.parseFromString(html, 'text/html');
+                    const newTableContainer = doc.querySelector('#tableContainer');
+                    const newPagination = doc.querySelector('.pagination');
+                    const newInfoBanner = doc.querySelector('.alert-info');
+
+                    // Update table
+                    tableContainer.innerHTML = newTableContainer ?
+                        newTableContainer.innerHTML :
+                        '<div class="alert alert-warning text-center my-3">No results found.</div>';
+
+                    // Update info banner
+                    const oldInfoBanner = document.querySelector('.alert-info');
+                    if (oldInfoBanner) oldInfoBanner.remove();
+                    if (newInfoBanner) tableContainer.insertAdjacentElement('beforebegin', newInfoBanner);
+
+                    // Update pagination
+                    const paginationContainer = document.querySelector('.pagination');
+                    if (paginationContainer && newPagination)
+                        paginationContainer.outerHTML = newPagination.outerHTML;
+
+                    loadingSpinner.style.display = 'none';
+                    tableContainer.style.opacity = '1';
+
+                    attachClearAllAjax(); // rebind after reload
+                })
+                .catch(err => {
+                    console.error('AJAX Search Error:', err);
+                    loadingSpinner.style.display = 'none';
+                    tableContainer.style.opacity = '1';
+                });
+        }
+
+        // ---- EVENT LISTENERS ----
+
+        // Debounced live search
+        searchInput.addEventListener('input', function() {
+            toggleClearButton();
             clearTimeout(searchTimeout);
-            searchTimeout = setTimeout(() => {
-                if (searchInput.value.length >= 3 || searchInput.value.length === 0) {
-                    searchForm.submit();
-                }
-            }, 500);
+            searchTimeout = setTimeout(() => performAjaxSearch(), 400);
         });
 
-        // Show loading spinner on form submit
-        searchForm?.addEventListener('submit', function() {
-            document.getElementById('loadingSpinner').style.display = 'block';
-            document.getElementById('tableContainer').style.opacity = '0.5';
+        // Clear search input
+        clearSearchBtn.addEventListener('click', function() {
+            searchInput.value = '';
+            toggleClearButton();
+            performAjaxSearch();
         });
 
-        // Handle Complete button clicks with loading spinner
+        // Filter & sort trigger AJAX
+        [filterSelect, sortSelect].forEach(el => el?.addEventListener('change', performAjaxSearch));
+
+        // Reset button click
+        resetBtn.addEventListener('click', function() {
+            searchInput.value = '';
+            filterSelect.value = 'all';
+            sortSelect.value = 'default';
+            toggleClearButton();
+            performAjaxSearch();
+        });
+
+        // AJAX pagination
+        document.addEventListener('click', function(e) {
+            if (e.target.closest('.pagination a')) {
+                e.preventDefault();
+                const url = e.target.closest('.pagination a').href;
+
+                loadingSpinner.style.display = 'block';
+                tableContainer.style.opacity = '0.5';
+
+                fetch(url, {
+                        headers: {
+                            'X-Requested-With': 'XMLHttpRequest'
+                        }
+                    })
+                    .then(response => response.text())
+                    .then(html => {
+                        const parser = new DOMParser();
+                        const doc = parser.parseFromString(html, 'text/html');
+                        const newTableContainer = doc.querySelector('#tableContainer');
+                        const newPagination = doc.querySelector('.pagination');
+
+                        tableContainer.innerHTML = newTableContainer ?
+                            newTableContainer.innerHTML :
+                            '<div class="alert alert-warning text-center my-3">No results found.</div>';
+
+                        const paginationContainer = document.querySelector('.pagination');
+                        if (paginationContainer && newPagination)
+                            paginationContainer.outerHTML = newPagination.outerHTML;
+
+                        loadingSpinner.style.display = 'none';
+                        tableContainer.style.opacity = '1';
+
+                        attachClearAllAjax();
+                    });
+            }
+        });
+
+        // “Clear All” button inside alert-info (AJAX)
+        function attachClearAllAjax() {
+            const clearAllBtn = document.querySelector('.alert-info a.btn-outline-info');
+            if (clearAllBtn) {
+                clearAllBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    searchInput.value = '';
+                    filterSelect.value = 'all';
+                    sortSelect.value = 'default';
+                    toggleClearButton();
+                    performAjaxSearch();
+                });
+            }
+        }
+        attachClearAllAjax();
+
+        // ---- ACTION BUTTON LOGIC ----
+
+        // Complete button
         document.querySelectorAll('.complete-form').forEach(form => {
             form.addEventListener('submit', function(e) {
                 e.preventDefault();
                 const btn = this.querySelector('.complete-btn');
-
                 btn.disabled = true;
                 btn.innerHTML = '<span class="spinner-border spinner-border-sm me-1"></span>Processing...';
-
-                // Disable other buttons in the same row
                 const row = this.closest('tr');
                 row.querySelectorAll('button, a.btn').forEach(b => {
                     if (b !== btn) {
@@ -337,22 +451,18 @@
                         b.style.opacity = '0.5';
                     }
                 });
-
                 setTimeout(() => this.submit(), 100);
             });
         });
 
-        // Handle Delete button clicks with confirmation
+        // Delete buttons
         document.querySelectorAll('.delete-form, .delete2-form').forEach(form => {
             form.addEventListener('submit', function(e) {
                 e.preventDefault();
                 const btn = this.querySelector('.delete-btn, .delete2-btn');
-
                 if (confirm('Are you sure you want to delete this request?')) {
                     btn.disabled = true;
                     btn.innerHTML = '<span class="spinner-border spinner-border-sm me-1"></span>Deleting...';
-
-                    // Disable other buttons in the same row
                     const row = this.closest('tr');
                     row.querySelectorAll('button, a.btn').forEach(b => {
                         if (b !== btn) {
@@ -360,22 +470,18 @@
                             b.style.opacity = '0.5';
                         }
                     });
-
                     setTimeout(() => this.submit(), 100);
                 }
             });
         });
 
-        // Handle Print button clicks with loading spinner
+        // Print button
         document.querySelectorAll('.print-form').forEach(form => {
             form.addEventListener('submit', function(e) {
                 e.preventDefault();
                 const btn = this.querySelector('.print-btn');
-
                 btn.disabled = true;
                 btn.innerHTML = '<span class="spinner-border spinner-border-sm me-1"></span>Printing...';
-
-                // Disable other buttons in the same row
                 const row = this.closest('tr');
                 row.querySelectorAll('button, a.btn').forEach(b => {
                     if (b !== btn) {
@@ -383,41 +489,42 @@
                         b.style.opacity = '0.5';
                     }
                 });
-
                 setTimeout(() => this.submit(), 100);
             });
         });
 
-        // Keyboard shortcuts
+        // Keyboard shortcut: Ctrl+F focuses search
         document.addEventListener('keydown', function(e) {
             if ((e.ctrlKey || e.metaKey) && e.key === 'f') {
                 e.preventDefault();
-                searchInput?.focus();
+                searchInput.focus();
             }
         });
 
-        // Re-enable buttons on page show (back button)
+        // Re-enable buttons when returning to page (browser back)
         window.addEventListener('pageshow', function(event) {
             if (event.persisted) {
                 document.querySelectorAll('.complete-btn, .delete-btn, .delete2-btn, .print-btn').forEach(btn => {
                     btn.disabled = false;
                     btn.style.opacity = '1';
-
-                    if (btn.classList.contains('complete-btn')) {
-                        btn.innerHTML = 'Complete';
-                    } else if (btn.classList.contains('delete-btn') || btn.classList.contains('delete2-btn')) {
-                        btn.innerHTML = 'Delete';
-                    } else if (btn.classList.contains('print-btn')) {
-                        btn.innerHTML = 'Print';
-                    }
+                    if (btn.classList.contains('complete-btn')) btn.innerHTML = 'Complete';
+                    else if (btn.classList.contains('delete-btn') || btn.classList.contains('delete2-btn')) btn.innerHTML = 'Delete';
+                    else if (btn.classList.contains('print-btn')) btn.innerHTML = 'Print';
                 });
             }
         });
     });
 </script>
 
+
+
+
 <style>
     /* Core table styles */
+    #clearSearch {
+        display: none;
+    }
+
     #requestsTable {
         font-size: 0.85rem;
     }

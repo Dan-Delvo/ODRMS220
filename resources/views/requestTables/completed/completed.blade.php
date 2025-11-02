@@ -20,7 +20,7 @@
     </div>
     <div class="col-md-6 text-end">
         <h1 class="mt-4 text-dark">
-            <span class="badge" style="background-color: #1f2937; font-size: 2rem;">Total For Release: {{ $totalCount }}</span>
+            <span class="badge" style="background-color: #1f2937; font-size: 2rem;">Total For Release: <span id="totalCount">{{ $totalCount }}</span></span>
         </h1>
     </div>
 </div>
@@ -43,7 +43,6 @@
   </li>
 </ul>
 
-
 {{-- Main Card --}}
 <div class="card shadow-lg border-0 rounded-lg mt-3">
     {{-- Card Header with Search/Filter Controls --}}
@@ -52,66 +51,70 @@
         <h5 class="mb-2 mb-md-0">For Release Document Requests</h5>
 
         {{-- Search/Filter Form --}}
-        <form method="GET" action="{{ route('tables.index') }}" id="searchForm">
-            <div class="d-flex gap-2 mt-2 mt-md-0 flex-wrap" id="tableControls">
-                {{-- Search Input --}}
-                <div class="input-group" style="width: 300px;">
-                    <input type="text"
-                        name="search"
-                        id="searchInput"
-                        class="form-control form-control-sm"
-                        placeholder="Search requests..."
-                        value="{{ request('search') }}">
-                    <button class="btn btn-outline-light btn-sm"
-                        type="button"
-                        id="clearSearch"
-                        title="Clear search">
-                        <i class="fas fa-times"></i>
-                    </button>
-                </div>
-
-                {{-- Filter Dropdown --}}
-                <select name="filter" id="filterSelect" class="form-select form-select-sm" style="width: auto;">
-                    <option value="all" {{ request('filter') == 'all' ? 'selected' : '' }}>All Fields</option>
-                    <option value="student" {{ request('filter') == 'student' ? 'selected' : '' }}>Student Name</option>
-                    <option value="document" {{ request('filter') == 'document' ? 'selected' : '' }}>Document Type</option>
-                    <option value="school" {{ request('filter') == 'school' ? 'selected' : '' }}>School/Entity</option>
-                    <option value="reqno" {{ request('filter') == 'reqno' ? 'selected' : '' }}>Request No.</option>
-                </select>
-
-                {{-- Sort Dropdown --}}
-                <select name="sort" id="sortSelect" class="form-select form-select-sm" style="width: auto;">
-                    <option value="default" {{ request('sort') == 'default' ? 'selected' : '' }}>Default Order</option>
-                    <option value="asc" {{ request('sort') == 'asc' ? 'selected' : '' }}>Req No. (A-Z)</option>
-                    <option value="desc" {{ request('sort') == 'desc' ? 'selected' : '' }}>Req No. (Z-A)</option>
-                </select>
-
-                {{-- Search Button --}}
-                <button type="submit" class="btn btn-light btn-sm">
-                    <i class="fas fa-search"></i> Search
+        <div class="d-flex gap-2 mt-2 mt-md-0 flex-wrap" id="tableControls">
+            {{-- Search Input --}}
+            <div class="input-group" style="width: 300px;">
+                <input type="text"
+                    name="search"
+                    id="searchInput"
+                    class="form-control form-control-sm"
+                    placeholder="Search requests..."
+                    value="{{ request('search') }}"
+                    autocomplete="off">
+                <button class="btn btn-outline-light btn-sm"
+                    type="button"
+                    id="clearSearch"
+                    title="Clear search"
+                    style="display: none;">
+                    <i class="fas fa-times"></i>
                 </button>
             </div>
-        </form>
+
+            {{-- Filter Dropdown --}}
+            <select name="filter" id="filterSelect" class="form-select form-select-sm" style="width: auto;">
+                <option value="all" {{ request('filter') == 'all' ? 'selected' : '' }}>All Fields</option>
+                <option value="student" {{ request('filter') == 'student' ? 'selected' : '' }}>Student Name</option>
+                <option value="document" {{ request('filter') == 'document' ? 'selected' : '' }}>Document Type</option>
+                <option value="school" {{ request('filter') == 'school' ? 'selected' : '' }}>School/Entity</option>
+                <option value="reqno" {{ request('filter') == 'reqno' ? 'selected' : '' }}>Request No.</option>
+            </select>
+
+            {{-- Sort Dropdown --}}
+            <select name="sort" id="sortSelect" class="form-select form-select-sm" style="width: auto;">
+                <option value="default" {{ request('sort') == 'default' ? 'selected' : '' }}>Default Order</option>
+                <option value="asc" {{ request('sort') == 'asc' ? 'selected' : '' }}>Req No. (A-Z)</option>
+                <option value="desc" {{ request('sort') == 'desc' ? 'selected' : '' }}>Req No. (Z-A)</option>
+            </select>
+
+            {{-- Reset Button --}}
+            <button type="button" class="btn btn-light btn-sm" id="resetBtn">
+                <i class="fas fa-redo"></i> Reset
+            </button>
+        </div>
     </div>
 
     {{-- Card Body --}}
     <div class="card-body bg-light">
         {{-- Search Info Banner --}}
-        @if(request('search'))
-        <div class="alert alert-info mb-3 py-2">
+        @if(!empty(request('search')) || (request('filter') && request('filter') !== 'all') || (request('sort') && request('sort') !== 'default'))
+        <div class="alert alert-info mb-3 py-2 table-info-banner">
             <small>
                 <i class="fas fa-search me-1"></i>
+                @if(request('search'))
                 Showing results for: <strong>"{{ request('search') }}"</strong>
-                @if(request('filter') != 'all')
+                @endif
+                @if(request('filter') && request('filter') !== 'all')
                 in <strong>{{ ucfirst(request('filter')) }}</strong>
                 @endif
-                @if(request('sort') != 'default')
-                - Sorted by <strong>Request No. ({{ request('sort') == 'asc' ? 'A-Z' : 'Z-A' }})</strong>
+                @if(request('sort') && request('sort') !== 'default')
+                - Sorted by <strong>Request No. ({{ request('sort') === 'asc' ? 'A-Z' : 'Z-A' }})</strong>
                 @endif
-                <a href="{{ route('tables.index') }}" class="btn btn-sm btn-outline-info ms-2">Clear All</a>
+                <a href="{{ route('tables.index') }}" class="btn btn-sm btn-outline-info ms-2" id="clearAllBtn">Clear All</a>
             </small>
         </div>
         @endif
+
+
 
         {{-- Loading Spinner --}}
         <div id="loadingSpinner" class="text-center my-4" style="display: none;">
@@ -126,7 +129,6 @@
             <div class="alert alert-warning text-center my-3">
                 @if(request('search'))
                 No For Release document requests found matching your search criteria.
-                <a href="{{ route('tables.index') }}" class="btn btn-sm btn-outline-warning ms-2">Clear Search</a>
                 @else
                 No For Release document requests found.
                 @endif
@@ -182,14 +184,6 @@
                             @if(!empty($PermissionEdit))
                             <a href="{{ route('tables.edit', $item->id) }}" class="btn btn-sm btn-warning mb-1">Edit</a>
                             @endif
-
-                            <!-- @if(!empty($deleteCompleted))
-                            <form action="{{ route('tables.destroy', $item->id) }}" method="POST" class="d-inline delete-form" data-swal-loading="true" data-swal-delete="true">
-                                @csrf
-                                @method('DELETE')
-                                <button type="submit" class="btn btn-sm btn-danger mb-1 delete-btn">Delete</button>
-                            </form>
-                            @endif -->
                         </td>
                     </tr>
                     @endforeach
@@ -228,7 +222,7 @@
                 @method('PUT')
                 <div class="modal-body">
                     <div class="mb-3">
-                        <div class="alert alert-info">
+                        <div class="alert alert-info d-none" id="modalRequestInfo">
                             <strong>Request No:</strong> <span id="modalRequestNo"></span><br>
                             <strong>Student:</strong> <span id="modalStudentName"></span>
                         </div>
@@ -293,370 +287,353 @@
 
 {{-- JavaScript --}}
 <script>
-    document.addEventListener("DOMContentLoaded", function() {
-        // --- Search/Filter/Sort Logic ---
-        const searchForm = document.getElementById('searchForm');
-        const searchInput = document.getElementById('searchInput');
-        const clearSearchBtn = document.getElementById('clearSearch');
-        const filterSelect = document.getElementById('filterSelect');
-        const sortSelect = document.getElementById('sortSelect');
+document.addEventListener("DOMContentLoaded", function () {
+    // ======= ELEMENT REFERENCES =======
+    const searchInput = document.getElementById('searchInput');
+    const clearSearchBtn = document.getElementById('clearSearch');
+    const filterSelect = document.getElementById('filterSelect');
+    const sortSelect = document.getElementById('sortSelect');
+    const resetBtn = document.getElementById('resetBtn');
+    const loadingSpinner = document.getElementById('loadingSpinner');
+    const tableContainer = document.getElementById('tableContainer');
+    const totalCount = document.getElementById('totalCount');
+    let searchTimeout = null;
 
-        // Auto-submit form on filter/sort change
-        filterSelect?.addEventListener('change', function() {
-            searchForm.submit();
-        });
+    // ======= INITIAL STATE =======
+    toggleClearButton();
+    attachCompleteButtonListeners();
+    attachClearAllListener();
 
-        sortSelect?.addEventListener('change', function() {
-            const url = new URL(searchForm.action);
-            const params = new URLSearchParams(url.search);
-            params.set('sort', this.value);
-            params.delete('page');
-            url.search = params.toString();
-            searchForm.action = url.toString();
-            searchForm.submit();
-        });
+    // ======= CLEAR BUTTON VISIBILITY =======
+    function toggleClearButton() {
+        clearSearchBtn.style.display = searchInput.value.trim().length > 0 ? 'inline-block' : 'none';
+    }
 
-        // Clear search button
-        clearSearchBtn?.addEventListener('click', function() {
-            if (searchInput.value || '{{ request('
-                filter ') }}' != 'all' || '{{ request('
-                sort ') }}' != 'default') {
-                window.location.href = '{{ route("tables.index") }}';
-            } else {
-                searchInput.value = '';
-            }
-        });
+    // ======= SEARCH INPUT =======
+    searchInput.addEventListener('input', function () {
+        toggleClearButton();
+        clearTimeout(searchTimeout);
+        searchTimeout = setTimeout(() => performAjaxSearch(), 400);
+    });
 
-        // Show loading spinner on form submit
-        searchForm?.addEventListener('submit', function() {
-            document.getElementById('loadingSpinner').style.display = 'block';
-            document.getElementById('tableContainer').style.opacity = '0.5';
-        });
+    // ======= CLEAR SEARCH BUTTON =======
+    clearSearchBtn.addEventListener('click', function () {
+        searchInput.value = '';
+        toggleClearButton();
+        performAjaxSearch();
+    });
 
-        // --- Claimer Modal Logic ---
-        const sameAsStudentCheckbox = document.getElementById('sameAsStudent');
-        const claimerFirstName = document.getElementById('claimerFirstName');
-        const claimerLastName = document.getElementById('claimerLastName');
-        const claimerDate = document.getElementById('claimerDate');
-        const claimerModal = document.getElementById('claimerModal');
+    // ======= FILTER AND SORT SELECTS =======
+    [filterSelect, sortSelect].forEach(el => {
+        el?.addEventListener('change', performAjaxSearch);
+    });
 
-        function fillClaimerInfo() {
-            const studentName = document.getElementById('modalStudentName').textContent.trim();
-            if (sameAsStudentCheckbox.checked) {
-                if (studentName) {
-                    const nameParts = studentName.split(' ');
-                    claimerLastName.value = nameParts.pop() || ''; // Assume last word is last name
-                    claimerFirstName.value = nameParts.join(' '); // Remainder is first name
+    // ======= RESET BUTTON =======
+    resetBtn.addEventListener('click', function () {
+        searchInput.value = '';
+        filterSelect.value = 'all';
+        sortSelect.value = 'default';
+        toggleClearButton();
+        performAjaxSearch();
+    });
 
-                    claimerFirstName.setAttribute('readonly', true);
-                    claimerLastName.setAttribute('readonly', true);
+    // ======= AJAX SEARCH FUNCTION =======
+    function performAjaxSearch() {
+        const search = searchInput.value.trim();
+        const filter = filterSelect.value;
+        const sort = sortSelect.value;
+
+        loadingSpinner.style.display = 'block';
+        tableContainer.style.opacity = '0.5';
+
+        const url = `{{ route('tables.index') }}?search=${encodeURIComponent(search)}&filter=${encodeURIComponent(filter)}&sort=${encodeURIComponent(sort)}`;
+
+        fetch(url, { headers: { 'X-Requested-With': 'XMLHttpRequest' } })
+            .then(res => res.text())
+            .then(html => {
+                const parser = new DOMParser();
+                const doc = parser.parseFromString(html, 'text/html');
+
+                const newTableContainer = doc.querySelector('#tableContainer');
+                const newPagination = doc.querySelector('.pagination')?.parentElement;
+                const newTotalCount = doc.querySelector('#totalCount');
+                const newInfoBanner = doc.querySelector('.table-info-banner');
+                const oldInfoBanner = document.querySelector('.table-info-banner');
+
+                // Update table
+                tableContainer.innerHTML = newTableContainer ? newTableContainer.innerHTML : '<div class="alert alert-warning text-center my-3">No results found.</div>';
+
+                // Update count
+                if (newTotalCount) totalCount.textContent = newTotalCount.textContent;
+
+                // Update info alert (table only, not modal)
+                if (oldInfoBanner && newInfoBanner) {
+                    oldInfoBanner.outerHTML = newInfoBanner.outerHTML;
+                } else if (oldInfoBanner && !newInfoBanner) {
+                    oldInfoBanner.remove();
+                } else if (!oldInfoBanner && newInfoBanner) {
+                    document.querySelector('.card-body').insertBefore(newInfoBanner, tableContainer);
                 }
-            } else {
-                claimerFirstName.value = '';
-                claimerLastName.value = '';
-                claimerFirstName.removeAttribute('readonly');
-                claimerLastName.removeAttribute('readonly');
-            }
-        }
 
-        sameAsStudentCheckbox.addEventListener('change', fillClaimerInfo);
-
-        // Handle Claimed button clicks - populate modal
-        document.querySelectorAll('.complete-btn').forEach(btn => {
-            btn.addEventListener('click', function() {
-                const requestId = this.getAttribute('data-request-id');
-                const requestNo = this.getAttribute('data-request-no');
-                const studentName = this.getAttribute('data-student-name');
-
-                document.getElementById('modalRequestNo').textContent = requestNo;
-                document.getElementById('modalStudentName').textContent = studentName;
-
-                const form = document.getElementById('claimerForm');
-                // Fixed to match the actual route: /tables/completeRequest/{id}
-                form.action = `{{ url('tables/completeRequest') }}/${requestId}`;
-
-                // Reset form state
-                form.reset();
-                form.classList.remove('was-validated');
-                sameAsStudentCheckbox.checked = false;
-
-                // Clear name fields and remove readonly
-                claimerFirstName.value = '';
-                claimerLastName.value = '';
-                claimerFirstName.removeAttribute('readonly');
-                claimerLastName.removeAttribute('readonly');
-
-                // Set today's date as default
-                const today = new Date().toISOString().split('T')[0];
-                claimerDate.value = today;
-
-                // Remove previous error/success alerts
-                document.getElementById('claimerForm').querySelectorAll('.alert-danger, .alert-success').forEach(alert => {
-                    if (!alert.classList.contains('alert-info')) {
-                        alert.remove();
-                    }
-                });
-
-                setLoadingState(false);
-            });
-        });
-
-        // Reset modal state when hidden
-        claimerModal?.addEventListener('hidden.bs.modal', function() {
-            const claimerForm = document.getElementById('claimerForm');
-            claimerForm.classList.remove('was-validated');
-            document.getElementById('claimerForm').querySelectorAll('.alert-danger, .alert-success').forEach(alert => {
-                if (!alert.classList.contains('alert-info')) {
-                    alert.remove();
+                // Update pagination
+                const oldPagination = document.querySelector('.pagination')?.parentElement;
+                if (oldPagination && newPagination) {
+                    oldPagination.outerHTML = newPagination.outerHTML;
+                } else if (oldPagination && !newPagination) {
+                    oldPagination.remove();
                 }
+
+                attachCompleteButtonListeners();
+                attachClearAllListener();
+
+                loadingSpinner.style.display = 'none';
+                tableContainer.style.opacity = '1';
+            })
+            .catch(err => {
+                console.error('AJAX Search Error:', err);
+                showErrorToast('Error loading table.');
+                loadingSpinner.style.display = 'none';
+                tableContainer.style.opacity = '1';
             });
-            setLoadingState(false);
-        });
+    }
 
-        // CLAIMER FORM SUBMISSION
-        const claimerForm = document.getElementById('claimerForm');
-        const submitClaimBtn = document.getElementById('submitClaimBtn');
+    // ======= CLEAR ALL BUTTON (AJAX) =======
+    function attachClearAllListener() {
+        const clearAllBtn = document.getElementById('clearAllBtn');
+        if (!clearAllBtn) return;
 
-        claimerForm.addEventListener('submit', function(e) {
+        clearAllBtn.addEventListener('click', function (e) {
             e.preventDefault();
+            tableContainer.innerHTML = `<div class="text-center my-4">
+                <div class="spinner-border text-info" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
+            </div>`;
 
-            // Validate form
-            if (!claimerForm.checkValidity()) {
-                e.stopPropagation();
-                claimerForm.classList.add('was-validated');
-                return;
-            }
+            fetch(this.href, { headers: { 'X-Requested-With': 'XMLHttpRequest' } })
+                .then(response => response.text())
+                .then(html => {
+                    const parser = new DOMParser();
+                    const doc = parser.parseFromString(html, 'text/html');
 
-            // Ensure date is set
-            if (!claimerDate.value) {
-                claimerDate.value = new Date().toISOString().split('T')[0];
-            }
+                    // Replace table
+                    const newTable = doc.querySelector('#tableContainer').innerHTML;
+                    tableContainer.innerHTML = newTable;
 
-            setLoadingState(true);
+                    // Remove info banner
+                    const infoBanner = document.querySelector('.table-info-banner');
+                    if (infoBanner) infoBanner.remove();
 
-            // Get CSRF token
-            let csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
-            if (!csrfToken) {
-                csrfToken = claimerForm.querySelector('input[name="_token"]')?.value;
-            }
+                    // Reset search/filter/sort fields
+                    searchInput.value = '';
+                    filterSelect.value = 'all';
+                    sortSelect.value = 'default';
+                    toggleClearButton();
 
-            if (!csrfToken) {
-                console.error('CSRF token not found!');
-                showError('Security token missing. Please refresh the page.');
-                setLoadingState(false);
-                return;
-            }
+                    // Update pagination
+                    const newPagination = doc.querySelector('.pagination');
+                    const oldPagination = document.querySelector('.pagination');
+                    if (newPagination && oldPagination) oldPagination.outerHTML = newPagination.outerHTML;
 
-            // --- FIX STARTS HERE: Prepare data as a JSON object ---
-            const formDataObject = {
-                claimer_first_name: claimerFirstName.value,
-                claimer_last_name: claimerLastName.value,
-                claimer_date: claimerDate.value,
-                _method: 'PUT',
-                _token: csrfToken // Include the token in the payload
-            };
+                    attachCompleteButtonListeners();
+                    attachClearAllListener();
 
-            const actionUrl = claimerForm.action;
-            // --- FIX ENDS HERE ---
-
-            // Submit using fetch
-            fetch(actionUrl, {
-                    method: 'POST', // Use POST with _method: 'PUT' override
-                    headers: {
-                        'X-CSRF-TOKEN': csrfToken,
-                        'Accept': 'application/json',
-                        'Content-Type': 'application/json', // CRITICAL FIX: Set Content-Type for JSON
-                        'X-Requested-With': 'XMLHttpRequest'
-                    },
-                    body: JSON.stringify(formDataObject), // CRITICAL FIX: Send data as JSON string
-                    credentials: 'same-origin'
-                })
-                .then(async response => {
-                    // Explicitly check for 419 session expired
-                    if (response.status === 419) {
-                        throw new Error('Session expired. Please refresh the page (Error 419).');
-                    }
-
-                    if (!response.ok) {
-                        let errorMessage = 'An error occurred while processing the request.';
-                        try {
-                            const errorData = await response.json();
-
-                            if (errorData.message) {
-                                errorMessage = errorData.message;
-                            } else if (errorData.errors) {
-                                const errors = Object.values(errorData.errors).flat();
-                                errorMessage = 'Validation Failed: ' + errors.join('; ');
-                            } else if (response.status === 404) {
-                                errorMessage = 'Request not found. Please refresh the page (Error 404).';
-                            }
-                        } catch (e) {
-                            errorMessage = `Network or server error (Status ${response.status}).`;
-                        }
-                        throw new Error(errorMessage);
-                    }
-
-                    // Handle successful response
-                    let result = {};
-                    const contentType = response.headers.get('content-type');
-                    if (contentType && contentType.includes('application/json')) {
-                        result = await response.json();
-                    }
-
-                    const successMsg = result.message || 'Document marked as claimed successfully!';
-                    showSuccess(successMsg);
-
-                    // Redirect or reload after short delay
-                    setTimeout(() => {
-                        if (result.redirect) {
-                            window.location.href = result.redirect;
-                        } else {
-                            window.location.reload();
-                        }
-                    }, 1500);
+                    showSuccessToast('All filters cleared!');
                 })
                 .catch(error => {
-                    console.error('Fetch error:', error);
-                    showError(error.message);
-                    setLoadingState(false);
+                    console.error('Clear All failed:', error);
+                    showErrorToast('Failed to clear filters.');
                 });
         });
+    }
 
-        function setLoadingState(isLoading) {
-            const formInputs = claimerForm.querySelectorAll('input, select, textarea, button');
+    // ======= COMPLETE BUTTON HANDLER =======
+    function attachCompleteButtonListeners() {
+        document.querySelectorAll('.complete-btn').forEach(btn => {
+            btn.addEventListener('click', handleCompleteClick);
+        });
+    }
 
-            if (isLoading) {
-                submitClaimBtn.disabled = true;
-                submitClaimBtn.innerHTML = `
-                <span class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"></span>
-                Processing...
-            `;
-                formInputs.forEach(input => {
-                    if (input !== submitClaimBtn) {
-                        input.disabled = true;
-                    }
-                });
-            } else {
-                submitClaimBtn.disabled = false;
-                submitClaimBtn.innerHTML = `
-                <i class="fas fa-check me-1"></i>Mark as Claimed
-            `;
-                formInputs.forEach(input => {
-                    input.disabled = false;
-                });
-            }
+    // ======= MODAL HANDLING =======
+    const sameAsStudentCheckbox = document.getElementById('sameAsStudent');
+    const claimerFirstName = document.getElementById('claimerFirstName');
+    const claimerLastName = document.getElementById('claimerLastName');
+    const claimerDate = document.getElementById('claimerDate');
+    const claimerModal = document.getElementById('claimerModal');
+    const claimerForm = document.getElementById('claimerForm');
+    const submitClaimBtn = document.getElementById('submitClaimBtn');
+
+    sameAsStudentCheckbox?.addEventListener('change', fillClaimerInfo);
+
+    function fillClaimerInfo() {
+        const studentName = document.getElementById('modalStudentName').textContent.trim();
+        if (sameAsStudentCheckbox.checked && studentName) {
+            const nameParts = studentName.split(' ');
+            claimerLastName.value = nameParts.pop() || '';
+            claimerFirstName.value = nameParts.join(' ');
+            claimerFirstName.readOnly = true;
+            claimerLastName.readOnly = true;
+        } else {
+            claimerFirstName.value = '';
+            claimerLastName.value = '';
+            claimerFirstName.readOnly = false;
+            claimerLastName.readOnly = false;
+        }
+    }
+
+    function handleCompleteClick() {
+        const requestId = this.dataset.requestId;
+        const requestNo = this.dataset.requestNo;
+        const studentName = this.dataset.studentName;
+
+        document.getElementById('modalRequestNo').textContent = requestNo;
+        document.getElementById('modalStudentName').textContent = studentName;
+        document.getElementById('modalRequestInfo').classList.remove('d-none');
+
+        claimerForm.action = `{{ url('tables/completeRequest') }}/${requestId}`;
+        claimerForm.reset();
+        claimerForm.classList.remove('was-validated');
+        sameAsStudentCheckbox.checked = false;
+        claimerFirstName.readOnly = false;
+        claimerLastName.readOnly = false;
+
+        const today = new Date().toISOString().split('T')[0];
+        claimerDate.value = today;
+
+        claimerForm.querySelectorAll('.alert-danger, .alert-success').forEach(alert => {
+            if (!alert.classList.contains('alert-info')) alert.remove();
+        });
+
+        setLoadingState(false);
+    }
+
+    claimerModal?.addEventListener('hidden.bs.modal', function () {
+        document.getElementById('modalRequestInfo').classList.add('d-none');
+        claimerForm.classList.remove('was-validated');
+        claimerForm.querySelectorAll('.alert-danger, .alert-success').forEach(alert => {
+            if (!alert.classList.contains('alert-info')) alert.remove();
+        });
+        setLoadingState(false);
+    });
+
+    // ======= CLAIMER FORM SUBMIT =======
+    claimerForm.addEventListener('submit', function (e) {
+        e.preventDefault();
+        if (!claimerForm.checkValidity()) {
+            e.stopPropagation();
+            claimerForm.classList.add('was-validated');
+            return;
         }
 
-        function showError(message) {
-            let errorAlert = document.getElementById('modalErrorAlert');
-            if (!errorAlert) {
-                errorAlert = document.createElement('div');
-                errorAlert.id = 'modalErrorAlert';
-                errorAlert.className = 'alert alert-danger alert-dismissible fade show';
-                errorAlert.innerHTML = `
-                <strong>Error:</strong> <span id="errorMessage"></span>
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-            `;
-                // Insert error message after the alert-info box in the modal body
-                claimerForm.querySelector('.modal-body').insertBefore(errorAlert, claimerForm.querySelector('.modal-body > .mb-3:first-child').nextSibling);
-            }
+        setLoadingState(true);
+        const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+        const formDataObject = {
+            claimer_first_name: claimerFirstName.value,
+            claimer_last_name: claimerLastName.value,
+            claimer_date: claimerDate.value,
+            _method: 'PUT',
+            _token: csrfToken
+        };
 
-            document.getElementById('errorMessage').textContent = message;
-            errorAlert.style.display = 'block';
-            errorAlert.scrollIntoView({
-                behavior: 'smooth',
-                block: 'nearest'
-            });
-        }
-
-        function showSuccess(message) {
-            let successAlert = document.getElementById('modalSuccessAlert');
-            if (!successAlert) {
-                successAlert = document.createElement('div');
-                successAlert.id = 'modalSuccessAlert';
-                successAlert.className = 'alert alert-success fade show';
-                successAlert.innerHTML = `
-                <i class="fas fa-check-circle me-2"></i><span id="successMessage"></span>
-            `;
-                // Insert success message after the alert-info box in the modal body
-                claimerForm.querySelector('.modal-body').insertBefore(successAlert, claimerForm.querySelector('.modal-body > .mb-3:first-child').nextSibling);
-            }
-
-            document.getElementById('successMessage').textContent = message;
-            successAlert.style.display = 'block';
-        }
-
-        // --- Delete Logic ---
-        const deleteForms = document.querySelectorAll(".delete-form");
-        deleteForms.forEach(form => {
-            form.addEventListener("submit", function(e) {
-                e.preventDefault();
-
-                const deleteBtn = form.querySelector(".delete-btn");
-
-                if (confirm("Are you sure you want to delete this completed request? This action cannot be undone.")) {
-                    deleteBtn.disabled = true;
-                    deleteBtn.innerHTML = `
-                    <span class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"></span>
-                    Deleting...
-                `;
-
-                    const row = form.closest('tr');
-                    const allButtons = row.querySelectorAll('button, a.btn');
-                    allButtons.forEach(btn => {
-                        if (btn !== deleteBtn) {
-                            btn.disabled = true;
-                            btn.style.opacity = '0.5';
-                        }
-                    });
-
-                    setTimeout(() => {
-                        form.submit();
-                    }, 200);
-                }
-            });
-        });
-
-        // Reset button states on page show
-        window.addEventListener('pageshow', function(event) {
-            if (event.persisted) {
-                document.querySelectorAll('.delete-btn').forEach(btn => {
-                    btn.disabled = false;
-                    btn.style.opacity = '1';
-                    btn.innerHTML = 'Delete';
-                });
-                document.querySelectorAll('.complete-btn').forEach(btn => {
-                    btn.disabled = false;
-                    btn.style.opacity = '1';
-                    btn.innerHTML = 'Claimed';
-                });
-            }
-        });
-
-        // Keyboard shortcuts
-        document.addEventListener('keydown', function(e) {
-            if ((e.ctrlKey || e.metaKey) && e.key === 'f') {
-                e.preventDefault();
-                searchInput.focus();
-            }
-        });
-
-        // Auto-capitalize name fields
-        const nameFields = ['claimerFirstName', 'claimerLastName'];
-        nameFields.forEach(fieldId => {
-            const field = document.getElementById(fieldId);
-            field?.addEventListener('input', function() {
-                this.value = this.value.replace(/\b\w/g, l => l.toUpperCase());
-            });
+        fetch(claimerForm.action, {
+            method: 'POST',
+            headers: {
+                'X-CSRF-TOKEN': csrfToken,
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+                'X-Requested-With': 'XMLHttpRequest'
+            },
+            body: JSON.stringify(formDataObject),
+        })
+        .then(async response => {
+            if (!response.ok) throw new Error('Error updating claim.');
+            const result = await response.json();
+            showRevertSuccess(result.message);
+            setTimeout(() => window.location.reload(), 1500);
+        })
+        .catch(error => {
+            console.error(error);
+            showRevertError(error.message);
+            setLoadingState(false);
         });
     });
+
+    // ======= LOADING STATES =======
+    function setLoadingState(isLoading) {
+        const formInputs = claimerForm.querySelectorAll('input, select, textarea, button');
+        if (isLoading) {
+            submitClaimBtn.disabled = true;
+            submitClaimBtn.innerHTML = `<span class="spinner-border spinner-border-sm me-1"></span> Processing...`;
+            formInputs.forEach(i => i.disabled = true);
+        } else {
+            submitClaimBtn.disabled = false;
+            submitClaimBtn.innerHTML = `<i class="fas fa-check me-1"></i>Mark as Claimed`;
+            formInputs.forEach(i => i.disabled = false);
+        }
+    }
+
+    // ======= TOAST-STYLE ALERTS INSIDE MODAL =======
+    function showRevertSuccess(message) {
+        let successAlert = document.getElementById('modalRevertSuccessAlert');
+        if (!successAlert) {
+            successAlert = document.createElement('div');
+            successAlert.id = 'modalRevertSuccessAlert';
+            successAlert.className = 'alert alert-success fade show mt-2';
+            successAlert.innerHTML = `
+                <i class="fas fa-check-circle me-2"></i>
+                <span id="revertSuccessMessage"></span>
+            `;
+            claimerForm.querySelector('.modal-body').insertBefore(
+                successAlert,
+                claimerForm.querySelector('.modal-body').firstChild
+            );
+        }
+
+        document.getElementById('revertSuccessMessage').textContent = message;
+        successAlert.style.display = 'block';
+    }
+
+    // ======= ERROR ALERT (same style) =======
+    function showRevertError(message) {
+        let errorAlert = document.getElementById('modalRevertErrorAlert');
+        if (!errorAlert) {
+            errorAlert = document.createElement('div');
+            errorAlert.id = 'modalRevertErrorAlert';
+            errorAlert.className = 'alert alert-danger fade show mt-2';
+            errorAlert.innerHTML = `
+                <i class="fas fa-exclamation-circle me-2"></i>
+                <span id="revertErrorMessage"></span>
+            `;
+            claimerForm.querySelector('.modal-body').insertBefore(
+                errorAlert,
+                claimerForm.querySelector('.modal-body').firstChild
+            );
+        }
+
+        document.getElementById('revertErrorMessage').textContent = message;
+        errorAlert.style.display = 'block';
+    }
+
+
+    // ======= SHORTCUTS =======
+    document.addEventListener('keydown', function (e) {
+        if ((e.ctrlKey || e.metaKey) && e.key === 'f') {
+            e.preventDefault();
+            searchInput.focus();
+        }
+    });
+});
 </script>
+
+
 
 <style>
     /* CORE STYLES */
     #requestsTable {
         font-size: 0.85rem;
     }
+
+
 
     #requestsTable thead th a {
         transition: opacity 0.2s;
@@ -674,6 +651,10 @@
     #searchInput:focus {
         border-color: #1dd3b0;
         box-shadow: 0 0 0 0.2rem rgba(29, 211, 176, 0.25);
+    }
+
+    .modal #tableSearchAlert {
+        display: none !important;
     }
 
     .form-select:focus {

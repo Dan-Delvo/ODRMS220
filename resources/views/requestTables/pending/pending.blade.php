@@ -21,21 +21,21 @@
 </div>
 
 <ul class="nav nav-tabs" data-bs-theme="dark">
-  <li class="nav-item">
-    <a class="nav-link active" aria-current="page" href="{{ route('pending.index') }}">Pending</a>
-  </li>
-  <li class="nav-item">
-    <a class="nav-link  text-dark" href="{{ route('ongoing.index') }}">Processing</a>
-  </li>
-  <li class="nav-item">
-    <a class="nav-link  text-dark" href="{{ route('tables.index') }}">For Release</a>
-  </li>
-  <li class="nav-item">
-    <a class="nav-link  text-dark" href="{{ route('claimed-documents.index') }}">Claimed</a>
-  </li>
-  <li class="nav-item">
-    <a class="nav-link  text-dark" href="{{ route('declined-documents.index') }}">Declined</a>
-  </li>
+    <li class="nav-item">
+        <a class="nav-link active" aria-current="page" href="{{ route('pending.index') }}">Pending</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link  text-dark" href="{{ route('ongoing.index') }}">Processing</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link  text-dark" href="{{ route('tables.index') }}">For Release</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link  text-dark" href="{{ route('claimed-documents.index') }}">Claimed</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link  text-dark" href="{{ route('declined-documents.index') }}">Declined</a>
+    </li>
 </ul>
 
 {{-- Main Card --}}
@@ -80,11 +80,6 @@
                     <option value="asc" {{ request('sort') == 'asc' ? 'selected' : '' }}>Req No. (A-Z)</option>
                     <option value="desc" {{ request('sort') == 'desc' ? 'selected' : '' }}>Req No. (Z-A)</option>
                 </select>
-
-                {{-- Search Button --}}
-                <button type="submit" class="btn btn-light btn-sm">
-                    <i class="fas fa-search"></i> Search
-                </button>
             </div>
         </form>
     </div>
@@ -121,7 +116,6 @@
             <div class="alert alert-warning text-center my-3">
                 @if(request('search'))
                 No pending document requests found matching your search criteria.
-                <a href="{{ route('pending.index') }}" class="btn btn-sm btn-outline-warning ms-2">Clear Search</a>
                 @else
                 No pending document requests found.
                 @endif
@@ -193,7 +187,7 @@
                             <button class="btn btn-sm btn-info"
                                 data-bs-toggle="modal"
                                 data-bs-target="#receiptModal{{ $item->id }}">
-                                Receipt
+                            Receipt
                             </button>
                             @endif --}}
 
@@ -312,13 +306,13 @@
                 @endphp
 
                 @if(in_array($fileExtension, ['jpg', 'jpeg', 'png', 'gif', 'webp']))
-               <img src="/public/{{trim($documentPath)}}" target="_blank"
+                <img src="/public/{{trim($documentPath)}}" target="_blank"
                     alt="Supporting Document"
                     class="img-fluid w-100"
                     style="max-height: 70vh; object-fit: contain;">
                 @elseif($fileExtension === 'pdf')
                 <div class="p-4">
-                    <iframe src="{{ asset($documentPath) }}"
+                    <iframe src="/public/{{trim($documentPath)}}"
                         width="100%"
                         height="400px"
                         style="border: 1px solid #ddd;"></iframe>
@@ -328,7 +322,7 @@
                     <i class="fas fa-file text-muted" style="font-size: 4rem;"></i>
                     <h5 class="mt-3">{{ strtoupper($fileExtension) }} Document</h5>
                     <p class="text-muted">{{ basename($item->supporting_document) }}</p>
-                    <a href="{{ asset($documentPath) }}" class="btn btn-primary" download>
+                    <a href="/public/{{trim($documentPath)}}" class="btn btn-primary" download>
                         <i class="fas fa-download me-1"></i> Download
                     </a>
                 </div>
@@ -377,41 +371,119 @@
         const reasonModal = new bootstrap.Modal(document.getElementById('reasonModal'));
         const reasonInput = document.getElementById('reasonInput');
         const confirmDeclineBtn = document.getElementById('confirmDeclineBtn');
+        const tableContainer = document.getElementById('tableContainer');
+        const loadingSpinner = document.getElementById('loadingSpinner');
 
         let pendingDeclineId = null;
         let searchTimeout = null;
 
-        // Auto-submit form on filter/sort change
-        filterSelect?.addEventListener('change', function() {
-            searchForm.submit();
-        });
+        toggleClearButton();
 
-        sortSelect?.addEventListener('change', function() {
-            searchForm.submit();
-        });
+        // ✅ Show/Hide clear button dynamically
+        function toggleClearButton() {
+            clearSearchBtn.style.display = searchInput.value.trim().length > 0 ? 'inline-block' : 'none';
+        }
 
-        // Clear search button
-        clearSearchBtn?.addEventListener('click', function() {
-            window.location.href = '{{ route("pending.index") }}';
-        });
-
-        // Auto-search with debounce (optional - remove if you want manual search only)
-        searchInput?.addEventListener('input', function() {
+        // ✅ Debounced AJAX search
+        searchInput.addEventListener('input', function() {
+            toggleClearButton();
             clearTimeout(searchTimeout);
-            searchTimeout = setTimeout(() => {
-                if (searchInput.value.length >= 3 || searchInput.value.length === 0) {
-                    searchForm.submit();
-                }
-            }, 500);
+            searchTimeout = setTimeout(() => performAjaxSearch(), 400);
         });
 
-        // Show loading spinner on form submit
-        searchForm?.addEventListener('submit', function() {
-            document.getElementById('loadingSpinner').style.display = 'block';
-            document.getElementById('tableContainer').style.opacity = '0.5';
+        // ✅ Clear search
+        clearSearchBtn.addEventListener('click', function() {
+            searchInput.value = '';
+            toggleClearButton();
+            performAjaxSearch();
         });
 
-        // Decline workflow
+        // ✅ Trigger AJAX when filter/sort changes
+        [filterSelect, sortSelect].forEach(el => el?.addEventListener('change', performAjaxSearch));
+
+        // ✅ Add Reset Button beside filters (your preferred design)
+        const resetBtn = document.createElement('button');
+        resetBtn.type = 'button';
+        resetBtn.className = 'btn btn-light btn-sm';
+        resetBtn.id = 'resetBtn';
+        resetBtn.innerHTML = '<i class="fas fa-redo"></i> Reset';
+        document.getElementById('tableControls').appendChild(resetBtn);
+
+        // ✅ Reset Button logic
+        resetBtn.addEventListener('click', function() {
+            searchInput.value = '';
+            filterSelect.value = 'all';
+            sortSelect.value = 'default';
+            toggleClearButton();
+            performAjaxSearch();
+        });
+
+        // ✅ AJAX Search + Sort + Filter Refresh
+        function performAjaxSearch() {
+            const search = searchInput.value.trim();
+            const filter = filterSelect.value;
+            const sort = sortSelect.value;
+
+            loadingSpinner.style.display = 'block';
+            tableContainer.style.opacity = '0.5';
+
+            const url = `{{ route('pending.index') }}?search=${encodeURIComponent(search)}&filter=${encodeURIComponent(filter)}&sort=${encodeURIComponent(sort)}`;
+
+            fetch(url, {
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest'
+                    }
+                })
+                .then(response => response.text())
+                .then(html => {
+                    const parser = new DOMParser();
+                    const doc = parser.parseFromString(html, 'text/html');
+                    const newTableContainer = doc.querySelector('#tableContainer');
+                    const newPagination = doc.querySelector('.pagination');
+                    const newInfoBanner = doc.querySelector('.alert-info');
+
+                    // Replace table content
+                    tableContainer.innerHTML = newTableContainer ? newTableContainer.innerHTML : '<div class="alert alert-warning text-center my-3">No results found.</div>';
+
+                    // Replace info banner (search summary)
+                    const oldInfoBanner = document.querySelector('.alert-info');
+                    if (oldInfoBanner) oldInfoBanner.remove();
+                    if (newInfoBanner) tableContainer.insertAdjacentElement('beforebegin', newInfoBanner);
+
+                    // Replace pagination
+                    const paginationContainer = document.querySelector('.pagination');
+                    if (paginationContainer && newPagination) paginationContainer.outerHTML = newPagination.outerHTML;
+
+                    loadingSpinner.style.display = 'none';
+                    tableContainer.style.opacity = '1';
+
+                    attachClearAllAjax(); // Rebind after refresh
+                })
+                .catch(err => {
+                    console.error('AJAX Search Error:', err);
+                    loadingSpinner.style.display = 'none';
+                    tableContainer.style.opacity = '1';
+                });
+        }
+
+        // ✅ Turn “Clear All” (alert-info) into AJAX
+        function attachClearAllAjax() {
+            const clearAllBtn = document.querySelector('.alert-info a.btn-outline-info');
+            if (clearAllBtn) {
+                clearAllBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    searchInput.value = '';
+                    filterSelect.value = 'all';
+                    sortSelect.value = 'default';
+                    toggleClearButton();
+                    performAjaxSearch();
+                });
+            }
+        }
+
+        attachClearAllAjax(); // Initial bind
+
+        // 🟥 Decline Workflow
         document.querySelectorAll('.decline-btn').forEach(btn => {
             btn.addEventListener('click', function() {
                 pendingDeclineId = this.dataset.id;
@@ -442,23 +514,16 @@
                 confirmButtonColor: '#dc3545',
                 cancelButtonColor: '#1f2937',
                 confirmButtonText: 'Yes, decline it'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    submitDeclineForm(pendingDeclineId, reason);
-                }
+            }).then(result => {
+                if (result.isConfirmed) submitDeclineForm(pendingDeclineId, reason);
             });
         });
 
         function submitDeclineForm(id, reason) {
             const form = document.createElement('form');
             form.method = 'POST';
-            form.action = `{{ url('pending/decline') }}/${id}`; // ✅ Updated route
-
-            form.innerHTML = `
-        @csrf
-        @method('DELETE')
-        <input type="hidden" name="remarks" value="${reason}">
-    `;
+            form.action = `{{ url('pending/decline') }}/${id}`;
+            form.innerHTML = `@csrf @method('DELETE') <input type="hidden" name="remarks" value="${reason}">`;
 
             Swal.fire({
                 title: 'Declining...',
@@ -471,8 +536,7 @@
             form.submit();
         }
 
-
-        // Accept form handling
+        // ✅ Accept Button Spinner
         document.querySelectorAll('.accept-form').forEach(form => {
             form.addEventListener('submit', function(e) {
                 e.preventDefault();
@@ -481,7 +545,6 @@
                 btn.disabled = true;
                 btn.innerHTML = '<span class="spinner-border spinner-border-sm me-1"></span>Processing...';
 
-                // Disable other buttons in the same row
                 const row = this.closest('tr');
                 row.querySelectorAll('button, a.btn').forEach(b => {
                     if (b !== btn) {
@@ -494,7 +557,7 @@
             });
         });
 
-        // Keyboard shortcuts
+        // ✅ Keyboard shortcut: Ctrl+F focuses search
         document.addEventListener('keydown', function(e) {
             if ((e.ctrlKey || e.metaKey) && e.key === 'f') {
                 e.preventDefault();
@@ -502,7 +565,7 @@
             }
         });
 
-        // Re-enable buttons on page show (back button)
+        // ✅ Re-enable buttons when using browser back
         window.addEventListener('pageshow', function(event) {
             if (event.persisted) {
                 document.querySelectorAll('.accept-btn').forEach(btn => {
@@ -514,8 +577,14 @@
     });
 </script>
 
+
+
 <style>
     /* Core table styles */
+    #clearSearch {
+        display: none;
+    }
+
     #requestsTable {
         font-size: 0.85rem;
     }
