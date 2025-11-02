@@ -22,22 +22,6 @@
 <div class="row">
     <div class="col-md-12">
 
-        @if(session('Status'))
-        <div class="alert alert-success alert-dismissible fade show">
-            <i class="fas fa-check-circle me-2"></i>
-            {{ session('Status') }}
-            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-        </div>
-        @endif
-
-        @if(session('Danger'))
-        <div class="alert alert-danger alert-dismissible fade show">
-            <i class="fas fa-exclamation-triangle me-2"></i>
-            {{ session('Danger') }}
-            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-        </div>
-        @endif
-
         <!-- Search and Filter Section -->
         <div class="card shadow-sm border-0 mb-3">
             <div class="card-body">
@@ -148,26 +132,68 @@
 <div class="row">
     <!-- Backup Button -->
     <div class="col-md-6 mb-3">
-        <button class="btn btn-lg w-100"
-            style="background-color: #1f2937; border-color: #1f2937; color: white;"
-            onclick="window.location.href='{{ route('backup.download') }}'">
-            <i class="fas fa-download me-2"></i> Backup Database
-        </button>
+        <div class="card shadow-sm h-100">
+            <div class="card-body">
+                <h5 class="card-title text-dark mb-3">
+                    <i class="fas fa-download me-2" style="color:#1dd3b0;"></i> Backup Database
+                </h5>
+                <p class="card-text text-muted">
+                    Download a secure, encrypted backup of the entire database.
+                    A unique password will be sent to <strong>nubzman123@gmail.com</strong>.
+                </p>
+                <button class="btn btn-lg w-100 mt-3" id="backupBtn"
+                    style="background-color: #1f2937; border-color: #1f2937; color: white;">
+                    <i class="fas fa-download me-2"></i> Create Backup
+                </button>
+                <div class="alert alert-info mt-3 mb-0" style="font-size: 0.85rem;">
+                    <i class="fas fa-info-circle me-1"></i>
+                    <strong>Note:</strong> Save the password from your email - you'll need it to restore this backup.
+                </div>
+            </div>
+        </div>
     </div>
 
     <!-- Restore Form -->
     <div class="col-md-6 mb-3">
-        <form action="{{ route('backup.restore') }}" method="POST" enctype="multipart/form-data">
-            @csrf
-            <div class="mb-3">
-                <label for="backup_file" class="form-label fw-bold">Select Backup File</label>
-                <input type="file" name="backup_file" id="backup_file" class="form-control" accept=".zip" required>
+        <div class="card shadow-sm h-100">
+            <div class="card-body">
+                <h5 class="card-title text-dark mb-3">
+                    <i class="fas fa-upload me-2" style="color:#dc3545;"></i> Restore Database
+                </h5>
+                <p class="card-text text-muted">
+                    Upload a backup file and enter the password from your email to restore the database.
+                </p>
+                <form action="{{ route('backup.restore') }}" method="POST" enctype="multipart/form-data" id="restoreForm" class="mt-3">
+                    @csrf
+                    <div class="mb-3">
+                        <label for="backup_file" class="form-label fw-bold">
+                            <i class="fas fa-file-archive me-1"></i> Select Backup File
+                        </label>
+                        <input type="file" name="backup_file" id="backup_file" class="form-control" accept=".zip" required>
+                        <small class="text-muted">Accepted format: .zip</small>
+                    </div>
+                    <div class="mb-3">
+                        <label for="backup_password" class="form-label fw-bold">
+                            <i class="fas fa-key me-1"></i> Backup Password
+                        </label>
+                        <input type="text" name="backup_password" id="backup_password" class="form-control"
+                            placeholder="XXXX-XXXX-XXXX-XXXX"
+                            required
+                            minlength="12"
+                            style="font-family: 'Courier New', monospace; letter-spacing: 1px;">
+                        <small class="text-muted">Check email: <strong>nubzman123@gmail.com</strong></small>
+                    </div>
+                    <div class="alert alert-warning mb-3" style="font-size: 0.85rem;">
+                        <i class="fas fa-exclamation-triangle me-1"></i>
+                        <strong>Warning:</strong> This will replace ALL current data!
+                    </div>
+                    <button type="button" id="restoreBtn" class="btn btn-lg w-100"
+                        style="background-color: #dc3545; border-color: #dc3545; color: white;">
+                        <i class="fas fa-upload me-2"></i> Restore Database
+                    </button>
+                </form>
             </div>
-            <button type="submit" class="btn btn-lg w-100"
-                style="background-color: #dc3545; border-color: #dc3545; color: white;">
-                <i class="fas fa-upload me-2"></i> Restore Database
-            </button>
-        </form>
+        </div>
     </div>
 </div>
 
@@ -175,6 +201,96 @@
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
     $(document).ready(function() {
+        // Backup button with SweetAlert
+        $('#backupBtn').on('click', function() {
+            Swal.fire({
+                title: 'Create Database Backup?',
+                html: '<p>A unique backup password will be emailed to:<br><strong>nubzman123@gmail.com</strong></p>',
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonColor: '#1f2937',
+                cancelButtonColor: '#6c757d',
+                confirmButtonText: '<i class="fas fa-download me-2"></i> Create Backup',
+                cancelButtonText: 'Cancel'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // Show loading
+                    Swal.fire({
+                        title: 'Creating Backup...',
+                        html: 'Please wait while we backup your database.',
+                        allowOutsideClick: false,
+                        allowEscapeKey: false,
+                        didOpen: () => {
+                            Swal.showLoading();
+                        }
+                    });
+                    // Redirect to backup download
+                    window.location.href = '{{ route('backup.download') }}';
+                }
+            });
+        });
+
+        // Restore form with SweetAlert
+        $('#restoreBtn').on('click', function(e) {
+            e.preventDefault();
+
+            // Validate form fields
+            const backupFile = $('#backup_file').val();
+            const backupPassword = $('#backup_password').val();
+
+            if (!backupFile) {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Missing File',
+                    text: 'Please select a backup file to restore.',
+                    confirmButtonColor: '#1dd3b0'
+                });
+                return;
+            }
+
+            if (!backupPassword || backupPassword.length < 12) {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Missing Password',
+                    text: 'Please enter the backup password (minimum 12 characters).',
+                    confirmButtonColor: '#1dd3b0'
+                });
+                return;
+            }
+
+            // Show confirmation dialog
+            Swal.fire({
+                title: 'Restore Database?',
+                html: '<div class="text-start">' +
+                      '<p><strong>⚠️ WARNING:</strong> This will replace ALL current data with the backup data.</p>' +
+                      '<p>This action <strong>cannot be undone</strong>.</p>' +
+                      '<p>Are you absolutely sure you want to continue?</p>' +
+                      '</div>',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#dc3545',
+                cancelButtonColor: '#6c757d',
+                confirmButtonText: '<i class="fas fa-upload me-2"></i> Yes, Restore Database',
+                cancelButtonText: 'Cancel',
+                reverseButtons: true
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // Show loading
+                    Swal.fire({
+                        title: 'Restoring Database...',
+                        html: 'Please wait. This may take a few moments.',
+                        allowOutsideClick: false,
+                        allowEscapeKey: false,
+                        didOpen: () => {
+                            Swal.showLoading();
+                        }
+                    });
+                    // Submit the form
+                    $('#restoreForm').submit();
+                }
+            });
+        });
+
         let searchTimeout;
         const searchInput = $('#search');
         const filterSelect = $('#filter');
@@ -197,7 +313,7 @@
             const search = searchInput.val();
             const filter = filterSelect.val();
             const actionType = actionTypeSelect.val();
-            
+
             let badges = '';
             let hasFilters = false;
 
@@ -245,20 +361,20 @@
                 success: function(response) {
                     // Update table body
                     $('#auditTableBody').html(response.html);
-                    
+
                     // Update total records badge
                     $('#totalRecords').text('Total Records: ' + response.total);
-                    
+
                     // Update records info
                     if (response.count > 0) {
                         $('#recordsInfo').text(`Showing ${response.from} - ${response.to} of ${response.total}`);
                     } else {
                         $('#recordsInfo').text('No records');
                     }
-                    
+
                     // Update active filters
                     updateActiveFilters();
-                    
+
                     // Hide loading, show table
                     loadingIndicator.hide();
                     auditTableCard.css('opacity', '1');
@@ -307,7 +423,7 @@
             e.preventDefault();
             const page = $(this).attr('href').split('page=')[1];
             loadAuditTrail(page);
-            
+
             // Scroll to top of table
             $('html, body').animate({
                 scrollTop: auditTableCard.offset().top - 100
@@ -363,5 +479,48 @@
         border-color: #86b7fe;
     }
 </style>
+
+<!-- SweetAlert Notifications -->
+<script>
+    @if(session('success'))
+        Swal.fire({
+            icon: 'success',
+            title: 'Success!',
+            text: '{{ session('success') }}',
+            confirmButtonColor: '#1dd3b0',
+            confirmButtonText: 'OK'
+        });
+    @endif
+
+    @if(session('error'))
+        Swal.fire({
+            icon: 'error',
+            title: 'Error!',
+            text: '{{ session('error') }}',
+            confirmButtonColor: '#dc3545',
+            confirmButtonText: 'OK'
+        });
+    @endif
+
+    @if(session('Status'))
+        Swal.fire({
+            icon: 'success',
+            title: 'Success!',
+            text: '{{ session('Status') }}',
+            confirmButtonColor: '#1dd3b0',
+            confirmButtonText: 'OK'
+        });
+    @endif
+
+    @if(session('Danger'))
+        Swal.fire({
+            icon: 'error',
+            title: 'Error!',
+            text: '{{ session('Danger') }}',
+            confirmButtonColor: '#dc3545',
+            confirmButtonText: 'OK'
+        });
+    @endif
+</script>
 
 @endsection
