@@ -45,7 +45,7 @@ class BackupController extends Controller
                     ]);
                 });
 
-                // Send email only once when audit log is created
+                // TODO: PALITAN NIYO NALANG TO PAR PAG TETESTING KAYO
                 try {
                     Mail::to('nubzman123@gmail.com')->send(
                         new BackupPasswordMail(
