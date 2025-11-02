@@ -9,6 +9,8 @@
             $PermissionPending = App\Models\PermissionRoleModel::getPermission('pending', $roleId);
             $PermissionOngoing = App\Models\PermissionRoleModel::getPermission('ongoing', $roleId);
             $PermissionCompleted = App\Models\PermissionRoleModel::getPermission('completed', $roleId);
+            $PermissionDeclined = App\Models\PermissionRoleModel::getPermission('declined', $roleId);
+            $PermissionClaimed = App\Models\PermissionRoleModel::getPermission('claimed', $roleId);
             $PermissionRole = App\Models\PermissionRoleModel::getPermission('role', $roleId);
             $PermissionAcc = App\Models\PermissionRoleModel::getPermission('user', $roleId);
             $PermissionStud = App\Models\PermissionRoleModel::getPermission('student', $roleId);
@@ -16,9 +18,7 @@
             $PermissionWalk = App\Models\PermissionRoleModel::getPermission('walkinRequest', $roleId);
             $PermissionGen= App\Models\PermissionRoleModel::getPermission('generateReports', $roleId);
             $PermissionAnalytics = App\Models\PermissionRoleModel::getPermission('analytics', $roleId);
-            $PermissionClaimed = App\Models\PermissionRoleModel::getPermission('claimed', $roleId);
             $PermissionAudit = App\Models\PermissionRoleModel::getPermission('auditTrail', $roleId);
-            $PermissionDeclined = App\Models\PermissionRoleModel::getPermission('declined', $roleId);
             $PermissionBulkRequest = App\Models\PermissionRoleModel::getPermission('bulkRequest', $roleId);
             $PermissionAddBulkRequest = App\Models\PermissionRoleModel::getPermission('addBulkRequest', $roleId);
             @endphp
@@ -98,35 +98,7 @@
             @if(!empty($PermissionPending))
             <a class="nav-link text-light sidebar-item" href="{{ route('pending.index') }}">
                 <div class="sb-nav-link-icon"><i class="fas fa-clock"></i></div>
-                Pending Requests
-            </a>
-            @endif
-
-            @if(!empty($PermissionOngoing))
-            <a class="nav-link text-light sidebar-item" href="{{ route('ongoing.index') }}">
-                <div class="sb-nav-link-icon"><i class="fas fa-spinner"></i></div>
-                Processing Requests
-            </a>
-            @endif
-
-            @if(!empty($PermissionCompleted))
-            <a class="nav-link text-light sidebar-item" href="{{ route('tables.index') }}">
-                <div class="sb-nav-link-icon"><i class="fas fa-check-circle"></i></div>
-                For Release Requests
-            </a>
-            @endif
-
-            @if(!empty($PermissionClaimed))
-            <a class="nav-link text-light sidebar-item" href="{{ route('claimed-documents.index') }}">
-                <div class="sb-nav-link-icon"><i class="fas fa-check-circle"></i></div>
-                Claimed Requests
-            </a>
-            @endif
-
-            @if(!empty($PermissionDeclined))
-            <a class="nav-link text-light sidebar-item" href="{{ route('declined-documents.index') }}">
-                <div class="sb-nav-link-icon"><i class="fas fa-check-circle"></i></div>
-                Declined Requests
+                All Requests
             </a>
             @endif
 
