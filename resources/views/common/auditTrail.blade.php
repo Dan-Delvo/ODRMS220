@@ -74,7 +74,7 @@
 
                         <!-- Reset Button -->
                         <div class="col-md-12">
-                            <a href="{{ route('audit.index') }}" class="btn text-white" style="background-color: #1f2937;">
+                            <a href="#" id="resetFilters" class="btn text-white" style="background-color: #1f2937;">
                                 <i class="fas fa-redo me-1"></i> Reset
                             </a>
                         </div>
@@ -89,7 +89,7 @@
                 <i class="fas fa-info-circle me-2"></i>
                 <strong>Active Filters:</strong>
                 <span id="filterBadges"></span>
-                <a href="{{ route('audit.index') }}" class="btn btn-sm btn-outline-info ms-2">Clear All</a>
+                <a href="#" id="clearAllFilters" class="btn btn-sm btn-outline-info ms-2">Clear All</a>
                 <button type="button" class="btn-close" id="closeActiveFilters"></button>
             </div>
         </div>
@@ -338,6 +338,15 @@
             }
         }
 
+        // Clear all filters
+        function clearAllFilters() {
+            searchInput.val('');
+            filterSelect.val('all');
+            actionTypeSelect.val('');
+            toggleClearButton();
+            loadAuditTrail();
+        }
+
         // Load audit trail data via AJAX
         function loadAuditTrail(page = 1) {
             const search = searchInput.val();
@@ -394,7 +403,7 @@
             clearTimeout(searchTimeout);
             searchTimeout = setTimeout(function() {
                 loadAuditTrail();
-            }, 500); // Wait 500ms after user stops typing
+            }, 500);
         });
 
         // Clear search button
@@ -416,6 +425,18 @@
         // Close active filters alert
         $('#closeActiveFilters').on('click', function() {
             $('#activeFilters').hide();
+        });
+
+        // Clear All button - AJAX version
+        $(document).on('click', '#clearAllFilters', function(e) {
+            e.preventDefault();
+            clearAllFilters();
+        });
+
+        // Reset button - AJAX version
+        $(document).on('click', '#resetFilters', function(e) {
+            e.preventDefault();
+            clearAllFilters();
         });
 
         // Handle pagination clicks
@@ -440,9 +461,7 @@
             // ESC to clear search
             if (e.key === 'Escape' && searchInput.val() !== '') {
                 e.preventDefault();
-                searchInput.val('');
-                toggleClearButton();
-                loadAuditTrail();
+                clearAllFilters();
                 searchInput.focus();
             }
         });
@@ -475,7 +494,7 @@
         background-color: #e9ecef;
     }
 
-    .input-group .form-control:focus + #clearSearch {
+    .input-group .form-control:focus+#clearSearch {
         border-color: #86b7fe;
     }
 </style>

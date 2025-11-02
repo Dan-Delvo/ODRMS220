@@ -1,902 +1,902 @@
 @extends('layout.blankpage')
 
 @push('head')
-    <meta name="csrf-token" content="{{ csrf_token() }}">
+<meta name="csrf-token" content="{{ csrf_token() }}">
 @endpush
 
 @section('content')
-    @include('layout.partials.message')
+@include('layout.partials.message')
 
-    {{-- Header Section --}}
-    <div class="row align-items-center">
-        <div class="col-12 col-md-6 mb-3 mb-md-0">
-            <h1 class="mt-4">
-                <span class="badge page-title-badge">For Release Requests</span>
-            </h1>
-            <ol class="breadcrumb mb-0">
-                <li class="breadcrumb-item"><a href="{{ route('dashboard') }}" class="text-dark">Dashboard</a></li>
-                <li class="breadcrumb-item active">For Release Requests</li>
-            </ol>
-        </div>
-        <div class="col-12 col-md-6 text-md-end">
-            <h1 class="mt-md-4">
-                <span class="badge count-badge">Total For Release: {{ $totalCount }}</span>
-            </h1>
+{{-- Header Section --}}
+<div class="row align-items-center">
+    <div class="col-12 col-md-6 mb-3 mb-md-0">
+        <h1 class="mt-4">
+            <span class="badge page-title-badge">For Release Requests</span>
+        </h1>
+        <ol class="breadcrumb mb-0">
+            <li class="breadcrumb-item"><a href="{{ route('dashboard') }}" class="text-dark">Dashboard</a></li>
+            <li class="breadcrumb-item active">For Release Requests</li>
+        </ol>
+    </div>
+    <div class="col-12 col-md-6 text-md-end">
+        <h1 class="mt-md-4">
+            <span class="badge count-badge">Total For Release: {{ $totalCount }}</span>
+        </h1>
+    </div>
+</div>
+
+<x-tabs page='ForRelease' />
+
+{{-- Main Card --}}
+<div class="card shadow-lg border-0 rounded-lg mt-3">
+    {{-- Card Header with Search/Filter Controls --}}
+    <div class="card-header card-header-custom">
+        <h5 class="mb-0">For Release Document Requests</h5>
+
+        {{-- Search/Filter Form --}}
+        <div class="d-flex gap-2 mt-2 mt-md-0 flex-wrap" id="tableControls">
+            {{-- Search Input --}}
+            <div class="input-group" style="width: 300px;">
+                <input type="text"
+                    name="search"
+                    id="searchInput"
+                    class="form-control form-control-sm"
+                    placeholder="Search requests..."
+                    value="{{ request('search') }}"
+                    autocomplete="off">
+                <button class="btn btn-outline-light btn-sm"
+                    type="button"
+                    id="clearSearch"
+                    title="Clear search"
+                    style="display: none;">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+
+            {{-- Filter Dropdown --}}
+            <select name="filter" id="filterSelect" class="form-select form-select-sm filter-select">
+                <option value="all" {{ request('filter') == 'all' ? 'selected' : '' }}>All</option>
+                <option value="student" {{ request('filter') == 'student' ? 'selected' : '' }}>Student</option>
+                <option value="document" {{ request('filter') == 'document' ? 'selected' : '' }}>Document</option>
+                <option value="school" {{ request('filter') == 'school' ? 'selected' : '' }}>School</option>
+                <option value="reqno" {{ request('filter') == 'reqno' ? 'selected' : '' }}>Req No.</option>
+            </select>
+
+            {{-- Sort Dropdown --}}
+            <select name="sort" id="sortSelect" class="form-select form-select-sm sort-select">
+                <option value="default" {{ request('sort') == 'default' ? 'selected' : '' }}>Sort</option>
+                <option value="asc" {{ request('sort') == 'asc' ? 'selected' : '' }}>A-Z</option>
+                <option value="desc" {{ request('sort') == 'desc' ? 'selected' : '' }}>Z-A</option>
+            </select>
+
+            {{-- Reset Button --}}
+            <button type="button" class="btn btn-light btn-sm" id="resetBtn">
+                <i class="fas fa-redo"></i> Reset
+            </button>
         </div>
     </div>
 
-    <x-tabs page='ForRelease' />
+    {{-- Card Body --}}
+    <div class="card-body bg-light">
+        {{-- Search Info Banner --}}
+        @if(!empty(request('search')) || (request('filter') && request('filter') !== 'all') || (request('sort') && request('sort') !== 'default'))
+        <div class="alert alert-info mb-3 py-2 table-info-banner">
+            <small>
+                <i class="fas fa-search me-1"></i>
+                @if(request('search'))
+                Showing results for: <strong>"{{ request('search') }}"</strong>
+                @endif
+                @if(request('filter') && request('filter') !== 'all')
+                in <strong>{{ ucfirst(request('filter')) }}</strong>
+                @endif
+                @if(request('sort') && request('sort') !== 'default')
+                - Sorted by <strong>Request No. ({{ request('sort') === 'asc' ? 'A-Z' : 'Z-A' }})</strong>
+                @endif
+                <a href="{{ route('tables.index') }}" class="btn btn-sm btn-outline-info ms-2" id="clearAllBtn">Clear All</a>
+            </small>
+        </div>
+        @endif
 
-    {{-- Main Card --}}
-    <div class="card shadow-lg border-0 rounded-lg mt-3">
-        {{-- Card Header with Search/Filter Controls --}}
-        <div class="card-header card-header-custom">
-            <h5 class="mb-0">For Release Document Requests</h5>
 
-            {{-- Search/Filter Form --}}
-            <form method="GET" action="{{ route('tables.index') }}" id="searchForm" class="w-100 w-md-auto">
-                <div class="search-controls">
-                    {{-- Search Input --}}
-                    <div class="input-group search-input-group">
-                        <input type="text" name="search" id="searchInput" class="form-control form-control-sm"
-                            placeholder="Search..." value="{{ request('search') }}">
-                        <button class="btn btn-outline-light btn-sm px-2" type="button" id="clearSearch" title="Clear">
-                            <i class="fas fa-times"></i>
-                        </button>
+
+        {{-- Loading Spinner --}}
+        <div id="loadingSpinner" class="text-center my-4" style="display: none;">
+            <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+        </div>
+
+        {{-- Table Container --}}
+        <div class="table-responsive" id="tableContainer">
+            @if ($DocRequests->isEmpty())
+            <div class="alert alert-warning text-center my-3">
+                @if (request('search'))
+                No For Release document requests found matching your search criteria.
+                @else
+                No For Release document requests found.
+                @endif
+            </div>
+            @else
+            <table class="table table-bordered table-hover align-middle" id="requestsTable">
+                <thead class="table-dark">
+                    <tr>
+                        <th class="sortable-header">
+                            <a href="{{ route('tables.index', array_merge(request()->except('page'), ['sort' => request('sort') == 'asc' ? 'desc' : 'asc'])) }}"
+                                class="text-white text-decoration-none d-flex align-items-center gap-1">
+                                <span>Req #</span>
+                                @if (request('sort') == 'asc')
+                                <i class="fas fa-sort-up"></i>
+                                @elseif(request('sort') == 'desc')
+                                <i class="fas fa-sort-down"></i>
+                                @else
+                                <i class="fas fa-sort"></i>
+                                @endif
+                            </a>
+                        </th>
+                        <th>Student</th>
+                        <th>Document</th>
+                        <th title="School/Entity">School</th>
+                        <th>Remarks</th>
+                        <th>Status</th>
+                        <th title="For Release Date">Rel Date</th>
+                        <th class="action-column">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach ($DocRequests as $item)
+                    <tr>
+                        <td class="fw-semibold">{{ $item->req_no }}</td>
+                        <td>{{ strtoupper($item->studentInformation->full_name) }}</td>
+                        <td>{{ $item->documents->DocType }}</td>
+                        <td>{{ strtoupper($item->request_schl_entity) }}</td>
+                        <td>{{ $item->remarks }}</td>
+                        <td><span class="badge bg-success text-white status-badge">{{ $item->status }}</span></td>
+                        <td>{{ $item->forRelease_date }}</td>
+                        <td class="action-column">
+                            <div class="btn-group-vertical btn-group-sm d-md-inline" role="group">
+                                <button type="button" class="btn btn-success btn-sm complete-btn mb-1"
+                                    data-request-id="{{ $item->id }}" data-request-no="{{ $item->req_no }}"
+                                    data-student-name="{{ $item->studentInformation->full_name }}"
+                                    data-bs-toggle="modal" data-bs-target="#claimerModal">
+                                    <i class="fas fa-check me-1"></i>Claimed
+                                </button>
+
+                                @if (!empty($PermissionEdit))
+                                <a href="{{ route('tables.edit', $item->id) }}"
+                                    class="btn btn-sm btn-warning mb-1">
+                                    <i class="fas fa-edit me-1"></i>Edit
+                                </a>
+                                @endif
+                            </div>
+                        </td>
+                    </tr>
+                    @endforeach
+                </tbody>
+            </table>
+            @endif
+        </div>
+
+        {{-- Pagination --}}
+        <div id="paginationContainer">
+            @if (!$DocRequests->isEmpty())
+            <div class="d-flex flex-column justify-content-center align-items-center mt-3">
+                {{ $DocRequests->appends(request()->query())->links() }}
+                <small class="text-muted">
+                    Showing {{ $DocRequests->firstItem() }} - {{ $DocRequests->lastItem() }} of
+                    {{ $DocRequests->total() }}
+                </small>
+            </div>
+            @endif
+        </div>
+    </div>
+</div>
+
+{{-- Claimer Information Modal --}}
+<div class="modal fade" id="claimerModal" tabindex="-1" aria-labelledby="claimerModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header text-white" style="background-color: #1f2937;">
+                <h5 class="modal-title" id="claimerModalLabel">
+                    <i class="fas fa-user-check me-2"></i>Document Claim Information
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                    aria-label="Close"></button>
+            </div>
+            <form id="claimerForm" action="{{ route('document-request3.complete', 0) }}" method="POST"
+                data-swal-loading="true" data-swal-title="Releasing Document Request"
+                data-swal-text="This may take a few seconds...">
+                @csrf
+                @method('PUT')
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <div class="alert alert-info">
+                            <strong>Request No:</strong> <span id="modalRequestNo"></span><br>
+                            <strong>Student:</strong> <span id="modalStudentName"></span>
+                        </div>
                     </div>
 
-                    {{-- Filter Dropdown --}}
-                    <select name="filter" id="filterSelect" class="form-select form-select-sm filter-select">
-                        <option value="all" {{ request('filter') == 'all' ? 'selected' : '' }}>All</option>
-                        <option value="student" {{ request('filter') == 'student' ? 'selected' : '' }}>Student</option>
-                        <option value="document" {{ request('filter') == 'document' ? 'selected' : '' }}>Document</option>
-                        <option value="school" {{ request('filter') == 'school' ? 'selected' : '' }}>School</option>
-                        <option value="reqno" {{ request('filter') == 'reqno' ? 'selected' : '' }}>Req No.</option>
-                    </select>
+                    <div class="form-check mb-3">
+                        <input class="form-check-input thick-outline" type="checkbox" id="sameAsStudent">
+                        <label class="form-check-label fw-bold" for="sameAsStudent">
+                            Claimer is the same as the requestor
+                        </label>
+                    </div>
 
-                    {{-- Sort Dropdown --}}
-                    <select name="sort" id="sortSelect" class="form-select form-select-sm sort-select">
-                        <option value="default" {{ request('sort') == 'default' ? 'selected' : '' }}>Sort</option>
-                        <option value="asc" {{ request('sort') == 'asc' ? 'selected' : '' }}>A-Z</option>
-                        <option value="desc" {{ request('sort') == 'desc' ? 'selected' : '' }}>Z-A</option>
-                    </select>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="claimerFirstName" class="form-label">
+                                    <i class="fas fa-user me-1"></i>First Name <span class="text-danger">*</span>
+                                </label>
+                                <input type="text" class="form-control" id="claimerFirstName"
+                                    name="claimer_first_name" required>
+                                <div class="invalid-feedback">
+                                    Please provide the claimer's first name.
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="claimerLastName" class="form-label">
+                                    <i class="fas fa-user me-1"></i>Last Name <span class="text-danger">*</span>
+                                </label>
+                                <input type="text" class="form-control" id="claimerLastName"
+                                    name="claimer_last_name" required>
+                                <div class="invalid-feedback">
+                                    Please provide the claimer's last name.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
 
-                    {{-- Search Button --}}
-                    <button type="submit" class="btn btn-light btn-sm search-btn px-2">
-                        <i class="fas fa-search"></i>
+                    <div class="mb-3">
+                        <label for="claimerDate" class="form-label">
+                            <i class="fas fa-calendar-alt me-1"></i>Date <span class="text-danger">*</span>
+                        </label>
+                        <input type="date" class="form-control" id="claimerDate" name="claimer_date" required>
+                        <div class="invalid-feedback">
+                            Please provide a valid date.
+                        </div>
+                        <small class="form-text text-muted">Select the appropriate date</small>
+                    </div>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn text-white" style="background-color: #1f2937;"
+                        data-bs-dismiss="modal">
+                        <i class="fas fa-times me-1"></i>Cancel
+                    </button>
+                    <button type="submit" class="btn text-white" style="background-color: #1dd3b0"
+                        id="submitClaimBtn">
+                        <i class="fas fa-check me-1"></i>Mark as Claimed
                     </button>
                 </div>
             </form>
         </div>
-
-        {{-- Card Body --}}
-        <div class="card-body bg-light">
-            {{-- Search Info Banner --}}
-            @if (request('search'))
-                <div class="alert alert-info mb-3 py-2">
-                    <small>
-                        <i class="fas fa-search me-1"></i>
-                        Showing results for: <strong>"{{ request('search') }}"</strong>
-                        @if (request('filter') != 'all')
-                            in <strong>{{ ucfirst(request('filter')) }}</strong>
-                        @endif
-                        @if (request('sort') != 'default')
-                            - Sorted by <strong>Request No. ({{ request('sort') == 'asc' ? 'A-Z' : 'Z-A' }})</strong>
-                        @endif
-                        <a href="{{ route('tables.index') }}" class="btn btn-sm btn-outline-info ms-2">Clear All</a>
-                    </small>
-                </div>
-            @endif
-
-            {{-- Loading Spinner --}}
-            <div id="loadingSpinner" class="text-center my-4" style="display: none;">
-                <div class="spinner-border text-primary" role="status">
-                    <span class="visually-hidden">Loading...</span>
-                </div>
-            </div>
-
-            {{-- Table Container --}}
-            <div class="table-responsive" id="tableContainer">
-                @if ($DocRequests->isEmpty())
-                    <div class="alert alert-warning text-center my-3">
-                        @if (request('search'))
-                            No For Release document requests found matching your search criteria.
-                            <a href="{{ route('tables.index') }}" class="btn btn-sm btn-outline-warning ms-2">Clear
-                                Search</a>
-                        @else
-                            No For Release document requests found.
-                        @endif
-                    </div>
-                @else
-                    <table class="table table-bordered table-hover align-middle" id="requestsTable">
-                        <thead class="table-dark">
-                            <tr>
-                                <th class="sortable-header">
-                                    <a href="{{ route('tables.index', array_merge(request()->except('page'), ['sort' => request('sort') == 'asc' ? 'desc' : 'asc'])) }}"
-                                        class="text-white text-decoration-none d-flex align-items-center gap-1">
-                                        <span>Req #</span>
-                                        @if (request('sort') == 'asc')
-                                            <i class="fas fa-sort-up"></i>
-                                        @elseif(request('sort') == 'desc')
-                                            <i class="fas fa-sort-down"></i>
-                                        @else
-                                            <i class="fas fa-sort"></i>
-                                        @endif
-                                    </a>
-                                </th>
-                                <th>Student</th>
-                                <th>Document</th>
-                                <th title="School/Entity">School</th>
-                                <th>Remarks</th>
-                                <th>Status</th>
-                                <th title="For Release Date">Rel Date</th>
-                                <th class="action-column">Action</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach ($DocRequests as $item)
-                                <tr>
-                                    <td class="fw-semibold">{{ $item->req_no }}</td>
-                                    <td>{{ strtoupper($item->studentInformation->full_name) }}</td>
-                                    <td>{{ $item->documents->DocType }}</td>
-                                    <td>{{ strtoupper($item->request_schl_entity) }}</td>
-                                    <td>{{ $item->remarks }}</td>
-                                    <td><span class="badge bg-success text-white status-badge">{{ $item->status }}</span></td>
-                                    <td>{{ $item->forRelease_date }}</td>
-                                    <td class="action-column">
-                                        <div class="btn-group-vertical btn-group-sm d-md-inline" role="group">
-                                            <button type="button" class="btn btn-success btn-sm complete-btn mb-1"
-                                                data-request-id="{{ $item->id }}" data-request-no="{{ $item->req_no }}"
-                                                data-student-name="{{ $item->studentInformation->full_name }}"
-                                                data-bs-toggle="modal" data-bs-target="#claimerModal">
-                                                <i class="fas fa-check me-1"></i>Claimed
-                                            </button>
-
-                                            @if (!empty($PermissionEdit))
-                                                <a href="{{ route('tables.edit', $item->id) }}"
-                                                    class="btn btn-sm btn-warning mb-1">
-                                                    <i class="fas fa-edit me-1"></i>Edit
-                                                </a>
-                                            @endif
-                                        </div>
-                                    </td>
-                                </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
-                @endif
-            </div>
-
-            {{-- Pagination --}}
-            @if (!$DocRequests->isEmpty())
-                <div class="d-flex flex-column justify-content-center align-items-center mt-3">
-                    {{ $DocRequests->appends(request()->query())->links() }}
-                    <small class="text-muted">
-                        Showing {{ $DocRequests->firstItem() }} - {{ $DocRequests->lastItem() }} of
-                        {{ $DocRequests->total() }}
-                    </small>
-                </div>
-            @endif
-        </div>
     </div>
+</div>
 
-    {{-- Claimer Information Modal --}}
-    <div class="modal fade" id="claimerModal" tabindex="-1" aria-labelledby="claimerModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header text-white" style="background-color: #1f2937;">
-                    <h5 class="modal-title" id="claimerModalLabel">
-                        <i class="fas fa-user-check me-2"></i>Document Claim Information
-                    </h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
-                        aria-label="Close"></button>
-                </div>
-                <form id="claimerForm" action="{{ route('document-request3.complete', 0) }}" method="POST"
-                    data-swal-loading="true" data-swal-title="Releasing Document Request"
-                    data-swal-text="This may take a few seconds...">
-                    @csrf
-                    @method('PUT')
-                    <div class="modal-body">
-                        <div class="mb-3">
-                            <div class="alert alert-info">
-                                <strong>Request No:</strong> <span id="modalRequestNo"></span><br>
-                                <strong>Student:</strong> <span id="modalStudentName"></span>
-                            </div>
-                        </div>
+{{-- JavaScript --}}
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        // ======= ELEMENT REFERENCES =======
+        const searchInput = document.getElementById('searchInput');
+        const clearSearchBtn = document.getElementById('clearSearch');
+        const filterSelect = document.getElementById('filterSelect');
+        const sortSelect = document.getElementById('sortSelect');
+        const resetBtn = document.getElementById('resetBtn');
+        const loadingSpinner = document.getElementById('loadingSpinner');
+        const tableContainer = document.getElementById('tableContainer');
+        let searchTimeout = null;
 
-                        <div class="form-check mb-3">
-                            <input class="form-check-input thick-outline" type="checkbox" id="sameAsStudent">
-                            <label class="form-check-label fw-bold" for="sameAsStudent">
-                                Claimer is the same as the requestor
-                            </label>
-                        </div>
+        // ======= INITIAL STATE =======
+        toggleClearButton();
+        attachCompleteButtonListeners();
+        attachClearAllListener();
 
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="mb-3">
-                                    <label for="claimerFirstName" class="form-label">
-                                        <i class="fas fa-user me-1"></i>First Name <span class="text-danger">*</span>
-                                    </label>
-                                    <input type="text" class="form-control" id="claimerFirstName"
-                                        name="claimer_first_name" required>
-                                    <div class="invalid-feedback">
-                                        Please provide the claimer's first name.
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="mb-3">
-                                    <label for="claimerLastName" class="form-label">
-                                        <i class="fas fa-user me-1"></i>Last Name <span class="text-danger">*</span>
-                                    </label>
-                                    <input type="text" class="form-control" id="claimerLastName"
-                                        name="claimer_last_name" required>
-                                    <div class="invalid-feedback">
-                                        Please provide the claimer's last name.
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+        // ======= CLEAR BUTTON VISIBILITY =======
+        function toggleClearButton() {
+            clearSearchBtn.style.display = searchInput.value.trim().length > 0 ? 'inline-block' : 'none';
+        }
 
-                        <div class="mb-3">
-                            <label for="claimerDate" class="form-label">
-                                <i class="fas fa-calendar-alt me-1"></i>Date <span class="text-danger">*</span>
-                            </label>
-                            <input type="date" class="form-control" id="claimerDate" name="claimer_date" required>
-                            <div class="invalid-feedback">
-                                Please provide a valid date.
-                            </div>
-                            <small class="form-text text-muted">Select the appropriate date</small>
-                        </div>
+        // ======= SEARCH INPUT =======
+        searchInput.addEventListener('input', function() {
+            toggleClearButton();
+            clearTimeout(searchTimeout);
+            searchTimeout = setTimeout(() => performAjaxSearch(), 400);
+        });
 
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn text-white" style="background-color: #1f2937;"
-                            data-bs-dismiss="modal">
-                            <i class="fas fa-times me-1"></i>Cancel
-                        </button>
-                        <button type="submit" class="btn text-white" style="background-color: #1dd3b0"
-                            id="submitClaimBtn">
-                            <i class="fas fa-check me-1"></i>Mark as Claimed
-                        </button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
+        // ======= CLEAR SEARCH BUTTON =======
+        clearSearchBtn.addEventListener('click', function() {
+            searchInput.value = '';
+            toggleClearButton();
+            performAjaxSearch();
+        });
 
-    {{-- JavaScript --}}
-    <script>
-        document.addEventListener("DOMContentLoaded", function() {
-            // --- Search/Filter/Sort Logic ---
-            const searchForm = document.getElementById('searchForm');
-            const searchInput = document.getElementById('searchInput');
-            const clearSearchBtn = document.getElementById('clearSearch');
-            const filterSelect = document.getElementById('filterSelect');
-            const sortSelect = document.getElementById('sortSelect');
+        // ======= FILTER AND SORT SELECTS =======
+        [filterSelect, sortSelect].forEach(el => {
+            el?.addEventListener('change', performAjaxSearch);
+        });
 
-            // Auto-submit form on filter/sort change
-            filterSelect?.addEventListener('change', function() {
-                searchForm.submit();
-            });
+        // ======= RESET BUTTON =======
+        resetBtn.addEventListener('click', function() {
+            searchInput.value = '';
+            filterSelect.value = 'all';
+            sortSelect.value = 'default';
+            toggleClearButton();
+            performAjaxSearch();
+        });
 
-            sortSelect?.addEventListener('change', function() {
-                const url = new URL(searchForm.action);
-                const params = new URLSearchParams(url.search);
-                params.set('sort', this.value);
-                params.delete('page');
-                url.search = params.toString();
-                searchForm.action = url.toString();
-                searchForm.submit();
-            });
+        // ======= AJAX SEARCH FUNCTION =======
+        function performAjaxSearch() {
+            const search = searchInput.value.trim();
+            const filter = filterSelect.value;
+            const sort = sortSelect.value;
 
-            // Clear search button
-            clearSearchBtn?.addEventListener('click', function() {
-                if (searchInput.value || '{{ request('
-                                filter ') }}' != 'all' ||
-                    '{{ request('
-                                    sort ') }}' != 'default') {
-                    window.location.href = '{{ route('tables.index') }}';
-                } else {
-                    searchInput.value = '';
-                }
-            });
+            loadingSpinner.style.display = 'block';
+            tableContainer.style.opacity = '0.5';
 
-            // Show loading spinner on form submit
-            searchForm?.addEventListener('submit', function() {
-                document.getElementById('loadingSpinner').style.display = 'block';
-                document.getElementById('tableContainer').style.opacity = '0.5';
-            });
+            const url = `{{ route('tables.index') }}?search=${encodeURIComponent(search)}&filter=${encodeURIComponent(filter)}&sort=${encodeURIComponent(sort)}`;
 
-            // --- Claimer Modal Logic ---
-            const sameAsStudentCheckbox = document.getElementById('sameAsStudent');
-            const claimerFirstName = document.getElementById('claimerFirstName');
-            const claimerLastName = document.getElementById('claimerLastName');
-            const claimerDate = document.getElementById('claimerDate');
-            const claimerModal = document.getElementById('claimerModal');
-
-            function fillClaimerInfo() {
-                const studentName = document.getElementById('modalStudentName').textContent.trim();
-                if (sameAsStudentCheckbox.checked) {
-                    if (studentName) {
-                        const nameParts = studentName.split(' ');
-                        claimerLastName.value = nameParts.pop() || ''; // Assume last word is last name
-                        claimerFirstName.value = nameParts.join(' '); // Remainder is first name
-
-                        claimerFirstName.setAttribute('readonly', true);
-                        claimerLastName.setAttribute('readonly', true);
+            fetch(url, {
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest'
                     }
-                } else {
-                    claimerFirstName.value = '';
-                    claimerLastName.value = '';
-                    claimerFirstName.removeAttribute('readonly');
-                    claimerLastName.removeAttribute('readonly');
-                }
-            }
+                })
+                .then(res => res.text())
+                .then(html => {
+                    const parser = new DOMParser();
+                    const doc = parser.parseFromString(html, 'text/html');
 
-            sameAsStudentCheckbox.addEventListener('change', fillClaimerInfo);
+                    const newTableContainer = doc.querySelector('#tableContainer');
+                    const newInfoBanner = doc.querySelector('.table-info-banner');
+                    const newPaginationWrapper = doc.querySelector('#paginationContainer');
 
-            // Handle Claimed button clicks - populate modal
-            document.querySelectorAll('.complete-btn').forEach(btn => {
-                btn.addEventListener('click', function() {
-                    const requestId = this.getAttribute('data-request-id');
-                    const requestNo = this.getAttribute('data-request-no');
-                    const studentName = this.getAttribute('data-student-name');
+                    // Update table
+                    tableContainer.innerHTML = newTableContainer ? newTableContainer.innerHTML : '<div class="alert alert-warning text-center my-3">No results found.</div>';
 
-                    document.getElementById('modalRequestNo').textContent = requestNo;
-                    document.getElementById('modalStudentName').textContent = studentName;
+                    // Update info banner
+                    const oldInfoBanner = document.querySelector('.table-info-banner');
+                    if (oldInfoBanner) oldInfoBanner.remove();
 
-                    const form = document.getElementById('claimerForm');
-                    // Fixed to match the actual route: /tables/completeRequest/{id}
-                    form.action = `{{ url('tables/completeRequest') }}/${requestId}`;
+                    if (newInfoBanner) {
+                        const cardBody = document.querySelector('.card-body.bg-light');
+                        cardBody.insertBefore(newInfoBanner, cardBody.firstChild);
+                    }
 
-                    // Reset form state
-                    form.reset();
-                    form.classList.remove('was-validated');
-                    sameAsStudentCheckbox.checked = false;
+                    // Update pagination - FIXED
+                    const paginationContainer = document.querySelector('#paginationContainer');
+                    if (paginationContainer && newPaginationWrapper) {
+                        paginationContainer.innerHTML = newPaginationWrapper.innerHTML;
+                    } else if (paginationContainer && !newPaginationWrapper) {
+                        paginationContainer.innerHTML = ''; // Clear pagination if no results
+                    }
 
-                    // Clear name fields and remove readonly
-                    claimerFirstName.value = '';
-                    claimerLastName.value = '';
-                    claimerFirstName.removeAttribute('readonly');
-                    claimerLastName.removeAttribute('readonly');
+                    attachCompleteButtonListeners();
+                    attachClearAllListener();
 
-                    // Set today's date as default
-                    const today = new Date().toISOString().split('T')[0];
-                    claimerDate.value = today;
-
-                    // Remove previous error/success alerts
-                    document.getElementById('claimerForm').querySelectorAll(
-                        '.alert-danger, .alert-success').forEach(alert => {
-                        if (!alert.classList.contains('alert-info')) {
-                            alert.remove();
-                        }
-                    });
-
-                    setLoadingState(false);
+                    loadingSpinner.style.display = 'none';
+                    tableContainer.style.opacity = '1';
+                })
+                .catch(err => {
+                    console.error('AJAX Search Error:', err);
+                    loadingSpinner.style.display = 'none';
+                    tableContainer.style.opacity = '1';
                 });
-            });
+        }
 
-            // Reset modal state when hidden
-            claimerModal?.addEventListener('hidden.bs.modal', function() {
-                const claimerForm = document.getElementById('claimerForm');
-                claimerForm.classList.remove('was-validated');
-                document.getElementById('claimerForm').querySelectorAll('.alert-danger, .alert-success')
-                    .forEach(alert => {
-                        if (!alert.classList.contains('alert-info')) {
-                            alert.remove();
-                        }
-                    });
-                setLoadingState(false);
-            });
-
-            // CLAIMER FORM SUBMISSION
-            const claimerForm = document.getElementById('claimerForm');
-            const submitClaimBtn = document.getElementById('submitClaimBtn');
-
-            claimerForm.addEventListener('submit', function(e) {
+        // ======= AJAX PAGINATION HANDLER =======
+        document.addEventListener('click', function(e) {
+            const paginationLink = e.target.closest('.pagination a');
+            if (paginationLink) {
                 e.preventDefault();
+                const url = paginationLink.href;
 
-                // Validate form
-                if (!claimerForm.checkValidity()) {
-                    e.stopPropagation();
-                    claimerForm.classList.add('was-validated');
-                    return;
-                }
+                loadingSpinner.style.display = 'block';
+                tableContainer.style.opacity = '0.5';
 
-                // Ensure date is set
-                if (!claimerDate.value) {
-                    claimerDate.value = new Date().toISOString().split('T')[0];
-                }
-
-                setLoadingState(true);
-
-                // Get CSRF token
-                let csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
-                if (!csrfToken) {
-                    csrfToken = claimerForm.querySelector('input[name="_token"]')?.value;
-                }
-
-                if (!csrfToken) {
-                    console.error('CSRF token not found!');
-                    showError('Security token missing. Please refresh the page.');
-                    setLoadingState(false);
-                    return;
-                }
-
-                // --- FIX STARTS HERE: Prepare data as a JSON object ---
-                const formDataObject = {
-                    claimer_first_name: claimerFirstName.value,
-                    claimer_last_name: claimerLastName.value,
-                    claimer_date: claimerDate.value,
-                    _method: 'PUT',
-                    _token: csrfToken // Include the token in the payload
-                };
-
-                const actionUrl = claimerForm.action;
-                // --- FIX ENDS HERE ---
-
-                // Submit using fetch
-                fetch(actionUrl, {
-                        method: 'POST', // Use POST with _method: 'PUT' override
+                fetch(url, {
                         headers: {
-                            'X-CSRF-TOKEN': csrfToken,
-                            'Accept': 'application/json',
-                            'Content-Type': 'application/json', // CRITICAL FIX: Set Content-Type for JSON
                             'X-Requested-With': 'XMLHttpRequest'
-                        },
-                        body: JSON.stringify(formDataObject), // CRITICAL FIX: Send data as JSON string
-                        credentials: 'same-origin'
+                        }
                     })
-                    .then(async response => {
-                        // Explicitly check for 419 session expired
-                        if (response.status === 419) {
-                            throw new Error(
-                            'Session expired. Please refresh the page (Error 419).');
+                    .then(response => response.text())
+                    .then(html => {
+                        const parser = new DOMParser();
+                        const doc = parser.parseFromString(html, 'text/html');
+                        const newTableContainer = doc.querySelector('#tableContainer');
+                        const newPaginationWrapper = doc.querySelector('#paginationContainer');
+
+                        // Update table
+                        tableContainer.innerHTML = newTableContainer ?
+                            newTableContainer.innerHTML :
+                            '<div class="alert alert-warning text-center my-3">No results found.</div>';
+
+                        // Update pagination - FIXED
+                        const paginationContainer = document.querySelector('#paginationContainer');
+                        if (paginationContainer && newPaginationWrapper) {
+                            paginationContainer.innerHTML = newPaginationWrapper.innerHTML;
                         }
 
-                        if (!response.ok) {
-                            let errorMessage = 'An error occurred while processing the request.';
-                            try {
-                                const errorData = await response.json();
+                        loadingSpinner.style.display = 'none';
+                        tableContainer.style.opacity = '1';
 
-                                if (errorData.message) {
-                                    errorMessage = errorData.message;
-                                } else if (errorData.errors) {
-                                    const errors = Object.values(errorData.errors).flat();
-                                    errorMessage = 'Validation Failed: ' + errors.join('; ');
-                                } else if (response.status === 404) {
-                                    errorMessage =
-                                        'Request not found. Please refresh the page (Error 404).';
-                                }
-                            } catch (e) {
-                                errorMessage =
-                                    `Network or server error (Status ${response.status}).`;
-                            }
-                            throw new Error(errorMessage);
-                        }
-
-                        // Handle successful response
-                        let result = {};
-                        const contentType = response.headers.get('content-type');
-                        if (contentType && contentType.includes('application/json')) {
-                            result = await response.json();
-                        }
-
-                        const successMsg = result.message ||
-                            'Document marked as claimed successfully!';
-                        showSuccess(successMsg);
-
-                        // Redirect or reload after short delay
-                        setTimeout(() => {
-                            if (result.redirect) {
-                                window.location.href = result.redirect;
-                            } else {
-                                window.location.reload();
-                            }
-                        }, 1500);
-                    })
-                    .catch(error => {
-                        console.error('Fetch error:', error);
-                        showError(error.message);
-                        setLoadingState(false);
-                    });
-            });
-
-            function setLoadingState(isLoading) {
-                const formInputs = claimerForm.querySelectorAll('input, select, textarea, button');
-
-                if (isLoading) {
-                    submitClaimBtn.disabled = true;
-                    submitClaimBtn.innerHTML = `
-                <span class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"></span>
-                Processing...
-            `;
-                    formInputs.forEach(input => {
-                        if (input !== submitClaimBtn) {
-                            input.disabled = true;
-                        }
-                    });
-                } else {
-                    submitClaimBtn.disabled = false;
-                    submitClaimBtn.innerHTML = `
-                <i class="fas fa-check me-1"></i>Mark as Claimed
-            `;
-                    formInputs.forEach(input => {
-                        input.disabled = false;
-                    });
-                }
-            }
-
-            function showError(message) {
-                let errorAlert = document.getElementById('modalErrorAlert');
-                if (!errorAlert) {
-                    errorAlert = document.createElement('div');
-                    errorAlert.id = 'modalErrorAlert';
-                    errorAlert.className = 'alert alert-danger alert-dismissible fade show';
-                    errorAlert.innerHTML = `
-                <strong>Error:</strong> <span id="errorMessage"></span>
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-            `;
-                    // Insert error message after the alert-info box in the modal body
-                    claimerForm.querySelector('.modal-body').insertBefore(errorAlert, claimerForm.querySelector(
-                        '.modal-body > .mb-3:first-child').nextSibling);
-                }
-
-                document.getElementById('errorMessage').textContent = message;
-                errorAlert.style.display = 'block';
-                errorAlert.scrollIntoView({
-                    behavior: 'smooth',
-                    block: 'nearest'
-                });
-            }
-
-            function showSuccess(message) {
-                let successAlert = document.getElementById('modalSuccessAlert');
-                if (!successAlert) {
-                    successAlert = document.createElement('div');
-                    successAlert.id = 'modalSuccessAlert';
-                    successAlert.className = 'alert alert-success fade show';
-                    successAlert.innerHTML = `
-                <i class="fas fa-check-circle me-2"></i><span id="successMessage"></span>
-            `;
-                    // Insert success message after the alert-info box in the modal body
-                    claimerForm.querySelector('.modal-body').insertBefore(successAlert, claimerForm.querySelector(
-                        '.modal-body > .mb-3:first-child').nextSibling);
-                }
-
-                document.getElementById('successMessage').textContent = message;
-                successAlert.style.display = 'block';
-            }
-
-            // --- Delete Logic ---
-            const deleteForms = document.querySelectorAll(".delete-form");
-            deleteForms.forEach(form => {
-                form.addEventListener("submit", function(e) {
-                    e.preventDefault();
-
-                    const deleteBtn = form.querySelector(".delete-btn");
-
-                    if (confirm(
-                            "Are you sure you want to delete this completed request? This action cannot be undone."
-                            )) {
-                        deleteBtn.disabled = true;
-                        deleteBtn.innerHTML = `
-                    <span class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"></span>
-                    Deleting...
-                `;
-
-                        const row = form.closest('tr');
-                        const allButtons = row.querySelectorAll('button, a.btn');
-                        allButtons.forEach(btn => {
-                            if (btn !== deleteBtn) {
-                                btn.disabled = true;
-                                btn.style.opacity = '0.5';
-                            }
+                        // Scroll to top of card
+                        document.querySelector('.card').scrollIntoView({
+                            behavior: 'smooth',
+                            block: 'start'
                         });
 
-                        setTimeout(() => {
-                            form.submit();
-                        }, 200);
-                    }
-                });
-            });
-
-            // Reset button states on page show
-            window.addEventListener('pageshow', function(event) {
-                if (event.persisted) {
-                    document.querySelectorAll('.delete-btn').forEach(btn => {
-                        btn.disabled = false;
-                        btn.style.opacity = '1';
-                        btn.innerHTML = 'Delete';
+                        attachCompleteButtonListeners();
+                        attachClearAllListener();
+                    })
+                    .catch(err => {
+                        console.error('AJAX Pagination Error:', err);
+                        loadingSpinner.style.display = 'none';
+                        tableContainer.style.opacity = '1';
                     });
-                    document.querySelectorAll('.complete-btn').forEach(btn => {
-                        btn.disabled = false;
-                        btn.style.opacity = '1';
-                        btn.innerHTML = 'Claimed';
-                    });
-                }
-            });
-
-            // Keyboard shortcuts
-            document.addEventListener('keydown', function(e) {
-                if ((e.ctrlKey || e.metaKey) && e.key === 'f') {
-                    e.preventDefault();
-                    searchInput.focus();
-                }
-            });
-
-            // Auto-capitalize name fields
-            const nameFields = ['claimerFirstName', 'claimerLastName'];
-            nameFields.forEach(fieldId => {
-                const field = document.getElementById(fieldId);
-                field?.addEventListener('input', function() {
-                    this.value = this.value.replace(/\b\w/g, l => l.toUpperCase());
-                });
-            });
+            }
         });
-    </script>
 
-    <style>
-        /* ===== CORE VARIABLES ===== */
-        :root {
-            --primary-color: #1dd3b0;
-            --secondary-color: #1f2937;
-            --success-color: #28a745;
-            --warning-color: #ffc107;
-            --danger-color: #dc3545;
-            --info-color: #17a2b8;
+        // ======= CLEAR ALL BUTTON (AJAX) =======
+        function attachClearAllListener() {
+            const clearAllBtn = document.getElementById('clearAllBtn');
+            if (clearAllBtn) {
+                clearAllBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    searchInput.value = '';
+                    filterSelect.value = 'all';
+                    sortSelect.value = 'default';
+                    toggleClearButton();
+                    performAjaxSearch();
+                });
+            }
         }
 
-        /* ===== HEADER BADGES ===== */
-        .page-title-badge {
-            background-color: var(--primary-color);
-            font-size: clamp(1.25rem, 4vw, 2rem);
-            padding: 0.5rem 1rem;
+        // ======= COMPLETE BUTTON HANDLER =======
+        function attachCompleteButtonListeners() {
+            document.querySelectorAll('.complete-btn').forEach(btn => {
+                btn.addEventListener('click', handleCompleteClick);
+            });
         }
 
-        .count-badge {
-            background-color: var(--secondary-color);
-            font-size: clamp(1rem, 3vw, 2rem);
-            padding: 0.5rem 1rem;
+        // ======= MODAL HANDLING =======
+        const sameAsStudentCheckbox = document.getElementById('sameAsStudent');
+        const claimerFirstName = document.getElementById('claimerFirstName');
+        const claimerLastName = document.getElementById('claimerLastName');
+        const claimerDate = document.getElementById('claimerDate');
+        const claimerModal = document.getElementById('claimerModal');
+        const claimerForm = document.getElementById('claimerForm');
+        const submitClaimBtn = document.getElementById('submitClaimBtn');
+
+        sameAsStudentCheckbox?.addEventListener('change', fillClaimerInfo);
+
+        function fillClaimerInfo() {
+            const studentName = document.getElementById('modalStudentName').textContent.trim();
+            if (sameAsStudentCheckbox.checked && studentName) {
+                const nameParts = studentName.split(' ');
+                claimerLastName.value = nameParts.pop() || '';
+                claimerFirstName.value = nameParts.join(' ');
+                claimerFirstName.readOnly = true;
+                claimerLastName.readOnly = true;
+            } else {
+                claimerFirstName.value = '';
+                claimerLastName.value = '';
+                claimerFirstName.readOnly = false;
+                claimerLastName.readOnly = false;
+            }
         }
 
-        /* ===== CARD HEADER ===== */
+        function handleCompleteClick() {
+            const requestId = this.dataset.requestId;
+            const requestNo = this.dataset.requestNo;
+            const studentName = this.dataset.studentName;
+
+            document.getElementById('modalRequestNo').textContent = requestNo;
+            document.getElementById('modalStudentName').textContent = studentName;
+
+            claimerForm.action = `{{ url('tables/completeRequest') }}/${requestId}`;
+            claimerForm.reset();
+            claimerForm.classList.remove('was-validated');
+            sameAsStudentCheckbox.checked = false;
+            claimerFirstName.readOnly = false;
+            claimerLastName.readOnly = false;
+
+            const today = new Date().toISOString().split('T')[0];
+            claimerDate.value = today;
+
+            claimerForm.querySelectorAll('.alert-danger, .alert-success').forEach(alert => {
+                if (!alert.classList.contains('alert-info')) alert.remove();
+            });
+
+            setLoadingState(false);
+        }
+
+        claimerModal?.addEventListener('hidden.bs.modal', function() {
+            claimerForm.classList.remove('was-validated');
+            claimerForm.querySelectorAll('.alert-danger, .alert-success').forEach(alert => {
+                if (!alert.classList.contains('alert-info')) alert.remove();
+            });
+            setLoadingState(false);
+        });
+
+        // ======= CLAIMER FORM SUBMIT =======
+        claimerForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            if (!claimerForm.checkValidity()) {
+                e.stopPropagation();
+                claimerForm.classList.add('was-validated');
+                return;
+            }
+
+            setLoadingState(true);
+            const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+            const formDataObject = {
+                claimer_first_name: claimerFirstName.value,
+                claimer_last_name: claimerLastName.value,
+                claimer_date: claimerDate.value,
+                _method: 'PUT',
+                _token: csrfToken
+            };
+
+            fetch(claimerForm.action, {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': csrfToken,
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json',
+                        'X-Requested-With': 'XMLHttpRequest'
+                    },
+                    body: JSON.stringify(formDataObject),
+                })
+                .then(async response => {
+                    if (!response.ok) throw new Error('Error updating claim.');
+                    const result = await response.json();
+                    showRevertSuccess(result.message);
+                    setTimeout(() => window.location.reload(), 1500);
+                })
+                .catch(error => {
+                    console.error(error);
+                    showRevertError(error.message);
+                    setLoadingState(false);
+                });
+        });
+
+        // ======= LOADING STATES =======
+        function setLoadingState(isLoading) {
+            const formInputs = claimerForm.querySelectorAll('input, select, textarea, button');
+            if (isLoading) {
+                submitClaimBtn.disabled = true;
+                submitClaimBtn.innerHTML = `<span class="spinner-border spinner-border-sm me-1"></span> Processing...`;
+                formInputs.forEach(i => i.disabled = true);
+            } else {
+                submitClaimBtn.disabled = false;
+                submitClaimBtn.innerHTML = `<i class="fas fa-check me-1"></i>Mark as Claimed`;
+                formInputs.forEach(i => i.disabled = false);
+            }
+        }
+
+        // ======= SUCCESS ALERT INSIDE MODAL =======
+        function showRevertSuccess(message) {
+            let successAlert = document.getElementById('modalRevertSuccessAlert');
+            if (!successAlert) {
+                successAlert = document.createElement('div');
+                successAlert.id = 'modalRevertSuccessAlert';
+                successAlert.className = 'alert alert-success fade show mt-2';
+                successAlert.innerHTML = `
+                <i class="fas fa-check-circle me-2"></i>
+                <span id="revertSuccessMessage"></span>
+            `;
+                claimerForm.querySelector('.modal-body').insertBefore(
+                    successAlert,
+                    claimerForm.querySelector('.modal-body').firstChild
+                );
+            }
+
+            document.getElementById('revertSuccessMessage').textContent = message;
+            successAlert.style.display = 'block';
+        }
+
+        // ======= ERROR ALERT =======
+        function showRevertError(message) {
+            let errorAlert = document.getElementById('modalRevertErrorAlert');
+            if (!errorAlert) {
+                errorAlert = document.createElement('div');
+                errorAlert.id = 'modalRevertErrorAlert';
+                errorAlert.className = 'alert alert-danger fade show mt-2';
+                errorAlert.innerHTML = `
+                <i class="fas fa-exclamation-circle me-2"></i>
+                <span id="revertErrorMessage"></span>
+            `;
+                claimerForm.querySelector('.modal-body').insertBefore(
+                    errorAlert,
+                    claimerForm.querySelector('.modal-body').firstChild
+                );
+            }
+
+            document.getElementById('revertErrorMessage').textContent = message;
+            errorAlert.style.display = 'block';
+        }
+
+        // ======= KEYBOARD SHORTCUTS =======
+        document.addEventListener('keydown', function(e) {
+            if ((e.ctrlKey || e.metaKey) && e.key === 'f') {
+                e.preventDefault();
+                searchInput?.focus();
+            }
+        });
+    });
+</script>
+
+
+
+<style>
+    .modal #tableSearchAlert {
+        display: none !important;
+    }
+
+    /* ===== CORE VARIABLES ===== */
+    :root {
+        --primary-color: #1dd3b0;
+        --secondary-color: #1f2937;
+        --success-color: #28a745;
+        --warning-color: #ffc107;
+        --danger-color: #dc3545;
+        --info-color: #17a2b8;
+    }
+
+    /* ===== HEADER BADGES ===== */
+    .page-title-badge {
+        background-color: var(--primary-color);
+        font-size: clamp(1.25rem, 4vw, 2rem);
+        padding: 0.5rem 1rem;
+    }
+
+    .count-badge {
+        background-color: var(--secondary-color);
+        font-size: clamp(1rem, 3vw, 2rem);
+        padding: 0.5rem 1rem;
+    }
+
+    /* ===== CARD HEADER ===== */
+    .card-header-custom {
+        background-color: var(--secondary-color);
+        color: white;
+        display: flex;
+        flex-direction: column;
+        gap: 0.75rem;
+        padding: 0.75rem 1rem;
+    }
+
+    @media (min-width: 768px) {
         .card-header-custom {
-            background-color: var(--secondary-color);
-            color: white;
-            display: flex;
-            flex-direction: column;
-            gap: 0.75rem;
-            padding: 0.75rem 1rem;
+            flex-direction: row;
+            justify-content: space-between;
+            align-items: center;
         }
+    }
 
-        @media (min-width: 768px) {
-            .card-header-custom {
-                flex-direction: row;
-                justify-content: space-between;
-                align-items: center;
-            }
-        }
+    /* ===== SEARCH CONTROLS ===== */
+    .search-controls {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.4rem;
+        width: 100%;
+        justify-content: flex-end;
+        margin-left: auto;
+    }
 
-        /* ===== SEARCH CONTROLS ===== */
+    @media (min-width: 768px) {
         .search-controls {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 0.4rem;
-            width: 100%;
+            width: auto;
+            flex-wrap: nowrap;
+            flex: 0 0 auto;
             justify-content: flex-end;
-            margin-left: auto;
         }
+    }
 
-        @media (min-width: 768px) {
-            .search-controls {
-                width: auto;
-                flex-wrap: nowrap;
-                flex: 0 0 auto;
-                justify-content: flex-end;
-            }
-        }
+    .search-input-group {
+        flex: 1 1 auto;
+        min-width: 150px;
+        max-width: 250px;
+    }
 
+    @media (min-width: 768px) {
         .search-input-group {
-            flex: 1 1 auto;
-            min-width: 150px;
-            max-width: 250px;
+            width: 180px;
+            flex: 0 0 180px;
         }
+    }
 
-        @media (min-width: 768px) {
-            .search-input-group {
-                width: 180px;
-                flex: 0 0 180px;
-            }
-        }
+    .filter-select,
+    .sort-select {
+        flex: 1 1 auto;
+        min-width: 80px;
+        max-width: 120px;
+    }
+
+    @media (min-width: 768px) {
 
         .filter-select,
         .sort-select {
-            flex: 1 1 auto;
-            min-width: 80px;
-            max-width: 120px;
+            width: 100px;
+            flex: 0 0 100px;
         }
+    }
 
-        @media (min-width: 768px) {
-            .filter-select,
-            .sort-select {
-                width: 100px;
-                flex: 0 0 100px;
-            }
-        }
+    .search-btn {
+        flex: 0 0 auto;
+        min-width: 38px;
+    }
 
-        .search-btn {
-            flex: 0 0 auto;
-            min-width: 38px;
-        }
+    /* ===== FORM CONTROLS ===== */
+    #searchInput:focus,
+    .form-select:focus {
+        border-color: var(--primary-color);
+        box-shadow: 0 0 0 0.2rem rgba(29, 211, 176, 0.25);
+    }
 
-        /* ===== FORM CONTROLS ===== */
-        #searchInput:focus,
-        .form-select:focus {
-            border-color: var(--primary-color);
-            box-shadow: 0 0 0 0.2rem rgba(29, 211, 176, 0.25);
-        }
+    /* ===== TABLE STYLES ===== */
+    #requestsTable {
+        font-size: 0.8rem;
+        margin-bottom: 0;
+    }
 
-        /* ===== TABLE STYLES ===== */
+    #requestsTable thead th {
+        white-space: nowrap;
+        vertical-align: middle;
+        font-weight: 600;
+        padding: 0.3rem 0.3rem;
+        font-size: 0.8rem;
+        line-height: 1;
+    }
+
+    #requestsTable tbody td {
+        vertical-align: middle;
+        padding: 0.3rem 0.3rem;
+        font-size: 0.8rem;
+        line-height: 1;
+    }
+
+    .sortable-header a {
+        transition: opacity 0.2s;
+    }
+
+    .sortable-header a:hover {
+        opacity: 0.8;
+    }
+
+    /* ===== ACTION COLUMN ===== */
+    .action-column {
+        min-width: 200px !important;
+        max-width: 200px !important;
+        width: 200px !important;
+        white-space: normal !important;
+    }
+
+    .btn-group-vertical {
+        display: flex !important;
+        flex-direction: row !important;
+        flex-wrap: wrap !important;
+        gap: 0.15rem !important;
+        width: 100% !important;
+    }
+
+    .action-column .btn {
+        padding: 0.25rem 0.5rem !important;
+        font-size: 0.75rem !important;
+        width: 95px !important;
+        min-width: 95px !important;
+        max-width: 95px !important;
+        display: inline-block !important;
+        text-align: center !important;
+        margin-bottom: 0 !important;
+    }
+
+    .action-column .btn i {
+        font-size: 0.75rem !important;
+    }
+
+    /* ===== STATUS BADGE ===== */
+    .status-badge {
+        font-size: 0.7rem;
+        padding: 0.25rem 0.5rem;
+        white-space: nowrap;
+    }
+
+    /* ===== BUTTON STATES ===== */
+    .btn:disabled {
+        cursor: not-allowed;
+        opacity: 0.65;
+    }
+
+    .btn-sm {
+        font-size: 0.75rem;
+        padding: 0.25rem 0.5rem;
+    }
+
+    .spinner-border-sm {
+        width: 0.875rem;
+        height: 0.875rem;
+        border-width: 0.125rem;
+    }
+
+    /* ===== LOADING STATE ===== */
+    #tableContainer {
+        transition: opacity 0.3s ease;
+        overflow-x: auto;
+    }
+
+    /* ===== ALERT STYLES ===== */
+    .alert-info {
+        background-color: #e3f2fd;
+        border-color: #1976d2;
+        color: #1565c0;
+    }
+
+    /* ===== MODAL STYLES ===== */
+    .modal-dialog {
+        max-width: 600px;
+    }
+
+    .modal-header {
+        border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .form-control:focus {
+        border-color: var(--success-color);
+        box-shadow: 0 0 0 0.2rem rgba(40, 167, 69, 0.25);
+    }
+
+    .thick-outline {
+        width: 1.2rem;
+        height: 1.2rem;
+        border: 2.5px solid var(--secondary-color) !important;
+        accent-color: var(--primary-color);
+        cursor: pointer;
+    }
+
+    .thick-outline:focus {
+        box-shadow: 0 0 0 3px rgba(29, 211, 176, 0.4);
+    }
+
+    /* ===== RESPONSIVE TABLE ===== */
+    .table-responsive {
+        border-radius: 0.25rem;
+    }
+
+    @media (max-width: 576px) {
         #requestsTable {
-            font-size: 0.8rem;
-            margin-bottom: 0;
+            font-size: 0.75rem;
         }
 
-        #requestsTable thead th {
-            white-space: nowrap;
-            vertical-align: middle;
-            font-weight: 600;
-            padding: 0.3rem 0.3rem;
-            font-size: 0.8rem;
-            line-height: 1;
-        }
-
-        #requestsTable tbody td {
-            vertical-align: middle;
-            padding: 0.3rem 0.3rem;
-            font-size: 0.8rem;
-            line-height: 1;
-        }
-
-        .sortable-header a {
-            transition: opacity 0.2s;
-        }
-
-        .sortable-header a:hover {
-            opacity: 0.8;
-        }
-
-        /* ===== ACTION COLUMN ===== */
-        .action-column {
-            min-width: 200px !important;
-            max-width: 200px !important;
-            width: 200px !important;
-            white-space: normal !important;
-        }
-
-        .btn-group-vertical {
-            display: flex !important;
-            flex-direction: row !important;
-            flex-wrap: wrap !important;
-            gap: 0.15rem !important;
-            width: 100% !important;
-        }
-
-        .action-column .btn {
-            padding: 0.25rem 0.5rem !important;
-            font-size: 0.75rem !important;
-            width: 95px !important;
-            min-width: 95px !important;
-            max-width: 95px !important;
-            display: inline-block !important;
-            text-align: center !important;
-            margin-bottom: 0 !important;
-        }
-
-        .action-column .btn i {
-            font-size: 0.75rem !important;
-        }
-
-        /* ===== STATUS BADGE ===== */
-        .status-badge {
-            font-size: 0.7rem;
-            padding: 0.25rem 0.5rem;
-            white-space: nowrap;
-        }
-
-        /* ===== BUTTON STATES ===== */
-        .btn:disabled {
-            cursor: not-allowed;
-            opacity: 0.65;
+        #requestsTable th,
+        #requestsTable td {
+            padding: 0.25rem 0.25rem;
         }
 
         .btn-sm {
-            font-size: 0.75rem;
-            padding: 0.25rem 0.5rem;
+            font-size: 0.65rem;
+            padding: 0.2rem 0.3rem;
         }
+    }
 
-        .spinner-border-sm {
-            width: 0.875rem;
-            height: 0.875rem;
-            border-width: 0.125rem;
-        }
+    /* ===== PAGINATION ===== */
+    .pagination {
+        margin-bottom: 0;
+    }
 
-        /* ===== LOADING STATE ===== */
-        #tableContainer {
-            transition: opacity 0.3s ease;
-            overflow-x: auto;
-        }
+    /* ===== SMOOTH TRANSITIONS ===== */
+    .btn,
+    .form-control,
+    .form-select {
+        transition: all 0.2s ease-in-out;
+    }
 
-        /* ===== ALERT STYLES ===== */
-        .alert-info {
-            background-color: #e3f2fd;
-            border-color: #1976d2;
-            color: #1565c0;
-        }
+    /* ===== UTILITY CLASSES ===== */
+    .fw-semibold {
+        font-weight: 600;
+    }
+</style>
 
-        /* ===== MODAL STYLES ===== */
-        .modal-dialog {
-            max-width: 600px;
-        }
-
-        .modal-header {
-            border-bottom: 2px solid rgba(255, 255, 255, 0.1);
-        }
-
-        .form-control:focus {
-            border-color: var(--success-color);
-            box-shadow: 0 0 0 0.2rem rgba(40, 167, 69, 0.25);
-        }
-
-        .thick-outline {
-            width: 1.2rem;
-            height: 1.2rem;
-            border: 2.5px solid var(--secondary-color) !important;
-            accent-color: var(--primary-color);
-            cursor: pointer;
-        }
-
-        .thick-outline:focus {
-            box-shadow: 0 0 0 3px rgba(29, 211, 176, 0.4);
-        }
-
-        /* ===== RESPONSIVE TABLE ===== */
-        .table-responsive {
-            border-radius: 0.25rem;
-        }
-
-        @media (max-width: 576px) {
-            #requestsTable {
-                font-size: 0.75rem;
-            }
-
-            #requestsTable th,
-            #requestsTable td {
-                padding: 0.25rem 0.25rem;
-            }
-
-            .btn-sm {
-                font-size: 0.65rem;
-                padding: 0.2rem 0.3rem;
-            }
-        }
-
-        /* ===== PAGINATION ===== */
-        .pagination {
-            margin-bottom: 0;
-        }
-
-        /* ===== SMOOTH TRANSITIONS ===== */
-        .btn,
-        .form-control,
-        .form-select {
-            transition: all 0.2s ease-in-out;
-        }
-
-        /* ===== UTILITY CLASSES ===== */
-        .fw-semibold {
-            font-weight: 600;
-        }
-    </style>@endsection
+@endsection
