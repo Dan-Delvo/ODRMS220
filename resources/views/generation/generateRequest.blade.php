@@ -23,10 +23,11 @@
                 <h5 class="mb-0">Generate Reports</h5>
             </div>
             <div class="card-body">
-                <form action="{{ route('generateReports') }}" method="GET" class="row g-3"                     
+                <form action="{{ route('generateReports') }}" method="GET" id="reportForm" class="row g-3"                     
                     data-swal-loading="true"
                     data-swal-title="Generating Reports"
                     data-swal-text="This may take a few seconds...">
+                    <input type="hidden" name="action" id="reportAction" value="">
                     <div class="col-md-3">
                         <label for="start_date" class="form-label text-dark">Start Date:</label>
                         <input type="date" id="start_date" name="start_date" class="form-control" value="{{ request('start_date') }}" required>
@@ -47,10 +48,10 @@
                     </div>
                     <div class="col-md-3 d-flex align-items-end">
                         <div class="btn-group w-100" role="group">
-                            <button type="submit" name="action" value="pdf" class="btn btn-danger">
+                            <button type="button" class="btn btn-danger report-btn" data-action="pdf">
                                 <i class="fas fa-file-pdf"></i> PDF
                             </button>
-                            <button type="submit" name="action" value="excel" class="btn btn-success">
+                            <button type="button" class="btn btn-success report-btn" data-action="excel">
                                 <i class="fas fa-file-excel"></i> Excel
                             </button>
                         </div>
@@ -334,6 +335,26 @@
 
         document.getElementById('end_date').addEventListener('change', function() {
             document.getElementById('start_date').setAttribute('max', this.value);
+        });
+
+        // Handle report generation buttons
+        document.querySelectorAll('.report-btn').forEach(function(btn) {
+            btn.addEventListener('click', function() {
+                const action = this.getAttribute('data-action');
+                const form = document.getElementById('reportForm');
+                
+                // Validate form
+                if (!form.checkValidity()) {
+                    form.reportValidity();
+                    return;
+                }
+                
+                // Set the action value
+                document.getElementById('reportAction').value = action;
+                
+                // Submit the form
+                form.submit();
+            });
         });
 
         // Initialize active filters display

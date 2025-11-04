@@ -400,7 +400,7 @@
             </div>
 
             <div class="d-flex justify-content-between align-items-center mt-4">
-                <a href="dashboard.html" class="text-warning-link">← Back to Dashboard</a>
+                <a href="{{route('st.page')}}" class="text-warning-link">← Back to Dashboard</a>
                 <button type="submit" class="btn btn-submit">Submit Request</button>
             </div>
         </form>
