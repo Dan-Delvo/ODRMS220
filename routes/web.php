@@ -75,6 +75,7 @@ Route::group(['middleware' => 'useradmin'], function () {
     Route::get('dashboard', [DashboardController::class, 'dashboard'])->name('dashboard');
 
     //Request Management        ================================================================================
+    Route::get('/dictionary', function () { return view('common.dictionary'); } );
     Route::resource('tables', DocumentRequestController::class);
     Route::resource('pending', PendingController::class);
     Route::resource('ongoing', OngoingController::class);
