@@ -840,12 +840,12 @@
             exportContainer.style.fontFamily = 'Arial, sans-serif';
 
             exportContainer.innerHTML = `
-                <table style="width: 576px; border-collapse: collapse; border: 2px solid #000000; background: transparent; font-family: Arial, sans-serif; table-layout: fixed;">
+               <table style="width: 586px; border-collapse: separate; border-spacing: 0; border: 2px solid #000000; background: transparent; font-family: Arial, sans-serif; table-layout: fixed;">
                 <colgroup>
-                    <col style="width: 150px;">
-                    <col style="width: 110px;">
+                    <col style="width: 160px;">
+                    <col style="width: 130px;">
                     <col style="width: 90px;">
-                    <col style="width: 226px;">
+                    <col style="width: 206px;">
                 </colgroup>
                 <thead>
                     <tr style="background: #2d3748;">
