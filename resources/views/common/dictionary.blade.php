@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -363,6 +364,7 @@
         }
     </style>
 </head>
+
 <body>
     <div class="container">
         <div class="header">
@@ -404,311 +406,934 @@
     </div>
 
     <script>
-        const tables = [
-            {
+        const tables = [{
                 name: 'acc_users',
                 description: 'Stores user account information for all system users (students, admin, registrar)',
-                columns: [
-                    { name: 'user_account_id', type: 'bigint', description: 'Primary key - Unique user account identifier' },
-                    { name: 'std_students_id', type: 'bigint unsigned', description: 'Foreign key linking to std_students table' },
-                    { name: 'role_id', type: 'int', description: 'Foreign key to role table defining user permissions' },
-                    { name: 'email_address', type: 'varchar(255)', description: 'User email address for login and notifications' },
-                    { name: 'username', type: 'varchar(255)', description: 'Display name/username for the user' },
-                    { name: 'password', type: 'varchar(255)', description: 'Encrypted password hash' },
-                    { name: 'email_verified_at', type: 'timestamp', description: 'Email verification timestamp' },
-                    { name: 'remember_token', type: 'varchar(100)', description: 'Token for "remember me" functionality' },
-                    { name: 'timestamps', type: 'timestamp', description: 'General timestamp field' },
-                    { name: 'account_created', type: 'timestamp', description: 'Account creation date and time' },
-                    { name: 'account_edited', type: 'timestamp', description: 'Last account modification timestamp' },
-                    { name: 'deleted_at', type: 'timestamp', description: 'Soft delete timestamp (null if active)' },
-                    { name: 'fcm_token', type: 'varchar(45)', description: 'Firebase Cloud Messaging token for push notifications' }
+                columns: [{
+                        name: 'user_account_id',
+                        type: 'bigint',
+                        description: 'Primary key - Unique user account identifier'
+                    },
+                    {
+                        name: 'std_students_id',
+                        type: 'bigint unsigned',
+                        description: 'Foreign key linking to std_students table'
+                    },
+                    {
+                        name: 'role_id',
+                        type: 'int',
+                        description: 'Foreign key to role table defining user permissions'
+                    },
+                    {
+                        name: 'email_address',
+                        type: 'varchar(255)',
+                        description: 'User email address for login and notifications'
+                    },
+                    {
+                        name: 'username',
+                        type: 'varchar(255)',
+                        description: 'Display name/username for the user'
+                    },
+                    {
+                        name: 'password',
+                        type: 'varchar(255)',
+                        description: 'Encrypted password hash'
+                    },
+                    {
+                        name: 'email_verified_at',
+                        type: 'timestamp',
+                        description: 'Email verification timestamp'
+                    },
+                    {
+                        name: 'remember_token',
+                        type: 'varchar(100)',
+                        description: 'Token for "remember me" functionality'
+                    },
+                    {
+                        name: 'timestamps',
+                        type: 'timestamp',
+                        description: 'General timestamp field'
+                    },
+                    {
+                        name: 'account_created',
+                        type: 'timestamp',
+                        description: 'Account creation date and time'
+                    },
+                    {
+                        name: 'account_edited',
+                        type: 'timestamp',
+                        description: 'Last account modification timestamp'
+                    },
+                    {
+                        name: 'deleted_at',
+                        type: 'timestamp',
+                        description: 'Soft delete timestamp (null if active)'
+                    },
+                    {
+                        name: 'fcm_token',
+                        type: 'varchar(45)',
+                        description: 'Firebase Cloud Messaging token for push notifications'
+                    }
                 ]
             },
             {
                 name: 'std_students',
                 description: 'Contains student demographic and academic information',
-                columns: [
-                    { name: 'id', type: 'bigint unsigned', description: 'Primary key - Unique student identifier' },
-                    { name: 'LastName', type: 'varchar(255)', description: 'Student last name/surname' },
-                    { name: 'FirstName', type: 'varchar(255)', description: 'Student first name' },
-                    { name: 'MiddleName', type: 'varchar(255)', description: 'Student middle name (optional)' },
-                    { name: 'Suffix', type: 'varchar(255)', description: 'Name suffix (Jr., Sr., III, etc.)' },
-                    { name: 'LRN', type: 'varchar(255)', description: 'Learner Reference Number - unique education ID' },
-                    { name: 'Grade_level', type: 'int', description: 'Current or last grade level attended' },
-                    { name: 'Std_status', type: 'varchar(255)', description: 'Student status (Regular, Alumni, etc.)' },
-                    { name: 'Last_sy_attended', type: 'varchar(25)', description: 'Last school year attended' },
-                    { name: 'id_image', type: 'varchar(500)', description: 'Path to student ID image file' }
+                columns: [{
+                        name: 'id',
+                        type: 'bigint unsigned',
+                        description: 'Primary key - Unique student identifier'
+                    },
+                    {
+                        name: 'LastName',
+                        type: 'varchar(255)',
+                        description: 'Student last name/surname'
+                    },
+                    {
+                        name: 'FirstName',
+                        type: 'varchar(255)',
+                        description: 'Student first name'
+                    },
+                    {
+                        name: 'MiddleName',
+                        type: 'varchar(255)',
+                        description: 'Student middle name (optional)'
+                    },
+                    {
+                        name: 'Suffix',
+                        type: 'varchar(255)',
+                        description: 'Name suffix (Jr., Sr., III, etc.)'
+                    },
+                    {
+                        name: 'LRN',
+                        type: 'varchar(255)',
+                        description: 'Learner Reference Number - unique education ID'
+                    },
+                    {
+                        name: 'Grade_level',
+                        type: 'int',
+                        description: 'Current or last grade level attended'
+                    },
+                    {
+                        name: 'Std_status',
+                        type: 'varchar(255)',
+                        description: 'Student status (Regular, Alumni, etc.)'
+                    },
+                    {
+                        name: 'Last_sy_attended',
+                        type: 'varchar(25)',
+                        description: 'Last school year attended'
+                    },
+                    {
+                        name: 'id_image',
+                        type: 'varchar(500)',
+                        description: 'Path to student ID image file'
+                    }
                 ]
             },
             {
                 name: 'doc_requests',
                 description: 'Tracks all document requests from students including status and processing information',
-                columns: [
-                    { name: 'id', type: 'bigint', description: 'Primary key - Unique request identifier' },
-                    { name: 'clm_claimers_id', type: 'bigint unsigned', description: 'Foreign key to claimer who will pick up document' },
-                    { name: 'std_students_id', type: 'bigint unsigned', description: 'Foreign key to requesting student' },
-                    { name: 'doc_categories_id', type: 'bigint unsigned', description: 'Foreign key to document type' },
-                    { name: 'request_time', type: 'time', description: 'Time when request was submitted' },
-                    { name: 'request_date', type: 'date', description: 'Date when request was submitted' },
-                    { name: 'request_schl_entity', type: 'varchar(255)', description: 'School/institution requesting the document' },
-                    { name: 'request_mode', type: 'varchar(255)', description: 'How request was made (Online, Walk-in)' },
-                    { name: 'release_mode', type: 'varchar(255)', description: 'How document will be released (Pick Up, Delivery)' },
-                    { name: 'remarks', type: 'text', description: 'Additional notes or comments about the request' },
-                    { name: 'status', type: 'varchar(45)', description: 'Current status (Pending, Processing, For Release, Claimed, Declined)' },
-                    { name: 'receipt_no', type: 'int', description: 'Payment receipt number' },
-                    { name: 'approve_date', type: 'date', description: 'Date request was approved' },
-                    { name: 'forRelease_date', type: 'date', description: 'Date document was prepared for release' },
-                    { name: 'claimed_date', type: 'date', description: 'Date document was claimed/picked up' },
-                    { name: 'req_no', type: 'int', description: 'Sequential request number (auto-increment)' },
-                    { name: 'image', type: 'varchar(500)', description: 'Path to related image file' },
-                    { name: 'supporting_document', type: 'varchar(500)', description: 'Path to supporting documents uploaded' },
-                    { name: 'claimed_time', type: 'time', description: 'Time when document was claimed' }
+                columns: [{
+                        name: 'id',
+                        type: 'bigint',
+                        description: 'Primary key - Unique request identifier'
+                    },
+                    {
+                        name: 'clm_claimers_id',
+                        type: 'bigint unsigned',
+                        description: 'Foreign key to claimer who will pick up document'
+                    },
+                    {
+                        name: 'std_students_id',
+                        type: 'bigint unsigned',
+                        description: 'Foreign key to requesting student'
+                    },
+                    {
+                        name: 'doc_categories_id',
+                        type: 'bigint unsigned',
+                        description: 'Foreign key to document type'
+                    },
+                    {
+                        name: 'request_time',
+                        type: 'time',
+                        description: 'Time when request was submitted'
+                    },
+                    {
+                        name: 'request_date',
+                        type: 'date',
+                        description: 'Date when request was submitted'
+                    },
+                    {
+                        name: 'request_schl_entity',
+                        type: 'varchar(255)',
+                        description: 'School/institution requesting the document'
+                    },
+                    {
+                        name: 'request_mode',
+                        type: 'varchar(255)',
+                        description: 'How request was made (Online, Walk-in)'
+                    },
+                    {
+                        name: 'release_mode',
+                        type: 'varchar(255)',
+                        description: 'How document will be released (Pick Up, Delivery)'
+                    },
+                    {
+                        name: 'remarks',
+                        type: 'text',
+                        description: 'Additional notes or comments about the request'
+                    },
+                    {
+                        name: 'status',
+                        type: 'varchar(45)',
+                        description: 'Current status (Pending, Processing, For Release, Claimed, Declined)'
+                    },
+                    {
+                        name: 'receipt_no',
+                        type: 'int',
+                        description: 'Payment receipt number'
+                    },
+                    {
+                        name: 'approve_date',
+                        type: 'date',
+                        description: 'Date request was approved'
+                    },
+                    {
+                        name: 'forRelease_date',
+                        type: 'date',
+                        description: 'Date document was prepared for release'
+                    },
+                    {
+                        name: 'claimed_date',
+                        type: 'date',
+                        description: 'Date document was claimed/picked up'
+                    },
+                    {
+                        name: 'req_no',
+                        type: 'int',
+                        description: 'Sequential request number (auto-increment)'
+                    },
+                    {
+                        name: 'image',
+                        type: 'varchar(500)',
+                        description: 'Path to related image file'
+                    },
+                    {
+                        name: 'supporting_document',
+                        type: 'varchar(500)',
+                        description: 'Path to supporting documents uploaded'
+                    },
+                    {
+                        name: 'claimed_time',
+                        type: 'time',
+                        description: 'Time when document was claimed'
+                    }
                 ]
             },
             {
                 name: 'doc_categories',
                 description: 'Defines types of documents that can be requested',
-                columns: [
-                    { name: 'id', type: 'bigint unsigned', description: 'Primary key - Unique document type identifier' },
-                    { name: 'DocType', type: 'varchar(255)', description: 'Name of document type (Good Moral, Form 137, etc.)' },
-                    { name: 'DocPrice', type: 'varchar(45)', description: 'Price/fee for the document' }
+                columns: [{
+                        name: 'id',
+                        type: 'bigint unsigned',
+                        description: 'Primary key - Unique document type identifier'
+                    },
+                    {
+                        name: 'DocType',
+                        type: 'varchar(255)',
+                        description: 'Name of document type (Good Moral, Form 137, etc.)'
+                    },
+                    {
+                        name: 'DocPrice',
+                        type: 'varchar(45)',
+                        description: 'Price/fee for the document'
+                    }
                 ]
             },
             {
                 name: 'clm_claimers',
                 description: 'Information about people authorized to claim documents',
-                columns: [
-                    { name: 'id', type: 'bigint unsigned', description: 'Primary key - Unique claimer identifier' },
-                    { name: 'Fname', type: 'varchar(255)', description: 'Claimer first name' },
-                    { name: 'Lname', type: 'varchar(255)', description: 'Claimer last name' },
-                    { name: 'contact_no', type: 'varchar(255)', description: 'Contact number of claimer' },
-                    { name: 'claimed_date', type: 'date', description: 'Date when documents were claimed' }
+                columns: [{
+                        name: 'id',
+                        type: 'bigint unsigned',
+                        description: 'Primary key - Unique claimer identifier'
+                    },
+                    {
+                        name: 'Fname',
+                        type: 'varchar(255)',
+                        description: 'Claimer first name'
+                    },
+                    {
+                        name: 'Lname',
+                        type: 'varchar(255)',
+                        description: 'Claimer last name'
+                    },
+                    {
+                        name: 'contact_no',
+                        type: 'varchar(255)',
+                        description: 'Contact number of claimer'
+                    },
+                    {
+                        name: 'claimed_date',
+                        type: 'date',
+                        description: 'Date when documents were claimed'
+                    }
                 ]
             },
             {
                 name: 'audit_table',
                 description: 'Tracks all system changes and modifications for audit trail purposes',
-                columns: [
-                    { name: 'id', type: 'int', description: 'Primary key - Unique audit entry identifier' },
-                    { name: 'type', type: 'varchar(45)', description: 'Type of action (INSERT, UPDATE, DELETE, Back Up, Restore, User Logged In)' },
-                    { name: 'old_data', type: 'text', description: 'Previous data values before change' },
-                    { name: 'new_data', type: 'text', description: 'New data values after change' },
-                    { name: 'time', type: 'datetime', description: 'Timestamp of the action' },
-                    { name: 'changedBy', type: 'varchar(45)', description: 'Username who performed the action' },
-                    { name: 'fromTableName', type: 'varchar(45)', description: 'Name of table that was modified' },
-                    { name: 'description', type: 'varchar(500)', description: 'Additional description of the action' }
+                columns: [{
+                        name: 'id',
+                        type: 'int',
+                        description: 'Primary key - Unique audit entry identifier'
+                    },
+                    {
+                        name: 'type',
+                        type: 'varchar(45)',
+                        description: 'Type of action (INSERT, UPDATE, DELETE, Back Up, Restore, User Logged In)'
+                    },
+                    {
+                        name: 'old_data',
+                        type: 'text',
+                        description: 'Previous data values before change'
+                    },
+                    {
+                        name: 'new_data',
+                        type: 'text',
+                        description: 'New data values after change'
+                    },
+                    {
+                        name: 'time',
+                        type: 'datetime',
+                        description: 'Timestamp of the action'
+                    },
+                    {
+                        name: 'changedBy',
+                        type: 'varchar(45)',
+                        description: 'Username who performed the action'
+                    },
+                    {
+                        name: 'fromTableName',
+                        type: 'varchar(45)',
+                        description: 'Name of table that was modified'
+                    },
+                    {
+                        name: 'description',
+                        type: 'varchar(500)',
+                        description: 'Additional description of the action'
+                    }
                 ]
             },
             {
                 name: 'role',
                 description: 'Defines user roles in the system',
-                columns: [
-                    { name: 'id', type: 'int', description: 'Primary key - Unique role identifier' },
-                    { name: 'name', type: 'varchar(45)', description: 'Role name (student, Admin, Super admin, Registrar Window)' }
+                columns: [{
+                        name: 'id',
+                        type: 'int',
+                        description: 'Primary key - Unique role identifier'
+                    },
+                    {
+                        name: 'name',
+                        type: 'varchar(45)',
+                        description: 'Role name (student, Admin, Super admin, Registrar Window)'
+                    }
                 ]
             },
             {
                 name: 'permission',
                 description: 'Defines specific permissions that can be granted to roles',
-                columns: [
-                    { name: 'id', type: 'int', description: 'Primary key - Unique permission identifier' },
-                    { name: 'name', type: 'varchar(45)', description: 'Permission name (dashboard, pending, editPending, etc.)' },
-                    { name: 'slug', type: 'varchar(45)', description: 'URL-friendly permission identifier' },
-                    { name: 'groupBy', type: 'int', description: 'Group number for organizing related permissions' },
-                    { name: 'created_at', type: 'datetime', description: 'Permission creation timestamp' },
-                    { name: 'updated_at', type: 'datetime', description: 'Last update timestamp' }
+                columns: [{
+                        name: 'id',
+                        type: 'int',
+                        description: 'Primary key - Unique permission identifier'
+                    },
+                    {
+                        name: 'name',
+                        type: 'varchar(45)',
+                        description: 'Permission name (dashboard, pending, editPending, etc.)'
+                    },
+                    {
+                        name: 'slug',
+                        type: 'varchar(45)',
+                        description: 'URL-friendly permission identifier'
+                    },
+                    {
+                        name: 'groupBy',
+                        type: 'int',
+                        description: 'Group number for organizing related permissions'
+                    },
+                    {
+                        name: 'created_at',
+                        type: 'datetime',
+                        description: 'Permission creation timestamp'
+                    },
+                    {
+                        name: 'updated_at',
+                        type: 'datetime',
+                        description: 'Last update timestamp'
+                    }
                 ]
             },
             {
                 name: 'permission_role',
                 description: 'Links permissions to roles (many-to-many relationship)',
-                columns: [
-                    { name: 'id', type: 'int', description: 'Primary key - Unique link identifier' },
-                    { name: 'role_id', type: 'int', description: 'Foreign key to role table' },
-                    { name: 'permission_id', type: 'int', description: 'Foreign key to permission table' },
-                    { name: 'created_at', type: 'datetime', description: 'Assignment creation timestamp' },
-                    { name: 'updated_at', type: 'datetime', description: 'Last update timestamp' }
+                columns: [{
+                        name: 'id',
+                        type: 'int',
+                        description: 'Primary key - Unique link identifier'
+                    },
+                    {
+                        name: 'role_id',
+                        type: 'int',
+                        description: 'Foreign key to role table'
+                    },
+                    {
+                        name: 'permission_id',
+                        type: 'int',
+                        description: 'Foreign key to permission table'
+                    },
+                    {
+                        name: 'created_at',
+                        type: 'datetime',
+                        description: 'Assignment creation timestamp'
+                    },
+                    {
+                        name: 'updated_at',
+                        type: 'datetime',
+                        description: 'Last update timestamp'
+                    }
                 ]
             },
             {
                 name: 'docu_payment_fees',
                 description: 'Records payment information for document requests',
-                columns: [
-                    { name: 'receipt_no', type: 'bigint', description: 'Primary key - Unique receipt number' },
-                    { name: 'docu_categories_id', type: 'bigint unsigned', description: 'Foreign key to document type' },
-                    { name: 'doc_amount', type: 'int', description: 'Payment amount for the document' },
-                    { name: 'name_request', type: 'varchar(100)', description: 'Name/ID of person making payment' },
-                    { name: 'time_request', type: 'datetime', description: 'Payment timestamp' }
+                columns: [{
+                        name: 'receipt_no',
+                        type: 'bigint',
+                        description: 'Primary key - Unique receipt number'
+                    },
+                    {
+                        name: 'docu_categories_id',
+                        type: 'bigint unsigned',
+                        description: 'Foreign key to document type'
+                    },
+                    {
+                        name: 'doc_amount',
+                        type: 'int',
+                        description: 'Payment amount for the document'
+                    },
+                    {
+                        name: 'name_request',
+                        type: 'varchar(100)',
+                        description: 'Name/ID of person making payment'
+                    },
+                    {
+                        name: 'time_request',
+                        type: 'datetime',
+                        description: 'Payment timestamp'
+                    }
                 ]
             },
             {
                 name: 'notifications',
                 description: 'Stores system notifications sent to users',
-                columns: [
-                    { name: 'id', type: 'bigint', description: 'Primary key - Unique notification identifier' },
-                    { name: 'account_id', type: 'bigint', description: 'User account receiving notification' },
-                    { name: 'doc_request_id', type: 'bigint', description: 'Related document request (if applicable)' },
-                    { name: 'type', type: 'text', description: 'Type/category of notification' },
-                    { name: 'title', type: 'varchar(255)', description: 'Notification title/subject' },
-                    { name: 'content', type: 'text', description: 'Notification message content' },
-                    { name: 'status', type: 'enum', description: 'Delivery status (Pending, Sent, Failed, Completed, Processing, Released)' },
-                    { name: 'created_at', type: 'datetime', description: 'Notification creation timestamp' },
-                    { name: 'sent_at', type: 'datetime', description: 'When notification was sent' }
+                columns: [{
+                        name: 'id',
+                        type: 'bigint',
+                        description: 'Primary key - Unique notification identifier'
+                    },
+                    {
+                        name: 'account_id',
+                        type: 'bigint',
+                        description: 'User account receiving notification'
+                    },
+                    {
+                        name: 'doc_request_id',
+                        type: 'bigint',
+                        description: 'Related document request (if applicable)'
+                    },
+                    {
+                        name: 'type',
+                        type: 'text',
+                        description: 'Type/category of notification'
+                    },
+                    {
+                        name: 'title',
+                        type: 'varchar(255)',
+                        description: 'Notification title/subject'
+                    },
+                    {
+                        name: 'content',
+                        type: 'text',
+                        description: 'Notification message content'
+                    },
+                    {
+                        name: 'status',
+                        type: 'enum',
+                        description: 'Delivery status (Pending, Sent, Failed, Completed, Processing, Released)'
+                    },
+                    {
+                        name: 'created_at',
+                        type: 'datetime',
+                        description: 'Notification creation timestamp'
+                    },
+                    {
+                        name: 'sent_at',
+                        type: 'datetime',
+                        description: 'When notification was sent'
+                    }
                 ]
             },
             {
                 name: 'report_doc_requests',
                 description: 'Archived/reporting data for completed document requests',
-                columns: [
-                    { name: 'report_id', type: 'bigint', description: 'Primary key - Unique report entry identifier' },
-                    { name: 'request_id', type: 'bigint', description: 'Original request ID' },
-                    { name: 'student_name', type: 'varchar(50)', description: 'Name of requesting student' },
-                    { name: 'grade_level', type: 'varchar(45)', description: 'Student grade level' },
-                    { name: 'document_type', type: 'varchar(50)', description: 'Type of document requested' },
-                    { name: 'request_schl_entity', type: 'varchar(50)', description: 'Requesting school/institution' },
-                    { name: 'request_date', type: 'date', description: 'Request date' },
-                    { name: 'release_mode', type: 'varchar(50)', description: 'Release method' },
-                    { name: 'status', type: 'varchar(45)', description: 'Final status' },
-                    { name: 'processed_by', type: 'varchar(50)', description: 'Staff who processed request' },
-                    { name: 'remarks', type: 'text', description: 'Additional notes' },
-                    { name: 'claimers_name', type: 'varchar(50)', description: 'Person who claimed document' },
-                    { name: 'created_at', type: 'datetime', description: 'Report entry creation timestamp' },
-                    { name: 'updated_at', type: 'datetime', description: 'Last update timestamp' }
+                columns: [{
+                        name: 'report_id',
+                        type: 'bigint',
+                        description: 'Primary key - Unique report entry identifier'
+                    },
+                    {
+                        name: 'request_id',
+                        type: 'bigint',
+                        description: 'Original request ID'
+                    },
+                    {
+                        name: 'student_name',
+                        type: 'varchar(50)',
+                        description: 'Name of requesting student'
+                    },
+                    {
+                        name: 'grade_level',
+                        type: 'varchar(45)',
+                        description: 'Student grade level'
+                    },
+                    {
+                        name: 'document_type',
+                        type: 'varchar(50)',
+                        description: 'Type of document requested'
+                    },
+                    {
+                        name: 'request_schl_entity',
+                        type: 'varchar(50)',
+                        description: 'Requesting school/institution'
+                    },
+                    {
+                        name: 'request_date',
+                        type: 'date',
+                        description: 'Request date'
+                    },
+                    {
+                        name: 'release_mode',
+                        type: 'varchar(50)',
+                        description: 'Release method'
+                    },
+                    {
+                        name: 'status',
+                        type: 'varchar(45)',
+                        description: 'Final status'
+                    },
+                    {
+                        name: 'processed_by',
+                        type: 'varchar(50)',
+                        description: 'Staff who processed request'
+                    },
+                    {
+                        name: 'remarks',
+                        type: 'text',
+                        description: 'Additional notes'
+                    },
+                    {
+                        name: 'claimers_name',
+                        type: 'varchar(50)',
+                        description: 'Person who claimed document'
+                    },
+                    {
+                        name: 'created_at',
+                        type: 'datetime',
+                        description: 'Report entry creation timestamp'
+                    },
+                    {
+                        name: 'updated_at',
+                        type: 'datetime',
+                        description: 'Last update timestamp'
+                    }
                 ]
             },
             {
                 name: 'std_addresses',
                 description: 'Stores student residential address information',
-                columns: [
-                    { name: 'std_students_id', type: 'bigint unsigned', description: 'Primary/Foreign key to student record' },
-                    { name: 'HouseNumber_Street', type: 'varchar(255)', description: 'House number and street name' },
-                    { name: 'subdivision_village', type: 'varchar(255)', description: 'Subdivision or village name' },
-                    { name: 'Barangay', type: 'varchar(255)', description: 'Barangay (district) name' },
-                    { name: 'City_municipality', type: 'varchar(255)', description: 'City or municipality' },
-                    { name: 'Province', type: 'varchar(255)', description: 'Province name' },
-                    { name: 'PostalCode', type: 'varchar(45)', description: 'Postal/ZIP code' }
+                columns: [{
+                        name: 'std_students_id',
+                        type: 'bigint unsigned',
+                        description: 'Primary/Foreign key to student record'
+                    },
+                    {
+                        name: 'HouseNumber_Street',
+                        type: 'varchar(255)',
+                        description: 'House number and street name'
+                    },
+                    {
+                        name: 'subdivision_village',
+                        type: 'varchar(255)',
+                        description: 'Subdivision or village name'
+                    },
+                    {
+                        name: 'Barangay',
+                        type: 'varchar(255)',
+                        description: 'Barangay (district) name'
+                    },
+                    {
+                        name: 'City_municipality',
+                        type: 'varchar(255)',
+                        description: 'City or municipality'
+                    },
+                    {
+                        name: 'Province',
+                        type: 'varchar(255)',
+                        description: 'Province name'
+                    },
+                    {
+                        name: 'PostalCode',
+                        type: 'varchar(45)',
+                        description: 'Postal/ZIP code'
+                    }
                 ]
             },
             {
                 name: 'sessions',
                 description: 'Laravel session management table for tracking user sessions',
-                columns: [
-                    { name: 'id', type: 'varchar(255)', description: 'Primary key - Unique session identifier' },
-                    { name: 'user_id', type: 'bigint unsigned', description: 'Associated user account ID' },
-                    { name: 'ip_address', type: 'varchar(45)', description: 'IP address of the session' },
-                    { name: 'user_agent', type: 'text', description: 'Browser/device information' },
-                    { name: 'payload', type: 'longtext', description: 'Serialized session data' },
-                    { name: 'last_activity', type: 'int', description: 'Unix timestamp of last activity' }
+                columns: [{
+                        name: 'id',
+                        type: 'varchar(255)',
+                        description: 'Primary key - Unique session identifier'
+                    },
+                    {
+                        name: 'user_id',
+                        type: 'bigint unsigned',
+                        description: 'Associated user account ID'
+                    },
+                    {
+                        name: 'ip_address',
+                        type: 'varchar(45)',
+                        description: 'IP address of the session'
+                    },
+                    {
+                        name: 'user_agent',
+                        type: 'text',
+                        description: 'Browser/device information'
+                    },
+                    {
+                        name: 'payload',
+                        type: 'longtext',
+                        description: 'Serialized session data'
+                    },
+                    {
+                        name: 'last_activity',
+                        type: 'int',
+                        description: 'Unix timestamp of last activity'
+                    }
                 ]
             },
             {
                 name: 'cache',
                 description: 'Laravel cache storage table for application performance optimization',
-                columns: [
-                    { name: 'key', type: 'varchar(255)', description: 'Primary key - Cache key identifier' },
-                    { name: 'value', type: 'mediumtext', description: 'Cached data value' },
-                    { name: 'expiration', type: 'int', description: 'Unix timestamp when cache expires' }
+                columns: [{
+                        name: 'key',
+                        type: 'varchar(255)',
+                        description: 'Primary key - Cache key identifier'
+                    },
+                    {
+                        name: 'value',
+                        type: 'mediumtext',
+                        description: 'Cached data value'
+                    },
+                    {
+                        name: 'expiration',
+                        type: 'int',
+                        description: 'Unix timestamp when cache expires'
+                    }
                 ]
             },
             {
                 name: 'cache_locks',
                 description: 'Laravel cache locking mechanism to prevent race conditions',
-                columns: [
-                    { name: 'key', type: 'varchar(255)', description: 'Primary key - Lock identifier' },
-                    { name: 'owner', type: 'varchar(255)', description: 'Process/thread owning the lock' },
-                    { name: 'expiration', type: 'int', description: 'Unix timestamp when lock expires' }
+                columns: [{
+                        name: 'key',
+                        type: 'varchar(255)',
+                        description: 'Primary key - Lock identifier'
+                    },
+                    {
+                        name: 'owner',
+                        type: 'varchar(255)',
+                        description: 'Process/thread owning the lock'
+                    },
+                    {
+                        name: 'expiration',
+                        type: 'int',
+                        description: 'Unix timestamp when lock expires'
+                    }
                 ]
             },
             {
                 name: 'fdbk_feedback',
                 description: 'Stores user feedback and suggestions',
-                columns: [
-                    { name: 'id', type: 'bigint', description: 'Primary key - Unique feedback identifier' },
-                    { name: 'account_id', type: 'bigint', description: 'User account who submitted feedback' },
-                    { name: 'feedback_text', type: 'text', description: 'Feedback message content' },
-                    { name: 'feedback_date', type: 'datetime', description: 'Submission timestamp' }
+                columns: [{
+                        name: 'id',
+                        type: 'bigint',
+                        description: 'Primary key - Unique feedback identifier'
+                    },
+                    {
+                        name: 'account_id',
+                        type: 'bigint',
+                        description: 'User account who submitted feedback'
+                    },
+                    {
+                        name: 'feedback_text',
+                        type: 'text',
+                        description: 'Feedback message content'
+                    },
+                    {
+                        name: 'feedback_date',
+                        type: 'datetime',
+                        description: 'Submission timestamp'
+                    }
                 ]
             },
             {
                 name: 'log_access',
                 description: 'Logs user account creation and access events',
-                columns: [
-                    { name: 'id', type: 'int', description: 'Primary key - Unique log entry identifier' },
-                    { name: 'user_account_id', type: 'bigint', description: 'User account ID' },
-                    { name: 'username', type: 'varchar(45)', description: 'Username involved' },
-                    { name: 'email_address', type: 'varchar(45)', description: 'Email address involved' },
-                    { name: 'action_type', type: 'varchar(50)', description: 'Type of action (Account Created, etc.)' },
-                    { name: 'remarks', type: 'text', description: 'Additional details about the action' },
-                    { name: 'timestamp', type: 'datetime', description: 'When action occurred' }
+                columns: [{
+                        name: 'id',
+                        type: 'int',
+                        description: 'Primary key - Unique log entry identifier'
+                    },
+                    {
+                        name: 'user_account_id',
+                        type: 'bigint',
+                        description: 'User account ID'
+                    },
+                    {
+                        name: 'username',
+                        type: 'varchar(45)',
+                        description: 'Username involved'
+                    },
+                    {
+                        name: 'email_address',
+                        type: 'varchar(45)',
+                        description: 'Email address involved'
+                    },
+                    {
+                        name: 'action_type',
+                        type: 'varchar(50)',
+                        description: 'Type of action (Account Created, etc.)'
+                    },
+                    {
+                        name: 'remarks',
+                        type: 'text',
+                        description: 'Additional details about the action'
+                    },
+                    {
+                        name: 'timestamp',
+                        type: 'datetime',
+                        description: 'When action occurred'
+                    }
                 ]
             },
             {
                 name: 'log_requests',
                 description: 'Logs document request lifecycle events',
-                columns: [
-                    { name: 'id', type: 'bigint', description: 'Primary key - Unique log entry identifier' },
-                    { name: 'account_id', type: 'bigint', description: 'User account performing action' },
-                    { name: 'doc_request_id', type: 'bigint', description: 'Document request being modified' },
-                    { name: 'action_type', type: 'enum', description: 'Type of action (created, updated, approved, rejected, claimed)' },
-                    { name: 'action_timestamp', type: 'datetime', description: 'When action occurred' },
-                    { name: 'remarks', type: 'text', description: 'Additional notes about the action' }
+                columns: [{
+                        name: 'id',
+                        type: 'bigint',
+                        description: 'Primary key - Unique log entry identifier'
+                    },
+                    {
+                        name: 'account_id',
+                        type: 'bigint',
+                        description: 'User account performing action'
+                    },
+                    {
+                        name: 'doc_request_id',
+                        type: 'bigint',
+                        description: 'Document request being modified'
+                    },
+                    {
+                        name: 'action_type',
+                        type: 'enum',
+                        description: 'Type of action (created, updated, approved, rejected, claimed)'
+                    },
+                    {
+                        name: 'action_timestamp',
+                        type: 'datetime',
+                        description: 'When action occurred'
+                    },
+                    {
+                        name: 'remarks',
+                        type: 'text',
+                        description: 'Additional notes about the action'
+                    }
                 ]
             },
             {
                 name: 'log_transactions',
                 description: 'Transaction log for document request operations',
-                columns: [
-                    { name: 'id', type: 'int', description: 'Primary key - Unique log entry identifier' },
-                    { name: 'doc_request_id', type: 'bigint', description: 'Document request ID' },
-                    { name: 'std_student_id', type: 'bigint', description: 'Student ID' },
-                    { name: 'name', type: 'varchar(45)', description: 'Name of person/action' },
-                    { name: 'action', type: 'text', description: 'Description of action taken' },
-                    { name: 'date', type: 'date', description: 'Date of transaction' },
-                    { name: 'time', type: 'time', description: 'Time of transaction' }
+                columns: [{
+                        name: 'id',
+                        type: 'int',
+                        description: 'Primary key - Unique log entry identifier'
+                    },
+                    {
+                        name: 'doc_request_id',
+                        type: 'bigint',
+                        description: 'Document request ID'
+                    },
+                    {
+                        name: 'std_student_id',
+                        type: 'bigint',
+                        description: 'Student ID'
+                    },
+                    {
+                        name: 'name',
+                        type: 'varchar(45)',
+                        description: 'Name of person/action'
+                    },
+                    {
+                        name: 'action',
+                        type: 'text',
+                        description: 'Description of action taken'
+                    },
+                    {
+                        name: 'date',
+                        type: 'date',
+                        description: 'Date of transaction'
+                    },
+                    {
+                        name: 'time',
+                        type: 'time',
+                        description: 'Time of transaction'
+                    }
                 ]
             },
             {
                 name: 'migrations',
                 description: 'Laravel migration tracking table',
-                columns: [
-                    { name: 'id', type: 'int unsigned', description: 'Primary key - Migration entry identifier' },
-                    { name: 'migration', type: 'varchar(255)', description: 'Migration file name' },
-                    { name: 'batch', type: 'int', description: 'Batch number for grouping migrations' }
+                columns: [{
+                        name: 'id',
+                        type: 'int unsigned',
+                        description: 'Primary key - Migration entry identifier'
+                    },
+                    {
+                        name: 'migration',
+                        type: 'varchar(255)',
+                        description: 'Migration file name'
+                    },
+                    {
+                        name: 'batch',
+                        type: 'int',
+                        description: 'Batch number for grouping migrations'
+                    }
                 ]
             },
             {
                 name: 'password_reset_tokens',
                 description: 'Stores tokens for password reset functionality',
-                columns: [
-                    { name: 'email', type: 'varchar(255)', description: 'Primary key - Email address for reset' },
-                    { name: 'token', type: 'varchar(255)', description: 'Reset token generated' },
-                    { name: 'created_at', type: 'timestamp', description: 'Token creation timestamp' }
+                columns: [{
+                        name: 'email',
+                        type: 'varchar(255)',
+                        description: 'Primary key - Email address for reset'
+                    },
+                    {
+                        name: 'token',
+                        type: 'varchar(255)',
+                        description: 'Reset token generated'
+                    },
+                    {
+                        name: 'created_at',
+                        type: 'timestamp',
+                        description: 'Token creation timestamp'
+                    }
                 ]
             },
             {
                 name: 'temp_passwords',
                 description: 'Temporary passwords for new user account setup',
-                columns: [
-                    { name: 'id', type: 'bigint unsigned', description: 'Primary key - Entry identifier' },
-                    { name: 'email_address', type: 'varchar(255)', description: 'User email address' },
-                    { name: 'temp_password', type: 'varchar(255)', description: 'Temporary password (encrypted)' },
-                    { name: 'email_sent', type: 'tinyint(1)', description: 'Whether email was sent (0=no, 1=yes)' },
-                    { name: 'created_at', type: 'timestamp', description: 'Creation timestamp' },
-                    { name: 'updated_at', type: 'timestamp', description: 'Last update timestamp' }
+                columns: [{
+                        name: 'id',
+                        type: 'bigint unsigned',
+                        description: 'Primary key - Entry identifier'
+                    },
+                    {
+                        name: 'email_address',
+                        type: 'varchar(255)',
+                        description: 'User email address'
+                    },
+                    {
+                        name: 'temp_password',
+                        type: 'varchar(255)',
+                        description: 'Temporary password (encrypted)'
+                    },
+                    {
+                        name: 'email_sent',
+                        type: 'tinyint(1)',
+                        description: 'Whether email was sent (0=no, 1=yes)'
+                    },
+                    {
+                        name: 'created_at',
+                        type: 'timestamp',
+                        description: 'Creation timestamp'
+                    },
+                    {
+                        name: 'updated_at',
+                        type: 'timestamp',
+                        description: 'Last update timestamp'
+                    }
                 ]
             },
             {
                 name: 'users',
                 description: 'Laravel default users table (appears unused in favor of acc_users)',
-                columns: [
-                    { name: 'id', type: 'bigint unsigned', description: 'Primary key - User identifier' },
-                    { name: 'name', type: 'varchar(255)', description: 'User name' },
-                    { name: 'email', type: 'varchar(255)', description: 'User email (unique)' },
-                    { name: 'email_verified_at', type: 'timestamp', description: 'Email verification timestamp' },
-                    { name: 'password', type: 'varchar(255)', description: 'Encrypted password' },
-                    { name: 'remember_token', type: 'varchar(100)', description: 'Remember me token' },
-                    { name: 'created_at', type: 'timestamp', description: 'Creation timestamp' },
-                    { name: 'updated_at', type: 'timestamp', description: 'Last update timestamp' }
+                columns: [{
+                        name: 'id',
+                        type: 'bigint unsigned',
+                        description: 'Primary key - User identifier'
+                    },
+                    {
+                        name: 'name',
+                        type: 'varchar(255)',
+                        description: 'User name'
+                    },
+                    {
+                        name: 'email',
+                        type: 'varchar(255)',
+                        description: 'User email (unique)'
+                    },
+                    {
+                        name: 'email_verified_at',
+                        type: 'timestamp',
+                        description: 'Email verification timestamp'
+                    },
+                    {
+                        name: 'password',
+                        type: 'varchar(255)',
+                        description: 'Encrypted password'
+                    },
+                    {
+                        name: 'remember_token',
+                        type: 'varchar(100)',
+                        description: 'Remember me token'
+                    },
+                    {
+                        name: 'created_at',
+                        type: 'timestamp',
+                        description: 'Creation timestamp'
+                    },
+                    {
+                        name: 'updated_at',
+                        type: 'timestamp',
+                        description: 'Last update timestamp'
+                    }
                 ]
             }
         ];
@@ -806,61 +1431,100 @@
         }
 
         // Export table as image
+        // Export table as image with document-style layout
         async function exportTableAsImage(tableName) {
-            const tableCard = document.getElementById(`table-card-${tableName}`);
-            const content = document.getElementById(`content-${tableName}`);
-            const chevron = document.getElementById(`chevron-${tableName}`);
+            const table = tables.find(t => t.name === tableName);
+            if (!table) return;
 
-            // Temporarily expand the table if it's collapsed
-            const wasExpanded = expandedTables[tableName];
-            if (!wasExpanded) {
-                content.classList.add('expanded');
-                chevron.classList.add('rotated');
-                // Wait for expansion animation
-                await new Promise(resolve => setTimeout(resolve, 300));
-            }
+            // Create a temporary container for export
+            const exportContainer = document.createElement('div');
+            exportContainer.style.cssText = `
+                position: fixed;
+                left: -9999px;
+                top: 0;
+                width: 1000px;
+                background: white;
+                padding: 40px;
+                font-family: Arial, sans-serif;
+            `;
+
+            exportContainer.innerHTML = `
+                <div style="margin-bottom: 30px;">
+                    <h2 style="font-size: 18px; margin: 0 0 20px 0; text-align: center;">3.2.4 Data dictionary</h2>
+                    <div style="background: #2c3e50; color: white; padding: 12px 20px; font-weight: bold; font-size: 16px; text-align: center;">
+                        ${table.name}
+                    </div>
+                    <table style="width: 100%; border-collapse: collapse; border: 1px solid #000;">
+                        <thead>
+                            <tr style="background: white;">
+                                <th style="border: 1px solid #000; padding: 10px; text-align: left; font-weight: bold;">Field Name</th>
+                                <th style="border: 1px solid #000; padding: 10px; text-align: left; font-weight: bold;">Data Type</th>
+                                <th style="border: 1px solid #000; padding: 10px; text-align: left; font-weight: bold;">Constraint</th>
+                                <th style="border: 1px solid #000; padding: 10px; text-align: left; font-weight: bold;">Description</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${table.columns.map(col => {
+                                let constraint = '';
+                                if (col.name.toLowerCase().includes('id') && col.name === table.columns[0].name) {
+                                    constraint = 'PRIMARY KEY';
+                                } else if (col.name.toLowerCase().includes('_id') && col.name !== table.columns[0].name) {
+                                    constraint = 'FOREIGN KEY';
+                                }
+                                
+                                return ` <
+                tr style = "background: white;" >
+                <
+                td style = "border: 1px solid #000; padding: 10px;" > $ {
+                    col.name
+                } < /td> <
+                td style = "border: 1px solid #000; padding: 10px;" > $ {
+                    col.type.toUpperCase()
+                } < /td> <
+                td style = "border: 1px solid #000; padding: 10px;" > $ {
+                    constraint
+                } < /td> <
+                td style = "border: 1px solid #000; padding: 10px;" > $ {
+                    col.description
+                } < /td> <
+                /tr>
+            `;
+                            }).join('')}
+                        </tbody>
+                    </table>
+                    <p style="text-align: center; font-style: italic; margin-top: 15px; font-size: 14px;">
+                        Table 1. Data Dictionary
+                    </p>
+                </div>
+            `;
+
+            document.body.appendChild(exportContainer);
 
             try {
-                // Hide the export button temporarily
-                const exportBtn = tableCard.querySelector('.export-btn');
-                const exportBtnDisplay = exportBtn.style.display;
-                exportBtn.style.display = 'none';
-
-                // Capture the table card
-                const canvas = await html2canvas(tableCard, {
+                const canvas = await html2canvas(exportContainer, {
                     backgroundColor: '#ffffff',
-                    scale: 2, // Higher quality
+                    scale: 2,
                     logging: false,
-                    useCORS: true
+                    useCORS: true,
+                    width: 1000,
+                    windowWidth: 1000
                 });
 
-                // Restore export button
-                exportBtn.style.display = exportBtnDisplay;
+                document.body.removeChild(exportContainer);
 
-                // Convert to blob and download
                 canvas.toBlob((blob) => {
                     const url = URL.createObjectURL(blob);
                     const link = document.createElement('a');
-                    link.download = `${tableName}_table_schema.png`;
+                    link.download = `${tableName}_data_dictionary.png`;
                     link.href = url;
                     link.click();
                     URL.revokeObjectURL(url);
                 });
-
-                // Restore original state if it was collapsed
-                if (!wasExpanded) {
-                    await new Promise(resolve => setTimeout(resolve, 100));
-                    content.classList.remove('expanded');
-                    chevron.classList.remove('rotated');
-                }
             } catch (error) {
                 console.error('Error exporting table:', error);
                 alert('Failed to export table. Please try again.');
-
-                // Restore original state on error
-                if (!wasExpanded) {
-                    content.classList.remove('expanded');
-                    chevron.classList.remove('rotated');
+                if (document.body.contains(exportContainer)) {
+                    document.body.removeChild(exportContainer);
                 }
             }
         }
@@ -876,4 +1540,5 @@
         document.getElementById('totalTables').textContent = tables.length;
     </script>
 </body>
+
 </html>
