@@ -192,6 +192,43 @@
             height: 16px;
         }
 
+        .export-all-btn {
+            background: #10b981;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 0.95em;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.2s;
+            font-weight: 600;
+            box-shadow: 0 2px 8px rgba(16, 185, 129, 0.3);
+        }
+
+        .export-all-btn:hover {
+            background: #059669;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4);
+        }
+
+        .export-all-btn:active {
+            transform: translateY(0);
+        }
+
+        .export-all-btn:disabled {
+            background: #9ca3af;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .export-all-icon {
+            width: 20px;
+            height: 20px;
+        }
+
         .table-content {
             max-height: 0;
             overflow: hidden;
@@ -389,6 +426,15 @@
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
                 </svg>
                 <input type="text" id="searchInput" placeholder="Search tables, columns, or descriptions...">
+            </div>
+
+            <div style="margin-top: 20px; text-align: center;">
+                <button class="export-all-btn" onclick="exportAllTables()" id="exportAllBtn">
+                    <svg class="export-all-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                    </svg>
+                    Export All Tables
+                </button>
             </div>
         </div>
 
@@ -916,6 +962,133 @@
                     content.classList.remove('expanded');
                     chevron.classList.remove('rotated');
                 }
+            }
+        }
+
+        // Export all tables as images
+        async function exportAllTables() {
+            const exportBtn = document.getElementById('exportAllBtn');
+            exportBtn.disabled = true;
+            exportBtn.innerHTML = `
+                <svg class="export-all-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                </svg>
+                Exporting...
+            `;
+
+            try {
+                for (let i = 0; i < tables.length; i++) {
+                    const table = tables[i];
+
+                    // Update button text with progress
+                    exportBtn.innerHTML = `
+                        <svg class="export-all-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                        </svg>
+                        Exporting ${i + 1} of ${tables.length}...
+                    `;
+
+                    // Create a temporary container for export
+                    const exportContainer = document.createElement('div');
+                    exportContainer.style.position = 'absolute';
+                    exportContainer.style.left = '-9999px';
+                    exportContainer.style.background = 'white';
+                    exportContainer.style.padding = '30px';
+                    exportContainer.style.fontFamily = '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, sans-serif';
+
+                    exportContainer.innerHTML = `
+                        <div style="margin-bottom: 15px; text-align: center;">
+                            <h2 style="font-size: 14pt; color: #000000; margin-bottom: 5px; font-weight: bold;">Table: ${table.name}</h2>
+                            <p style="color: #000000; font-size: 10pt; font-style: italic;">${table.description}</p>
+                        </div>
+                        <table style="width: 100%; border-collapse: collapse; border: 2px solid #000000; background: transparent;">
+                            <thead>
+                                <tr>
+                                    <th style="padding: 8px 10px; text-align: left; font-size: 10pt; color: #000000; font-weight: bold; border: 1px solid #000000; background: #ffffff;">Field Name</th>
+                                    <th style="padding: 8px 10px; text-align: left; font-size: 10pt; color: #000000; font-weight: bold; border: 1px solid #000000; background: #ffffff;">Data Type</th>
+                                    <th style="padding: 8px 10px; text-align: left; font-size: 10pt; color: #000000; font-weight: bold; border: 1px solid #000000; background: #ffffff;">Constraint</th>
+                                    <th style="padding: 8px 10px; text-align: left; font-size: 10pt; color: #000000; font-weight: bold; border: 1px solid #000000; background: #ffffff;">Description</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${table.columns.map((col, idx) => `
+                                    <tr>
+                                        <td style="padding: 8px 10px; border: 1px solid #000000; background: #ffffff;">
+                                            <span style="font-family: 'Courier New', monospace; color: #000000; font-size: 9pt;">${col.name}</span>
+                                        </td>
+                                        <td style="padding: 8px 10px; border: 1px solid #000000; background: #ffffff;">
+                                            <span style="color: #000000; font-size: 9pt;">${col.type}</span>
+                                        </td>
+                                        <td style="padding: 8px 10px; border: 1px solid #000000; background: #ffffff;">
+                                            <span style="color: #000000; font-size: 9pt;">${col.constraint || 'NULL'}</span>
+                                        </td>
+                                        <td style="padding: 8px 10px; border: 1px solid #000000; background: #ffffff;">
+                                            <span style="color: #000000; font-size: 9pt;">${col.description}</span>
+                                        </td>
+                                    </tr>
+                                `).join('')}
+                            </tbody>
+                        </table>
+                    `;
+
+                    document.body.appendChild(exportContainer);
+
+                    // Capture the export container
+                    const canvas = await html2canvas(exportContainer, {
+                        backgroundColor: '#ffffff',
+                        scale: 2,
+                        logging: false,
+                        useCORS: true
+                    });
+
+                    // Remove temporary container
+                    document.body.removeChild(exportContainer);
+
+                    // Convert to blob and download
+                    await new Promise((resolve) => {
+                        canvas.toBlob((blob) => {
+                            const url = URL.createObjectURL(blob);
+                            const link = document.createElement('a');
+                            link.download = `${String(i + 1).padStart(2, '0')}_${table.name}_table_schema.png`;
+                            link.href = url;
+                            link.click();
+                            URL.revokeObjectURL(url);
+                            resolve();
+                        });
+                    });
+
+                    // Small delay between exports to prevent browser issues
+                    await new Promise(resolve => setTimeout(resolve, 500));
+                }
+
+                // Success message
+                exportBtn.innerHTML = `
+                    <svg class="export-all-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                    </svg>
+                    Exported ${tables.length} Tables!
+                `;
+
+                setTimeout(() => {
+                    exportBtn.innerHTML = `
+                        <svg class="export-all-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                        </svg>
+                        Export All Tables
+                    `;
+                    exportBtn.disabled = false;
+                }, 2000);
+
+            } catch (error) {
+                console.error('Error exporting tables:', error);
+                alert('Failed to export all tables. Please try again.');
+                exportBtn.innerHTML = `
+                    <svg class="export-all-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                    </svg>
+                    Export All Tables
+                `;
+                exportBtn.disabled = false;
             }
         }
 
