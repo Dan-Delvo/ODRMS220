@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Database Dictionary - Document Request System</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <style>
         * {
             margin: 0;
@@ -159,6 +160,36 @@
 
         .chevron.rotated {
             transform: rotate(90deg);
+        }
+
+        .export-btn {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 0.85em;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.2s;
+            margin-right: 10px;
+        }
+
+        .export-btn:hover {
+            background: #5568d3;
+            transform: translateY(-1px);
+            box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
+        }
+
+        .export-btn:active {
+            transform: translateY(0);
+        }
+
+        .export-icon {
+            width: 16px;
+            height: 16px;
         }
 
         .table-content {
@@ -693,7 +724,7 @@
             }
 
             container.innerHTML = tablesToRender.map((table, index) => `
-                <div class="table-card">
+                <div class="table-card" id="table-card-${table.name}">
                     <div class="table-header" onclick="toggleTable('${table.name}')">
                         <div class="table-title-section">
                             <svg class="table-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -705,6 +736,12 @@
                             </div>
                         </div>
                         <div class="table-meta">
+                            <button class="export-btn" onclick="event.stopPropagation(); exportTableAsImage('${table.name}')" title="Export table as image">
+                                <svg class="export-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                                </svg>
+                                Export
+                            </button>
                             <span class="column-count">${table.columns.length} columns</span>
                             <svg class="chevron" id="chevron-${table.name}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
@@ -766,6 +803,66 @@
 
                 return nameMatch || descMatch || columnMatch;
             });
+        }
+
+        // Export table as image
+        async function exportTableAsImage(tableName) {
+            const tableCard = document.getElementById(`table-card-${tableName}`);
+            const content = document.getElementById(`content-${tableName}`);
+            const chevron = document.getElementById(`chevron-${tableName}`);
+
+            // Temporarily expand the table if it's collapsed
+            const wasExpanded = expandedTables[tableName];
+            if (!wasExpanded) {
+                content.classList.add('expanded');
+                chevron.classList.add('rotated');
+                // Wait for expansion animation
+                await new Promise(resolve => setTimeout(resolve, 300));
+            }
+
+            try {
+                // Hide the export button temporarily
+                const exportBtn = tableCard.querySelector('.export-btn');
+                const exportBtnDisplay = exportBtn.style.display;
+                exportBtn.style.display = 'none';
+
+                // Capture the table card
+                const canvas = await html2canvas(tableCard, {
+                    backgroundColor: '#ffffff',
+                    scale: 2, // Higher quality
+                    logging: false,
+                    useCORS: true
+                });
+
+                // Restore export button
+                exportBtn.style.display = exportBtnDisplay;
+
+                // Convert to blob and download
+                canvas.toBlob((blob) => {
+                    const url = URL.createObjectURL(blob);
+                    const link = document.createElement('a');
+                    link.download = `${tableName}_table_schema.png`;
+                    link.href = url;
+                    link.click();
+                    URL.revokeObjectURL(url);
+                });
+
+                // Restore original state if it was collapsed
+                if (!wasExpanded) {
+                    await new Promise(resolve => setTimeout(resolve, 100));
+                    content.classList.remove('expanded');
+                    chevron.classList.remove('rotated');
+                }
+            } catch (error) {
+                console.error('Error exporting table:', error);
+                alert('Failed to export table. Please try again.');
+
+                // Restore original state on error
+                if (!wasExpanded) {
+                    content.classList.remove('expanded');
+                    chevron.classList.remove('rotated');
+                }
+            }
         }
 
         // Search functionality
