@@ -448,7 +448,7 @@
                     { name: 'Grade_level', type: 'int', constraint: 'NULL', description: 'Current or last grade level attended' },
                     { name: 'Std_status', type: 'varchar(255)', constraint: 'NULL', description: 'Student status (Regular, Alumni, etc.)' },
                     { name: 'Last_sy_attended', type: 'varchar(25)', constraint: 'NULL', description: 'Last school year attended' },
-                    { name: 'id_image', type: 'varchar(500)', constraint: 'NULL', description: 'Path to student ID image file' }
+                    { name: 'Id_image', type: 'varchar(500)', constraint: 'NULL', description: 'Path to student ID image file' }
                 ]
             },
             {
@@ -473,7 +473,11 @@
                     { name: 'req_no', type: 'int', constraint: 'AUTO_INCREMENT', description: 'Sequential request number (auto-increment)' },
                     { name: 'image', type: 'varchar(500)', constraint: 'NULL', description: 'Path to related image file' },
                     { name: 'supporting_document', type: 'varchar(500)', constraint: 'NULL', description: 'Path to supporting documents uploaded' },
-                    { name: 'claimed_time', type: 'time', constraint: 'NULL', description: 'Time when document was claimed' }
+                    { name: 'claimed_time', type: 'time', constraint: 'NULL', description: 'Time when document was claimed' },
+                    { name: 'was_offline', type: 'tinyint(1)', constraint: 'default 0', description: 'Indicates if the request was made offline' },
+                    { name: 'synced_at', type: 'timestamp', constraint: 'NULL', description: 'Time when document was claimed' },
+                    { name: 'offline_id', type: 'VARCHAR(255)', constraint: 'NULL', description: 'Time when document was claimed' },
+                    { name: 'sync_attempts', type: 'int', constraint: 'default 0', description: 'Time when document was claimed' }
                 ]
             },
             {
@@ -494,6 +498,30 @@
                     { name: 'Lname', type: 'varchar(255)', constraint: 'NOT NULL', description: 'Claimer last name' },
                     { name: 'contact_no', type: 'varchar(255)', constraint: 'NULL', description: 'Contact number of claimer' },
                     { name: 'claimed_date', type: 'date', constraint: 'NULL', description: 'Date when documents were claimed' }
+                ]
+            },
+            {
+                name: 'bulk_requests',
+                description: 'Stores bulk document requests from schools or institutions',
+                columns: [
+                    { name: 'Request_ID', type: 'bigint', constraint: 'PRIMARY KEY', description: 'Unique bulk request identifier' },
+                    { name: 'School_Name', type: 'varchar(255)', constraint: 'NOT NULL', description: 'Name of the requesting school/institution' },
+                    { name: 'School_Email', type: 'varchar(255)', constraint: 'NOT NULL', description: 'Email address of requesting school/institution' },
+                    { name: 'DocType', type: 'varchar(255)', constraint: 'NOT NULL', description: 'Type of document being requested in bulk' },
+                    { name: 'Status', type: 'enum("pending", "processing", "for release", "claimed")', constraint: 'NOT NULL', description: 'Current status of the bulk request' },
+                    { name: 'request_date', type: 'timestamp', constraint: 'NOT NULL', description: 'Date and time when bulk request was submitted' },
+                    { name: 'approve_date', type: 'timestamp', constraint: 'NULL', description: 'Date when bulk request was approved' },
+                    { name: 'forRelease_date', type: 'timestamp', constraint: 'NULL', description: 'Date when documents were prepared for release' },
+                    { name: 'claimed_date', type: 'timestamp', constraint: 'NULL', description: 'Date when documents were claimed' },
+                ]
+            },
+            {
+                name: 'bulk_students',
+                description: 'Stores user account information for all system users (students, admin, registrar)',
+                columns: [
+                    { name: 'Student_ID', type: 'bigint', constraint: 'PRIMARY KEY', description: 'Unique user account identifier' },
+                    { name: 'Request_ID', type: 'bigint', constraint: 'FOREIGN KEY', description: 'Foreign key linking to std_students table' },
+                    { name: 'Student_Name', type: 'varchar(255)', constraint: 'NOT NULL', description: 'Foreign key to role table defining user permissions' }
                 ]
             },
             {
@@ -550,21 +578,6 @@
                     { name: 'doc_amount', type: 'int', constraint: 'NULL', description: 'Payment amount for the document' },
                     { name: 'name_request', type: 'varchar(100)', constraint: 'NULL', description: 'Name/ID of person making payment' },
                     { name: 'time_request', type: 'datetime', constraint: 'NULL', description: 'Payment timestamp' }
-                ]
-            },
-            {
-                name: 'notifications',
-                description: 'Stores system notifications sent to users',
-                columns: [
-                    { name: 'id', type: 'bigint', constraint: 'PRIMARY KEY', description: 'Unique notification identifier' },
-                    { name: 'account_id', type: 'bigint', constraint: 'FOREIGN KEY', description: 'User account receiving notification' },
-                    { name: 'doc_request_id', type: 'bigint', constraint: 'FOREIGN KEY', description: 'Related document request (if applicable)' },
-                    { name: 'type', type: 'text', constraint: 'NULL', description: 'Type/category of notification' },
-                    { name: 'title', type: 'varchar(255)', constraint: 'NULL', description: 'Notification title/subject' },
-                    { name: 'content', type: 'text', constraint: 'NULL', description: 'Notification message content' },
-                    { name: 'status', type: 'enum', constraint: 'NULL', description: 'Delivery status (Pending, Sent, Failed, Completed, Processing, Released)' },
-                    { name: 'created_at', type: 'datetime', constraint: 'NULL', description: 'Notification creation timestamp' },
-                    { name: 'sent_at', type: 'datetime', constraint: 'NULL', description: 'When notification was sent' }
                 ]
             },
             {
@@ -641,31 +654,6 @@
                 ]
             },
             {
-                name: 'log_access',
-                description: 'Logs user account creation and access events',
-                columns: [
-                    { name: 'id', type: 'int', constraint: 'PRIMARY KEY', description: 'Unique log entry identifier' },
-                    { name: 'user_account_id', type: 'bigint', constraint: 'NULL', description: 'User account ID' },
-                    { name: 'username', type: 'varchar(45)', constraint: 'NULL', description: 'Username involved' },
-                    { name: 'email_address', type: 'varchar(45)', constraint: 'NULL', description: 'Email address involved' },
-                    { name: 'action_type', type: 'varchar(50)', constraint: 'NULL', description: 'Type of action (Account Created, etc.)' },
-                    { name: 'remarks', type: 'text', constraint: 'NULL', description: 'Additional details about the action' },
-                    { name: 'timestamp', type: 'datetime', constraint: 'NULL', description: 'When action occurred' }
-                ]
-            },
-            {
-                name: 'log_requests',
-                description: 'Logs document request lifecycle events',
-                columns: [
-                    { name: 'id', type: 'bigint', constraint: 'PRIMARY KEY', description: 'Unique log entry identifier' },
-                    { name: 'account_id', type: 'bigint', constraint: 'NULL', description: 'User account performing action' },
-                    { name: 'doc_request_id', type: 'bigint', constraint: 'NULL', description: 'Document request being modified' },
-                    { name: 'action_type', type: 'enum', constraint: 'NULL', description: 'Type of action (created, updated, approved, rejected, claimed)' },
-                    { name: 'action_timestamp', type: 'datetime', constraint: 'NULL', description: 'When action occurred' },
-                    { name: 'remarks', type: 'text', constraint: 'NULL', description: 'Additional notes about the action' }
-                ]
-            },
-            {
                 name: 'log_transactions',
                 description: 'Transaction log for document request operations',
                 columns: [
@@ -688,38 +676,45 @@
                 ]
             },
             {
-                name: 'password_reset_tokens',
-                description: 'Stores tokens for password reset functionality',
+                name: 'failed_jobs',
+                description: 'Laravel failed job queue tracking table',
                 columns: [
-                    { name: 'email', type: 'varchar(255)', constraint: 'PRIMARY KEY', description: 'Email address for reset' },
-                    { name: 'token', type: 'varchar(255)', constraint: 'NOT NULL', description: 'Reset token generated' },
-                    { name: 'created_at', type: 'timestamp', constraint: 'NULL', description: 'Token creation timestamp' }
+                    { name: 'id', type: 'bigint unsigned', constraint: 'PRIMARY KEY', description: 'Unique failed job identifier' },
+                    { name: 'uuid', type: 'varchar(255)', constraint: 'NOT NULL', description: 'Unique UUID for the failed job' },
+                    { name: 'connection', type: 'text', constraint: 'NOT NULL', description: 'Queue connection name' },
+                    { name: 'queue', type: 'text', constraint: 'NOT NULL', description: 'Queue name where job failed' },
+                    { name: 'payload', type: 'longtext', constraint: 'NOT NULL', description: 'Serialized job data' },
+                    { name: 'exception', type: 'longtext', constraint: 'NOT NULL', description: 'Exception details and stack trace' },
+                    { name: 'failed_at', type: 'timestamp', constraint: 'DEFAULT CURRENT_TIMESTAMP', description: 'Timestamp when job failed' }
                 ]
             },
             {
-                name: 'temp_passwords',
-                description: 'Temporary passwords for new user account setup',
+                name: 'job_batches',
+                description: 'Laravel job batch tracking for monitoring grouped background jobs',
                 columns: [
-                    { name: 'id', type: 'bigint unsigned', constraint: 'PRIMARY KEY', description: 'Entry identifier' },
-                    { name: 'email_address', type: 'varchar(255)', constraint: 'NOT NULL', description: 'User email address' },
-                    { name: 'temp_password', type: 'varchar(255)', constraint: 'NOT NULL', description: 'Temporary password (encrypted)' },
-                    { name: 'email_sent', type: 'tinyint(1)', constraint: 'NOT NULL', description: 'Whether email was sent (0=no, 1=yes)' },
-                    { name: 'created_at', type: 'timestamp', constraint: 'NULL', description: 'Creation timestamp' },
-                    { name: 'updated_at', type: 'timestamp', constraint: 'NULL', description: 'Last update timestamp' }
+                    { name: 'id', type: 'varchar(255)', constraint: 'PRIMARY KEY', description: 'Unique batch identifier' },
+                    { name: 'name', type: 'varchar(255)', constraint: 'NOT NULL', description: 'Name of the job batch' },
+                    { name: 'total_jobs', type: 'int', constraint: 'NOT NULL', description: 'Total number of jobs in the batch' },
+                    { name: 'pending_jobs', type: 'int', constraint: 'NOT NULL', description: 'Number of jobs still pending' },
+                    { name: 'failed_jobs', type: 'int', constraint: 'NOT NULL', description: 'Number of jobs that failed' },
+                    { name: 'failed_job_ids', type: 'longtext', constraint: 'NOT NULL', description: 'IDs of failed jobs in the batch' },
+                    { name: 'options', type: 'mediumtext', constraint: 'NULL', description: 'Serialized batch options' },
+                    { name: 'cancelled_at', type: 'int', constraint: 'NULL', description: 'Unix timestamp when batch was cancelled' },
+                    { name: 'created_at', type: 'int', constraint: 'NOT NULL', description: 'Batch creation timestamp' },
+                    { name: 'finished_at', type: 'int', constraint: 'NULL', description: 'Unix timestamp when batch completed' }
                 ]
             },
             {
-                name: 'users',
-                description: 'Laravel default users table (appears unused in favor of acc_users)',
+                name: 'jobs',
+                description: 'Laravel queue jobs table for managing background job processing',
                 columns: [
-                    { name: 'id', type: 'bigint unsigned', constraint: 'PRIMARY KEY', description: 'User identifier' },
-                    { name: 'name', type: 'varchar(255)', constraint: 'NOT NULL', description: 'User name' },
-                    { name: 'email', type: 'varchar(255)', constraint: 'UNIQUE', description: 'User email (unique)' },
-                    { name: 'email_verified_at', type: 'timestamp', constraint: 'NULL', description: 'Email verification timestamp' },
-                    { name: 'password', type: 'varchar(255)', constraint: 'NOT NULL', description: 'Encrypted password' },
-                    { name: 'remember_token', type: 'varchar(100)', constraint: 'NULL', description: 'Remember me token' },
-                    { name: 'created_at', type: 'timestamp', constraint: 'NULL', description: 'Creation timestamp' },
-                    { name: 'updated_at', type: 'timestamp', constraint: 'NULL', description: 'Last update timestamp' }
+                    { name: 'id', type: 'bigint unsigned', constraint: 'PRIMARY KEY', description: 'Unique job identifier' },
+                    { name: 'queue', type: 'varchar(255)', constraint: 'NOT NULL', description: 'Queue name where job is placed' },
+                    { name: 'payload', type: 'longtext', constraint: 'NOT NULL', description: 'Serialized job data and parameters' },
+                    { name: 'attempts', type: 'tinyint unsigned', constraint: 'NOT NULL', description: 'Number of times job has been attempted' },
+                    { name: 'reserved_at', type: 'int unsigned', constraint: 'NULL', description: 'Unix timestamp when job was reserved for processing' },
+                    { name: 'available_at', type: 'int unsigned', constraint: 'NOT NULL', description: 'Unix timestamp when job becomes available' },
+                    { name: 'created_at', type: 'int unsigned', constraint: 'NOT NULL', description: 'Unix timestamp when job was created' }
                 ]
             }
         ];
@@ -818,8 +813,7 @@
             });
         }
 
-        // Export table as image
-        // Export table as image with document-style layout
+        // Export table as image with transparent background
         async function exportTableAsImage(tableName) {
             const content = document.getElementById(`content-${tableName}`);
             const chevron = document.getElementById(`chevron-${tableName}`);
@@ -827,98 +821,104 @@
             // Temporarily expand the table if it's collapsed
             const wasExpanded = expandedTables[tableName];
             if (!wasExpanded) {
-                content.classList.add('expanded');
-                chevron.classList.add('rotated');
-                // Wait for expansion animation
-                await new Promise(resolve => setTimeout(resolve, 300));
+            content.classList.add('expanded');
+            chevron.classList.add('rotated');
+            // Wait for expansion animation
+            await new Promise(resolve => setTimeout(resolve, 300));
             }
 
             try {
-                // Get the table info
-                const table = tables.find(t => t.name === tableName);
+            // Get the table info
+            const table = tables.find(t => t.name === tableName);
 
-                // Create a temporary container for export
-                const exportContainer = document.createElement('div');
-                exportContainer.style.position = 'absolute';
-                exportContainer.style.left = '-9999px';
-                exportContainer.style.background = 'white';
-                exportContainer.style.padding = '30px';
-                exportContainer.style.fontFamily = '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, sans-serif';
+            // Create a temporary container for export
+            const exportContainer = document.createElement('div');
+            exportContainer.style.position = 'absolute';
+            exportContainer.style.left = '-9999px';
+            exportContainer.style.background = 'transparent';
+            exportContainer.style.padding = '0';
+            exportContainer.style.fontFamily = 'Arial, sans-serif';
 
-                exportContainer.innerHTML = `
-                    <div style="margin-bottom: 15px; text-align: center;">
-                        <h2 style="font-size: 14pt; color: #000000; margin-bottom: 5px; font-weight: bold;">Table: ${table.name}</h2>
-                        <p style="color: #000000; font-size: 10pt; font-style: italic;">${table.description}</p>
-                    </div>
-                    <table style="width: 100%; border-collapse: collapse; border: 2px solid #000000; background: transparent;">
-                        <thead>
-                            <tr>
-                                <th style="padding: 8px 10px; text-align: left; font-size: 10pt; color: #000000; font-weight: bold; border: 1px solid #000000; background: #ffffff;">Field Name</th>
-                                <th style="padding: 8px 10px; text-align: left; font-size: 10pt; color: #000000; font-weight: bold; border: 1px solid #000000; background: #ffffff;">Data Type</th>
-                                <th style="padding: 8px 10px; text-align: left; font-size: 10pt; color: #000000; font-weight: bold; border: 1px solid #000000; background: #ffffff;">Constraint</th>
-                                <th style="padding: 8px 10px; text-align: left; font-size: 10pt; color: #000000; font-weight: bold; border: 1px solid #000000; background: #ffffff;">Description</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            ${table.columns.map((col, idx) => `
-                                <tr>
-                                    <td style="padding: 8px 10px; border: 1px solid #000000; background: #ffffff;">
-                                        <span style="font-family: 'Courier New', monospace; color: #000000; font-size: 9pt;">${col.name}</span>
-                                    </td>
-                                    <td style="padding: 8px 10px; border: 1px solid #000000; background: #ffffff;">
-                                        <span style="color: #000000; font-size: 9pt;">${col.type}</span>
-                                    </td>
-                                    <td style="padding: 8px 10px; border: 1px solid #000000; background: #ffffff;">
-                                        <span style="color: #000000; font-size: 9pt;">${col.constraint || 'NULL'}</span>
-                                    </td>
-                                    <td style="padding: 8px 10px; border: 1px solid #000000; background: #ffffff;">
-                                        <span style="color: #000000; font-size: 9pt;">${col.description}</span>
-                                    </td>
-                                </tr>
-                            `).join('')}
-                        </tbody>
-                    </table>
-                `;
+            exportContainer.innerHTML = `
+                <table style="width: 576px; border-collapse: collapse; border: 2px solid #000000; background: transparent; font-family: Arial, sans-serif; table-layout: fixed;">
+                <colgroup>
+                    <col style="width: 150px;">
+                    <col style="width: 110px;">
+                    <col style="width: 90px;">
+                    <col style="width: 226px;">
+                </colgroup>
+                <thead>
+                    <tr style="background: #2d3748;">
+                    <th colspan="4" style="padding: 4px 10px; text-align: center; font-size: 11pt; color: #ffffff; font-weight: bold; border: 2px solid #000000; font-family: Arial, sans-serif; line-height: 1;">${table.name}</th>
+                    </tr>
+                    <tr>
+                    <th style="padding: 3px 8px; text-align: center; font-size: 11pt; color: #000000; font-weight: bold; border: 1px solid #000000; background: #d9d9d9; font-family: Arial, sans-serif; line-height: 1;">Field Name</th>
+                    <th style="padding: 3px 8px; text-align: center; font-size: 11pt; color: #000000; font-weight: bold; border: 1px solid #000000; background: #d9d9d9; font-family: Arial, sans-serif; line-height: 1;">Data Type</th>
+                    <th style="padding: 3px 8px; text-align: center; font-size: 11pt; color: #000000; font-weight: bold; border: 1px solid #000000; background: #d9d9d9; font-family: Arial, sans-serif; line-height: 1;">Constraint</th>
+                    <th style="padding: 3px 8px; text-align: center; font-size: 11pt; color: #000000; font-weight: bold; border: 1px solid #000000; background: #d9d9d9; font-family: Arial, sans-serif; line-height: 1;">Description</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    ${table.columns.map((col, idx) => `
+                    <tr>
+                        <td style="padding: 2px 8px; border: 1px solid #000000; background: #ffffff; word-wrap: break-word; overflow-wrap: break-word; vertical-align: top; line-height: 1.1;">
+                        <span style="font-family: Arial, sans-serif; color: #000000; font-size: 11pt; font-weight: 600; display: block;">${col.name}</span>
+                        </td>
+                        <td style="padding: 2px 8px; border: 1px solid #000000; background: #ffffff; word-wrap: break-word; overflow-wrap: break-word; vertical-align: top; line-height: 1.1;">
+                        <span style="font-family: Arial, sans-serif; color: #000000; font-size: 11pt; display: block;">${col.type}</span>
+                        </td>
+                        <td style="padding: 2px 8px; border: 1px solid #000000; background: #ffffff; word-wrap: break-word; overflow-wrap: break-word; vertical-align: top; line-height: 1.1;">
+                        <span style="font-family: Arial, sans-serif; color: #000000; font-size: 11pt; font-weight: 500; display: block;">${col.constraint || ''}</span>
+                        </td>
+                        <td style="padding: 2px 8px; border: 1px solid #000000; background: #ffffff; word-wrap: break-word; overflow-wrap: break-word; vertical-align: top; line-height: 1.1;">
+                        <span style="font-family: Arial, sans-serif; color: #000000; font-size: 11pt; display: block;">${col.description}</span>
+                        </td>
+                    </tr>
+                    `).join('')}
+                </tbody>
+                </table>
+            `;
 
-                document.body.appendChild(exportContainer);
+            document.body.appendChild(exportContainer);
 
-                // Capture the export container
-                const canvas = await html2canvas(exportContainer, {
-                    backgroundColor: '#ffffff',
-                    scale: 2,
-                    logging: false,
-                    useCORS: true,
-                    width: 1000,
-                    windowWidth: 1000
-                });
+            // Capture the export container
+            const canvas = await html2canvas(exportContainer, {
+                backgroundColor: null,
+                scale: 2,
+                logging: false,
+                useCORS: true,
+                width: 576,
+                windowWidth: 576
+            });
 
-                // Remove temporary container
-                document.body.removeChild(exportContainer);
+            // Remove temporary container
+            document.body.removeChild(exportContainer);
 
-                canvas.toBlob((blob) => {
-                    const url = URL.createObjectURL(blob);
-                    const link = document.createElement('a');
-                    link.download = `${tableName}_data_dictionary.png`;
-                    link.href = url;
-                    link.click();
-                    URL.revokeObjectURL(url);
-                });
+            canvas.toBlob((blob) => {
+                const url = URL.createObjectURL(blob);
+                const link = document.createElement('a');
+                link.download = `${tableName}_data_dictionary.png`;
+                link.href = url;
+                link.click();
+                URL.revokeObjectURL(url);
+            });
             } catch (error) {
-                console.error('Error exporting table:', error);
-                alert('Failed to export table. Please try again.');
-                if (document.body.contains(exportContainer)) {
-                    document.body.removeChild(exportContainer);
-                }
+            console.error('Error exporting table:', error);
+            alert('Failed to export table. Please try again.');
+            } finally {
+            // Restore original state if it was collapsed
+            if (!wasExpanded) {
+                content.classList.remove('expanded');
+                chevron.classList.remove('rotated');
+            }
             }
         }
 
-        // Search functionality
         document.getElementById('searchInput').addEventListener('input', (e) => {
             const filteredTables = filterTables(e.target.value);
             renderTables(filteredTables);
         });
 
-        // Initial render
         renderTables(tables);
         document.getElementById('totalTables').textContent = tables.length;
     </script>
