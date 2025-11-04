@@ -193,6 +193,43 @@
             height: 16px;
         }
 
+        .export-all-btn {
+            background: #10b981;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 0.95em;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.2s;
+            font-weight: 600;
+            box-shadow: 0 2px 8px rgba(16, 185, 129, 0.3);
+        }
+
+        .export-all-btn:hover {
+            background: #059669;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4);
+        }
+
+        .export-all-btn:active {
+            transform: translateY(0);
+        }
+
+        .export-all-btn:disabled {
+            background: #9ca3af;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .export-all-icon {
+            width: 20px;
+            height: 20px;
+        }
+
         .table-content {
             max-height: 0;
             overflow: hidden;
@@ -391,6 +428,15 @@
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
                 </svg>
                 <input type="text" id="searchInput" placeholder="Search tables, columns, or descriptions...">
+            </div>
+
+            <div style="margin-top: 20px; text-align: center;">
+                <button class="export-all-btn" onclick="exportAllTables()" id="exportAllBtn">
+                    <svg class="export-all-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                    </svg>
+                    Export All Tables
+                </button>
             </div>
         </div>
 

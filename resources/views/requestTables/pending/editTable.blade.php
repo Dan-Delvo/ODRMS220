@@ -70,16 +70,22 @@
                         </div>
 
                         <div class="mb-3 col-lg-4">
-                            <label class="form-label">Request Mode</label>
-                            <input type="text" name="request_mode" class="form-control" value="{{ $pending->request_mode }}">
+                            <label class="form-label">Request Mode <i class="fas fa-lock"></i></label>
+                            <input type="text" id="requestMode" name="request_mode" class="form-control" value="{{ $pending->request_mode }}" readonly>
+                            <small id="requestHelp" class="text-muted" style="display: none;">
+                                🔒 This field is locked.
+                            </small>
                             @error('request_mode') <small class="text-danger">{{ $message }}</small> @enderror
                         </div>
                     </div>
 
                     <div class="row">
                         <div class="mb-3 col-md-4">
-                            <label class="form-label">Release Mode</label>
-                            <input type="text" name="release_mode" class="form-control" value="{{ $pending->release_mode }}">
+                            <label class="form-label">Release Mode <i class="fas fa-lock"></i></label>
+                            <input type="text" id="releaseMode" name="release_mode" class="form-control" value="{{ $pending->release_mode }}" readonly>
+                            <small id="releaseHelp" class="text-muted" style="display: none;">
+                                🔒 This field is locked.
+                            </small>
                             @error('release_mode') <small class="text-danger">{{ $message }}</small> @enderror
                         </div>
 
@@ -123,13 +129,15 @@
     document.addEventListener('DOMContentLoaded', function() {
         const statusField = document.getElementById('status');
         const claimerField = document.getElementById('claimer_id');
+        const requestMode = document.getElementById('requestMode');
+        const releaseMode = document.getElementById('releaseMode');
 
         if (statusField && claimerField) {
             const statusValue = statusField.value.trim().toLowerCase();
 
             if (statusValue === 'pending') {
                 // Disable visually + functionally
-                [claimerField, statusField].forEach(field => {
+                [claimerField, statusField, requestMode, releaseMode].forEach(field => {
                     field.setAttribute('readonly', true);
                     field.style.backgroundColor = '#f3f4f6';
                     field.style.cursor = 'not-allowed';
@@ -141,6 +149,9 @@
                 document.getElementById('statusLockIcon').style.display = 'inline';
                 document.getElementById('claimerHelp').style.display = 'block';
                 document.getElementById('statusHelp').style.display = 'block';
+                document.getElementById('requestHelp').style.display = 'block';
+                document.getElementById('releaseHelp').style.display = 'block';
+
 
                 // SweetAlert — only once
                 if (!window._claimerNoticeShown) {

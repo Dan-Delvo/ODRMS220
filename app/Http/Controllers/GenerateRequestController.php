@@ -154,7 +154,7 @@ class GenerateRequestController extends Controller
             // Generate HTML for table
             $html = '';
 
-            if ($DocRequests->count() > 0) {
+            if ($DocRequests->total() > 0) {
                 $html .= '<div class="table-responsive">';
                 $html .= '<table class="table table-striped table-bordered table-hover">';
                 $html .= '<thead class="table-dark"><tr>';
@@ -216,7 +216,7 @@ class GenerateRequestController extends Controller
 
                 // Pagination
                 $html .= '<div class="d-flex flex-column justify-content-center align-items-center mt-3">';
-                $html .= $DocRequests->appends($request->query())->links()->toHtml();
+                $html .= $DocRequests->appends($request->query())->render();
                 $html .= '<small class="text-muted">Showing ' . $DocRequests->firstItem() . ' - ' . $DocRequests->lastItem() . ' of ' . $DocRequests->total() . '</small>';
                 $html .= '</div>';
             } else {
@@ -247,7 +247,7 @@ class GenerateRequestController extends Controller
 
             return response()->json([
                 'html' => $html,
-                'showing' => $DocRequests->count(),
+                'showing' => $DocRequests->lastItem() - $DocRequests->firstItem() + 1,
                 'total' => $DocRequests->total(),
                 'totalCount' => $totalCount,
                 'currentPage' => $DocRequests->currentPage(),
@@ -257,6 +257,7 @@ class GenerateRequestController extends Controller
 
         return view('generation.generateRequest', compact('DocRequests', 'totalCount', 'statusFilter'));
     }
+
     /**
      * Generate PDF report with date range and status filtering
      */
