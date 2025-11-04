@@ -807,7 +807,6 @@
 
         // Export table as image
         async function exportTableAsImage(tableName) {
-            const tableCard = document.getElementById(`table-card-${tableName}`);
             const content = document.getElementById(`content-${tableName}`);
             const chevron = document.getElementById(`chevron-${tableName}`);
 
@@ -821,21 +820,60 @@
             }
 
             try {
-                // Hide the export button temporarily
-                const exportBtn = tableCard.querySelector('.export-btn');
-                const exportBtnDisplay = exportBtn.style.display;
-                exportBtn.style.display = 'none';
+                // Get the table info
+                const table = tables.find(t => t.name === tableName);
 
-                // Capture the table card
-                const canvas = await html2canvas(tableCard, {
+                // Create a temporary container for export
+                const exportContainer = document.createElement('div');
+                exportContainer.style.position = 'absolute';
+                exportContainer.style.left = '-9999px';
+                exportContainer.style.background = 'white';
+                exportContainer.style.padding = '30px';
+                exportContainer.style.fontFamily = '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, sans-serif';
+
+                exportContainer.innerHTML = `
+                    <div style="margin-bottom: 20px;">
+                        <h2 style="font-size: 1.5em; color: #1a202c; margin-bottom: 8px;">${table.name}</h2>
+                        <p style="color: #718096; font-size: 0.95em;">${table.description}</p>
+                    </div>
+                    <table style="width: 100%; border-collapse: collapse; border: 1px solid #cbd5e0;">
+                        <thead style="background: #f7fafc;">
+                            <tr>
+                                <th style="padding: 12px 16px; text-align: left; font-size: 0.8em; text-transform: uppercase; letter-spacing: 0.5px; color: #2d3748; font-weight: 700; border: 1px solid #cbd5e0;">Column Name</th>
+                                <th style="padding: 12px 16px; text-align: left; font-size: 0.8em; text-transform: uppercase; letter-spacing: 0.5px; color: #2d3748; font-weight: 700; border: 1px solid #cbd5e0;">Data Type</th>
+                                <th style="padding: 12px 16px; text-align: left; font-size: 0.8em; text-transform: uppercase; letter-spacing: 0.5px; color: #2d3748; font-weight: 700; border: 1px solid #cbd5e0;">Description</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${table.columns.map((col, idx) => `
+                                <tr style="background: ${idx % 2 === 0 ? 'white' : '#f7fafc'};">
+                                    <td style="padding: 12px 16px; border: 1px solid #cbd5e0;">
+                                        <span style="font-family: 'Courier New', monospace; color: #1a202c; font-weight: 600; font-size: 0.9em;">${col.name}</span>
+                                    </td>
+                                    <td style="padding: 12px 16px; border: 1px solid #cbd5e0;">
+                                        <span style="color: #4a5568; font-size: 0.85em;">${col.type}</span>
+                                    </td>
+                                    <td style="padding: 12px 16px; border: 1px solid #cbd5e0;">
+                                        <span style="color: #4a5568; font-size: 0.9em;">${col.description}</span>
+                                    </td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                `;
+
+                document.body.appendChild(exportContainer);
+
+                // Capture the export container
+                const canvas = await html2canvas(exportContainer, {
                     backgroundColor: '#ffffff',
                     scale: 2, // Higher quality
                     logging: false,
                     useCORS: true
                 });
 
-                // Restore export button
-                exportBtn.style.display = exportBtnDisplay;
+                // Remove temporary container
+                document.body.removeChild(exportContainer);
 
                 // Convert to blob and download
                 canvas.toBlob((blob) => {
