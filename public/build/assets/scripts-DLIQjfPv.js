@@ -1,0 +1,5 @@
+/*!
+ * Start Bootstrap - SB Admin v7.0.7 (https://startbootstrap.com/template/sb-admin)
+ * Copyright 2013-2023 Start Bootstrap
+ * Licensed under MIT (https://github.com/StartBootstrap/startbootstrap-sb-admin/blob/master/LICENSE)
+ */window.addEventListener("DOMContentLoaded",l=>{const t=document.body.querySelector("#sidebarToggle");t&&(localStorage.getItem("sb|sidebar-toggle")==="true"&&document.body.classList.toggle("sb-sidenav-toggled"),t.addEventListener("click",o=>{o.preventDefault(),document.body.classList.toggle("sb-sidenav-toggled"),localStorage.setItem("sb|sidebar-toggle",document.body.classList.contains("sb-sidenav-toggled"))}));const e=document.querySelector(".sb-sidenav-menu");if(e){const o=localStorage.getItem("sb|sidebar-scroll");o!==null&&(e.scrollTop=parseInt(o,10));let s;e.addEventListener("scroll",function(){clearTimeout(s),s=setTimeout(function(){localStorage.setItem("sb|sidebar-scroll",e.scrollTop)},100)}),window.addEventListener("beforeunload",function(){localStorage.setItem("sb|sidebar-scroll",e.scrollTop)})}});
