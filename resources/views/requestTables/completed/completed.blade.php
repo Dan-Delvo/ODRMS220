@@ -150,7 +150,7 @@
                         <td>{{ $item->documents->DocType }}</td>
                         <td>{{ strtoupper($item->request_schl_entity) }}</td>
                         <td>{{ $item->remarks }}</td>
-                        <td><span class="badge bg-success text-white status-badge">{{ $item->status }}</span></td>
+                        <td><span class="badge text-black status-badge" style="background-color: #FFFF00">{{ $item->status }}</span></td>
                         <td>{{ $item->forRelease_date }}</td>
                         <td class="action-column">
                             <div class="btn-group-vertical btn-group-sm d-md-inline" role="group">
