@@ -2,6 +2,27 @@
 
 @section ('content')
 
+<!-- Add CSS for remarks truncation -->
+<style>
+    .remarks-cell {
+        max-width: 200px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        cursor: pointer;
+    }
+    
+    .remarks-cell:hover {
+        background-color: rgba(29, 211, 176, 0.1);
+    }
+    
+    .remarks-cell.expanded {
+        white-space: normal;
+        overflow: visible;
+        text-overflow: unset;
+    }
+</style>
+
 <div class="row mb-4">
     <div class="col-md-6">
         <h1 class="mt-4 text-dark"><span class="badge" style="background-color: #1dd3b0; font-size: 2rem;">All Requests</span></h1>
@@ -244,7 +265,9 @@
                                     <td>{{ $item->request_schl_entity ?? 'N/A' }}</td>
                                     <td>{{ $item->request_mode ?? 'Bulk Request' }}</td>
                                     <td>{{ $item->release_mode ?? 'Walk In' }}</td>
-                                    <td>{{ $item->remarks ?? 'N/A' }}</td>
+                                    <td class="remarks-cell" title="Click to expand">
+                                        {{ $item->remarks ?? 'N/A' }}
+                                    </td>
                                     <td>
                                         @switch($item->status)
                                         @case('Pending')
@@ -476,6 +499,13 @@
             if ((e.ctrlKey || e.metaKey) && e.key === 'f') {
                 e.preventDefault();
                 document.getElementById('search').focus();
+            }
+        });
+
+        // Handle remarks cell click to expand/collapse
+        document.addEventListener('click', function(e) {
+            if (e.target.classList.contains('remarks-cell')) {
+                e.target.classList.toggle('expanded');
             }
         });
 
