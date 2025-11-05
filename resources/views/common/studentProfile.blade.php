@@ -103,14 +103,26 @@
     }
 
     /* Password Toggle */
+    /* Increase clickable area for password toggle icons */
     .toggle-password {
         cursor: pointer;
         color: #94a3b8;
         transition: color 0.2s ease;
+        padding: 8px;
+        margin: -8px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
     }
 
     .toggle-password:hover {
         color: #1dd3b0;
+    }
+
+    /* Ensure the icon is clickable and not blocked */
+    .position-relative .toggle-password {
+        pointer-events: auto;
+        z-index: 10;
     }
 
     /* Password Strength */
@@ -830,18 +842,25 @@
     </div>
 </div>
 
-<!-- OTP Verification Modal -->
+<!-- Updated Modal - No OTP Expiry Timer Display -->
 <div class="modal fade" id="otpModal" tabindex="-1" aria-labelledby="otpModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="otpModalLabel"><i class="fas fa-envelope"></i>Verify OTP Code</h5>
+                <h5 class="modal-title" id="otpModalLabel"><i class="fas fa-envelope"></i> Verify OTP Code</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
                 <p>An OTP code has been sent to your registered email. Please enter it below to continue.</p>
-                <input type="text" id="otpCode" class="form-control mb-3" placeholder="Enter OTP Code" maxlength="6">
-                <div id="otpFeedback" class="fw-semibold"></div>
+
+                <input type="text" id="otpCode" class="form-control mb-3" placeholder="Enter 6-Digit OTP" maxlength="6">
+                <div id="otpFeedback" class="fw-semibold mb-3"></div>
+
+                <!-- Resend OTP Button with 60s cooldown -->
+                <button type="button" id="resendOtpBtn" class="btn btn-outline-secondary w-100">
+                    <i class="fas fa-redo me-2"></i>Resend OTP
+                </button>
+                <small class="text-white d-block mt-2 text-center">Didn't receive the email? Click to resend.</small>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-outline-light" data-bs-dismiss="modal">Cancel</button>
@@ -1106,84 +1125,293 @@
             "mobileReplacePreviewImg",
             ".mobile-profile-img"
         );
+        let otpExpiryTimer;
+        let resendCooldownTimer; // Only keep resend cooldown timer
         const desktopChangeBtn = document.getElementById('desktopChangePasswordBtn');
         const mobileChangeBtn = document.getElementById('mobileChangePasswordBtn');
         const otpModal = new bootstrap.Modal(document.getElementById('otpModal'));
         const changePasswordModal = new bootstrap.Modal(document.getElementById('changePasswordModal'));
-
         const verifyOtpBtn = document.getElementById('verifyOtpBtn');
         const otpFeedback = document.getElementById('otpFeedback');
+        const resendBtn = document.getElementById('resendOtpBtn');
+        
+        let canResend = false;
 
-        // --- Step 1: Send OTP on button click (ERROR HANDLERS FIXED) ---
+        // --- Function to start resend cooldown ---
+        function startResendCooldown(seconds = 60) {
+            let timeLeft = seconds;
+            canResend = false;
+            resendBtn.disabled = true;
+            
+            if (resendCooldownTimer) clearInterval(resendCooldownTimer);
+            
+            resendBtn.innerHTML = `<i class="fas fa-clock me-2"></i>Wait ${timeLeft}s`;
+            
+            resendCooldownTimer = setInterval(() => {
+                timeLeft--;
+                
+                if (timeLeft <= 0) {
+                    clearInterval(resendCooldownTimer);
+                    canResend = true;
+                    resendBtn.disabled = false;
+                    resendBtn.innerHTML = '<i class="fas fa-redo me-2"></i>Resend OTP';
+                } else {
+                    resendBtn.innerHTML = `<i class="fas fa-clock me-2"></i>Wait ${timeLeft}s`;
+                }
+            }, 1000);
+        }
+
+        function formatTime(seconds) {
+            if (seconds < 60) {
+                return `${seconds} second${seconds !== 1 ? 's' : ''}`;
+            }
+            
+            const minutes = Math.floor(seconds / 60);
+            const secs = seconds % 60;
+            
+            if (secs === 0) {
+                return `${minutes} minute${minutes !== 1 ? 's' : ''}`;
+            }
+            
+            return `${minutes}m ${secs}s`;
+        }
+
+        // Enhanced send OTP function
+        async function sendOtp(btn) {
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Sending OTP...';
+
+            try {
+                const response = await fetch('{{ route("student.password.sendOtp", $studInfo->id) }}', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                    },
+                    body: JSON.stringify({})
+                });
+
+                const data = await response.json();
+                
+                if (data.success) {
+                    let message = data.message;
+                    
+                    // Show remaining attempts if provided
+                    if (data.remaining_attempts !== undefined && data.remaining_attempts < 3) {
+                        message += ` You have ${data.remaining_attempts} verification attempt${data.remaining_attempts !== 1 ? 's' : ''} remaining.`;
+                    }
+                    
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'OTP Sent!',
+                        text: message,
+                        confirmButtonColor: '#1dd3b0',
+                        confirmButtonText: 'OK',
+                        background: '#1F2937',
+                        color: '#fff',
+                        timer: 4000,
+                        timerProgressBar: true
+                    });
+
+                    verifyOtpBtn.disabled = false;
+                    verifyOtpBtn.innerHTML = 'Verify OTP';
+
+                    document.getElementById('otpCode').value = '';
+                    otpFeedback.textContent = '';
+
+                    otpModal.show();
+                    
+                    // Start the 60-second resend cooldown
+                    startResendCooldown(60);
+
+                } else if (data.locked || data.wait_time) {
+                    showWaitTimeAlert(data);
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Failed',
+                        text: data.message || 'Failed to send OTP.',
+                        confirmButtonColor: '#1dd3b0',
+                        background: '#1F2937',
+                        color: '#fff',
+                    });
+                }
+            } catch (error) {
+                console.error('Send OTP Error:', error);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'Network error. Please try again.',
+                    confirmButtonColor: '#1dd3b0',
+                    background: '#1F2937',
+                    color: '#fff',
+                });
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fas fa-key me-2"></i>Change Password';
+            }
+        }
+
+        // Modern wait time alert with live countdown
+        function showWaitTimeAlert(data) {
+            let remainingTime = data.wait_time;
+            const isLocked = data.locked || false;
+            
+            const icon = isLocked ? 'error' : 'warning';
+            const title = isLocked ? '🔒 Change password temporarily locked' : '⏱️ Please Wait';
+            
+            const timerHtml = `
+                <div style="margin-top: 20px; padding: 15px; background: rgba(29, 211, 176, 0.1); border-radius: 8px; border-left: 4px solid #1dd3b0;">
+                    <div style="font-size: 14px; color: #94a3b8; margin-bottom: 8px;">Time remaining:</div>
+                    <div style="font-size: 32px; font-weight: bold; color: #1dd3b0; font-family: 'Courier New', monospace;" id="countdownDisplay">
+                        ${formatTime(remainingTime)}
+                    </div>
+                </div>
+            `;
+            
+            Swal.fire({
+                icon: icon,
+                title: title,
+                html: `
+                    <p style="color: #e2e8f0; margin-bottom: 20px;">${data.message}</p>
+                    ${timerHtml}
+                `,
+                showConfirmButton: true,
+                confirmButtonText: 'OK',
+                confirmButtonColor: '#1dd3b0',
+                background: '#1F2937',
+                color: '#fff',
+                allowOutsideClick: false,
+                didOpen: () => {
+                    const countdownEl = document.getElementById('countdownDisplay');
+                    const countdownInterval = setInterval(() => {
+                        remainingTime--;
+                        if (remainingTime <= 0) {
+                            clearInterval(countdownInterval);
+                            Swal.close();
+                        } else {
+                            countdownEl.textContent = formatTime(remainingTime);
+                        }
+                    }, 1000);
+                    
+                    Swal.getPopup().countdownInterval = countdownInterval;
+                },
+                willClose: () => {
+                    const popup = Swal.getPopup();
+                    if (popup && popup.countdownInterval) {
+                        clearInterval(popup.countdownInterval);
+                    }
+                }
+            });
+        }
+
+        // Attach to change password buttons
         [desktopChangeBtn, mobileChangeBtn].forEach(btn => {
             if (btn) {
-                btn.addEventListener('click', async () => {
-                    btn.disabled = true;
-                    btn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Sending OTP...';
+                btn.addEventListener('click', () => sendOtp(btn));
+            }
+        });
 
-                    try {
-                        const response = await fetch('{{ route("student.password.sendOtp", $studInfo->id) }}', {
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/json',
-                                'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                            },
-                            body: JSON.stringify({})
+        // Updated resend button handler
+        if (resendBtn) {
+            resendBtn.addEventListener('click', async () => {
+                if (!canResend) {
+                    return;
+                }
+
+                resendBtn.disabled = true;
+                const originalHtml = resendBtn.innerHTML;
+                resendBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Sending...';
+
+                try {
+                    const response = await fetch('{{ route("student.password.sendOtp", $studInfo->id) }}', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                        },
+                        body: JSON.stringify({})
+                    });
+
+                    const data = await response.json();
+                    
+                    if (data.success) {
+                        let message = 'A new OTP has been sent to your email.';
+                        
+                        // Warn about remaining attempts
+                        if (data.remaining_attempts !== undefined && data.remaining_attempts < 3) {
+                            message += ` ⚠️ You have ${data.remaining_attempts} verification attempt${data.remaining_attempts !== 1 ? 's' : ''} remaining.`;
+                        }
+                        
+                        Swal.fire({
+                            icon: 'success',
+                            title: '✅ OTP Resent!',
+                            html: `<p style="color: #e2e8f0;">${message}</p>`,
+                            confirmButtonColor: '#1dd3b0',
+                            background: '#1F2937',
+                            color: '#fff',
+                            timer: 4000,
+                            timerProgressBar: true
                         });
 
-                        const data = await response.json();
-                        if (data.success) {
-                            // Show success notification with button AND auto-close
-                            Swal.fire({
-                                icon: 'success',
-                                title: 'Notice!',
-                                text: data.message || 'OTP has been sent to your email address.',
-                                confirmButtonColor: '#1dd3b0',
-                                confirmButtonText: 'OK',
-                                background: '#1F2937',
-                                color: '#fff',
-                                timer: 3000,
-                                timerProgressBar: true
-                            });
+                        verifyOtpBtn.disabled = false;
+                        verifyOtpBtn.innerHTML = 'Verify OTP';
 
-                            // Show the OTP modal
-                            otpModal.show();
-                        } else {
-                            // Show error notification (user needs to read this)
-                            Swal.fire({
-                                icon: 'error',
-                                title: 'Notice!',
-                                text: data.message || 'Failed to send OTP.',
-                                confirmButtonColor: '#1dd3b0',
-                                background: '#1F2937',
-                                color: '#fff',
-                            });
-                        }
-                    } catch (error) {
-                        // Show error notification for network issues (user needs to read this)
+                        document.getElementById('otpCode').value = '';
+                        otpFeedback.textContent = '';
+
+                        // Start new 60-second cooldown
+                        startResendCooldown(60);
+
+                    } else if (data.locked || data.wait_time) {
+                        showWaitTimeAlert(data);
+                        otpModal.hide();
+                        
+                        resendBtn.disabled = false;
+                        resendBtn.innerHTML = originalHtml;
+                    } else {
                         Swal.fire({
-                            icon: 'error',
-                            title: 'Notice!',
-                            text: 'Error sending OTP. Please try again.',
+                            icon: 'warning',
+                            title: 'Unable to Send',
+                            text: data.message || 'Failed to resend OTP.',
                             confirmButtonColor: '#1dd3b0',
                             background: '#1F2937',
                             color: '#fff',
                         });
-                    } finally {
-                        btn.disabled = false;
-                        btn.innerHTML = '<i class="fas fa-key me-2"></i>Change Password';
+                        
+                        resendBtn.disabled = false;
+                        resendBtn.innerHTML = originalHtml;
                     }
-                });
-            }
-        });
+                } catch (error) {
+                    console.error('Resend OTP Error:', error);
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Network Error',
+                        text: 'Unable to resend OTP. Please check your connection.',
+                        confirmButtonColor: '#1dd3b0',
+                        background: '#1F2937',
+                        color: '#fff',
+                    });
+                    
+                    resendBtn.disabled = false;
+                    resendBtn.innerHTML = originalHtml;
+                }
+            });
+        }
 
-        // --- Step 2: Verify OTP ---
+        // Verify OTP handler
         verifyOtpBtn.addEventListener('click', async () => {
             const code = document.getElementById('otpCode').value.trim();
             otpFeedback.textContent = '';
 
             if (!code) {
                 otpFeedback.textContent = 'Please enter the OTP code.';
+                otpFeedback.style.color = '#f87171';
+                return;
+            }
+
+            if (code.length !== 6 || !/^\d+$/.test(code)) {
+                otpFeedback.textContent = 'OTP must be 6 digits.';
                 otpFeedback.style.color = '#f87171';
                 return;
             }
@@ -1198,60 +1426,109 @@
                         'Content-Type': 'application/json',
                         'X-CSRF-TOKEN': '{{ csrf_token() }}'
                     },
-                    body: JSON.stringify({
-                        otp: code
-                    })
+                    body: JSON.stringify({ otp: code })
                 });
 
                 const data = await response.json();
+                
                 if (data.verified) {
-                    // Show success notification with button AND auto-close
                     Swal.fire({
                         icon: 'success',
-                        title: 'Verified!',
-                        text: 'OTP verified successfully. You can now change your password.',
+                        title: '✅ Verified!',
+                        text: 'OTP verified successfully!',
                         confirmButtonColor: '#1dd3b0',
-                        confirmButtonText: 'OK',
+                        confirmButtonText: 'Continue',
                         background: '#1F2937',
                         color: '#fff',
-                        timer: 3000,
+                        timer: 2000,
                         timerProgressBar: true
                     });
 
-                    // Hide OTP modal and show password change modal
+                    if (resendCooldownTimer) clearInterval(resendCooldownTimer);
                     otpModal.hide();
                     changePasswordModal.show();
-                } else {
-                    // Show error notification
+                    
+                } else if (data.locked) {
+                    if (resendCooldownTimer) clearInterval(resendCooldownTimer);
+                    otpModal.hide();
+                    
                     Swal.fire({
                         icon: 'error',
-                        title: 'Verification Failed',
-                        text: data.message || 'Invalid or expired OTP.',
+                        title: '🚫 Request Terminated',
+                        html: `
+                            <p style="color: #e2e8f0; margin-bottom: 15px;">${data.message}</p>
+                            <div style="padding: 12px; background: rgba(239, 68, 68, 0.1); border-radius: 6px; border-left: 4px solid #ef4444;">
+                                <i class="fas fa-exclamation-triangle" style="color: #ef4444;"></i>
+                                <span style="color: #fca5a5; margin-left: 8px;">Too many failed attempts</span>
+                            </div>
+                        `,
+                        confirmButtonColor: '#1dd3b0',
+                        background: '#1F2937',
+                        color: '#fff',
+                    });
+                } else if (data.expired) {
+                    otpFeedback.innerHTML = '<i class="fas fa-clock me-2"></i>' + data.message;
+                    otpFeedback.style.color = '#f87171';
+                    
+                    Swal.fire({
+                        icon: 'warning',
+                        title: '⏰ OTP Expired',
+                        text: data.message,
+                        confirmButtonColor: '#1dd3b0',
+                        background: '#1F2937',
+                        color: '#fff',
+                    });
+                } else {
+                    const message = data.message || 'Invalid OTP code.';
+                    otpFeedback.innerHTML = '<i class="fas fa-times-circle me-2"></i>' + message;
+                    otpFeedback.style.color = '#f87171';
+                    
+                    Swal.fire({
+                        icon: 'error',
+                        title: '❌ Invalid OTP',
+                        text: message,
                         confirmButtonColor: '#1dd3b0',
                         background: '#1F2937',
                         color: '#fff',
                     });
 
-                    otpFeedback.textContent = data.message || 'Invalid or expired OTP.';
-                    otpFeedback.style.color = '#f87171';
+                    document.getElementById('otpCode').value = '';
                 }
             } catch (error) {
-                // Show error notification for network issues
+                console.error('Verify OTP Error:', error);
                 Swal.fire({
                     icon: 'error',
-                    title: 'Error',
-                    text: 'Error verifying OTP. Please try again.',
+                    title: 'Network Error',
+                    text: 'Unable to verify OTP. Please try again.',
                     confirmButtonColor: '#1dd3b0',
                     background: '#1F2937',
                     color: '#fff',
                 });
 
-                otpFeedback.textContent = 'Error verifying OTP.';
+                otpFeedback.textContent = 'Network error occurred.';
                 otpFeedback.style.color = '#f87171';
             } finally {
                 verifyOtpBtn.disabled = false;
                 verifyOtpBtn.innerHTML = 'Verify OTP';
             }
+        });
+
+        // Clean up timers when modal is closed
+        document.getElementById('otpModal').addEventListener('hidden.bs.modal', function() {
+            if (resendCooldownTimer) clearInterval(resendCooldownTimer);
+
+            // Reset resend button
+            resendBtn.disabled = false;
+            resendBtn.innerHTML = '<i class="fas fa-redo me-2"></i>Resend OTP';
+            canResend = true;
+
+            // Clear input and feedback
+            document.getElementById('otpCode').value = '';
+            otpFeedback.textContent = '';
+
+            // Reset verify button
+            verifyOtpBtn.disabled = false;
+            verifyOtpBtn.innerHTML = 'Verify OTP';
         });
 
         // --- Step 3: Update Password (CONVERTED TO SWAL) ---

@@ -259,32 +259,102 @@ class AccountController extends Controller
         if (!$user) {
             return response()->json(['success' => false, 'message' => 'User not found.']);
         }
+
+        // Check if user is locked out due to failed attempts
+        $lockoutKey = "otp_lockout_{$id}";
+        $lockoutUntil = Session::get($lockoutKey);
+        if ($lockoutUntil && now()->lessThan($lockoutUntil)) {
+            $remainingSeconds = (int) now()->diffInSeconds($lockoutUntil);
+            $formattedTime = $this->formatDuration($remainingSeconds);
+
+            return response()->json([
+                'success' => false,
+                'message' => "Too many failed attempts. Please try again in {$formattedTime}.",
+                'locked' => true,
+                'wait_time' => $remainingSeconds,
+                'formatted_time' => $formattedTime
+            ], 429);
+        }
+
+        // Rate limiting check - allow OTP request only once per minute
+        $lastOtpTime = Session::get("otp_last_sent_{$id}");
+        if ($lastOtpTime) {
+            $secondsSinceLastOtp = $lastOtpTime->diffInSeconds(now());
+
+            if ($secondsSinceLastOtp < 60) {
+                $remainingSeconds = (int) (60 - $secondsSinceLastOtp);
+                $formattedTime = $this->formatDuration($remainingSeconds);
+
+                return response()->json([
+                    'success' => false,
+                    'message' => "Please wait {$formattedTime} before requesting another OTP.",
+                    'wait_time' => $remainingSeconds,
+                    'formatted_time' => $formattedTime
+                ], 429);
+            }
+        }
+
         $fullName = $user->studentInformation->FirstName . ' ' . $user->studentInformation->LastName;
         $customSubject = "UBNHS Portal - Requesting Change Password Verification";
+
         // Generate a 6-digit OTP
         $otp = rand(100000, 999999);
+        $expiresAt = now()->addMinutes(3);
 
-        // Store OTP and expiry in session
+        // ✅ GET EXISTING ATTEMPTS - DON'T RESET TO 0
+        $existingSession = Session::get('password_otp');
+        $existingAttempts = ($existingSession && isset($existingSession['attempts'])) ? $existingSession['attempts'] : 0;
+
+        // Store OTP and expiry in session - PRESERVE ATTEMPTS
         Session::put('password_otp', [
             'code' => $otp,
-            'expires_at' => now()->addMinutes(5),
-            'user_id' => $user->user_account_id
+            'expires_at' => $expiresAt,
+            'user_id' => $user->user_account_id,
+            'attempts' => $existingAttempts // ✅ Keep existing attempts instead of resetting to 0
         ]);
 
+        // Store the last OTP send time for rate limiting
+        Session::put("otp_last_sent_{$id}", now());
+
+        // ❌ DO NOT clear lockout when sending new OTP - let it persist
+        // Session::forget($lockoutKey); // REMOVED THIS LINE
+
         try {
-            // Send OTP to user's email
             Mail::to($user->email_address)
                 ->send(new PasswordOTPMail($fullName, $otp, $customSubject, '3 minutes'));
+
             return response()->json([
                 'success' => true,
-                'message' => 'OTP has been sent to your email address.'
+                'message' => 'OTP has been sent to your email address.',
+                'remaining_attempts' => 3 - $existingAttempts // ✅ Inform frontend of remaining attempts
             ]);
         } catch (\Exception $e) {
+            Log::error('Failed to send OTP: ' . $e->getMessage());
             return response()->json([
                 'success' => false,
                 'message' => 'Failed to send OTP. Please try again.'
-            ]);
+            ], 500);
         }
+    }
+
+    /**
+     * Format duration in seconds to human-readable format
+     */
+    private function formatDuration($seconds)
+    {
+        if ($seconds < 60) {
+            return $seconds . ' second' . ($seconds != 1 ? 's' : '');
+        }
+
+        $minutes = floor($seconds / 60);
+        $remainingSeconds = $seconds % 60;
+
+        if ($remainingSeconds == 0) {
+            return $minutes . ' minute' . ($minutes != 1 ? 's' : '');
+        }
+
+        return $minutes . ' minute' . ($minutes != 1 ? 's' : '') . ' and ' .
+            $remainingSeconds . ' second' . ($remainingSeconds != 1 ? 's' : '');
     }
 
     /**
@@ -295,26 +365,81 @@ class AccountController extends Controller
         $otp = $request->input('otp');
         $sessionOtp = Session::get('password_otp');
 
+        // Check if user is locked out
+        $lockoutKey = "otp_lockout_{$id}";
+        $lockoutUntil = Session::get($lockoutKey);
+        if ($lockoutUntil && now()->lessThan($lockoutUntil)) {
+            $remainingSeconds = (int) now()->diffInSeconds($lockoutUntil);
+            $formattedTime = $this->formatDuration($remainingSeconds);
+
+            return response()->json([
+                'verified' => false,
+                'message' => "Too many failed attempts. Please try again in {$formattedTime}.",
+                'locked' => true,
+                'wait_time' => $remainingSeconds,
+                'formatted_time' => $formattedTime
+            ], 429);
+        }
+
         if (!$sessionOtp) {
-            return response()->json(['verified' => false, 'message' => 'No OTP session found.']);
+            return response()->json([
+                'verified' => false,
+                'message' => 'No OTP session found. Please request a new OTP.',
+                'expired' => true
+            ], 404);
         }
 
         if ($sessionOtp['user_id'] != $id) {
-            return response()->json(['verified' => false, 'message' => 'Invalid session user.']);
+            return response()->json([
+                'verified' => false,
+                'message' => 'Invalid session user.'
+            ], 403);
         }
 
+        // Check if OTP has expired
         if (Carbon::now()->greaterThan($sessionOtp['expires_at'])) {
             Session::forget('password_otp');
-            return response()->json(['verified' => false, 'message' => 'OTP expired.']);
+            return response()->json([
+                'verified' => false,
+                'message' => 'OTP expired. Please request a new one.',
+                'expired' => true
+            ], 410);
         }
 
+        // Check if OTP matches
         if ($sessionOtp['code'] != $otp) {
-            return response()->json(['verified' => false, 'message' => 'Invalid OTP code.']);
+            $attempts = $sessionOtp['attempts'] + 1;
+            $sessionOtp['attempts'] = $attempts;
+            Session::put('password_otp', $sessionOtp);
+
+            $remainingAttempts = 3 - $attempts;
+
+            // Lock out after 3 failed attempts - 5 MINUTES LOCKOUT
+            if ($attempts >= 3) {
+                $lockoutUntil = now()->addMinutes(5); // ✅ Changed from 15 to 5 minutes
+                Session::put($lockoutKey, $lockoutUntil);
+                Session::forget('password_otp');
+
+                return response()->json([
+                    'verified' => false,
+                    'message' => 'Too many failed attempts. Your request has been terminated. Please try again after 5 minutes.',
+                    'locked' => true,
+                    'attempts' => $attempts
+                ], 429);
+            }
+
+            return response()->json([
+                'verified' => false,
+                'message' => "Invalid OTP code. {$remainingAttempts} attempt" . ($remainingAttempts != 1 ? 's' : '') . " remaining.",
+                'attempts' => $attempts,
+                'remaining_attempts' => $remainingAttempts
+            ], 422);
         }
 
-        // Mark user as verified for password change
+        // OTP is correct
         Session::put('password_verified', $id);
         Session::forget('password_otp');
+        Session::forget($lockoutKey);
 
         return response()->json([
             'verified' => true,
@@ -772,7 +897,7 @@ class AccountController extends Controller
             $remainingTime = now()->diffInMinutes($lockoutEnd, false);
 
             return view('common.OTP.adminOtp', compact('email', 'username', 'password'))
-                ->with('error', "Account temporarily locked. Try again in {$remainingTime} minutes.");
+                ->with('error', "Change password temporarily locked. Try again in {$remainingTime} minutes.");
         }
 
         // Generate and send new OTP
@@ -804,7 +929,7 @@ class AccountController extends Controller
         // Check if OTP has expired
         if ($this->isOtpExpired()) {
             $this->handleExpiredOtp($email);
-            return back()->with('error', 'OTP has expired. Account temporarily locked.');
+            return back()->with('error', 'OTP has expired. Change password temporarily locked.');
         }
 
         // Verify OTP
@@ -942,7 +1067,7 @@ class AccountController extends Controller
 
         if ($attempts >= self::MAX_OTP_ATTEMPTS) {
             $this->lockoutUser($email);
-            return back()->with('error', 'Too many failed attempts. Account temporarily locked for ' . self::LOCKOUT_DURATION_MINUTES . ' minutes.');
+            return back()->with('error', 'Too many failed attempts. Change password temporarily locked for ' . self::LOCKOUT_DURATION_MINUTES . ' minutes.');
         }
 
         $remaining = self::MAX_OTP_ATTEMPTS - $attempts;
