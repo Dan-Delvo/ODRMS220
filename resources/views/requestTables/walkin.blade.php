@@ -40,8 +40,8 @@
 </style>
 
 @include('layout.partials.message')
-<div class="row justify-content-space-evenly">
-    <div class="col-lg-8">
+<div class="row justify-content-center">
+    <div class="col-lg-10 d-flex justify-content-center">
         <div class="card shadow-lg border-0 rounded-lg mt-3">
             <div class="card-header text-white" style="background-color: #1f2937;">
                 <h3 class="my-2">Document Request Form</h3>
@@ -219,7 +219,7 @@
     </div>
 
 
-
+    <!-- 
     <div class="col-lg-4 mt-3 d-none d-lg-block">
         <div class="card" style="width: 18rem;">
             <img src="{{ asset('images/qrCode.png') }}" class="card-img-top" alt="ubnhsLogo">
@@ -228,7 +228,7 @@
                     Please scan the Qr Code to answer a quick survey and help us improve the system for our research.</p>
             </div>
         </div>
-    </div>
+    </div> -->
 
 </div>
 

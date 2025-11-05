@@ -102,27 +102,25 @@
         display: block;
     }
 
-    /* Password Toggle */
-    /* Increase clickable area for password toggle icons */
+    /* Password Toggle - FIXED VERTICAL ALIGNMENT */
     .toggle-password {
         cursor: pointer;
         color: #94a3b8;
         transition: color 0.2s ease;
         padding: 8px;
-        margin: -8px;
         display: inline-flex;
         align-items: center;
         justify-content: center;
+        position: absolute;
+        top: 50%;
+        right: 12px;
+        transform: translateY(-50%);
+        z-index: 10;
+        pointer-events: auto;
     }
 
     .toggle-password:hover {
         color: #1dd3b0;
-    }
-
-    /* Ensure the icon is clickable and not blocked */
-    .position-relative .toggle-password {
-        pointer-events: auto;
-        z-index: 10;
     }
 
     /* Password Strength */
@@ -140,11 +138,12 @@
         transition: color 0.2s ease;
     }
 
-    #passwordRules small.text-success {
-        color: #10b981 !important;
+    /* Use specific classes for color control */
+    #passwordRules small.rule-valid {
+        color: #4ade80 !important;
     }
 
-    #passwordRules small.text-danger {
+    #passwordRules small.rule-invalid {
         color: #f87171 !important;
     }
 
@@ -887,9 +886,7 @@
                                 class="form-control"
                                 style="padding-right: 2.5rem;"
                                 required>
-                            <i class="fas fa-eye-slash position-absolute toggle-password"
-                                id="toggleCurrentPassword"
-                                style="top: 50%; right: 12px; transform: translateY(-50%); z-index: 10; pointer-events: auto;"></i>
+                            <i class="fas fa-eye-slash toggle-password" id="toggleCurrentPassword"></i>
                         </div>
                     </div>
 
@@ -900,19 +897,17 @@
                                 class="form-control"
                                 style="padding-right: 2.5rem;"
                                 required minlength="8">
-                            <i class="fas fa-eye-slash position-absolute toggle-password"
-                                id="toggleNewPassword"
-                                style="top: 50%; right: 12px; transform: translateY(-50%); z-index: 10; pointer-events: auto;"></i>
+                            <i class="fas fa-eye-slash toggle-password" id="toggleNewPassword"></i>
                         </div>
                         <div id="passwordStrength" class="mt-1 small"></div>
 
-                        <!-- Password Rules -->
+                        <!-- Password Rules - UPDATED WITH CLASSES -->
                         <div id="passwordRules" class="mt-2 d-none">
-                            <small id="ruleLength" class="text-danger">✖ 8-20 characters</small>
-                            <small id="ruleLetter" class="text-danger">✖ Contains a letter</small>
-                            <small id="ruleNumber" class="text-danger">✖ Contains a number</small>
-                            <small id="ruleSpecial" class="text-danger">✖ Contains a special character</small>
-                            <small id="ruleNoSpaces" class="text-danger">✖ No spaces allowed</small>
+                            <small id="ruleLength" class="rule-invalid">✖ 8-20 characters</small>
+                            <small id="ruleLetter" class="rule-invalid">✖ Contains a letter</small>
+                            <small id="ruleNumber" class="rule-invalid">✖ Contains a number</small>
+                            <small id="ruleSpecial" class="rule-invalid">✖ Contains a special character</small>
+                            <small id="ruleNoSpaces" class="rule-invalid">✖ No spaces allowed</small>
                         </div>
                     </div>
 
@@ -923,9 +918,7 @@
                                 class="form-control"
                                 style="padding-right: 2.5rem;"
                                 required>
-                            <i class="fas fa-eye-slash position-absolute toggle-password"
-                                id="toggleConfirmPassword"
-                                style="top: 50%; right: 12px; transform: translateY(-50%); z-index: 10; pointer-events: auto;"></i>
+                            <i class="fas fa-eye-slash toggle-password" id="toggleConfirmPassword"></i>
                         </div>
                         <div id="passwordMatch" class="mt-1 small"></div>
                     </div>
@@ -1710,14 +1703,27 @@
             return Object.values(rules).every(rule => rule);
         }
 
+        // FIXED: Update rule indicator function
         function updateRuleIndicator(elementId, isValid) {
             const element = document.getElementById(elementId);
+            if (!element) return;
+
             if (isValid) {
-                element.style.color = '#4ade80';
-                element.innerHTML = element.innerHTML.replace('✖', '✓');
+                // Remove invalid class, add valid class
+                element.classList.remove('rule-invalid');
+                element.classList.add('rule-valid');
+                
+                // Update icon and text
+                const text = element.textContent.replace('✖', '✓');
+                element.textContent = text;
             } else {
-                element.style.color = '#f87171';
-                element.innerHTML = element.innerHTML.replace('✓', '✖');
+                // Remove valid class, add invalid class
+                element.classList.remove('rule-valid');
+                element.classList.add('rule-invalid');
+                
+                // Update icon and text
+                const text = element.textContent.replace('✓', '✖');
+                element.textContent = text;
             }
         }
 
