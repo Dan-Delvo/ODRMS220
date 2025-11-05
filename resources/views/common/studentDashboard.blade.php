@@ -1,3 +1,4 @@
+
 @extends('layout.studentpage')
 
 @section('content')
@@ -413,9 +414,19 @@
                         </p>
 
                         @if($item->remarks)
-                        <p class="mb-0"><i class="bi bi-chat-left-dots me-2" style="color:#1dd3b0;"></i>
+                        <p class="mb-0">
+                            <i class="bi bi-chat-left-dots me-2" style="color:#1dd3b0;"></i>
                             <span style="color:#1dd3b0; font-weight:600;">Remarks:</span>
-                            {{ $item->remarks }}
+                            @if(strlen($item->remarks) > 50)
+                            <button class="btn btn-sm btn-outline-info ms-2" 
+                                data-bs-toggle="modal" 
+                                data-bs-target="#remarksModal{{ $item->id }}"
+                                style="border-color:#1dd3b0; color:#1dd3b0;">
+                                <i class="bi bi-eye"></i> View Full Remarks
+                            </button>
+                            @else
+                            <span class="d-block mt-1" style="color:#cbd5e1;">{{ $item->remarks }}</span>
+                            @endif
                         </p>
                         @endif
                     </div>
@@ -428,7 +439,7 @@
                 $documentPath = $item->supporting_document;
                 @endphp
 
-                <h6 class="fw-semibold mb-3 text-center" style="color:#1dd3b0;">
+                <h6 class="fw-semibold mb-3 text-center mt-4" style="color:#1dd3b0;">
                     <i class="bi bi-folder2-open me-1"></i> Old Supporting Document
                 </h6>
                 <div class="mb-3 mt-4">
@@ -470,7 +481,7 @@
                         <h5 class="mt-3">{{ strtoupper($fileExtension) }} Document</h5>
                         <p class="text-muted">{{ basename($item->supporting_document) }}</p>
 
-                        <!-- ✅ Download & Open Buttons -->
+                        <!-- Download & Open Buttons -->
                         <div class="mt-3">
                             <a href="/public/{{trim($documentPath)}}"
                                 class="btn btn-sm btn-primary me-2"
@@ -522,6 +533,42 @@
         </div>
     </div>
 </div>
+
+<!-- Remarks Modal (only if remarks > 50 chars) -->
+@if($item->remarks && strlen($item->remarks) > 50)
+<div class="modal fade" id="remarksModal{{ $item->id }}" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-content"
+            style="background:#1e293b; color:#f1f5f9; border:1px solid #334155; border-radius:1rem;">
+            
+            <div class="modal-header" style="background:#0f172a; border-bottom:1px solid #334155;">
+                <h5 class="modal-title" style="color:#1dd3b0;">
+                    <i class="bi bi-chat-left-dots me-2"></i>Full Remarks
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                    style="filter: invert(1) grayscale(100%) brightness(200%); opacity:.8;"></button>
+            </div>
+            
+            <div class="modal-body p-4">
+                <div class="alert alert-info mb-3" style="background:#334155; border:1px solid #475569; color:#e2e8f0;">
+                    <strong>Request #{{ str_pad($item->id, 4, '0', STR_PAD_LEFT) }}</strong>
+                </div>
+                <div class="p-3 rounded" style="background:#0f172a; border:1px solid #334155; word-wrap: break-word; white-space: pre-wrap;">
+                    {{ $item->remarks }}
+                </div>
+            </div>
+            
+            <div class="modal-footer" style="background:#0f172a; border-top:1px solid #334155;">
+                <button type="button" class="btn btn-sm" 
+                    style="background:#1dd3b0; color:#0f172a;" 
+                    data-bs-dismiss="modal">
+                    <i class="bi bi-x-circle me-1"></i> Close
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+@endif
 @endforeach
 
 
@@ -702,7 +749,6 @@
 
         .mobile-card-body .btn {
             min-height: 44px;
-            /* Better touch target */
         }
     }
 
@@ -745,6 +791,17 @@
             padding: 0.375rem 0.75rem;
             font-size: 0.875rem;
         }
+    }
+
+    /* Remarks modal styling */
+    .modal .alert-info strong {
+        color: #1dd3b0;
+    }
+
+    /* Button hover effects for remarks */
+    .btn-outline-info:hover {
+        background: #1dd3b0 !important;
+        color: #0f172a !important;
     }
 </style>
 
@@ -797,6 +854,33 @@
 
             card.addEventListener('touchend', function() {
                 this.style.transform = 'scale(1)';
+            });
+        });
+
+        // Handle nested modals (remarks modal from details modal)
+        document.querySelectorAll('[data-bs-target^="#remarksModal"]').forEach(btn => {
+            btn.addEventListener('click', function(e) {
+                // Get the parent modal ID
+                const parentModal = this.closest('.modal');
+                if (parentModal) {
+                    // Hide parent modal temporarily
+                    const bsModal = bootstrap.Modal.getInstance(parentModal);
+                    if (bsModal) {
+                        bsModal.hide();
+                    }
+                }
+            });
+        });
+
+        // When remarks modal closes, show parent modal again
+        document.querySelectorAll('[id^="remarksModal"]').forEach(modal => {
+            modal.addEventListener('hidden.bs.modal', function() {
+                const modalId = this.id.replace('remarksModal', 'requestModal');
+                const parentModal = document.getElementById(modalId);
+                if (parentModal) {
+                    const bsModal = new bootstrap.Modal(parentModal);
+                    bsModal.show();
+                }
             });
         });
     });

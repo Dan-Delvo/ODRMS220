@@ -152,7 +152,41 @@
                                 <td>{{ strtoupper($item->request_schl_entity) }}</td>
                                 <td>{{ $item->request_mode }}</td>
                                 <td>{{ $item->release_mode }}</td>
-                                <td>{{ $item->remarks }}</td>
+                                <td class="text-wrap" style="max-width: 200px;">
+                                    @if (strlen($item->remarks) > 50)
+                                    <button class="btn btn-sm btn-outline-primary rounded-pill px-3" data-bs-toggle="modal"
+                                        data-bs-target="#remarksModal{{ $item->id }}">
+                                        <i class="fas fa-eye me-1"></i>View Remarks
+                                    </button>
+
+                                    <!-- Modern Modal -->
+                                    <div class="modal fade" id="remarksModal{{ $item->id }}" tabindex="-1" aria-labelledby="remarksModalLabel{{ $item->id }}" aria-hidden="true">
+                                        <div class="modal-dialog modal-dialog-centered">
+                                            <div class="modal-content border-0 shadow-lg">
+                                                <div class="modal-header text-white border-0" style="background-color: #1f2937;">
+                                                    <h5 class="modal-title fw-semibold d-flex align-items-center" id="remarksModalLabel{{ $item->id }}">
+                                                        <i class="fas fa-comment-dots me-2" style="color: #1dd3b0;"></i>
+                                                        Remarks Details
+                                                    </h5>
+                                                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                </div>
+                                                <div class="modal-body p-0">
+                                                    <div class="p-4" style="white-space: pre-wrap; word-wrap: break-word; line-height: 1.6;">
+                                                        {{ $item->remarks }}
+                                                    </div>
+                                                </div>
+                                                <div class="modal-footer border-0">
+                                                    <button type="button" class="btn btn-secondary rounded-pill px-4" data-bs-dismiss="modal">
+                                                        <i class="fas fa-times me-1"></i>Close
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    @else
+                                    <span class="text-muted">{{ $item->remarks }}</span>
+                                    @endif
+                                </td>
                                 <td><span class="badge bg-danger text-white status-badge">{{ $item->status }}</span></td>
                                 <td>{{ $item->request_date }}</td>
                                 <td class="action-column">
@@ -275,97 +309,94 @@
                 @if ($item->image || $item->supporting_document)
                 <div class="modal fade" id="documentModal{{ $item->id }}" tabindex="-1"
                     aria-labelledby="documentModalLabel{{ $item->id }}" aria-hidden="true">
-                    <div class="modal-dialog modal-dialog-centered modal-xl">
-                        <div class="modal-content border-0 shadow-sm">
-                            <div class="modal-header text-white justify-content-between align-items-center"
-                                style="background-color: #1f2937;">
-                                <h5 class="modal-title" id="documentModalLabel{{ $item->id }}"
-                                    style="color: #1dd3b0;">
-                                    <i class="fas fa-file-alt me-2"></i>
-                                    Supporting Document Comparison - Request No. {{ $item->req_no }}
+                    <div class="modal-dialog modal-dialog-centered modal-fullscreen-lg-down" style="max-width: 1400px;">
+                        <div class="modal-content border-0 shadow-lg rounded-3 overflow-hidden">
+                            {{-- Header --}}
+                            <div class="modal-header text-white" style="background-color: #1f2937; padding: 1rem 1.5rem;">
+                                <h5 class="modal-title fw-semibold d-flex align-items-center" id="documentModalLabel{{ $item->id }}">
+                                    <i class="fas fa-file-alt me-2 text-teal"></i>
+                                    Supporting Document Comparison - <span class="text-teal ms-1">#{{ $item->req_no }}</span>
                                 </h5>
-                                <button type="button" class="btn-close btn-close-white"
-                                    data-bs-dismiss="modal" aria-label="Close"></button>
+                                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                                    aria-label="Close"></button>
                             </div>
 
-                            <div class="modal-body bg-light">
-                                <div class="row g-3">
-
-                                    <div class="col-md-6">
-                                        <div
-                                            class="border rounded bg-white shadow-sm h-100 d-flex flex-column">
-                                            <div class="p-2 text-center border-bottom"
-                                                style="background:#f8fafc;">
-                                                <strong class="text-muted"><i class="fas fa-history me-1"></i>
-                                                    Old Supporting Document File</strong>
+                            {{-- Body --}}
+                            <div class="modal-body bg-light p-3" style="min-height: 75vh;">
+                                <div class="row g-3 h-100">
+                                    {{-- OLD FILE --}}
+                                    <div class="col-md-6 h-100">
+                                        <div class="border rounded-3 bg-white shadow-sm h-100 d-flex flex-column">
+                                            <div class="p-2 text-center border-bottom bg-gray-100">
+                                                <strong class="text-secondary fs-6">
+                                                    <i class="fas fa-history me-1 text-muted"></i>
+                                                    Old Supporting Document
+                                                </strong>
                                             </div>
-                                            <div
-                                                class="flex-fill d-flex align-items-center justify-content-center p-2">
+                                            <div class="flex-fill d-flex align-items-center justify-content-center p-2" style="min-height: calc(75vh - 60px); overflow: hidden;">
                                                 @php
                                                 $oldPath = $item->image;
-                                                $oldExt = $oldPath
-                                                ? strtolower(pathinfo($oldPath, PATHINFO_EXTENSION))
-                                                : null;
+                                                $oldExt = $oldPath ? strtolower(pathinfo($oldPath, PATHINFO_EXTENSION)) : null;
                                                 @endphp
 
                                                 @if ($oldPath)
-                                                {{-- Assuming file-preview partial exists and works --}}
-                                                @include('layout.partials.file-preview', [
-                                                'filePath' => $oldPath,
-                                                'ext' => $oldExt,
-                                                'id' => 'old_' . $item->id,
-                                                ])
+                                                <div class="w-100 h-100 d-flex align-items-center justify-content-center">
+                                                    @include('layout.partials.file-preview', [
+                                                    'filePath' => $oldPath,
+                                                    'ext' => $oldExt,
+                                                    'id' => 'old_' . $item->id,
+                                                    ])
+                                                </div>
                                                 @else
-                                                <p class="text-muted">No old file available</p>
-                                                @endif
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div class="col-md-6">
-                                        <div
-                                            class="border rounded bg-white shadow-sm h-100 d-flex flex-column">
-                                            <div class="p-2 text-center border-bottom"
-                                                style="background:#f8fafc;">
-                                                <strong class="text-muted"><i
-                                                        class="fas fa-file-upload me-1"></i> New Supporting
-                                                    Document File</strong>
-                                            </div>
-                                            <div
-                                                class="flex-fill d-flex align-items-center justify-content-center p-2">
-                                                @php
-                                                $newPath = $item->supporting_document;
-                                                $newExt = $newPath
-                                                ? strtolower(pathinfo($newPath, PATHINFO_EXTENSION))
-                                                : null;
-                                                @endphp
-
-                                                @if ($newPath)
-                                                {{-- Assuming file-preview partial exists and works --}}
-                                                @include('layout.partials.file-preview', [
-                                                'filePath' => $newPath,
-                                                'ext' => $newExt,
-                                                'id' => 'new_' . $item->id,
-                                                ])
-                                                @else
-                                                <div class="text-center text-muted">
-                                                    <i class="fas fa-file text-secondary"
-                                                        style="font-size:3rem;"></i>
-                                                    <p class="mt-2">No new file uploaded</p>
+                                                <div class="text-center text-muted py-5">
+                                                    <i class="fas fa-file text-secondary mb-2" style="font-size: 4rem;"></i>
+                                                    <p class="mb-0">No old document available</p>
                                                 </div>
                                                 @endif
                                             </div>
                                         </div>
                                     </div>
 
+                                    {{-- NEW FILE --}}
+                                    <div class="col-md-6 h-100">
+                                        <div class="border rounded-3 bg-white shadow-sm h-100 d-flex flex-column">
+                                            <div class="p-2 text-center border-bottom bg-gray-100">
+                                                <strong class="text-secondary fs-6">
+                                                    <i class="fas fa-file-upload me-1 text-muted"></i>
+                                                    New Supporting Document
+                                                </strong>
+                                            </div>
+                                            <div class="flex-fill d-flex align-items-center justify-content-center p-2" style="min-height: calc(75vh - 60px); overflow: hidden;">
+                                                @php
+                                                $newPath = $item->supporting_document;
+                                                $newExt = $newPath ? strtolower(pathinfo($newPath, PATHINFO_EXTENSION)) : null;
+                                                @endphp
+
+                                                @if ($newPath)
+                                                <div class="w-100 h-100 d-flex align-items-center justify-content-center">
+                                                    @include('layout.partials.file-preview', [
+                                                    'filePath' => $newPath,
+                                                    'ext' => $newExt,
+                                                    'id' => 'new_' . $item->id,
+                                                    ])
+                                                </div>
+                                                @else
+                                                <div class="text-center text-muted py-5">
+                                                    <i class="fas fa-file text-secondary mb-2" style="font-size: 4rem;"></i>
+                                                    <p class="mb-0">No new document uploaded</p>
+                                                </div>
+                                                @endif
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
 
-                            <div class="modal-footer" style="background-color: #1f2937;">
-                                <button type="button" class="btn btn-outline-light btn-sm"
+                            {{-- Footer --}}
+                            <div class="modal-footer d-flex justify-content-center" style="background-color: #1f2937; padding: 0.75rem;">
+                                <button type="button" class="btn btn-outline-light px-4 py-2 rounded-pill"
                                     data-bs-dismiss="modal" style="border-color: #1dd3b0; color: #1dd3b0;">
-                                    <i class="fas fa-times me-1"></i>
-                                    Close
+                                    <i class="fas fa-times me-1"></i> Close
                                 </button>
                             </div>
                         </div>
@@ -993,6 +1024,23 @@
     /* ===== UTILITY CLASSES ===== */
     .fw-semibold {
         font-weight: 600;
+    }
+
+    .text-teal {
+        color: #1dd3b0 !important;
+    }
+
+    .bg-gray-100 {
+        background-color: #f8fafc !important;
+    }
+
+    .modal-content {
+        border-radius: 1rem !important;
+    }
+
+    .modal-body {
+        max-height: 80vh;
+        overflow-y: auto;
     }
 </style>
 

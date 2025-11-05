@@ -266,8 +266,81 @@
         margin-bottom: 1rem;
     }
 
+    /* Remarks Button */
+    .btn-remarks {
+        padding: 0.3rem 0.6rem;
+        font-size: 0.75rem;
+        border-radius: 0.5rem;
+        border: 1px solid var(--primary-teal);
+        color: var(--primary-teal);
+        background: transparent;
+        transition: all 0.3s ease;
+        white-space: nowrap;
+    }
+
+    .btn-remarks:hover {
+        background: var(--primary-teal);
+        color: var(--dark-bg);
+        transform: translateY(-2px);
+    }
+
+    .btn-remarks i {
+        margin-right: 0.25rem;
+    }
+
+    /* Mobile Cards */
+    .mobile-request-card {
+        background: var(--card-bg);
+        border: 1px solid var(--border-color);
+        border-radius: 1rem;
+        margin-bottom: 1rem;
+        overflow: hidden;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .mobile-request-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 8px 16px rgba(29, 211, 176, 0.15);
+    }
+
+    .mobile-card-header {
+        background: linear-gradient(135deg, #020617 0%, #1e293b 100%);
+        padding: 1rem;
+        border-bottom: 2px solid var(--primary-teal);
+    }
+
+    .mobile-card-body {
+        padding: 1rem;
+    }
+
+    .mobile-card-row {
+        display: flex;
+        justify-content: space-between;
+        padding: 0.75rem 0;
+        border-bottom: 1px solid rgba(71, 85, 105, 0.3);
+    }
+
+    .mobile-card-row:last-child {
+        border-bottom: none;
+    }
+
+    .mobile-card-label {
+        color: var(--primary-teal);
+        font-weight: 600;
+        font-size: 0.85rem;
+    }
+
+    .mobile-card-value {
+        color: var(--text-secondary);
+        font-size: 0.85rem;
+        text-align: right;
+        max-width: 60%;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
     /* Responsive Design */
-    @media (max-width: 768px) {
+    @media (max-width: 991.98px) {
         #main-content {
             margin-left: 0 !important;
             padding: 6.5rem 1rem 2rem;
@@ -287,6 +360,36 @@
         .card-header-custom h4 {
             font-size: 1.2rem;
         }
+    }
+
+    /* Tablet View (768px - 991px) */
+    @media (min-width: 768px) and (max-width: 991.98px) {
+        .table-responsive {
+            display: none !important;
+        }
+
+        .tablet-view {
+            display: block !important;
+        }
+
+        .mobile-view {
+            display: none !important;
+        }
+    }
+
+    /* Mobile View (below 768px) */
+    @media (max-width: 767.98px) {
+        .table-responsive {
+            display: none !important;
+        }
+
+        .tablet-view {
+            display: none !important;
+        }
+
+        .mobile-view {
+            display: block !important;
+        }
 
         .custom-table th,
         .custom-table td {
@@ -299,13 +402,15 @@
         }
     }
 
-    @media (max-width: 480px) {
-        .custom-table th,
-        .custom-table td {
-            font-size: 0.75rem;
-            padding: 0.6rem 0.4rem;
+    /* Desktop View */
+    @media (min-width: 992px) {
+        .mobile-view,
+        .tablet-view {
+            display: none;
         }
+    }
 
+    @media (max-width: 480px) {
         .status-badge {
             font-size: 0.7rem;
             padding: 0.4rem 0.8rem;
@@ -313,6 +418,16 @@
 
         .school-entity {
             max-width: 80px;
+        }
+
+        .mobile-card-row {
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .mobile-card-value {
+            text-align: left;
+            max-width: 100%;
         }
     }
 
@@ -327,6 +442,7 @@
             transform: translateY(0);
         }
     }
+    
     /* Fixed Width Cell for Release Mode */
     .fixed-width-cell {
         width: 150px;
@@ -346,6 +462,118 @@
     .custom-table tbody tr:nth-child(3) { animation-delay: 0.3s; }
     .custom-table tbody tr:nth-child(4) { animation-delay: 0.4s; }
     .custom-table tbody tr:nth-child(5) { animation-delay: 0.5s; }
+
+    /* Remarks Modal Styling */
+    .remarks-modal .modal-content {
+        background: var(--card-bg);
+        color: var(--text-primary);
+        border: 1px solid var(--border-color);
+        border-radius: 1rem;
+    }
+
+    .remarks-modal .modal-header {
+        background: var(--dark-bg);
+        border-bottom: 1px solid var(--border-color);
+        padding: 1rem 1.5rem;
+    }
+
+    .remarks-modal .modal-title {
+        color: var(--primary-teal);
+        font-size: 1rem;
+    }
+
+    .remarks-modal .btn-close {
+        filter: invert(1) grayscale(100%) brightness(200%);
+        opacity: 0.8;
+    }
+
+    .remarks-modal .modal-body {
+        padding: 1rem 1.5rem;
+    }
+
+    .remarks-modal .alert-info {
+        background: var(--hover-bg);
+        border: 1px solid var(--border-color);
+        color: var(--text-secondary);
+        padding: 0.75rem;
+        margin-bottom: 1rem;
+    }
+
+    .remarks-modal .alert-info strong {
+        color: var(--primary-teal);
+    }
+
+    .remarks-modal .remarks-content {
+        background: var(--dark-bg);
+        border: 1px solid var(--border-color);
+        border-radius: 0.5rem;
+        padding: 1rem;
+        word-wrap: break-word;
+        white-space: pre-wrap;
+        color: var(--text-secondary);
+        max-height: 60vh;
+        overflow-y: auto;
+    }
+
+    .remarks-modal .modal-footer {
+        background: var(--dark-bg);
+        border-top: 1px solid var(--border-color);
+        padding: 0.75rem 1.5rem;
+    }
+
+    /* Tablet specific table styles */
+    .tablet-table {
+        background: var(--dark-bg);
+        border: none;
+        border-radius: 1rem;
+        overflow: hidden;
+        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.2);
+        width: 100%;
+    }
+
+    .tablet-table thead {
+        background: linear-gradient(135deg, #020617 0%, #1e293b 100%);
+    }
+
+    .tablet-table th {
+        background: transparent;
+        color: var(--primary-teal);
+        font-weight: 700;
+        font-size: 0.75rem;
+        letter-spacing: 0.05em;
+        text-transform: uppercase;
+        padding: 1rem 0.75rem;
+        border: none;
+        border-bottom: 2px solid var(--primary-teal);
+    }
+
+    .tablet-table tbody tr {
+        background: var(--dark-bg);
+        transition: all 0.3s ease;
+    }
+
+    .tablet-table tbody tr:nth-child(even) {
+        background: rgba(30, 41, 59, 0.3);
+    }
+
+    .tablet-table tbody tr:hover {
+        background: var(--hover-bg) !important;
+    }
+
+    .tablet-table td {
+        background: transparent;
+        color: var(--text-secondary);
+        padding: 0.75rem;
+        border: none;
+        border-bottom: 1px solid rgba(71, 85, 105, 0.3);
+        vertical-align: middle;
+        font-size: 0.85rem;
+    }
+
+    .tablet-table td:first-child {
+        color: var(--primary-teal);
+        font-weight: 600;
+    }
 </style>
 
 <div id="main-content">
@@ -371,6 +599,7 @@
                         <p>All document requests will appear here once submitted.</p>
                     </div>
                 @else
+                    <!-- Desktop Table View -->
                     <div class="table-responsive">
                         <table class="table table-sm custom-table">
                             <thead>
@@ -411,9 +640,17 @@
                                     </td>
                                     <td>
                                         @if($item->remarks)
-                                            <div class="school-entity" title="{{ $item->remarks }}">
-                                                {{ $item->remarks }}
-                                            </div>
+                                            @if(strlen($item->remarks) > 30)
+                                                <button class="btn btn-remarks" 
+                                                    data-bs-toggle="modal" 
+                                                    data-bs-target="#remarksModal{{ $item->id }}">
+                                                    <i class="bi bi-eye"></i> View Remarks
+                                                </button>
+                                            @else
+                                                <div class="school-entity" title="{{ $item->remarks }}">
+                                                    {{ $item->remarks }}
+                                                </div>
+                                            @endif
                                         @else
                                             <em class="text-muted">No remarks</em>
                                         @endif
@@ -452,6 +689,166 @@
                         </table>
                     </div>
 
+                    <!-- Tablet View (768px - 991px) -->
+                    <div class="tablet-view">
+                        <div class="table-responsive">
+                            <table class="table table-sm tablet-table">
+                                <thead>
+                                    <tr>
+                                        <th><i class="fas fa-user-graduate me-1"></i>Student</th>
+                                        <th><i class="fas fa-file-alt me-1"></i>Document</th>
+                                        <th><i class="fas fa-comment me-1"></i>Remarks</th>
+                                        <th><i class="fas fa-flag me-1"></i>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach ($DocRequests as $item)
+                                    <tr>
+                                        <td>
+                                            <div class="fw-semibold" style="color: var(--primary-teal);">
+                                                {{ $item->studentInformation->full_name }}
+                                            </div>
+                                            <small class="text-muted d-block mt-1">
+                                                <i class="fas fa-user me-1"></i>
+                                                @if($item->claimer->full_name !== 'Blank Blank')
+                                                    {{ Str::limit($item->claimer->full_name, 20) }}
+                                                @else
+                                                    Not claimed
+                                                @endif
+                                            </small>
+                                        </td>
+                                        <td>
+                                            <div class="fw-medium">{{ Str::limit($item->documents->DocType, 25) }}</div>
+                                            <small class="text-muted d-block mt-1">
+                                                {{ Str::limit($item->request_schl_entity, 30) }}
+                                            </small>
+                                        </td>
+                                        <td>
+                                            @if($item->remarks)
+                                                @if(strlen($item->remarks) > 30)
+                                                    <button class="btn btn-remarks" 
+                                                        data-bs-toggle="modal" 
+                                                        data-bs-target="#remarksModal{{ $item->id }}">
+                                                        <i class="bi bi-eye"></i> View
+                                                    </button>
+                                                @else
+                                                    <small>{{ $item->remarks }}</small>
+                                                @endif
+                                            @else
+                                                <em class="text-muted">No remarks</em>
+                                            @endif
+                                        </td>
+                                        <td>
+                                            @if($item->status == 'Claimed')
+                                                <span class="status-badge status-claimed" style="font-size: 0.7rem; padding: 0.4rem 0.8rem;">
+                                                    <i class="fas fa-check"></i> Claimed
+                                                </span>
+                                            @elseif($item->status == 'Processing')
+                                                <span class="status-badge status-processing" style="font-size: 0.7rem; padding: 0.4rem 0.8rem;">
+                                                    <i class="fas fa-spinner"></i> Processing
+                                                </span>
+                                            @elseif($item->status == 'Pending')
+                                                <span class="status-badge status-pending" style="font-size: 0.7rem; padding: 0.4rem 0.8rem;">
+                                                    <i class="fas fa-hourglass-half"></i> Pending
+                                                </span>
+                                            @elseif($item->status == 'For Release')
+                                                <span class="status-badge status-for-release" style="font-size: 0.7rem; padding: 0.4rem 0.8rem;">
+                                                    <i class="fas fa-paper-plane"></i> For Release
+                                                </span>
+                                            @else
+                                                <span class="status-badge status-declined" style="font-size: 0.7rem; padding: 0.4rem 0.8rem;">
+                                                    <i class="fas fa-times"></i> Declined
+                                                </span>
+                                            @endif
+                                        </td>
+                                    </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Mobile Card View -->
+                    <div class="mobile-view">
+                        @foreach ($DocRequests as $item)
+                        <div class="mobile-request-card">
+                            <div class="mobile-card-header">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <span style="color: var(--primary-teal); font-weight: 600;">
+                                        <i class="fas fa-user-graduate me-2"></i>
+                                        {{ $item->studentInformation->full_name }}
+                                    </span>
+                                    @if($item->status == 'Claimed')
+                                        <span class="status-badge status-claimed" style="font-size: 0.7rem; padding: 0.3rem 0.6rem;">
+                                            <i class="fas fa-check"></i> Claimed
+                                        </span>
+                                    @elseif($item->status == 'Processing')
+                                        <span class="status-badge status-processing" style="font-size: 0.7rem; padding: 0.3rem 0.6rem;">
+                                            <i class="fas fa-spinner"></i> Processing
+                                        </span>
+                                    @elseif($item->status == 'Pending')
+                                        <span class="status-badge status-pending" style="font-size: 0.7rem; padding: 0.3rem 0.6rem;">
+                                            <i class="fas fa-hourglass-half"></i> Pending
+                                        </span>
+                                    @elseif($item->status == 'For Release')
+                                        <span class="status-badge status-for-release" style="font-size: 0.7rem; padding: 0.3rem 0.6rem;">
+                                            <i class="fas fa-paper-plane"></i> For Release
+                                        </span>
+                                    @else
+                                        <span class="status-badge status-declined" style="font-size: 0.7rem; padding: 0.3rem 0.6rem;">
+                                            <i class="fas fa-times"></i> Declined
+                                        </span>
+                                    @endif
+                                </div>
+                            </div>
+                            <div class="mobile-card-body">
+                                <div class="mobile-card-row">
+                                    <span class="mobile-card-label"><i class="fas fa-user me-1"></i>Claimer:</span>
+                                    <span class="mobile-card-value">
+                                        @if($item->claimer->full_name !== 'Blank Blank')
+                                            {{ $item->claimer->full_name }}
+                                        @else
+                                            <em class="text-muted">Not claimed</em>
+                                        @endif
+                                    </span>
+                                </div>
+                                <div class="mobile-card-row">
+                                    <span class="mobile-card-label"><i class="fas fa-file-alt me-1"></i>Document:</span>
+                                    <span class="mobile-card-value">{{ $item->documents->DocType }}</span>
+                                </div>
+                                <div class="mobile-card-row">
+                                    <span class="mobile-card-label"><i class="fas fa-school me-1"></i>School:</span>
+                                    <span class="mobile-card-value" title="{{ $item->request_schl_entity }}">
+                                        {{ Str::limit($item->request_schl_entity, 30) }}
+                                    </span>
+                                </div>
+                                <div class="mobile-card-row">
+                                    <span class="mobile-card-label"><i class="fas fa-truck me-1"></i>Release:</span>
+                                    <span class="mobile-card-value">
+                                        <span class="release-mode-badge">{{ $item->release_mode }}</span>
+                                    </span>
+                                </div>
+                                @if($item->remarks)
+                                <div class="mobile-card-row">
+                                    <span class="mobile-card-label"><i class="fas fa-comment me-1"></i>Remarks:</span>
+                                    <span class="mobile-card-value">
+                                        @if(strlen($item->remarks) > 30)
+                                            <button class="btn btn-remarks" 
+                                                data-bs-toggle="modal" 
+                                                data-bs-target="#remarksModal{{ $item->id }}">
+                                                <i class="bi bi-eye"></i> View
+                                            </button>
+                                        @else
+                                            {{ $item->remarks }}
+                                        @endif
+                                    </span>
+                                </div>
+                                @endif
+                            </div>
+                        </div>
+                        @endforeach
+                    </div>
+
                     <!-- Pagination -->
                     <div class="d-flex justify-content-center mt-4">
                         {{ $DocRequests->links() }}
@@ -461,6 +858,39 @@
         </div>
     </div>
 </div>
+
+<!-- Remarks Modals -->
+@foreach ($DocRequests as $item)
+    @if($item->remarks && strlen($item->remarks) > 30)
+    <div class="modal fade remarks-modal" id="remarksModal{{ $item->id }}" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">
+                        <i class="bi bi-chat-left-dots me-2"></i>Full Remarks
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="alert alert-info">
+                        <strong>Request #{{ str_pad($item->id, 4, '0', STR_PAD_LEFT) }}</strong>
+                    </div>
+                    <div class="remarks-content">
+                        {{ $item->remarks }}
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-sm" 
+                        style="background: var(--primary-teal); color: var(--dark-bg);" 
+                        data-bs-dismiss="modal">
+                        <i class="bi bi-x-circle me-1"></i> Close
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    @endif
+@endforeach
 
 <script>
     document.addEventListener('DOMContentLoaded', function () {
@@ -472,7 +902,7 @@
         }
 
         // Add smooth scroll effect for table rows
-        const tableRows = document.querySelectorAll('.custom-table tbody tr');
+        const tableRows = document.querySelectorAll('.custom-table tbody tr, .tablet-table tbody tr');
         tableRows.forEach((row, index) => {
             row.style.opacity = '0';
             row.style.transform = 'translateY(20px)';
@@ -482,6 +912,30 @@
                 row.style.opacity = '1';
                 row.style.transform = 'translateY(0)';
             }, index * 100);
+        });
+
+        // Add smooth animation for mobile cards
+        const mobileCards = document.querySelectorAll('.mobile-request-card');
+        mobileCards.forEach((card, index) => {
+            card.style.opacity = '0';
+            card.style.transform = 'translateY(20px)';
+
+            setTimeout(() => {
+                card.style.transition = 'all 0.6s ease';
+                card.style.opacity = '1';
+                card.style.transform = 'translateY(0)';
+            }, index * 100);
+        });
+
+        // Enhanced touch interactions for mobile cards
+        mobileCards.forEach(card => {
+            card.addEventListener('touchstart', function() {
+                this.style.transform = 'scale(0.98)';
+            });
+
+            card.addEventListener('touchend', function() {
+                this.style.transform = 'translateY(0) scale(1)';
+            });
         });
     });
 </script>
