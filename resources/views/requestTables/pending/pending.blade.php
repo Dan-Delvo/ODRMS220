@@ -143,7 +143,7 @@
                         <td>{{ $item->documents->DocType }}</td>
                         <td>{{ strtoupper($item->request_schl_entity) }}</td>
                         <td>{{ $item->remarks }}</td>
-                        <td><span class="badge bg-warning text-dark status-badge">{{ $item->status }}</span></td>
+                        <td><span class="badge bg-secondary text-white status-badge">{{ $item->status }}</span></td>
                         <td>{{ $item->request_date }}</td>
                         <td class="action-column">
                             <div class="btn-group-vertical btn-group-sm d-md-inline" role="group">

@@ -12,6 +12,7 @@ class ClaimerModel extends Model
     protected $table = 'clm_claimers';
     protected $primaryKey = 'id';
     public $timestamps = false;
+    
     // Define the fillable fields
     protected $fillable = [
         'Fname',
@@ -20,14 +21,21 @@ class ClaimerModel extends Model
         'claimed_date'
     ];
 
+    // Relationship with individual document requests
     public function documentRequests()
     {
         return $this->hasMany(DocumentRequestModel::class, 'clm_claimers_id', 'id');
     }
 
+    // ✅ Relationship with bulk requests
+    public function bulkRequests()
+    {
+        return $this->hasMany(BulkRequest::class, 'claimer_id', 'id');
+    }
+
+    // Full name accessor
     public function getFullNameAttribute()
     {
         return "{$this->Fname} {$this->Lname}";
     }
-
 }

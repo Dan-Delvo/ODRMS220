@@ -17,6 +17,7 @@ class BulkRequest extends Model
         'School_Email',
         'Doc_Type',
         'Status',
+        'claimer_id', // ✅ Add this
         'request_date',
         'approve_date',
         'forRelease_date',
@@ -28,47 +29,61 @@ class BulkRequest extends Model
         return $this->hasMany(BulkStudent::class, 'Request_ID', 'Request_ID');
     }
 
+    // ✅ Add claimer relationship
+    public function claimer()
+    {
+        return $this->belongsTo(ClaimerModel::class, 'claimer_id', 'id');
+    }
+
     public static function getBulkRequest()
     {
         return self::withCount('students')->get();
     }
 
-    public static function moveRequest(string $status, int $id) {
-        try{
-
+    public static function moveRequest(string $status, int $id) 
+    {
+        try {
             $data = ['Status' => $status];
 
             if ($status === 'Processing') {
                 $data['approve_date'] = now();
             } elseif ($status === 'For Release') {
                 $data['forRelease_date'] = now();
-            } elseif ($status === 'Claimed') {
-                $data['claimed_date'] = now();
             }
 
             self::where('Request_ID', $id)->update($data);
-            Log::info('Success');
-
+            Log::info('Request moved successfully to ' . $status);
         } catch (QueryException $e) {
-
             Log::error($e->getMessage());
+        }
+    }
 
+    // ✅ New method for moving to claimed with claimer
+    public static function moveRequestWithClaimer(string $status, int $id, int $claimerId, string $claimedDate) 
+    {
+        try {
+            $data = [
+                'Status' => $status,
+                'claimer_id' => $claimerId,
+                'claimed_date' => $claimedDate,
+            ];
+
+            self::where('Request_ID', $id)->update($data);
+            Log::info('Request moved to Claimed with claimer ID: ' . $claimerId);
+        } catch (QueryException $e) {
+            Log::error('Error moving request with claimer: ' . $e->getMessage());
+            throw $e;
         }
     }
 
     public static function createWithStudents(array $data, array $students): self
     {
-        // $latestId = self::max('Request_ID'); // Replace 'id' with your actual PK column name
-        // $nextId = $latestId ? $latestId + 1 : 1;
-        // Create the bulk request
         $bulkRequest = self::create([
-            // 'Request_ID' => $nextId,
             'School_Name' => $data['school_name'],
             'School_Email' => $data['email'],
             'Doc_Type' => 'Form 137',
         ]);
 
-        // Let BulkStudent model handle its own insertion
         BulkStudent::createBulkStudents($bulkRequest->Request_ID, $students);
 
         return $bulkRequest;
