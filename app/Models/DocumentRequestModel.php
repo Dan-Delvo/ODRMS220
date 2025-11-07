@@ -212,6 +212,28 @@ class DocumentRequestModel extends Model
             );
     }
 
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::creating(function ($model) {
+            $year = date('Y');
+
+            $last = self::where('req_no', 'LIKE', $year . '-%')
+                        ->orderBy('req_no', 'desc')
+                        ->first();
+
+            if ($last && preg_match('/^'.$year.'-(\d+)$/', $last->req_no, $match)) {
+                $next = intval($match[1]) + 1;
+            } else {
+                $next = 1;
+            }
+
+            $model->req_no = $year . '-' . str_pad($next, 2, '0', STR_PAD_LEFT);
+        });
+    }
+
+
 
 
 }
