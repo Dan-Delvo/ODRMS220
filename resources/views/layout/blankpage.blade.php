@@ -472,6 +472,10 @@
                     console.log("Service worker has been registered for scope: " + reg.scope);
                 });
         }
+
+        document.querySelectorAll('form').forEach(form => {
+            form.setAttribute('autocomplete', 'off');
+        });
     </script>
     @include('layout.partials.statusCode')
     @include('layout.partials.swal-loading')

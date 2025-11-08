@@ -48,7 +48,7 @@
             </div>
             <div class="card-body p-4">
 
-                <form action="{{ route('walkin.store') }}" method="POST" id="walkinForm" autocomplete="off">
+                <form action="{{ route('walkin.store') }}" method="POST" id="walkinForm">
                     @csrf
 
                     <!-- Document Request Info -->
