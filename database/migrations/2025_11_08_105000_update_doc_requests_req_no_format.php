@@ -7,14 +7,14 @@ use Illuminate\Support\Facades\DB;
 
 return new class extends Migration
 {
-    public function up()
+    /**
+     * Run the migrations.
+     */
+    public function up(): void
     {
-        Schema::table('doc_requests', function (Blueprint $table) {
-            $table->string('req_no', 20)->change();
-        });
-
         // Update req_no with sequential numbering per year (year taken from request_date)
-        // Sequence resets for each year and uses 4-digit padding: YYYY-0001
+        // Format: SR-YYYY-#### (e.g., SR-2025-0001)
+        // Sequence resets for each year and uses 4-digit padding
         DB::unprepared("
             UPDATE doc_requests d
             JOIN (
@@ -30,10 +30,16 @@ return new class extends Migration
         ");
     }
 
-    public function down()
+    /**
+     * Reverse the migrations.
+     */
+    public function down(): void
     {
-        Schema::table('doc_requests', function (Blueprint $table) {
-            $table->bigInteger('req_no')->unsigned()->autoIncrement()->change();
-        });
+        // Optionally revert to plain year-number format (YYYY-####)
+        DB::unprepared("
+            UPDATE doc_requests
+            SET req_no = SUBSTRING(req_no, 4)
+            WHERE req_no LIKE 'SR-%';
+        ");
     }
 };

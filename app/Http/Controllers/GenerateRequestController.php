@@ -91,7 +91,7 @@ class GenerateRequestController extends Controller
             ->join('bulk_requests', 'bulk_students.Request_ID', '=', 'bulk_requests.Request_ID')
             ->select(
                 'bulk_students.Student_ID as id',
-                'bulk_students.Request_ID as req_no',
+                'bulk_requests.req_no as req_no',
                 'bulk_students.Student_Name as full_name',
                 'bulk_requests.Doc_Type as DocType',
                 'bulk_requests.School_Name as request_schl_entity',
@@ -113,7 +113,7 @@ class GenerateRequestController extends Controller
         // Apply search filter to bulk requests
         if ($search) {
             $bulkQuery->where(function ($q) use ($search) {
-                $q->where('bulk_students.Request_ID', 'like', '%' . $search . '%')
+                $q->where('bulk_requests.req_no', 'like', '%' . $search . '%')
                     ->orWhere('bulk_students.Student_Name', 'like', '%' . $search . '%')
                     ->orWhere('bulk_requests.Doc_Type', 'like', '%' . $search . '%')
                     ->orWhere('bulk_requests.School_Name', 'like', '%' . $search . '%');
@@ -304,7 +304,7 @@ class GenerateRequestController extends Controller
                 ->join('bulk_requests', 'bulk_students.Request_ID', '=', 'bulk_requests.Request_ID')
                 ->select(
                     'bulk_students.Student_ID as id',
-                    'bulk_students.Request_ID as req_no',
+                    'bulk_requests.req_no as req_no',
                     'bulk_students.Student_Name as full_name',
                     'bulk_requests.Doc_Type as DocType',
                     'bulk_requests.School_Name as request_schl_entity',
@@ -415,7 +415,7 @@ class GenerateRequestController extends Controller
                 ->join('bulk_requests', 'bulk_students.Request_ID', '=', 'bulk_requests.Request_ID')
                 ->select(
                     'bulk_students.Student_ID as id',
-                    'bulk_students.Request_ID as req_no',
+                    'bulk_requests.req_no as req_no',
                     'bulk_students.Student_Name as full_name',
                     'bulk_requests.Doc_Type as DocType',
                     'bulk_requests.School_Name as request_schl_entity',

@@ -48,7 +48,7 @@
             </div>
             <div class="card-body p-4">
 
-                <form action="{{ route('walkin.store') }}" method="POST" id="walkinForm">
+                <form action="{{ route('walkin.store') }}" method="POST" id="walkinForm" autocomplete="off">
                     @csrf
 
                     <!-- Document Request Info -->
@@ -219,7 +219,7 @@
     </div>
 
 
-    <!-- 
+    <!--
     <div class="col-lg-4 mt-3 d-none d-lg-block">
         <div class="card" style="width: 18rem;">
             <img src="{{ asset('images/qrCode.png') }}" class="card-img-top" alt="ubnhsLogo">

@@ -102,19 +102,20 @@ class BulkRequest extends Model
                 $year = date('Y');
 
                 // Lock the table and get the last record for this year
-                $last = self::where('req_no', 'LIKE', $year . '-%')
+                $last = self::where('req_no', 'LIKE', 'BR-' . $year . '-%')
                             ->lockForUpdate()
-                            ->orderByRaw('CAST(SUBSTRING(req_no, LOCATE("-", req_no) + 1) AS UNSIGNED) DESC')
+                            ->orderByRaw('CAST(SUBSTRING(req_no, LOCATE("-", req_no, 4) + 1) AS UNSIGNED) DESC')
                             ->first();
 
-                if ($last && preg_match('/^'.$year.'-(\d+)$/', $last->req_no, $match)) {
+                if ($last && preg_match('/^BR-'.$year.'-(\d+)$/', $last->req_no, $match)) {
                     $next = intval($match[1]) + 1;
                 } else {
                     $next = 1;
                 }
 
                 // Use 4-digit padding for better scalability
-                $model->req_no = $year . '-' . str_pad($next, 4, '0', STR_PAD_LEFT);
+                // Format: BR-YYYY-#### (e.g., BR-2025-0001)
+                $model->req_no = 'BR-' . $year . '-' . str_pad($next, 4, '0', STR_PAD_LEFT);
 
                 DB::commit();
             } catch (\Exception $e) {
