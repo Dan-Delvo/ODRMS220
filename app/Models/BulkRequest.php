@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\QueryException;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\DB;
 
 class BulkRequest extends Model
 {
@@ -22,6 +23,7 @@ class BulkRequest extends Model
         'approve_date',
         'forRelease_date',
         'claimed_date',
+        'req_no',
     ];
 
     public function students()
@@ -40,7 +42,7 @@ class BulkRequest extends Model
         return self::withCount('students')->get();
     }
 
-    public static function moveRequest(string $status, int $id) 
+    public static function moveRequest(string $status, int $id)
     {
         try {
             $data = ['Status' => $status];
@@ -59,7 +61,7 @@ class BulkRequest extends Model
     }
 
     // ✅ New method for moving to claimed with claimer
-    public static function moveRequestWithClaimer(string $status, int $id, int $claimerId, string $claimedDate) 
+    public static function moveRequestWithClaimer(string $status, int $id, int $claimerId, string $claimedDate)
     {
         try {
             $data = [
@@ -87,5 +89,38 @@ class BulkRequest extends Model
         BulkStudent::createBulkStudents($bulkRequest->Request_ID, $students);
 
         return $bulkRequest;
+    }
+
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::creating(function ($model) {
+            // Use a transaction to prevent race conditions
+            DB::beginTransaction();
+            try {
+                $year = date('Y');
+
+                // Lock the table and get the last record for this year
+                $last = self::where('req_no', 'LIKE', $year . '-%')
+                            ->lockForUpdate()
+                            ->orderByRaw('CAST(SUBSTRING(req_no, LOCATE("-", req_no) + 1) AS UNSIGNED) DESC')
+                            ->first();
+
+                if ($last && preg_match('/^'.$year.'-(\d+)$/', $last->req_no, $match)) {
+                    $next = intval($match[1]) + 1;
+                } else {
+                    $next = 1;
+                }
+
+                // Use 4-digit padding for better scalability
+                $model->req_no = $year . '-' . str_pad($next, 4, '0', STR_PAD_LEFT);
+
+                DB::commit();
+            } catch (\Exception $e) {
+                DB::rollBack();
+                throw $e;
+            }
+        });
     }
 }

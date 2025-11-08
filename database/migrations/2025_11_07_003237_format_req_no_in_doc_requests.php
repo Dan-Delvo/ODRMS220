@@ -13,21 +13,20 @@ return new class extends Migration
             $table->string('req_no', 20)->change();
         });
 
+        // Initialize counter variable
+        DB::statement('SET @i = 0');
+
+        // Update req_no with sequential numbering based on request_date and request_time
         DB::unprepared("
-            UPDATE doc_requests d
+            UPDATE doc_requests
             JOIN (
-                SELECT
-                    id,
-                    DATE_FORMAT(request_date, '%Y') AS yr,
-                    @row := IF(@current_year = DATE_FORMAT(request_date, '%Y'), @row + 1, 1) AS seq,
-                    @current_year := DATE_FORMAT(request_date, '%Y') AS dummy
-                FROM doc_requests, (SELECT @row := 0, @current_year := '') AS vars
-                ORDER BY request_date, id
-            ) AS t ON d.id = t.id
-            SET d.req_no = CONCAT(t.yr, '-', LPAD(t.seq, 2, '0'));
+                SELECT id, (@i := @i + 1) AS new_no
+                FROM doc_requests
+                ORDER BY request_date ASC, request_time ASC
+            ) AS sorted
+            ON doc_requests.id = sorted.id
+            SET doc_requests.req_no = CONCAT('2025-', LPAD(sorted.new_no, 4, '0'))
         ");
-
-
     }
 
     public function down()
