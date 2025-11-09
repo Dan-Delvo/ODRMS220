@@ -36,7 +36,7 @@
 
             @if(!empty($PermissionGen))
             <a class="nav-link text-light sidebar-item" href="{{ route('generate') }}">
-                <div class="sb-nav-link-icon"><i class="fas fa-chart-line"></i></div>
+                <div class="sb-nav-link-icon"><i class="bi bi-gear-wide-connected"></i></div>
                 Generate Report
             </a>
             @endif
@@ -84,7 +84,7 @@
 
             @if(!empty($PermissionAudit))
             <a class="nav-link text-light sidebar-item" href="{{ route('audit.index') }}">
-                <div class="sb-nav-link-icon"><i class="fas fa-file-alt"></i></div>
+                <div class="sb-nav-link-icon"><i class="bi bi-fingerprint"></i></div>
                 Audit Trail
             </a>
             @endif
@@ -102,6 +102,11 @@
             </a>
             @endif
 
+            <a class="nav-link text-light sidebar-item" href="{{ route('archived.pending') }}">
+                <div class="sb-nav-link-icon"><i class="bi bi-archive"></i></div>
+                Archived requests
+            </a>
+
             @if(!empty($PermissionWalk))
             <a class="nav-link text-light sidebar-item" href="{{ route('walkin.form') }}">
                 <div class="sb-nav-link-icon"><i class="fas fa-walking"></i></div>
@@ -115,14 +120,14 @@
             @if(!empty($PermissionBulkRequest))
             <div class="sb-sidenav-menu-heading text-uppercase text-light fw-bold mt-3">Bulk Requests</div>
             <a class="nav-link text-light sidebar-item" href="{{ route('bulk_request.index') }}">
-                <div class="sb-nav-link-icon"><i class="fas fa-check-circle"></i></div>
+                <div class="sb-nav-link-icon"><i class="bi bi-files"></i></div>
                 Bulk Requests
             </a>
             @endif
 
             @if(!empty($PermissionAddBulkRequest))
             <a class="nav-link text-light sidebar-item" href="{{ route('bulk_request_add.show') }}">
-                <div class="sb-nav-link-icon"><i class="fas fa-check-circle"></i></div>
+                <div class="sb-nav-link-icon"><i class="bi bi-file-earmark-plus-fill"></i></div>
                 Add Bulk Requests
             </a>
             @endif

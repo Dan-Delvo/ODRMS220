@@ -11,6 +11,7 @@ use App\Http\Controllers\declinedController;
 use App\Http\Controllers\RegistrationController;
 use App\Http\Controllers\StudentPageController;
 use App\Http\Controllers\AccountController;
+use App\Http\Controllers\ArchivedDocumentRequestsController;
 use App\Http\Controllers\DocumentsModelController;
 use App\Http\Controllers\GenerateRequestController;
 use App\Http\Controllers\RoleController;
@@ -96,6 +97,10 @@ Route::group(['middleware' => 'useradmin'], function () {
         Route::put('/moveToClaimed/{Request_ID}', [BulkRequest::class, 'moveToClaimed'])->name('bulk_request.moveToClaimed');
         Route::get('/bulk-request-add', [BulkRequest::class, 'show'])->name('bulk_request_add.show');
         Route::post('/bulk-request-add', [BulkRequest::class, 'store'])->name('bulk_request_add.store');
+    });
+
+    Route::prefix('archived')->group(function(){
+        Route::get('/pending', [ArchivedDocumentRequestsController::class, 'pending'])->name('archived.pending');
     });
 
 

@@ -26,7 +26,7 @@
         @foreach($tabs as $key => $tab)
         @if(!empty($permissions[$key]))
             <li class="nav-item">
-                <a class="nav-link {{ $page == $key ? 'active' : 'text-dark' }}" href="{{ route($tab['route']) }}">
+                <a class="nav-link {{ $page == $key ? 'active' : 'text-dark' }}" href="{{ route($tab['route']) }}" wire:navigate>
                     {{ $tab['label'] }}
                 </a>
             </li>
