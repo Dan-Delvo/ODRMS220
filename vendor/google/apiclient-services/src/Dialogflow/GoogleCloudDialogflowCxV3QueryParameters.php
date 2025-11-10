@@ -33,6 +33,10 @@ class GoogleCloudDialogflowCxV3QueryParameters extends \Google\Collection
    */
   public $currentPage;
   /**
+   * @var string
+   */
+  public $currentPlaybook;
+  /**
    * @var bool
    */
   public $disableWebhook;
@@ -46,6 +50,12 @@ class GoogleCloudDialogflowCxV3QueryParameters extends \Google\Collection
   public $flowVersions;
   protected $geoLocationType = GoogleTypeLatLng::class;
   protected $geoLocationDataType = '';
+  protected $llmModelSettingsType = GoogleCloudDialogflowCxV3LlmModelSettings::class;
+  protected $llmModelSettingsDataType = '';
+  /**
+   * @var string
+   */
+  public $parameterScope;
   /**
    * @var array[]
    */
@@ -118,6 +128,20 @@ class GoogleCloudDialogflowCxV3QueryParameters extends \Google\Collection
     return $this->currentPage;
   }
   /**
+   * @param string
+   */
+  public function setCurrentPlaybook($currentPlaybook)
+  {
+    $this->currentPlaybook = $currentPlaybook;
+  }
+  /**
+   * @return string
+   */
+  public function getCurrentPlaybook()
+  {
+    return $this->currentPlaybook;
+  }
+  /**
    * @param bool
    */
   public function setDisableWebhook($disableWebhook)
@@ -172,6 +196,34 @@ class GoogleCloudDialogflowCxV3QueryParameters extends \Google\Collection
   public function getGeoLocation()
   {
     return $this->geoLocation;
+  }
+  /**
+   * @param GoogleCloudDialogflowCxV3LlmModelSettings
+   */
+  public function setLlmModelSettings(GoogleCloudDialogflowCxV3LlmModelSettings $llmModelSettings)
+  {
+    $this->llmModelSettings = $llmModelSettings;
+  }
+  /**
+   * @return GoogleCloudDialogflowCxV3LlmModelSettings
+   */
+  public function getLlmModelSettings()
+  {
+    return $this->llmModelSettings;
+  }
+  /**
+   * @param string
+   */
+  public function setParameterScope($parameterScope)
+  {
+    $this->parameterScope = $parameterScope;
+  }
+  /**
+   * @return string
+   */
+  public function getParameterScope()
+  {
+    return $this->parameterScope;
   }
   /**
    * @param array[]

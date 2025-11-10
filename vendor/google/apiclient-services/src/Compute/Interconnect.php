@@ -19,11 +19,17 @@ namespace Google\Service\Compute;
 
 class Interconnect extends \Google\Collection
 {
-  protected $collection_key = 'requestedFeatures';
+  protected $collection_key = 'wireGroups';
+  /**
+   * @var bool
+   */
+  public $aaiEnabled;
   /**
    * @var bool
    */
   public $adminEnabled;
+  protected $applicationAwareInterconnectType = InterconnectApplicationAwareInterconnect::class;
+  protected $applicationAwareInterconnectDataType = '';
   /**
    * @var string[]
    */
@@ -60,6 +66,10 @@ class Interconnect extends \Google\Collection
    * @var string[]
    */
   public $interconnectAttachments;
+  /**
+   * @var string[]
+   */
+  public $interconnectGroups;
   /**
    * @var string
    */
@@ -102,6 +112,8 @@ class Interconnect extends \Google\Collection
    * @var string
    */
   public $operationalStatus;
+  protected $paramsType = InterconnectParams::class;
+  protected $paramsDataType = '';
   /**
    * @var string
    */
@@ -134,7 +146,29 @@ class Interconnect extends \Google\Collection
    * @var string
    */
   public $state;
+  /**
+   * @var string
+   */
+  public $subzone;
+  /**
+   * @var string[]
+   */
+  public $wireGroups;
 
+  /**
+   * @param bool
+   */
+  public function setAaiEnabled($aaiEnabled)
+  {
+    $this->aaiEnabled = $aaiEnabled;
+  }
+  /**
+   * @return bool
+   */
+  public function getAaiEnabled()
+  {
+    return $this->aaiEnabled;
+  }
   /**
    * @param bool
    */
@@ -148,6 +182,20 @@ class Interconnect extends \Google\Collection
   public function getAdminEnabled()
   {
     return $this->adminEnabled;
+  }
+  /**
+   * @param InterconnectApplicationAwareInterconnect
+   */
+  public function setApplicationAwareInterconnect(InterconnectApplicationAwareInterconnect $applicationAwareInterconnect)
+  {
+    $this->applicationAwareInterconnect = $applicationAwareInterconnect;
+  }
+  /**
+   * @return InterconnectApplicationAwareInterconnect
+   */
+  public function getApplicationAwareInterconnect()
+  {
+    return $this->applicationAwareInterconnect;
   }
   /**
    * @param string[]
@@ -288,6 +336,20 @@ class Interconnect extends \Google\Collection
   public function getInterconnectAttachments()
   {
     return $this->interconnectAttachments;
+  }
+  /**
+   * @param string[]
+   */
+  public function setInterconnectGroups($interconnectGroups)
+  {
+    $this->interconnectGroups = $interconnectGroups;
+  }
+  /**
+   * @return string[]
+   */
+  public function getInterconnectGroups()
+  {
+    return $this->interconnectGroups;
   }
   /**
    * @param string
@@ -444,6 +506,20 @@ class Interconnect extends \Google\Collection
     return $this->operationalStatus;
   }
   /**
+   * @param InterconnectParams
+   */
+  public function setParams(InterconnectParams $params)
+  {
+    $this->params = $params;
+  }
+  /**
+   * @return InterconnectParams
+   */
+  public function getParams()
+  {
+    return $this->params;
+  }
+  /**
    * @param string
    */
   public function setPeerIpAddress($peerIpAddress)
@@ -554,6 +630,34 @@ class Interconnect extends \Google\Collection
   public function getState()
   {
     return $this->state;
+  }
+  /**
+   * @param string
+   */
+  public function setSubzone($subzone)
+  {
+    $this->subzone = $subzone;
+  }
+  /**
+   * @return string
+   */
+  public function getSubzone()
+  {
+    return $this->subzone;
+  }
+  /**
+   * @param string[]
+   */
+  public function setWireGroups($wireGroups)
+  {
+    $this->wireGroups = $wireGroups;
+  }
+  /**
+   * @return string[]
+   */
+  public function getWireGroups()
+  {
+    return $this->wireGroups;
   }
 }
 

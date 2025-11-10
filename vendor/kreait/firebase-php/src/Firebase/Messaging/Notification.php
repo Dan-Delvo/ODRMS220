@@ -90,6 +90,6 @@ final class Notification implements JsonSerializable
             'title' => $this->title,
             'body' => $this->body,
             'image' => $this->imageUrl,
-        ], static fn($value): bool => $value !== null);
+        ], static fn(?string $value): bool => $value !== null);
     }
 }

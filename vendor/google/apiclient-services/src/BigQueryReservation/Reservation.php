@@ -42,6 +42,10 @@ class Reservation extends \Google\Model
    */
   public $labels;
   /**
+   * @var string
+   */
+  public $maxSlots;
+  /**
    * @var bool
    */
   public $multiRegionAuxiliary;
@@ -57,6 +61,18 @@ class Reservation extends \Google\Model
    * @var string
    */
   public $primaryLocation;
+  protected $replicationStatusType = ReplicationStatus::class;
+  protected $replicationStatusDataType = '';
+  /**
+   * @var string
+   */
+  public $reservationGroup;
+  /**
+   * @var string
+   */
+  public $scalingMode;
+  protected $schedulingPolicyType = SchedulingPolicy::class;
+  protected $schedulingPolicyDataType = '';
   /**
    * @var string
    */
@@ -155,6 +171,20 @@ class Reservation extends \Google\Model
     return $this->labels;
   }
   /**
+   * @param string
+   */
+  public function setMaxSlots($maxSlots)
+  {
+    $this->maxSlots = $maxSlots;
+  }
+  /**
+   * @return string
+   */
+  public function getMaxSlots()
+  {
+    return $this->maxSlots;
+  }
+  /**
    * @param bool
    */
   public function setMultiRegionAuxiliary($multiRegionAuxiliary)
@@ -209,6 +239,62 @@ class Reservation extends \Google\Model
   public function getPrimaryLocation()
   {
     return $this->primaryLocation;
+  }
+  /**
+   * @param ReplicationStatus
+   */
+  public function setReplicationStatus(ReplicationStatus $replicationStatus)
+  {
+    $this->replicationStatus = $replicationStatus;
+  }
+  /**
+   * @return ReplicationStatus
+   */
+  public function getReplicationStatus()
+  {
+    return $this->replicationStatus;
+  }
+  /**
+   * @param string
+   */
+  public function setReservationGroup($reservationGroup)
+  {
+    $this->reservationGroup = $reservationGroup;
+  }
+  /**
+   * @return string
+   */
+  public function getReservationGroup()
+  {
+    return $this->reservationGroup;
+  }
+  /**
+   * @param string
+   */
+  public function setScalingMode($scalingMode)
+  {
+    $this->scalingMode = $scalingMode;
+  }
+  /**
+   * @return string
+   */
+  public function getScalingMode()
+  {
+    return $this->scalingMode;
+  }
+  /**
+   * @param SchedulingPolicy
+   */
+  public function setSchedulingPolicy(SchedulingPolicy $schedulingPolicy)
+  {
+    $this->schedulingPolicy = $schedulingPolicy;
+  }
+  /**
+   * @return SchedulingPolicy
+   */
+  public function getSchedulingPolicy()
+  {
+    return $this->schedulingPolicy;
   }
   /**
    * @param string

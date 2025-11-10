@@ -21,10 +21,46 @@ class LocationMetadata extends \Google\Collection
 {
   protected $collection_key = 'supportedServiceLevels';
   /**
+   * @var bool
+   */
+  public $hasVcp;
+  /**
+   * @var string[]
+   */
+  public $supportedFlexPerformance;
+  /**
    * @var string[]
    */
   public $supportedServiceLevels;
 
+  /**
+   * @param bool
+   */
+  public function setHasVcp($hasVcp)
+  {
+    $this->hasVcp = $hasVcp;
+  }
+  /**
+   * @return bool
+   */
+  public function getHasVcp()
+  {
+    return $this->hasVcp;
+  }
+  /**
+   * @param string[]
+   */
+  public function setSupportedFlexPerformance($supportedFlexPerformance)
+  {
+    $this->supportedFlexPerformance = $supportedFlexPerformance;
+  }
+  /**
+   * @return string[]
+   */
+  public function getSupportedFlexPerformance()
+  {
+    return $this->supportedFlexPerformance;
+  }
   /**
    * @param string[]
    */

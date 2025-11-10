@@ -35,6 +35,10 @@ class GoogleCloudRunV2Revision extends \Google\Collection
   /**
    * @var string
    */
+  public $creator;
+  /**
+   * @var string
+   */
   public $deleteTime;
   /**
    * @var string
@@ -64,6 +68,10 @@ class GoogleCloudRunV2Revision extends \Google\Collection
    * @var string
    */
   public $generation;
+  /**
+   * @var bool
+   */
+  public $gpuZonalRedundancyDisabled;
   /**
    * @var string[]
    */
@@ -192,6 +200,20 @@ class GoogleCloudRunV2Revision extends \Google\Collection
   /**
    * @param string
    */
+  public function setCreator($creator)
+  {
+    $this->creator = $creator;
+  }
+  /**
+   * @return string
+   */
+  public function getCreator()
+  {
+    return $this->creator;
+  }
+  /**
+   * @param string
+   */
   public function setDeleteTime($deleteTime)
   {
     $this->deleteTime = $deleteTime;
@@ -300,6 +322,20 @@ class GoogleCloudRunV2Revision extends \Google\Collection
   public function getGeneration()
   {
     return $this->generation;
+  }
+  /**
+   * @param bool
+   */
+  public function setGpuZonalRedundancyDisabled($gpuZonalRedundancyDisabled)
+  {
+    $this->gpuZonalRedundancyDisabled = $gpuZonalRedundancyDisabled;
+  }
+  /**
+   * @return bool
+   */
+  public function getGpuZonalRedundancyDisabled()
+  {
+    return $this->gpuZonalRedundancyDisabled;
   }
   /**
    * @param string[]

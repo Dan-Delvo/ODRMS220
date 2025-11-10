@@ -25,10 +25,6 @@ final class SetApnsPushTypeIfNeeded
     {
         $payload = Json::decode(Json::encode($message), true);
 
-        if (!is_array($payload)) {
-            return $message;
-        }
-
         $notification = $this->getNotification($payload);
         $messageData = $this->getMessageData($payload);
         $apnsConfig = $this->getApnsConfig($payload);

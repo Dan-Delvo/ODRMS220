@@ -20,20 +20,36 @@ namespace Google\Service\NetworkSecurity;
 class AuthzPolicyAuthzRuleFromRequestSource extends \Google\Collection
 {
   protected $collection_key = 'resources';
-  protected $principalsType = AuthzPolicyAuthzRuleStringMatch::class;
+  protected $ipBlocksType = AuthzPolicyAuthzRuleIpBlock::class;
+  protected $ipBlocksDataType = 'array';
+  protected $principalsType = AuthzPolicyAuthzRulePrincipal::class;
   protected $principalsDataType = 'array';
   protected $resourcesType = AuthzPolicyAuthzRuleRequestResource::class;
   protected $resourcesDataType = 'array';
 
   /**
-   * @param AuthzPolicyAuthzRuleStringMatch[]
+   * @param AuthzPolicyAuthzRuleIpBlock[]
+   */
+  public function setIpBlocks($ipBlocks)
+  {
+    $this->ipBlocks = $ipBlocks;
+  }
+  /**
+   * @return AuthzPolicyAuthzRuleIpBlock[]
+   */
+  public function getIpBlocks()
+  {
+    return $this->ipBlocks;
+  }
+  /**
+   * @param AuthzPolicyAuthzRulePrincipal[]
    */
   public function setPrincipals($principals)
   {
     $this->principals = $principals;
   }
   /**
-   * @return AuthzPolicyAuthzRuleStringMatch[]
+   * @return AuthzPolicyAuthzRulePrincipal[]
    */
   public function getPrincipals()
   {

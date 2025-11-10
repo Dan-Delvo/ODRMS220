@@ -17,8 +17,44 @@
 
 namespace Google\Service\Aiplatform;
 
-class GoogleCloudAiplatformV1PscInterfaceConfig extends \Google\Model
+class GoogleCloudAiplatformV1PscInterfaceConfig extends \Google\Collection
 {
+  protected $collection_key = 'dnsPeeringConfigs';
+  protected $dnsPeeringConfigsType = GoogleCloudAiplatformV1DnsPeeringConfig::class;
+  protected $dnsPeeringConfigsDataType = 'array';
+  /**
+   * @var string
+   */
+  public $networkAttachment;
+
+  /**
+   * @param GoogleCloudAiplatformV1DnsPeeringConfig[]
+   */
+  public function setDnsPeeringConfigs($dnsPeeringConfigs)
+  {
+    $this->dnsPeeringConfigs = $dnsPeeringConfigs;
+  }
+  /**
+   * @return GoogleCloudAiplatformV1DnsPeeringConfig[]
+   */
+  public function getDnsPeeringConfigs()
+  {
+    return $this->dnsPeeringConfigs;
+  }
+  /**
+   * @param string
+   */
+  public function setNetworkAttachment($networkAttachment)
+  {
+    $this->networkAttachment = $networkAttachment;
+  }
+  /**
+   * @return string
+   */
+  public function getNetworkAttachment()
+  {
+    return $this->networkAttachment;
+  }
 }
 
 // Adding a class alias for backwards compatibility with the previous class name.

@@ -18,6 +18,7 @@
 namespace Google\Service\SQLAdmin\Resource;
 
 use Google\Service\SQLAdmin\DatabaseInstance;
+use Google\Service\SQLAdmin\ExecuteSqlPayload;
 use Google\Service\SQLAdmin\InstancesAcquireSsrsLeaseRequest;
 use Google\Service\SQLAdmin\InstancesCloneRequest;
 use Google\Service\SQLAdmin\InstancesDemoteMasterRequest;
@@ -28,13 +29,16 @@ use Google\Service\SQLAdmin\InstancesImportRequest;
 use Google\Service\SQLAdmin\InstancesListResponse;
 use Google\Service\SQLAdmin\InstancesListServerCasResponse;
 use Google\Service\SQLAdmin\InstancesListServerCertificatesResponse;
+use Google\Service\SQLAdmin\InstancesPreCheckMajorVersionUpgradeRequest;
 use Google\Service\SQLAdmin\InstancesReencryptRequest;
 use Google\Service\SQLAdmin\InstancesRestoreBackupRequest;
 use Google\Service\SQLAdmin\InstancesRotateServerCaRequest;
 use Google\Service\SQLAdmin\InstancesRotateServerCertificateRequest;
 use Google\Service\SQLAdmin\InstancesTruncateLogRequest;
 use Google\Service\SQLAdmin\Operation;
+use Google\Service\SQLAdmin\PointInTimeRestoreContext;
 use Google\Service\SQLAdmin\SqlInstancesAcquireSsrsLeaseResponse;
+use Google\Service\SQLAdmin\SqlInstancesExecuteSqlResponse;
 use Google\Service\SQLAdmin\SqlInstancesReleaseSsrsLeaseResponse;
 
 /**
@@ -182,6 +186,15 @@ class Instances extends \Google\Service\Resource
    * @param string $instance Cloud SQL instance ID. This does not include the
    * project ID.
    * @param array $optParams Optional parameters.
+   *
+   * @opt_param bool enableFinalBackup Flag to opt-in for final backup. By
+   * default, it is turned off.
+   * @opt_param string finalBackupDescription Optional. The description of the
+   * final backup.
+   * @opt_param string finalBackupExpiryTime Optional. Final Backup expiration
+   * time. Timestamp in UTC of when this resource is considered expired.
+   * @opt_param string finalBackupTtlDays Optional. Retention period of the final
+   * backup.
    * @return Operation
    * @throws \Google\Service\Exception
    */
@@ -225,6 +238,24 @@ class Instances extends \Google\Service\Resource
     $params = ['project' => $project, 'instance' => $instance, 'postBody' => $postBody];
     $params = array_merge($params, $optParams);
     return $this->call('demoteMaster', [$params], Operation::class);
+  }
+  /**
+   * Execute SQL statements. (instances.executeSql)
+   *
+   * @param string $project Required. Project ID of the project that contains the
+   * instance.
+   * @param string $instance Required. Database instance ID. This does not include
+   * the project ID.
+   * @param ExecuteSqlPayload $postBody
+   * @param array $optParams Optional parameters.
+   * @return SqlInstancesExecuteSqlResponse
+   * @throws \Google\Service\Exception
+   */
+  public function executeSql($project, $instance, ExecuteSqlPayload $postBody, $optParams = [])
+  {
+    $params = ['project' => $project, 'instance' => $instance, 'postBody' => $postBody];
+    $params = array_merge($params, $optParams);
+    return $this->call('executeSql', [$params], SqlInstancesExecuteSqlResponse::class);
   }
   /**
    * Exports data from a Cloud SQL instance to a Cloud Storage bucket as a SQL
@@ -272,9 +303,10 @@ class Instances extends \Google\Service\Resource
    * Retrieves a resource containing information about a Cloud SQL instance.
    * (instances.get)
    *
-   * @param string $project Project ID of the project that contains the instance.
-   * @param string $instance Database instance ID. This does not include the
-   * project ID.
+   * @param string $project Required. Project ID of the project that contains the
+   * instance.
+   * @param string $instance Required. Database instance ID. This does not include
+   * the project ID.
    * @param array $optParams Optional parameters.
    * @return DatabaseInstance
    * @throws \Google\Service\Exception
@@ -388,6 +420,41 @@ class Instances extends \Google\Service\Resource
     return $this->call('patch', [$params], Operation::class);
   }
   /**
+   * Point in time restore for an instance managed by Google Cloud Backup and
+   * Disaster Recovery. (instances.pointInTimeRestore)
+   *
+   * @param string $parent Required. The parent resource where you created this
+   * instance. Format: projects/{project}
+   * @param PointInTimeRestoreContext $postBody
+   * @param array $optParams Optional parameters.
+   * @return Operation
+   * @throws \Google\Service\Exception
+   */
+  public function pointInTimeRestore($parent, PointInTimeRestoreContext $postBody, $optParams = [])
+  {
+    $params = ['parent' => $parent, 'postBody' => $postBody];
+    $params = array_merge($params, $optParams);
+    return $this->call('pointInTimeRestore', [$params], Operation::class);
+  }
+  /**
+   * Execute MVU Pre-checks (instances.preCheckMajorVersionUpgrade)
+   *
+   * @param string $project Required. Project ID of the project that contains the
+   * instance.
+   * @param string $instance Required. Cloud SQL instance ID. This does not
+   * include the project ID.
+   * @param InstancesPreCheckMajorVersionUpgradeRequest $postBody
+   * @param array $optParams Optional parameters.
+   * @return Operation
+   * @throws \Google\Service\Exception
+   */
+  public function preCheckMajorVersionUpgrade($project, $instance, InstancesPreCheckMajorVersionUpgradeRequest $postBody, $optParams = [])
+  {
+    $params = ['project' => $project, 'instance' => $instance, 'postBody' => $postBody];
+    $params = array_merge($params, $optParams);
+    return $this->call('preCheckMajorVersionUpgrade', [$params], Operation::class);
+  }
+  /**
    * Promotes the read replica instance to be an independent Cloud SQL primary
    * instance. Using this operation might cause your instance to restart.
    * (instances.promoteReplica)
@@ -455,6 +522,8 @@ class Instances extends \Google\Service\Resource
    * @param string $instance Cloud SQL instance ID. This does not include the
    * project ID.
    * @param array $optParams Optional parameters.
+   *
+   * @opt_param string mode Optional. Reset SSL mode to use.
    * @return Operation
    * @throws \Google\Service\Exception
    */

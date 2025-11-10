@@ -17,8 +17,15 @@
 
 namespace Google\Service\VMMigrationService;
 
-class ImageImportOsAdaptationParameters extends \Google\Model
+class ImageImportOsAdaptationParameters extends \Google\Collection
 {
+  protected $collection_key = 'adaptationModifiers';
+  protected $adaptationModifiersType = AdaptationModifier::class;
+  protected $adaptationModifiersDataType = 'array';
+  /**
+   * @var string
+   */
+  public $bootConversion;
   /**
    * @var bool
    */
@@ -28,6 +35,34 @@ class ImageImportOsAdaptationParameters extends \Google\Model
    */
   public $licenseType;
 
+  /**
+   * @param AdaptationModifier[]
+   */
+  public function setAdaptationModifiers($adaptationModifiers)
+  {
+    $this->adaptationModifiers = $adaptationModifiers;
+  }
+  /**
+   * @return AdaptationModifier[]
+   */
+  public function getAdaptationModifiers()
+  {
+    return $this->adaptationModifiers;
+  }
+  /**
+   * @param string
+   */
+  public function setBootConversion($bootConversion)
+  {
+    $this->bootConversion = $bootConversion;
+  }
+  /**
+   * @return string
+   */
+  public function getBootConversion()
+  {
+    return $this->bootConversion;
+  }
   /**
    * @param bool
    */

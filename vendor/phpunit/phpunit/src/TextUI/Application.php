@@ -61,6 +61,7 @@ use PHPUnit\TextUI\CliArguments\Configuration as CliConfiguration;
 use PHPUnit\TextUI\CliArguments\Exception as ArgumentsException;
 use PHPUnit\TextUI\CliArguments\XmlConfigurationFileFinder;
 use PHPUnit\TextUI\Command\AtLeastVersionCommand;
+use PHPUnit\TextUI\Command\CheckPhpConfigurationCommand;
 use PHPUnit\TextUI\Command\GenerateConfigurationCommand;
 use PHPUnit\TextUI\Command\ListGroupsCommand;
 use PHPUnit\TextUI\Command\ListTestFilesCommand;
@@ -228,7 +229,7 @@ final readonly class Application
                         (new TestDoxHtmlRenderer)->render($testDoxResult),
                     );
                 } catch (DirectoryDoesNotExistException|InvalidSocketException $e) {
-                    EventFacade::emitter()->testRunnerTriggeredWarning(
+                    EventFacade::emitter()->testRunnerTriggeredPhpunitWarning(
                         sprintf(
                             'Cannot log test results in TestDox HTML format to "%s": %s',
                             $configuration->logfileTestdoxHtml(),
@@ -245,7 +246,7 @@ final readonly class Application
                         (new TestDoxTextRenderer)->render($testDoxResult),
                     );
                 } catch (DirectoryDoesNotExistException|InvalidSocketException $e) {
-                    EventFacade::emitter()->testRunnerTriggeredWarning(
+                    EventFacade::emitter()->testRunnerTriggeredPhpunitWarning(
                         sprintf(
                             'Cannot log test results in TestDox plain text format to "%s": %s',
                             $configuration->logfileTestdoxText(),
@@ -283,14 +284,7 @@ final readonly class Application
             }
 
             $shellExitCode = (new ShellExitCodeCalculator)->calculate(
-                $configuration->failOnDeprecation(),
-                $configuration->failOnPhpunitDeprecation(),
-                $configuration->failOnEmptyTestSuite(),
-                $configuration->failOnIncomplete(),
-                $configuration->failOnNotice(),
-                $configuration->failOnRisky(),
-                $configuration->failOnSkipped(),
-                $configuration->failOnWarning(),
+                $configuration,
                 $result,
             );
 
@@ -470,6 +464,10 @@ final readonly class Application
             $this->execute(new ShowVersionCommand);
         }
 
+        if ($cliConfiguration->checkPhpConfiguration()) {
+            $this->execute(new CheckPhpConfigurationCommand);
+        }
+
         if ($cliConfiguration->checkVersion()) {
             $this->execute(new VersionCheckCommand(new PhpDownloader, Version::majorVersionNumber(), Version::id()));
         }
@@ -549,7 +547,7 @@ final readonly class Application
         $runtime = 'PHP ' . PHP_VERSION;
 
         if (CodeCoverage::instance()->isActive()) {
-            $runtime .= ' with ' . CodeCoverage::instance()->driver()->nameAndVersion();
+            $runtime .= ' with ' . CodeCoverage::instance()->driverNameAndVersion();
         }
 
         $this->writeMessage($printer, 'Runtime', $runtime);
@@ -642,7 +640,7 @@ final readonly class Application
                     EventFacade::instance(),
                 );
             } catch (DirectoryDoesNotExistException|InvalidSocketException $e) {
-                EventFacade::emitter()->testRunnerTriggeredWarning(
+                EventFacade::emitter()->testRunnerTriggeredPhpunitWarning(
                     sprintf(
                         'Cannot log test results in JUnit XML format to "%s": %s',
                         $configuration->logfileJunit(),
@@ -661,7 +659,7 @@ final readonly class Application
                     EventFacade::instance(),
                 );
             } catch (DirectoryDoesNotExistException|InvalidSocketException $e) {
-                EventFacade::emitter()->testRunnerTriggeredWarning(
+                EventFacade::emitter()->testRunnerTriggeredPhpunitWarning(
                     sprintf(
                         'Cannot log test results in TeamCity format to "%s": %s',
                         $configuration->logfileTeamcity(),
@@ -727,7 +725,7 @@ final readonly class Application
             try {
                 $baseline = (new Reader)->read($baselineFile);
             } catch (CannotLoadBaselineException $e) {
-                EventFacade::emitter()->testRunnerTriggeredWarning($e->getMessage());
+                EventFacade::emitter()->testRunnerTriggeredPhpunitWarning($e->getMessage());
             }
 
             if ($baseline !== null) {
@@ -809,7 +807,7 @@ final readonly class Application
 
         foreach ($configuration->source()->deprecationTriggers()['functions'] as $function) {
             if (!function_exists($function)) {
-                EventFacade::emitter()->testRunnerTriggeredWarning(
+                EventFacade::emitter()->testRunnerTriggeredPhpunitWarning(
                     sprintf(
                         'Function %s cannot be configured as a deprecation trigger because it is not declared',
                         $function,
@@ -824,7 +822,7 @@ final readonly class Application
 
         foreach ($configuration->source()->deprecationTriggers()['methods'] as $method) {
             if (!str_contains($method, '::')) {
-                EventFacade::emitter()->testRunnerTriggeredWarning(
+                EventFacade::emitter()->testRunnerTriggeredPhpunitWarning(
                     sprintf(
                         '%s cannot be configured as a deprecation trigger because it is not in ClassName::methodName format',
                         $method,
@@ -837,7 +835,7 @@ final readonly class Application
             [$className, $methodName] = explode('::', $method);
 
             if (!class_exists($className) || !method_exists($className, $methodName)) {
-                EventFacade::emitter()->testRunnerTriggeredWarning(
+                EventFacade::emitter()->testRunnerTriggeredPhpunitWarning(
                     sprintf(
                         'Method %s::%s cannot be configured as a deprecation trigger because it is not declared',
                         $className,

@@ -17,8 +17,9 @@
 
 namespace Google\Service\Aiplatform;
 
-class GoogleCloudAiplatformV1EvaluateInstancesResponse extends \Google\Model
+class GoogleCloudAiplatformV1EvaluateInstancesResponse extends \Google\Collection
 {
+  protected $collection_key = 'metricResults';
   protected $bleuResultsType = GoogleCloudAiplatformV1BleuResults::class;
   protected $bleuResultsDataType = '';
   protected $coherenceResultType = GoogleCloudAiplatformV1CoherenceResult::class;
@@ -33,6 +34,8 @@ class GoogleCloudAiplatformV1EvaluateInstancesResponse extends \Google\Model
   protected $fulfillmentResultDataType = '';
   protected $groundednessResultType = GoogleCloudAiplatformV1GroundednessResult::class;
   protected $groundednessResultDataType = '';
+  protected $metricResultsType = GoogleCloudAiplatformV1MetricResult::class;
+  protected $metricResultsDataType = 'array';
   protected $metricxResultType = GoogleCloudAiplatformV1MetricxResult::class;
   protected $metricxResultDataType = '';
   protected $pairwiseMetricResultType = GoogleCloudAiplatformV1PairwiseMetricResult::class;
@@ -53,6 +56,8 @@ class GoogleCloudAiplatformV1EvaluateInstancesResponse extends \Google\Model
   protected $questionAnsweringRelevanceResultDataType = '';
   protected $rougeResultsType = GoogleCloudAiplatformV1RougeResults::class;
   protected $rougeResultsDataType = '';
+  protected $rubricBasedInstructionFollowingResultType = GoogleCloudAiplatformV1RubricBasedInstructionFollowingResult::class;
+  protected $rubricBasedInstructionFollowingResultDataType = '';
   protected $safetyResultType = GoogleCloudAiplatformV1SafetyResult::class;
   protected $safetyResultDataType = '';
   protected $summarizationHelpfulnessResultType = GoogleCloudAiplatformV1SummarizationHelpfulnessResult::class;
@@ -179,6 +184,20 @@ class GoogleCloudAiplatformV1EvaluateInstancesResponse extends \Google\Model
   public function getGroundednessResult()
   {
     return $this->groundednessResult;
+  }
+  /**
+   * @param GoogleCloudAiplatformV1MetricResult[]
+   */
+  public function setMetricResults($metricResults)
+  {
+    $this->metricResults = $metricResults;
+  }
+  /**
+   * @return GoogleCloudAiplatformV1MetricResult[]
+   */
+  public function getMetricResults()
+  {
+    return $this->metricResults;
   }
   /**
    * @param GoogleCloudAiplatformV1MetricxResult
@@ -319,6 +338,20 @@ class GoogleCloudAiplatformV1EvaluateInstancesResponse extends \Google\Model
   public function getRougeResults()
   {
     return $this->rougeResults;
+  }
+  /**
+   * @param GoogleCloudAiplatformV1RubricBasedInstructionFollowingResult
+   */
+  public function setRubricBasedInstructionFollowingResult(GoogleCloudAiplatformV1RubricBasedInstructionFollowingResult $rubricBasedInstructionFollowingResult)
+  {
+    $this->rubricBasedInstructionFollowingResult = $rubricBasedInstructionFollowingResult;
+  }
+  /**
+   * @return GoogleCloudAiplatformV1RubricBasedInstructionFollowingResult
+   */
+  public function getRubricBasedInstructionFollowingResult()
+  {
+    return $this->rubricBasedInstructionFollowingResult;
   }
   /**
    * @param GoogleCloudAiplatformV1SafetyResult

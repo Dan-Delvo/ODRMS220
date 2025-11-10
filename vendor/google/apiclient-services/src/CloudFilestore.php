@@ -87,13 +87,14 @@ class CloudFilestore extends \Google\Service
                   'type' => 'string',
                   'required' => true,
                 ],
+                'extraLocationTypes' => [
+                  'location' => 'query',
+                  'type' => 'string',
+                  'repeated' => true,
+                ],
                 'filter' => [
                   'location' => 'query',
                   'type' => 'string',
-                ],
-                'includeUnrevealedLocations' => [
-                  'location' => 'query',
-                  'type' => 'boolean',
                 ],
                 'pageSize' => [
                   'location' => 'query',
@@ -454,6 +455,10 @@ class CloudFilestore extends \Google\Service
                 'pageToken' => [
                   'location' => 'query',
                   'type' => 'string',
+                ],
+                'returnPartialSuccess' => [
+                  'location' => 'query',
+                  'type' => 'boolean',
                 ],
               ],
             ],

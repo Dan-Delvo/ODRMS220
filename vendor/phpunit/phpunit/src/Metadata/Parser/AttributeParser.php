@@ -18,6 +18,7 @@ use function sprintf;
 use function str_starts_with;
 use function strtolower;
 use function trim;
+use Error;
 use PHPUnit\Event\Facade as EventFacade;
 use PHPUnit\Framework\Attributes\After;
 use PHPUnit\Framework\Attributes\AfterClass;
@@ -76,9 +77,10 @@ use PHPUnit\Framework\Attributes\UsesFunction;
 use PHPUnit\Framework\Attributes\UsesMethod;
 use PHPUnit\Framework\Attributes\UsesTrait;
 use PHPUnit\Framework\Attributes\WithoutErrorHandler;
+use PHPUnit\Metadata\InvalidAttributeException;
 use PHPUnit\Metadata\Metadata;
 use PHPUnit\Metadata\MetadataCollection;
-use PHPUnit\Metadata\Version\ConstraintRequirement;
+use PHPUnit\Metadata\Version\Requirement;
 use ReflectionClass;
 use ReflectionMethod;
 
@@ -96,9 +98,10 @@ final readonly class AttributeParser implements Parser
     {
         assert(class_exists($className));
 
-        $result = [];
+        $reflector = new ReflectionClass($className);
+        $result    = [];
 
-        foreach ((new ReflectionClass($className))->getAttributes() as $attribute) {
+        foreach ($reflector->getAttributes() as $attribute) {
             if (!str_starts_with($attribute->getName(), 'PHPUnit\\Framework\\Attributes\\')) {
                 continue;
             }
@@ -107,7 +110,17 @@ final readonly class AttributeParser implements Parser
                 continue;
             }
 
-            $attributeInstance = $attribute->newInstance();
+            try {
+                $attributeInstance = $attribute->newInstance();
+            } catch (Error $e) {
+                throw new InvalidAttributeException(
+                    $attribute->getName(),
+                    'class ' . $className,
+                    $reflector->getFileName(),
+                    $reflector->getStartLine(),
+                    $e->getMessage(),
+                );
+            }
 
             switch ($attribute->getName()) {
                 case BackupGlobals::class:
@@ -262,7 +275,7 @@ final readonly class AttributeParser implements Parser
                     assert($attributeInstance instanceof RequiresPhp);
 
                     $result[] = Metadata::requiresPhpOnClass(
-                        ConstraintRequirement::from(
+                        Requirement::from(
                             $attributeInstance->versionRequirement(),
                         ),
                     );
@@ -276,7 +289,7 @@ final readonly class AttributeParser implements Parser
                     $versionRequirement = $attributeInstance->versionRequirement();
 
                     if ($versionRequirement !== null) {
-                        $versionConstraint = ConstraintRequirement::from($versionRequirement);
+                        $versionConstraint = Requirement::from($versionRequirement);
                     }
 
                     $result[] = Metadata::requiresPhpExtensionOnClass(
@@ -290,7 +303,7 @@ final readonly class AttributeParser implements Parser
                     assert($attributeInstance instanceof RequiresPhpunit);
 
                     $result[] = Metadata::requiresPhpunitOnClass(
-                        ConstraintRequirement::from(
+                        Requirement::from(
                             $attributeInstance->versionRequirement(),
                         ),
                     );
@@ -390,9 +403,10 @@ final readonly class AttributeParser implements Parser
         assert(class_exists($className));
         assert(method_exists($className, $methodName));
 
-        $result = [];
+        $reflector = new ReflectionMethod($className, $methodName);
+        $result    = [];
 
-        foreach ((new ReflectionMethod($className, $methodName))->getAttributes() as $attribute) {
+        foreach ($reflector->getAttributes() as $attribute) {
             if (!str_starts_with($attribute->getName(), 'PHPUnit\\Framework\\Attributes\\')) {
                 continue;
             }
@@ -401,7 +415,17 @@ final readonly class AttributeParser implements Parser
                 continue;
             }
 
-            $attributeInstance = $attribute->newInstance();
+            try {
+                $attributeInstance = $attribute->newInstance();
+            } catch (Error $e) {
+                throw new InvalidAttributeException(
+                    $attribute->getName(),
+                    'method ' . $className . '::' . $methodName . '()',
+                    $reflector->getFileName(),
+                    $reflector->getStartLine(),
+                    $e->getMessage(),
+                );
+            }
 
             switch ($attribute->getName()) {
                 case After::class:
@@ -631,7 +655,7 @@ final readonly class AttributeParser implements Parser
                     assert($attributeInstance instanceof RequiresPhp);
 
                     $result[] = Metadata::requiresPhpOnMethod(
-                        ConstraintRequirement::from(
+                        Requirement::from(
                             $attributeInstance->versionRequirement(),
                         ),
                     );
@@ -645,7 +669,7 @@ final readonly class AttributeParser implements Parser
                     $versionRequirement = $attributeInstance->versionRequirement();
 
                     if ($versionRequirement !== null) {
-                        $versionConstraint = ConstraintRequirement::from($versionRequirement);
+                        $versionConstraint = Requirement::from($versionRequirement);
                     }
 
                     $result[] = Metadata::requiresPhpExtensionOnMethod(
@@ -659,7 +683,7 @@ final readonly class AttributeParser implements Parser
                     assert($attributeInstance instanceof RequiresPhpunit);
 
                     $result[] = Metadata::requiresPhpunitOnMethod(
-                        ConstraintRequirement::from(
+                        Requirement::from(
                             $attributeInstance->versionRequirement(),
                         ),
                     );
@@ -762,7 +786,7 @@ final readonly class AttributeParser implements Parser
             return false;
         }
 
-        EventFacade::emitter()->testRunnerTriggeredWarning(
+        EventFacade::emitter()->testRunnerTriggeredPhpunitWarning(
             sprintf(
                 'Group name "%s" is not allowed for %s %s%s%s',
                 $_groupName,

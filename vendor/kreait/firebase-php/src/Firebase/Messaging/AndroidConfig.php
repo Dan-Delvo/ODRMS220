@@ -16,7 +16,7 @@ use function sprintf;
 
 /**
  * @see https://firebase.google.com/docs/reference/fcm/rest/v1/projects.messages#androidconfig
- * @see https://firebase.google.com/docs/cloud-messaging/concept-options#setting-the-priority-of-a-message
+ * @see https://firebase.google.com/docs/cloud-messaging/customize-messages/setting-message-priority
  * @see https://firebase.google.com/docs/reference/fcm/rest/v1/projects.messages#androidmessagepriority Android Message Priorities
  * @see https://firebase.google.com/docs/reference/fcm/rest/v1/projects.messages#androidfcmoptions Android FCM Options Syntax
  *
@@ -268,7 +268,7 @@ final class AndroidConfig implements JsonSerializable
         }
 
         if (preg_match('/^\d+$/', $value) === 1) {
-            return sprintf('%ds', $value);
+            return sprintf('%ss', $value);
         }
 
         if (preg_match($expectedPattern, $value) === 1) {

@@ -23,10 +23,16 @@ class WorkflowInvocationAction extends \Google\Model
   protected $bigqueryActionDataType = '';
   protected $canonicalTargetType = Target::class;
   protected $canonicalTargetDataType = '';
+  protected $dataPreparationActionType = DataPreparationAction::class;
+  protected $dataPreparationActionDataType = '';
   /**
    * @var string
    */
   public $failureReason;
+  /**
+   * @var string
+   */
+  public $internalMetadata;
   protected $invocationTimingType = Interval::class;
   protected $invocationTimingDataType = '';
   protected $notebookActionType = NotebookAction::class;
@@ -67,6 +73,20 @@ class WorkflowInvocationAction extends \Google\Model
     return $this->canonicalTarget;
   }
   /**
+   * @param DataPreparationAction
+   */
+  public function setDataPreparationAction(DataPreparationAction $dataPreparationAction)
+  {
+    $this->dataPreparationAction = $dataPreparationAction;
+  }
+  /**
+   * @return DataPreparationAction
+   */
+  public function getDataPreparationAction()
+  {
+    return $this->dataPreparationAction;
+  }
+  /**
    * @param string
    */
   public function setFailureReason($failureReason)
@@ -79,6 +99,20 @@ class WorkflowInvocationAction extends \Google\Model
   public function getFailureReason()
   {
     return $this->failureReason;
+  }
+  /**
+   * @param string
+   */
+  public function setInternalMetadata($internalMetadata)
+  {
+    $this->internalMetadata = $internalMetadata;
+  }
+  /**
+   * @return string
+   */
+  public function getInternalMetadata()
+  {
+    return $this->internalMetadata;
   }
   /**
    * @param Interval

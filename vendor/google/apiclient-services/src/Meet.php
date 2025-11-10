@@ -27,7 +27,7 @@ use Google\Client;
  *
  * <p>
  * For more information about this service, see the API
- * <a href="https://developers.google.com/meet/api" target="_blank">Documentation</a>
+ * <a href="https://developers.google.com/workspace/meet/api" target="_blank">Documentation</a>
  * </p>
  *
  * @author Google, Inc.
@@ -40,6 +40,9 @@ class Meet extends \Google\Service
   /** Read information about any of your Google Meet conferences. */
   const MEETINGS_SPACE_READONLY =
       "https://www.googleapis.com/auth/meetings.space.readonly";
+  /** Edit, and see settings for all of your Google Meet calls.. */
+  const MEETINGS_SPACE_SETTINGS =
+      "https://www.googleapis.com/auth/meetings.space.settings";
 
   public $conferenceRecords;
   public $conferenceRecords_participants;

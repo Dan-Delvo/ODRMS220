@@ -19,7 +19,7 @@ namespace Google\Service\DataFusion;
 
 class Instance extends \Google\Collection
 {
-  protected $collection_key = 'disabledReason';
+  protected $collection_key = 'maintenanceEvents';
   protected $acceleratorsType = Accelerator::class;
   protected $acceleratorsDataType = 'array';
   /**
@@ -80,6 +80,10 @@ class Instance extends \Google\Collection
    * @var string[]
    */
   public $labels;
+  protected $loggingConfigType = LoggingConfig::class;
+  protected $loggingConfigDataType = '';
+  protected $maintenanceEventsType = MaintenanceEvent::class;
+  protected $maintenanceEventsDataType = 'array';
   protected $maintenancePolicyType = MaintenancePolicy::class;
   protected $maintenancePolicyDataType = '';
   /**
@@ -107,6 +111,10 @@ class Instance extends \Google\Collection
   /**
    * @var bool
    */
+  public $satisfiesPzi;
+  /**
+   * @var bool
+   */
   public $satisfiesPzs;
   /**
    * @var string
@@ -124,6 +132,10 @@ class Instance extends \Google\Collection
    * @var string
    */
   public $stateMessage;
+  /**
+   * @var string[]
+   */
+  public $tags;
   /**
    * @var string
    */
@@ -388,6 +400,34 @@ class Instance extends \Google\Collection
     return $this->labels;
   }
   /**
+   * @param LoggingConfig
+   */
+  public function setLoggingConfig(LoggingConfig $loggingConfig)
+  {
+    $this->loggingConfig = $loggingConfig;
+  }
+  /**
+   * @return LoggingConfig
+   */
+  public function getLoggingConfig()
+  {
+    return $this->loggingConfig;
+  }
+  /**
+   * @param MaintenanceEvent[]
+   */
+  public function setMaintenanceEvents($maintenanceEvents)
+  {
+    $this->maintenanceEvents = $maintenanceEvents;
+  }
+  /**
+   * @return MaintenanceEvent[]
+   */
+  public function getMaintenanceEvents()
+  {
+    return $this->maintenanceEvents;
+  }
+  /**
    * @param MaintenancePolicy
    */
   public function setMaintenancePolicy(MaintenancePolicy $maintenancePolicy)
@@ -488,6 +528,20 @@ class Instance extends \Google\Collection
   /**
    * @param bool
    */
+  public function setSatisfiesPzi($satisfiesPzi)
+  {
+    $this->satisfiesPzi = $satisfiesPzi;
+  }
+  /**
+   * @return bool
+   */
+  public function getSatisfiesPzi()
+  {
+    return $this->satisfiesPzi;
+  }
+  /**
+   * @param bool
+   */
   public function setSatisfiesPzs($satisfiesPzs)
   {
     $this->satisfiesPzs = $satisfiesPzs;
@@ -554,6 +608,20 @@ class Instance extends \Google\Collection
   public function getStateMessage()
   {
     return $this->stateMessage;
+  }
+  /**
+   * @param string[]
+   */
+  public function setTags($tags)
+  {
+    $this->tags = $tags;
+  }
+  /**
+   * @return string[]
+   */
+  public function getTags()
+  {
+    return $this->tags;
   }
   /**
    * @param string

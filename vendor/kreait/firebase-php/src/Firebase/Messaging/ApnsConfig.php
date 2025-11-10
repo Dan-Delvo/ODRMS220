@@ -21,7 +21,8 @@ use function array_key_exists;
  *     fcm_options?: array{
  *         analytics_label?: string,
  *         image?: string
- *     }
+ *     },
+ *     live_activity_token?: non-empty-string
  * }
  */
 final class ApnsConfig implements JsonSerializable
@@ -34,17 +35,19 @@ final class ApnsConfig implements JsonSerializable
      * @param array<non-empty-string, non-empty-string> $headers
      * @param array<non-empty-string, mixed> $payload
      * @param array<non-empty-string, string> $fcmOptions
+     * @param non-empty-string|null $liveActivityToken
      */
     private function __construct(
-        private array $headers,
-        private array $payload,
+        private readonly array $headers,
+        private readonly array $payload,
         private readonly array $fcmOptions,
+        private readonly ?string $liveActivityToken,
     ) {
     }
 
     public static function new(): self
     {
-        return new self([], [], []);
+        return new self([], [], [], null);
     }
 
     /**
@@ -55,8 +58,9 @@ final class ApnsConfig implements JsonSerializable
         $headers = $data['headers'] ?? [];
         $payload = $data['payload'] ?? [];
         $fcmOptions = $data['fcm_options'] ?? [];
+        $liveActivityToken = $data['live_activity_token'] ?? null;
 
-        return new self($headers, $payload, $fcmOptions);
+        return new self($headers, $payload, $fcmOptions, $liveActivityToken);
     }
 
     /**
@@ -65,10 +69,15 @@ final class ApnsConfig implements JsonSerializable
      */
     public function withHeader(string $name, string $value): self
     {
-        $config = clone $this;
-        $config->headers[$name] = $value;
+        $headers = $this->headers;
+        $headers[$name] = $value;
 
-        return $config;
+        return new self(
+            headers: $headers,
+            payload: $this->payload,
+            fcmOptions: $this->fcmOptions,
+            liveActivityToken: $this->liveActivityToken,
+        );
     }
 
     public function hasHeader(string $name): bool
@@ -81,11 +90,16 @@ final class ApnsConfig implements JsonSerializable
      */
     public function withApsField(string $key, mixed $value): self
     {
-        $config = clone $this;
-        $config->payload['aps'] ??= [];
-        $config->payload['aps'][$key] = $value;
+        $payload = $this->payload;
+        $payload['aps'] ??= [];
+        $payload['aps'][$key] = $value;
 
-        return $config;
+        return new self(
+            headers: $this->headers,
+            payload: $payload,
+            fcmOptions: $this->fcmOptions,
+            liveActivityToken: $this->liveActivityToken,
+        );
     }
 
     /**
@@ -97,10 +111,15 @@ final class ApnsConfig implements JsonSerializable
             throw new InvalidArgument('"aps" is a reserved field name');
         }
 
-        $config = clone $this;
-        $config->payload[$name] = $value;
+        $payload = $this->payload;
+        $payload[$name] = $value;
 
-        return $config;
+        return new self(
+            headers: $this->headers,
+            payload: $payload,
+            fcmOptions: $this->fcmOptions,
+            liveActivityToken: $this->liveActivityToken,
+        );
     }
 
     public function withDefaultSound(): self
@@ -144,6 +163,20 @@ final class ApnsConfig implements JsonSerializable
     }
 
     /**
+     * @see https://firebase.google.com/docs/cloud-messaging/customize-messages/live-activity?hl=en
+     * @param non-empty-string $liveActivityToken
+    */
+    public function withLiveActivityToken(string $liveActivityToken): self
+    {
+        return new self(
+            headers: $this->headers,
+            payload: $this->payload,
+            fcmOptions: $this->fcmOptions,
+            liveActivityToken: $liveActivityToken,
+        );
+    }
+
+    /**
      * A subtitle of the notification, supported by iOS 9+, silently ignored for others.
      */
     public function withSubtitle(string $subtitle): self
@@ -182,9 +215,13 @@ final class ApnsConfig implements JsonSerializable
             'headers' => array_filter($this->headers, $filter),
             'payload' => array_filter($this->payload, $filter),
             'fcm_options' => array_filter($this->fcmOptions, $filter),
+            'live_activity_token' => $this->liveActivityToken,
         ], $filter);
     }
 
+    /**
+     * @return ApnsConfigShape
+     */
     public function jsonSerialize(): array
     {
         return $this->toArray();

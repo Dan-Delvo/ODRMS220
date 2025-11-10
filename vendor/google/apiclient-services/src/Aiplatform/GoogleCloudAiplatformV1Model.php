@@ -26,6 +26,8 @@ class GoogleCloudAiplatformV1Model extends \Google\Collection
   public $artifactUri;
   protected $baseModelSourceType = GoogleCloudAiplatformV1ModelBaseModelSource::class;
   protected $baseModelSourceDataType = '';
+  protected $checkpointsType = GoogleCloudAiplatformV1Checkpoint::class;
+  protected $checkpointsDataType = 'array';
   protected $containerSpecType = GoogleCloudAiplatformV1ModelContainerSpec::class;
   protected $containerSpecDataType = '';
   /**
@@ -34,6 +36,10 @@ class GoogleCloudAiplatformV1Model extends \Google\Collection
   public $createTime;
   protected $dataStatsType = GoogleCloudAiplatformV1ModelDataStats::class;
   protected $dataStatsDataType = '';
+  /**
+   * @var string
+   */
+  public $defaultCheckpointId;
   protected $deployedModelsType = GoogleCloudAiplatformV1DeployedModelRef::class;
   protected $deployedModelsDataType = 'array';
   /**
@@ -162,6 +168,20 @@ class GoogleCloudAiplatformV1Model extends \Google\Collection
     return $this->baseModelSource;
   }
   /**
+   * @param GoogleCloudAiplatformV1Checkpoint[]
+   */
+  public function setCheckpoints($checkpoints)
+  {
+    $this->checkpoints = $checkpoints;
+  }
+  /**
+   * @return GoogleCloudAiplatformV1Checkpoint[]
+   */
+  public function getCheckpoints()
+  {
+    return $this->checkpoints;
+  }
+  /**
    * @param GoogleCloudAiplatformV1ModelContainerSpec
    */
   public function setContainerSpec(GoogleCloudAiplatformV1ModelContainerSpec $containerSpec)
@@ -202,6 +222,20 @@ class GoogleCloudAiplatformV1Model extends \Google\Collection
   public function getDataStats()
   {
     return $this->dataStats;
+  }
+  /**
+   * @param string
+   */
+  public function setDefaultCheckpointId($defaultCheckpointId)
+  {
+    $this->defaultCheckpointId = $defaultCheckpointId;
+  }
+  /**
+   * @return string
+   */
+  public function getDefaultCheckpointId()
+  {
+    return $this->defaultCheckpointId;
   }
   /**
    * @param GoogleCloudAiplatformV1DeployedModelRef[]

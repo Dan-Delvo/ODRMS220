@@ -30,6 +30,8 @@ class Subscription extends \Google\Collection
    * @var string
    */
   public $dataExchange;
+  protected $destinationDatasetType = DestinationDataset::class;
+  protected $destinationDatasetDataType = '';
   /**
    * @var string
    */
@@ -42,6 +44,10 @@ class Subscription extends \Google\Collection
    * @var string
    */
   public $listing;
+  /**
+   * @var bool
+   */
+  public $logLinkedDatasetQueryUserEmail;
   /**
    * @var string
    */
@@ -110,6 +116,20 @@ class Subscription extends \Google\Collection
     return $this->dataExchange;
   }
   /**
+   * @param DestinationDataset
+   */
+  public function setDestinationDataset(DestinationDataset $destinationDataset)
+  {
+    $this->destinationDataset = $destinationDataset;
+  }
+  /**
+   * @return DestinationDataset
+   */
+  public function getDestinationDataset()
+  {
+    return $this->destinationDataset;
+  }
+  /**
    * @param string
    */
   public function setLastModifyTime($lastModifyTime)
@@ -164,6 +184,20 @@ class Subscription extends \Google\Collection
   public function getListing()
   {
     return $this->listing;
+  }
+  /**
+   * @param bool
+   */
+  public function setLogLinkedDatasetQueryUserEmail($logLinkedDatasetQueryUserEmail)
+  {
+    $this->logLinkedDatasetQueryUserEmail = $logLinkedDatasetQueryUserEmail;
+  }
+  /**
+   * @return bool
+   */
+  public function getLogLinkedDatasetQueryUserEmail()
+  {
+    return $this->logLinkedDatasetQueryUserEmail;
   }
   /**
    * @param string

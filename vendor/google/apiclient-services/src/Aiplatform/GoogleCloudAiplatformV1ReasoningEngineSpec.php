@@ -21,12 +21,36 @@ class GoogleCloudAiplatformV1ReasoningEngineSpec extends \Google\Collection
 {
   protected $collection_key = 'classMethods';
   /**
+   * @var string
+   */
+  public $agentFramework;
+  /**
    * @var array[]
    */
   public $classMethods;
+  protected $deploymentSpecType = GoogleCloudAiplatformV1ReasoningEngineSpecDeploymentSpec::class;
+  protected $deploymentSpecDataType = '';
   protected $packageSpecType = GoogleCloudAiplatformV1ReasoningEngineSpecPackageSpec::class;
   protected $packageSpecDataType = '';
+  /**
+   * @var string
+   */
+  public $serviceAccount;
 
+  /**
+   * @param string
+   */
+  public function setAgentFramework($agentFramework)
+  {
+    $this->agentFramework = $agentFramework;
+  }
+  /**
+   * @return string
+   */
+  public function getAgentFramework()
+  {
+    return $this->agentFramework;
+  }
   /**
    * @param array[]
    */
@@ -42,6 +66,20 @@ class GoogleCloudAiplatformV1ReasoningEngineSpec extends \Google\Collection
     return $this->classMethods;
   }
   /**
+   * @param GoogleCloudAiplatformV1ReasoningEngineSpecDeploymentSpec
+   */
+  public function setDeploymentSpec(GoogleCloudAiplatformV1ReasoningEngineSpecDeploymentSpec $deploymentSpec)
+  {
+    $this->deploymentSpec = $deploymentSpec;
+  }
+  /**
+   * @return GoogleCloudAiplatformV1ReasoningEngineSpecDeploymentSpec
+   */
+  public function getDeploymentSpec()
+  {
+    return $this->deploymentSpec;
+  }
+  /**
    * @param GoogleCloudAiplatformV1ReasoningEngineSpecPackageSpec
    */
   public function setPackageSpec(GoogleCloudAiplatformV1ReasoningEngineSpecPackageSpec $packageSpec)
@@ -54,6 +92,20 @@ class GoogleCloudAiplatformV1ReasoningEngineSpec extends \Google\Collection
   public function getPackageSpec()
   {
     return $this->packageSpec;
+  }
+  /**
+   * @param string
+   */
+  public function setServiceAccount($serviceAccount)
+  {
+    $this->serviceAccount = $serviceAccount;
+  }
+  /**
+   * @return string
+   */
+  public function getServiceAccount()
+  {
+    return $this->serviceAccount;
   }
 }
 

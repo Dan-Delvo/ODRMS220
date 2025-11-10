@@ -18,14 +18,14 @@ use function array_filter;
  */
 class ApiClient
 {
-    private readonly RemoteConfigApiExceptionConverter $errorHandler;
-
     private readonly string $baseUri;
 
-    public function __construct(string $projectId, private readonly ClientInterface $client)
-    {
+    public function __construct(
+        string $projectId,
+        private readonly ClientInterface $client,
+        private readonly RemoteConfigApiExceptionConverter $errorHandler,
+    ) {
         $this->baseUri = "https://firebaseremoteconfig.googleapis.com/v1/projects/{$projectId}/remoteConfig";
-        $this->errorHandler = new RemoteConfigApiExceptionConverter();
     }
 
     /**
@@ -35,10 +35,14 @@ class ApiClient
      */
     public function getTemplate(VersionNumber|int|string|null $versionNumber = null): ResponseInterface
     {
+        if (in_array($versionNumber, [null, '', '0'], true)) {
+            $versionNumber = VersionNumber::fromValue(0);
+        }
+
         return $this->requestApi('GET', 'remoteConfig', [
-            'query' => array_filter([
+            'query' => [
                 'version_number' => (string) $versionNumber,
-            ]),
+            ],
         ]);
     }
 
@@ -90,7 +94,7 @@ class ApiClient
         $since = $since?->format('Y-m-d\TH:i:s.v\Z');
         $until = $until?->format('Y-m-d\TH:i:s.v\Z');
         $lastVersionNumber = $lastVersionNumber !== null ? (string) $lastVersionNumber : null;
-        $pageSize = $pageSize ? (string) $pageSize : null;
+        $pageSize = $pageSize !== null ? (string) $pageSize : null;
 
         return $this->requestApi('GET', $uri, [
             'query' => array_filter([
@@ -99,7 +103,7 @@ class ApiClient
                 'endVersionNumber' => $lastVersionNumber,
                 'pageSize' => $pageSize,
                 'pageToken' => $nextPageToken,
-            ]),
+            ], fn(?string $value): bool => $value !== null),
         ]);
     }
 

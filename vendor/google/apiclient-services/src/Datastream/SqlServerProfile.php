@@ -38,6 +38,12 @@ class SqlServerProfile extends \Google\Model
   /**
    * @var string
    */
+  public $secretManagerStoredPassword;
+  protected $sslConfigType = SqlServerSslConfig::class;
+  protected $sslConfigDataType = '';
+  /**
+   * @var string
+   */
   public $username;
 
   /**
@@ -95,6 +101,34 @@ class SqlServerProfile extends \Google\Model
   public function getPort()
   {
     return $this->port;
+  }
+  /**
+   * @param string
+   */
+  public function setSecretManagerStoredPassword($secretManagerStoredPassword)
+  {
+    $this->secretManagerStoredPassword = $secretManagerStoredPassword;
+  }
+  /**
+   * @return string
+   */
+  public function getSecretManagerStoredPassword()
+  {
+    return $this->secretManagerStoredPassword;
+  }
+  /**
+   * @param SqlServerSslConfig
+   */
+  public function setSslConfig(SqlServerSslConfig $sslConfig)
+  {
+    $this->sslConfig = $sslConfig;
+  }
+  /**
+   * @return SqlServerSslConfig
+   */
+  public function getSslConfig()
+  {
+    return $this->sslConfig;
   }
   /**
    * @param string

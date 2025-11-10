@@ -21,9 +21,14 @@ use Google\Service\Aiplatform\GoogleCloudAiplatformV1ComputeTokensRequest;
 use Google\Service\Aiplatform\GoogleCloudAiplatformV1ComputeTokensResponse;
 use Google\Service\Aiplatform\GoogleCloudAiplatformV1CountTokensRequest;
 use Google\Service\Aiplatform\GoogleCloudAiplatformV1CountTokensResponse;
+use Google\Service\Aiplatform\GoogleCloudAiplatformV1FetchPredictOperationRequest;
 use Google\Service\Aiplatform\GoogleCloudAiplatformV1GenerateContentRequest;
 use Google\Service\Aiplatform\GoogleCloudAiplatformV1GenerateContentResponse;
+use Google\Service\Aiplatform\GoogleCloudAiplatformV1PredictLongRunningRequest;
+use Google\Service\Aiplatform\GoogleCloudAiplatformV1PredictRequest;
+use Google\Service\Aiplatform\GoogleCloudAiplatformV1PredictResponse;
 use Google\Service\Aiplatform\GoogleCloudAiplatformV1PublisherModel;
+use Google\Service\Aiplatform\GoogleLongrunningOperation;
 
 /**
  * The "models" collection of methods.
@@ -69,6 +74,25 @@ class PublishersModels extends \Google\Service\Resource
     return $this->call('countTokens', [$params], GoogleCloudAiplatformV1CountTokensResponse::class);
   }
   /**
+   * Fetch an asynchronous online prediction operation.
+   * (models.fetchPredictOperation)
+   *
+   * @param string $endpoint Required. The name of the Endpoint requested to serve
+   * the prediction. Format:
+   * `projects/{project}/locations/{location}/endpoints/{endpoint}` or `projects/{
+   * project}/locations/{location}/publishers/{publisher}/models/{model}`
+   * @param GoogleCloudAiplatformV1FetchPredictOperationRequest $postBody
+   * @param array $optParams Optional parameters.
+   * @return GoogleLongrunningOperation
+   * @throws \Google\Service\Exception
+   */
+  public function fetchPredictOperation($endpoint, GoogleCloudAiplatformV1FetchPredictOperationRequest $postBody, $optParams = [])
+  {
+    $params = ['endpoint' => $endpoint, 'postBody' => $postBody];
+    $params = array_merge($params, $optParams);
+    return $this->call('fetchPredictOperation', [$params], GoogleLongrunningOperation::class);
+  }
+  /**
    * Generate content with multimodal inputs. (models.generateContent)
    *
    * @param string $model Required. The fully qualified name of the publisher
@@ -111,6 +135,41 @@ class PublishersModels extends \Google\Service\Resource
     $params = ['name' => $name];
     $params = array_merge($params, $optParams);
     return $this->call('get', [$params], GoogleCloudAiplatformV1PublisherModel::class);
+  }
+  /**
+   * Perform an online prediction. (models.predict)
+   *
+   * @param string $endpoint Required. The name of the Endpoint requested to serve
+   * the prediction. Format:
+   * `projects/{project}/locations/{location}/endpoints/{endpoint}`
+   * @param GoogleCloudAiplatformV1PredictRequest $postBody
+   * @param array $optParams Optional parameters.
+   * @return GoogleCloudAiplatformV1PredictResponse
+   * @throws \Google\Service\Exception
+   */
+  public function predict($endpoint, GoogleCloudAiplatformV1PredictRequest $postBody, $optParams = [])
+  {
+    $params = ['endpoint' => $endpoint, 'postBody' => $postBody];
+    $params = array_merge($params, $optParams);
+    return $this->call('predict', [$params], GoogleCloudAiplatformV1PredictResponse::class);
+  }
+  /**
+   * (models.predictLongRunning)
+   *
+   * @param string $endpoint Required. The name of the Endpoint requested to serve
+   * the prediction. Format:
+   * `projects/{project}/locations/{location}/endpoints/{endpoint}` or `projects/{
+   * project}/locations/{location}/publishers/{publisher}/models/{model}`
+   * @param GoogleCloudAiplatformV1PredictLongRunningRequest $postBody
+   * @param array $optParams Optional parameters.
+   * @return GoogleLongrunningOperation
+   * @throws \Google\Service\Exception
+   */
+  public function predictLongRunning($endpoint, GoogleCloudAiplatformV1PredictLongRunningRequest $postBody, $optParams = [])
+  {
+    $params = ['endpoint' => $endpoint, 'postBody' => $postBody];
+    $params = array_merge($params, $optParams);
+    return $this->call('predictLongRunning', [$params], GoogleLongrunningOperation::class);
   }
   /**
    * Generate content with multimodal inputs with streaming support.

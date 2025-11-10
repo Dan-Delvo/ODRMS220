@@ -27,17 +27,11 @@ abstract readonly class Metadata
      */
     private int $level;
 
-    /**
-     * @param non-negative-int $priority
-     */
     public static function after(int $priority): After
     {
         return new After(self::METHOD_LEVEL, $priority);
     }
 
-    /**
-     * @param non-negative-int $priority
-     */
     public static function afterClass(int $priority): AfterClass
     {
         return new AfterClass(self::METHOD_LEVEL, $priority);
@@ -63,17 +57,11 @@ abstract readonly class Metadata
         return new BackupStaticProperties(self::METHOD_LEVEL, $enabled);
     }
 
-    /**
-     * @param non-negative-int $priority
-     */
     public static function before(int $priority): Before
     {
         return new Before(self::METHOD_LEVEL, $priority);
     }
 
-    /**
-     * @param non-negative-int $priority
-     */
     public static function beforeClass(int $priority): BeforeClass
     {
         return new BeforeClass(self::METHOD_LEVEL, $priority);
@@ -263,17 +251,11 @@ abstract readonly class Metadata
         return new IgnorePhpunitDeprecations(self::METHOD_LEVEL);
     }
 
-    /**
-     * @param non-negative-int $priority
-     */
     public static function postCondition(int $priority): PostCondition
     {
         return new PostCondition(self::METHOD_LEVEL, $priority);
     }
 
-    /**
-     * @param non-negative-int $priority
-     */
     public static function preCondition(int $priority): PreCondition
     {
         return new PreCondition(self::METHOD_LEVEL, $priority);
@@ -462,10 +444,9 @@ abstract readonly class Metadata
     }
 
     /**
-     * @param array<array<mixed>> $data
-     * @param ?non-empty-string   $name
+     * @param ?non-empty-string $name
      */
-    public static function testWith(array $data, ?string $name = null): TestWith
+    public static function testWith(mixed $data, ?string $name = null): TestWith
     {
         return new TestWith(self::METHOD_LEVEL, $data, $name);
     }
@@ -481,7 +462,7 @@ abstract readonly class Metadata
     /**
      * @param trait-string $traitName
      */
-    public static function UsesTrait(string $traitName): UsesTrait
+    public static function usesTrait(string $traitName): UsesTrait
     {
         return new UsesTrait(self::CLASS_LEVEL, $traitName);
     }

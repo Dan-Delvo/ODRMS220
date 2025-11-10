@@ -22,6 +22,12 @@ class GoogleCloudDialogflowCxV3SafetySettings extends \Google\Collection
   protected $collection_key = 'bannedPhrases';
   protected $bannedPhrasesType = GoogleCloudDialogflowCxV3SafetySettingsPhrase::class;
   protected $bannedPhrasesDataType = 'array';
+  /**
+   * @var string
+   */
+  public $defaultBannedPhraseMatchStrategy;
+  protected $promptSecuritySettingsType = GoogleCloudDialogflowCxV3SafetySettingsPromptSecuritySettings::class;
+  protected $promptSecuritySettingsDataType = '';
 
   /**
    * @param GoogleCloudDialogflowCxV3SafetySettingsPhrase[]
@@ -36,6 +42,34 @@ class GoogleCloudDialogflowCxV3SafetySettings extends \Google\Collection
   public function getBannedPhrases()
   {
     return $this->bannedPhrases;
+  }
+  /**
+   * @param string
+   */
+  public function setDefaultBannedPhraseMatchStrategy($defaultBannedPhraseMatchStrategy)
+  {
+    $this->defaultBannedPhraseMatchStrategy = $defaultBannedPhraseMatchStrategy;
+  }
+  /**
+   * @return string
+   */
+  public function getDefaultBannedPhraseMatchStrategy()
+  {
+    return $this->defaultBannedPhraseMatchStrategy;
+  }
+  /**
+   * @param GoogleCloudDialogflowCxV3SafetySettingsPromptSecuritySettings
+   */
+  public function setPromptSecuritySettings(GoogleCloudDialogflowCxV3SafetySettingsPromptSecuritySettings $promptSecuritySettings)
+  {
+    $this->promptSecuritySettings = $promptSecuritySettings;
+  }
+  /**
+   * @return GoogleCloudDialogflowCxV3SafetySettingsPromptSecuritySettings
+   */
+  public function getPromptSecuritySettings()
+  {
+    return $this->promptSecuritySettings;
   }
 }
 

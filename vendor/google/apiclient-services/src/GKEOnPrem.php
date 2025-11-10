@@ -96,6 +96,11 @@ class GKEOnPrem extends \Google\Service
                   'type' => 'string',
                   'required' => true,
                 ],
+                'extraLocationTypes' => [
+                  'location' => 'query',
+                  'type' => 'string',
+                  'repeated' => true,
+                ],
                 'filter' => [
                   'location' => 'query',
                   'type' => 'string',
@@ -1031,6 +1036,10 @@ class GKEOnPrem extends \Google\Service
                 'etag' => [
                   'location' => 'query',
                   'type' => 'string',
+                ],
+                'ignoreErrors' => [
+                  'location' => 'query',
+                  'type' => 'boolean',
                 ],
                 'validateOnly' => [
                   'location' => 'query',

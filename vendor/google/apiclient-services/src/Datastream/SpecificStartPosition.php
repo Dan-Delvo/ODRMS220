@@ -19,6 +19,10 @@ namespace Google\Service\Datastream;
 
 class SpecificStartPosition extends \Google\Model
 {
+  protected $mongodbChangeStreamPositionType = MongodbChangeStreamPosition::class;
+  protected $mongodbChangeStreamPositionDataType = '';
+  protected $mysqlGtidPositionType = MysqlGtidPosition::class;
+  protected $mysqlGtidPositionDataType = '';
   protected $mysqlLogPositionType = MysqlLogPosition::class;
   protected $mysqlLogPositionDataType = '';
   protected $oracleScnPositionType = OracleScnPosition::class;
@@ -26,6 +30,34 @@ class SpecificStartPosition extends \Google\Model
   protected $sqlServerLsnPositionType = SqlServerLsnPosition::class;
   protected $sqlServerLsnPositionDataType = '';
 
+  /**
+   * @param MongodbChangeStreamPosition
+   */
+  public function setMongodbChangeStreamPosition(MongodbChangeStreamPosition $mongodbChangeStreamPosition)
+  {
+    $this->mongodbChangeStreamPosition = $mongodbChangeStreamPosition;
+  }
+  /**
+   * @return MongodbChangeStreamPosition
+   */
+  public function getMongodbChangeStreamPosition()
+  {
+    return $this->mongodbChangeStreamPosition;
+  }
+  /**
+   * @param MysqlGtidPosition
+   */
+  public function setMysqlGtidPosition(MysqlGtidPosition $mysqlGtidPosition)
+  {
+    $this->mysqlGtidPosition = $mysqlGtidPosition;
+  }
+  /**
+   * @return MysqlGtidPosition
+   */
+  public function getMysqlGtidPosition()
+  {
+    return $this->mysqlGtidPosition;
+  }
   /**
    * @param MysqlLogPosition
    */

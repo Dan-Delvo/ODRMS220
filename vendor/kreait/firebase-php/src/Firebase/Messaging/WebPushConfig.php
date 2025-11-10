@@ -150,7 +150,7 @@ final class WebPushConfig implements JsonSerializable
     public function jsonSerialize(): array
     {
         // @phpstan-ignore notIdentical.alwaysTrue
-        return array_filter($this->config, static fn($value): bool => $value !== null);
+        return array_filter($this->config, static fn(array $value): bool => $value !== null);
     }
 
     /**

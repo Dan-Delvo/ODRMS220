@@ -22,6 +22,8 @@ class UpdateNodePoolRequest extends \Google\Collection
   protected $collection_key = 'storagePools';
   protected $acceleratorsType = AcceleratorConfig::class;
   protected $acceleratorsDataType = 'array';
+  protected $bootDiskType = BootDisk::class;
+  protected $bootDiskDataType = '';
   /**
    * @var string
    */
@@ -44,6 +46,10 @@ class UpdateNodePoolRequest extends \Google\Collection
   public $etag;
   protected $fastSocketType = FastSocket::class;
   protected $fastSocketDataType = '';
+  /**
+   * @var bool
+   */
+  public $flexStart;
   protected $gcfsConfigType = GcfsConfig::class;
   protected $gcfsConfigDataType = '';
   protected $gvnicType = VirtualNIC::class;
@@ -128,6 +134,20 @@ class UpdateNodePoolRequest extends \Google\Collection
   public function getAccelerators()
   {
     return $this->accelerators;
+  }
+  /**
+   * @param BootDisk
+   */
+  public function setBootDisk(BootDisk $bootDisk)
+  {
+    $this->bootDisk = $bootDisk;
+  }
+  /**
+   * @return BootDisk
+   */
+  public function getBootDisk()
+  {
+    return $this->bootDisk;
   }
   /**
    * @param string
@@ -226,6 +246,20 @@ class UpdateNodePoolRequest extends \Google\Collection
   public function getFastSocket()
   {
     return $this->fastSocket;
+  }
+  /**
+   * @param bool
+   */
+  public function setFlexStart($flexStart)
+  {
+    $this->flexStart = $flexStart;
+  }
+  /**
+   * @return bool
+   */
+  public function getFlexStart()
+  {
+    return $this->flexStart;
   }
   /**
    * @param GcfsConfig

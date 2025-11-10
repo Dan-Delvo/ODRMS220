@@ -11,18 +11,21 @@ namespace PHPUnit\TextUI\Output\TestDox;
 
 use const PHP_EOL;
 use function array_map;
-use function assert;
 use function explode;
 use function implode;
 use function preg_match;
 use function preg_split;
 use function rtrim;
+use function sprintf;
 use function str_starts_with;
 use function trim;
 use PHPUnit\Event\Code\Throwable;
+use PHPUnit\Event\Test\AfterLastTestMethodErrored;
+use PHPUnit\Event\Test\BeforeFirstTestMethodErrored;
 use PHPUnit\Framework\TestStatus\TestStatus;
 use PHPUnit\Logging\TestDox\TestResult as TestDoxTestResult;
 use PHPUnit\Logging\TestDox\TestResultCollection;
+use PHPUnit\TestRunner\TestResult\TestResult;
 use PHPUnit\TextUI\Output\Printer;
 use PHPUnit\Util\Color;
 
@@ -49,7 +52,7 @@ final readonly class ResultPrinter
     /**
      * @param array<string, TestResultCollection> $tests
      */
-    public function print(array $tests): void
+    public function print(TestResult $result, array $tests): void
     {
         $this->doPrint($tests, false);
 
@@ -58,6 +61,29 @@ final readonly class ResultPrinter
 
             $this->doPrint($tests, true);
         }
+
+        $beforeFirstTestMethodErrored = [];
+        $afterLastTestMethodErrored   = [];
+
+        foreach ($result->testErroredEvents() as $error) {
+            if ($error instanceof BeforeFirstTestMethodErrored) {
+                $beforeFirstTestMethodErrored[$error->calledMethod()->className() . '::' . $error->calledMethod()->methodName()] = $error;
+            }
+
+            if ($error instanceof AfterLastTestMethodErrored) {
+                $afterLastTestMethodErrored[$error->calledMethod()->className() . '::' . $error->calledMethod()->methodName()] = $error;
+            }
+        }
+
+        $this->printBeforeClassOrAfterClassErrors(
+            'before-first-test',
+            $beforeFirstTestMethodErrored,
+        );
+
+        $this->printBeforeClassOrAfterClassErrors(
+            'after-last-test',
+            $afterLastTestMethodErrored,
+        );
     }
 
     /**
@@ -150,7 +176,7 @@ final readonly class ResultPrinter
         }
 
         $this->printTestResultBodyStart($test);
-        $this->printThrowable($test);
+        $this->printThrowable($test->status(), $test->throwable());
         $this->printTestResultBodyEnd($test);
     }
 
@@ -180,12 +206,8 @@ final readonly class ResultPrinter
         $this->printer->print(PHP_EOL);
     }
 
-    private function printThrowable(TestDoxTestResult $test): void
+    private function printThrowable(TestStatus $status, Throwable $throwable): void
     {
-        $throwable = $test->throwable();
-
-        assert($throwable instanceof Throwable);
-
         $message    = trim($throwable->description());
         $stackTrace = $this->formatStackTrace($throwable->stackTrace());
         $diff       = '';
@@ -193,14 +215,14 @@ final readonly class ResultPrinter
         if (!empty($message) && $this->colors) {
             ['message' => $message, 'diff' => $diff] = $this->colorizeMessageAndDiff(
                 $message,
-                $this->messageColorFor($test->status()),
+                $this->messageColorFor($status),
             );
         }
 
         if (!empty($message)) {
             $this->printer->print(
                 $this->prefixLines(
-                    $this->prefixFor('message', $test->status()),
+                    $this->prefixFor('message', $status),
                     $message,
                 ),
             );
@@ -211,7 +233,7 @@ final readonly class ResultPrinter
         if (!empty($diff)) {
             $this->printer->print(
                 $this->prefixLines(
-                    $this->prefixFor('diff', $test->status()),
+                    $this->prefixFor('diff', $status),
                     $diff,
                 ),
             );
@@ -221,14 +243,38 @@ final readonly class ResultPrinter
 
         if (!empty($stackTrace)) {
             if (!empty($message) || !empty($diff)) {
-                $prefix = $this->prefixFor('default', $test->status());
+                $tracePrefix = $this->prefixFor('default', $status);
             } else {
-                $prefix = $this->prefixFor('trace', $test->status());
+                $tracePrefix = $this->prefixFor('trace', $status);
             }
 
             $this->printer->print(
-                $this->prefixLines($prefix, PHP_EOL . $stackTrace),
+                $this->prefixLines($tracePrefix, PHP_EOL . $stackTrace),
             );
+        }
+
+        if ($throwable->hasPrevious()) {
+            $this->printer->print(PHP_EOL);
+
+            $this->printer->print(
+                $this->prefixLines(
+                    $this->prefixFor('default', $status),
+                    ' ',
+                ),
+            );
+
+            $this->printer->print(PHP_EOL);
+
+            $this->printer->print(
+                $this->prefixLines(
+                    $this->prefixFor('default', $status),
+                    'Caused by:',
+                ),
+            );
+
+            $this->printer->print(PHP_EOL);
+
+            $this->printThrowable($status, $throwable->previous());
         }
     }
 
@@ -406,5 +452,40 @@ final readonly class ResultPrinter
         }
 
         return '?';
+    }
+
+    /**
+     * @param 'after-last-test'|'before-first-test'                                            $type
+     * @param array<non-empty-string, AfterLastTestMethodErrored|BeforeFirstTestMethodErrored> $errors
+     */
+    private function printBeforeClassOrAfterClassErrors(string $type, array $errors): void
+    {
+        if (empty($errors)) {
+            return;
+        }
+
+        $this->printer->print(
+            sprintf(
+                'These %s methods errored:' . PHP_EOL . PHP_EOL,
+                $type,
+            ),
+        );
+
+        $index = 0;
+
+        foreach ($errors as $method => $error) {
+            $this->printer->print(
+                sprintf(
+                    '%d) %s' . PHP_EOL,
+                    ++$index,
+                    $method,
+                ),
+            );
+
+            $this->printer->print(trim($error->throwable()->description()) . PHP_EOL . PHP_EOL);
+            $this->printer->print($this->formatStackTrace($error->throwable()->stackTrace()) . PHP_EOL);
+        }
+
+        $this->printer->print(PHP_EOL);
     }
 }

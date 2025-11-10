@@ -34,12 +34,18 @@ class GooglePrivacyDlpV2InfoTypeDescription extends \Google\Collection
    * @var string
    */
   public $example;
+  protected $locationSupportType = GooglePrivacyDlpV2LocationSupport::class;
+  protected $locationSupportDataType = '';
   /**
    * @var string
    */
   public $name;
   protected $sensitivityScoreType = GooglePrivacyDlpV2SensitivityScore::class;
   protected $sensitivityScoreDataType = '';
+  /**
+   * @var string[]
+   */
+  public $specificInfoTypes;
   /**
    * @var string[]
    */
@@ -104,6 +110,20 @@ class GooglePrivacyDlpV2InfoTypeDescription extends \Google\Collection
     return $this->example;
   }
   /**
+   * @param GooglePrivacyDlpV2LocationSupport
+   */
+  public function setLocationSupport(GooglePrivacyDlpV2LocationSupport $locationSupport)
+  {
+    $this->locationSupport = $locationSupport;
+  }
+  /**
+   * @return GooglePrivacyDlpV2LocationSupport
+   */
+  public function getLocationSupport()
+  {
+    return $this->locationSupport;
+  }
+  /**
    * @param string
    */
   public function setName($name)
@@ -130,6 +150,20 @@ class GooglePrivacyDlpV2InfoTypeDescription extends \Google\Collection
   public function getSensitivityScore()
   {
     return $this->sensitivityScore;
+  }
+  /**
+   * @param string[]
+   */
+  public function setSpecificInfoTypes($specificInfoTypes)
+  {
+    $this->specificInfoTypes = $specificInfoTypes;
+  }
+  /**
+   * @return string[]
+   */
+  public function getSpecificInfoTypes()
+  {
+    return $this->specificInfoTypes;
   }
   /**
    * @param string[]

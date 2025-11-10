@@ -27,7 +27,7 @@ use Google\Client;
  *
  * <p>
  * For more information about this service, see the API
- * <a href="https://developers.google.com/drive/" target="_blank">Documentation</a>
+ * <a href="https://developers.google.com/workspace/drive/" target="_blank">Documentation</a>
  * </p>
  *
  * @author Google, Inc.
@@ -73,7 +73,6 @@ class Drive extends \Google\Service
   public $comments;
   public $drives;
   public $files;
-  public $operation;
   public $operations;
   public $permissions;
   public $replies;
@@ -959,36 +958,6 @@ class Drive extends \Google\Service
           ]
         ]
     );
-    $this->operation = new Drive\Resource\Operation(
-        $this,
-        $this->serviceName,
-        'operation',
-        [
-          'methods' => [
-            'cancel' => [
-              'path' => 'operation/{name}:cancel',
-              'httpMethod' => 'POST',
-              'parameters' => [
-                'name' => [
-                  'location' => 'path',
-                  'type' => 'string',
-                  'required' => true,
-                ],
-              ],
-            ],'delete' => [
-              'path' => 'operation/{name}',
-              'httpMethod' => 'DELETE',
-              'parameters' => [
-                'name' => [
-                  'location' => 'path',
-                  'type' => 'string',
-                  'required' => true,
-                ],
-              ],
-            ],
-          ]
-        ]
-    );
     $this->operations = new Drive\Resource\Operations(
         $this,
         $this->serviceName,
@@ -1003,27 +972,6 @@ class Drive extends \Google\Service
                   'location' => 'path',
                   'type' => 'string',
                   'required' => true,
-                ],
-              ],
-            ],'list' => [
-              'path' => 'operations',
-              'httpMethod' => 'GET',
-              'parameters' => [
-                'filter' => [
-                  'location' => 'query',
-                  'type' => 'string',
-                ],
-                'name' => [
-                  'location' => 'query',
-                  'type' => 'string',
-                ],
-                'pageSize' => [
-                  'location' => 'query',
-                  'type' => 'integer',
-                ],
-                'pageToken' => [
-                  'location' => 'query',
-                  'type' => 'string',
                 ],
               ],
             ],
@@ -1048,6 +996,10 @@ class Drive extends \Google\Service
                 'emailMessage' => [
                   'location' => 'query',
                   'type' => 'string',
+                ],
+                'enforceExpansiveAccess' => [
+                  'location' => 'query',
+                  'type' => 'boolean',
                 ],
                 'enforceSingleParent' => [
                   'location' => 'query',
@@ -1091,6 +1043,10 @@ class Drive extends \Google\Service
                   'location' => 'path',
                   'type' => 'string',
                   'required' => true,
+                ],
+                'enforceExpansiveAccess' => [
+                  'location' => 'query',
+                  'type' => 'boolean',
                 ],
                 'supportsAllDrives' => [
                   'location' => 'query',
@@ -1179,6 +1135,10 @@ class Drive extends \Google\Service
                   'location' => 'path',
                   'type' => 'string',
                   'required' => true,
+                ],
+                'enforceExpansiveAccess' => [
+                  'location' => 'query',
+                  'type' => 'boolean',
                 ],
                 'removeExpiration' => [
                   'location' => 'query',

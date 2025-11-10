@@ -39,6 +39,12 @@ class ChromeManagement extends \Google\Service
   /** See detailed information about apps installed on Chrome browsers and devices managed by your organization. */
   const CHROME_MANAGEMENT_APPDETAILS_READONLY =
       "https://www.googleapis.com/auth/chrome.management.appdetails.readonly";
+  /** See, edit, delete, and take other necessary actions on Chrome browser profiles managed by your organization. */
+  const CHROME_MANAGEMENT_PROFILES =
+      "https://www.googleapis.com/auth/chrome.management.profiles";
+  /** See Chrome browser profiles managed by your organization. */
+  const CHROME_MANAGEMENT_PROFILES_READONLY =
+      "https://www.googleapis.com/auth/chrome.management.profiles.readonly";
   /** See reports about devices and Chrome browsers managed within your organization. */
   const CHROME_MANAGEMENT_REPORTS_READONLY =
       "https://www.googleapis.com/auth/chrome.management.reports.readonly";
@@ -50,12 +56,17 @@ class ChromeManagement extends \Google\Service
   public $customers_apps_android;
   public $customers_apps_chrome;
   public $customers_apps_web;
+  public $customers_certificateProvisioningProcesses;
+  public $customers_certificateProvisioningProcesses_operations;
   public $customers_profiles;
+  public $customers_profiles_commands;
   public $customers_reports;
   public $customers_telemetry_devices;
   public $customers_telemetry_events;
   public $customers_telemetry_notificationConfigs;
   public $customers_telemetry_users;
+  public $customers_thirdPartyProfileUsers;
+  public $operations;
   public $rootUrlTemplate;
 
   /**
@@ -223,6 +234,86 @@ class ChromeManagement extends \Google\Service
           ]
         ]
     );
+    $this->customers_certificateProvisioningProcesses = new ChromeManagement\Resource\CustomersCertificateProvisioningProcesses(
+        $this,
+        $this->serviceName,
+        'certificateProvisioningProcesses',
+        [
+          'methods' => [
+            'claim' => [
+              'path' => 'v1/{+name}:claim',
+              'httpMethod' => 'POST',
+              'parameters' => [
+                'name' => [
+                  'location' => 'path',
+                  'type' => 'string',
+                  'required' => true,
+                ],
+              ],
+            ],'get' => [
+              'path' => 'v1/{+name}',
+              'httpMethod' => 'GET',
+              'parameters' => [
+                'name' => [
+                  'location' => 'path',
+                  'type' => 'string',
+                  'required' => true,
+                ],
+              ],
+            ],'setFailure' => [
+              'path' => 'v1/{+name}:setFailure',
+              'httpMethod' => 'POST',
+              'parameters' => [
+                'name' => [
+                  'location' => 'path',
+                  'type' => 'string',
+                  'required' => true,
+                ],
+              ],
+            ],'signData' => [
+              'path' => 'v1/{+name}:signData',
+              'httpMethod' => 'POST',
+              'parameters' => [
+                'name' => [
+                  'location' => 'path',
+                  'type' => 'string',
+                  'required' => true,
+                ],
+              ],
+            ],'uploadCertificate' => [
+              'path' => 'v1/{+name}:uploadCertificate',
+              'httpMethod' => 'POST',
+              'parameters' => [
+                'name' => [
+                  'location' => 'path',
+                  'type' => 'string',
+                  'required' => true,
+                ],
+              ],
+            ],
+          ]
+        ]
+    );
+    $this->customers_certificateProvisioningProcesses_operations = new ChromeManagement\Resource\CustomersCertificateProvisioningProcessesOperations(
+        $this,
+        $this->serviceName,
+        'operations',
+        [
+          'methods' => [
+            'get' => [
+              'path' => 'v1/{+name}',
+              'httpMethod' => 'GET',
+              'parameters' => [
+                'name' => [
+                  'location' => 'path',
+                  'type' => 'string',
+                  'required' => true,
+                ],
+              ],
+            ],
+          ]
+        ]
+    );
     $this->customers_profiles = new ChromeManagement\Resource\CustomersProfiles(
         $this,
         $this->serviceName,
@@ -265,6 +356,54 @@ class ChromeManagement extends \Google\Service
                 'orderBy' => [
                   'location' => 'query',
                   'type' => 'string',
+                ],
+                'pageSize' => [
+                  'location' => 'query',
+                  'type' => 'integer',
+                ],
+                'pageToken' => [
+                  'location' => 'query',
+                  'type' => 'string',
+                ],
+              ],
+            ],
+          ]
+        ]
+    );
+    $this->customers_profiles_commands = new ChromeManagement\Resource\CustomersProfilesCommands(
+        $this,
+        $this->serviceName,
+        'commands',
+        [
+          'methods' => [
+            'create' => [
+              'path' => 'v1/{+parent}/commands',
+              'httpMethod' => 'POST',
+              'parameters' => [
+                'parent' => [
+                  'location' => 'path',
+                  'type' => 'string',
+                  'required' => true,
+                ],
+              ],
+            ],'get' => [
+              'path' => 'v1/{+name}',
+              'httpMethod' => 'GET',
+              'parameters' => [
+                'name' => [
+                  'location' => 'path',
+                  'type' => 'string',
+                  'required' => true,
+                ],
+              ],
+            ],'list' => [
+              'path' => 'v1/{+parent}/commands',
+              'httpMethod' => 'GET',
+              'parameters' => [
+                'parent' => [
+                  'location' => 'path',
+                  'type' => 'string',
+                  'required' => true,
                 ],
                 'pageSize' => [
                   'location' => 'query',
@@ -745,6 +884,82 @@ class ChromeManagement extends \Google\Service
                 'readMask' => [
                   'location' => 'query',
                   'type' => 'string',
+                ],
+              ],
+            ],
+          ]
+        ]
+    );
+    $this->customers_thirdPartyProfileUsers = new ChromeManagement\Resource\CustomersThirdPartyProfileUsers(
+        $this,
+        $this->serviceName,
+        'thirdPartyProfileUsers',
+        [
+          'methods' => [
+            'move' => [
+              'path' => 'v1/{+name}:move',
+              'httpMethod' => 'POST',
+              'parameters' => [
+                'name' => [
+                  'location' => 'path',
+                  'type' => 'string',
+                  'required' => true,
+                ],
+              ],
+            ],
+          ]
+        ]
+    );
+    $this->operations = new ChromeManagement\Resource\Operations(
+        $this,
+        $this->serviceName,
+        'operations',
+        [
+          'methods' => [
+            'cancel' => [
+              'path' => 'v1/{+name}:cancel',
+              'httpMethod' => 'POST',
+              'parameters' => [
+                'name' => [
+                  'location' => 'path',
+                  'type' => 'string',
+                  'required' => true,
+                ],
+              ],
+            ],'delete' => [
+              'path' => 'v1/{+name}',
+              'httpMethod' => 'DELETE',
+              'parameters' => [
+                'name' => [
+                  'location' => 'path',
+                  'type' => 'string',
+                  'required' => true,
+                ],
+              ],
+            ],'list' => [
+              'path' => 'v1/{+name}',
+              'httpMethod' => 'GET',
+              'parameters' => [
+                'name' => [
+                  'location' => 'path',
+                  'type' => 'string',
+                  'required' => true,
+                ],
+                'filter' => [
+                  'location' => 'query',
+                  'type' => 'string',
+                ],
+                'pageSize' => [
+                  'location' => 'query',
+                  'type' => 'integer',
+                ],
+                'pageToken' => [
+                  'location' => 'query',
+                  'type' => 'string',
+                ],
+                'returnPartialSuccess' => [
+                  'location' => 'query',
+                  'type' => 'boolean',
                 ],
               ],
             ],
