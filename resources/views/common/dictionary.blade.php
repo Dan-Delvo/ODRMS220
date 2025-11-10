@@ -960,6 +960,27 @@
             }
         }
 
+        // Export all tables as images
+        async function exportAllTables() {
+            const btn = document.getElementById('exportAllBtn');
+            btn.disabled = true;
+            btn.textContent = 'Exporting...';
+
+            for (let i = 0; i < tables.length; i++) {
+                await exportTableAsImage(tables[i].name);
+                // Add a small delay between exports
+                await new Promise(resolve => setTimeout(resolve, 500));
+            }
+
+            btn.disabled = false;
+            btn.innerHTML = `
+                <svg class="export-all-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                </svg>
+                Export All Tables
+            `;
+        }
+
         document.getElementById('searchInput').addEventListener('input', (e) => {
             const filteredTables = filterTables(e.target.value);
             renderTables(filteredTables);

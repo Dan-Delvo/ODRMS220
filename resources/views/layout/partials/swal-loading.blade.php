@@ -1,3 +1,4 @@
+
 <script>
     document.addEventListener('DOMContentLoaded', function() {
 
@@ -117,28 +118,56 @@
             confirmButtonColor: "#d33",
         });
         @endif
+
+        // ✅ ENHANCED WARNING HANDLER - Supports multiple message formats
         @if(session('warning'))
         Swal.fire({
             title: "⚠️ Warning!",
             html: `
-                <p><strong>{{ session('warning') }}</strong></p>
-                @if(session('warning_details'))
-                    <hr>
-                    <p style="text-align:left;">
-                        <b>Details:</b><br>
-                        {{ session('warning_details') }}
-                    </p>
-                @endif
-                @if(session('student_name') && session('request_count'))
-                    <hr>
-                    <p style="text-align:left;">
-                        <b>Student:</b> {{ session('student_name') }}<br>
-                        <b>Total of Requested Documents:</b> {{ session('request_count') }}
-                    </p>
-                @endif
+                <div style="text-align: left;">
+                    <p style="margin-bottom: 15px;"><strong>{{ session('warning') }}</strong></p>
+                    
+                    @if(session('warning_details'))
+                        <hr style="margin: 15px 0; border: 1px solid #e0e0e0;">
+                        <div style="margin-bottom: 15px;">
+                            <p style="margin-bottom: 8px;"><b>Details:</b></p>
+                            <p style="margin-left: 10px; color: #555;">{{ session('warning_details') }}</p>
+                        </div>
+                    @endif
+                    
+                    @if(session('student_name') && session('request_count'))
+                        <hr style="margin: 15px 0; border: 1px solid #e0e0e0;">
+                        <div style="margin-bottom: 10px;">
+                            <p style="margin-bottom: 5px;"><b>Student:</b> {{ session('student_name') }}</p>
+                            <p style="margin-bottom: 0;"><b>Total Requested Documents:</b> {{ session('request_count') }}</p>
+                        </div>
+                    @endif
+
+                    @if(session('document_name'))
+                        <hr style="margin: 15px 0; border: 1px solid #e0e0e0;">
+                        <div style="background: #fff3cd; padding: 12px; border-radius: 6px; border-left: 4px solid #ffc107;">
+                            <p style="margin: 0 0 8px 0;"><b>Document:</b> {{ session('document_name') }}</p>
+                            
+                            @if(session('active_requests'))
+                                <p style="margin: 0 0 5px 0;"><b>Active Requests:</b> {{ session('active_requests') }}</p>
+                                @if(session('request_breakdown'))
+                                    <p style="margin: 0 0 0 15px; font-size: 0.9em; color: #666;">{{ session('request_breakdown') }}</p>
+                                @endif
+                            @endif
+
+                            @if(session('total_requests'))
+                                <p style="margin: 8px 0 0 0;"><b>Total Requests:</b> {{ session('total_requests') }}</p>
+                                @if(session('history_breakdown'))
+                                    <p style="margin: 0 0 0 15px; font-size: 0.9em; color: #666;">{{ session('history_breakdown') }}</p>
+                                @endif
+                            @endif
+                        </div>
+                    @endif
+                </div>
             `,
             icon: "warning",
             confirmButtonColor: "#f6c23e",
+            width: '600px',
         });
         @endif
 
