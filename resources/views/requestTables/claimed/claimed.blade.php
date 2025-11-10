@@ -726,7 +726,7 @@
         display: flex;
         flex-direction: column;
         gap: 0.75rem;
-        padding: 0.75rem 1rem;
+        padding: 1rem 1.25rem;
     }
 
     @media (min-width: 768px) {
@@ -816,24 +816,28 @@
 
     /* ===== TABLE STYLES ===== */
     #requestsTable {
-        font-size: 0.8rem;
+        font-size: 0.9rem;
         margin-bottom: 0;
+        table-layout: auto;
+        width: max-content;
+        min-width: 100%;
     }
 
     #requestsTable thead th {
         white-space: nowrap;
         vertical-align: middle;
         font-weight: 600;
-        padding: 0.3rem 0.3rem;
-        font-size: 0.8rem;
-        line-height: 1;
+        padding: 0.75rem 0.75rem;
+        font-size: 0.9rem;
+        line-height: 1.5;
     }
 
     #requestsTable tbody td {
         vertical-align: middle;
-        padding: 0.3rem 0.3rem;
-        font-size: 0.8rem;
-        line-height: 1;
+        padding: 0.75rem 0.75rem;
+        font-size: 0.875rem;
+        line-height: 1.5;
+        white-space: nowrap;
     }
 
     .sortable-header a {
@@ -846,9 +850,9 @@
 
     /* ===== ACTION COLUMN ===== */
     .action-column {
-        min-width: 200px !important;
-        max-width: 200px !important;
-        width: 200px !important;
+        min-width: 220px !important;
+        max-width: 220px !important;
+        width: 220px !important;
         white-space: normal !important;
     }
 
@@ -856,30 +860,31 @@
         display: flex !important;
         flex-direction: row !important;
         flex-wrap: wrap !important;
-        gap: 0.15rem !important;
+        gap: 0.3rem !important;
         width: 100% !important;
     }
 
     .action-column .btn {
-        padding: 0.25rem 0.5rem !important;
-        font-size: 0.75rem !important;
-        width: 95px !important;
-        min-width: 95px !important;
-        max-width: 95px !important;
+        padding: 0.4rem 0.65rem !important;
+        font-size: 0.8rem !important;
+        width: 100px !important;
+        min-width: 100px !important;
+        max-width: 100px !important;
         display: inline-block !important;
         text-align: center !important;
         margin-bottom: 0 !important;
     }
 
     .action-column .btn i {
-        font-size: 0.75rem !important;
+        font-size: 0.8rem !important;
     }
 
     /* ===== STATUS BADGE ===== */
     .status-badge {
-        font-size: 0.7rem;
-        padding: 0.25rem 0.5rem;
+        font-size: 0.75rem;
+        padding: 0.35rem 0.65rem;
         white-space: nowrap;
+        font-weight: 500;
     }
 
     /* ===== BUTTON STATES ===== */
@@ -889,14 +894,14 @@
     }
 
     .btn-sm {
-        font-size: 0.75rem;
-        padding: 0.25rem 0.5rem;
+        font-size: 0.8rem;
+        padding: 0.35rem 0.65rem;
     }
 
     .spinner-border-sm {
-        width: 0.875rem;
-        height: 0.875rem;
-        border-width: 0.125rem;
+        width: 1rem;
+        height: 1rem;
+        border-width: 0.15rem;
     }
 
     /* ===== LOADING STATE ===== */
@@ -971,21 +976,41 @@
     /* ===== RESPONSIVE TABLE ===== */
     .table-responsive {
         border-radius: 0.25rem;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .table-responsive::-webkit-scrollbar {
+        height: 8px;
+    }
+
+    .table-responsive::-webkit-scrollbar-track {
+        background: #f1f1f1;
+        border-radius: 4px;
+    }
+
+    .table-responsive::-webkit-scrollbar-thumb {
+        background: #888;
+        border-radius: 4px;
+    }
+
+    .table-responsive::-webkit-scrollbar-thumb:hover {
+        background: #555;
     }
 
     @media (max-width: 576px) {
         #requestsTable {
-            font-size: 0.75rem;
+            font-size: 0.8rem;
         }
 
         #requestsTable th,
         #requestsTable td {
-            padding: 0.25rem 0.25rem;
+            padding: 0.5rem 0.5rem;
         }
 
         .btn-sm {
-            font-size: 0.65rem;
-            padding: 0.2rem 0.3rem;
+            font-size: 0.75rem;
+            padding: 0.3rem 0.5rem;
         }
 
         .btn-outline-light {

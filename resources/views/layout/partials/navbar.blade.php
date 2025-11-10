@@ -20,6 +20,7 @@
                 <i class="fas fa-user fa-fw" style="color: #1dd3b0;"></i>
             </a>
             <div class="dropdown-menu-custom" id="userDropdownMenu">
+                <a class="dropdown-item-custom text-success" href="{{ url('logout') }}"><i class="fa-solid fa-repeat"></i> Switch To Student Side</a>
                 <a class="dropdown-item-custom text-danger" href="{{ url('logout') }}"><i class="fas fa-sign-out-alt me-2"></i> Logout</a>
             </div>
         </div>
