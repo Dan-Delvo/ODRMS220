@@ -33,10 +33,6 @@ class InvocationConfig extends \Google\Collection
   /**
    * @var string
    */
-  public $queryPriority;
-  /**
-   * @var string
-   */
   public $serviceAccount;
   /**
    * @var bool
@@ -88,20 +84,6 @@ class InvocationConfig extends \Google\Collection
   public function getIncludedTargets()
   {
     return $this->includedTargets;
-  }
-  /**
-   * @param string
-   */
-  public function setQueryPriority($queryPriority)
-  {
-    $this->queryPriority = $queryPriority;
-  }
-  /**
-   * @return string
-   */
-  public function getQueryPriority()
-  {
-    return $this->queryPriority;
   }
   /**
    * @param string

@@ -33,7 +33,8 @@ class Accounts extends \Google\Service\Resource
   /**
    * Gets a GTM Account. (accounts.get)
    *
-   * @param string $path GTM Account's API relative path.
+   * @param string $path GTM Account's API relative path. Example:
+   * accounts/{account_id}
    * @param array $optParams Optional parameters.
    * @return Account
    * @throws \Google\Service\Exception
@@ -65,7 +66,8 @@ class Accounts extends \Google\Service\Resource
   /**
    * Updates a GTM Account. (accounts.update)
    *
-   * @param string $path GTM Account's API relative path.
+   * @param string $path GTM Account's API relative path. Example:
+   * accounts/{account_id}
    * @param Account $postBody
    * @param array $optParams Optional parameters.
    *

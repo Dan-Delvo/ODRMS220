@@ -46,8 +46,6 @@ class MigratingVm extends \Google\Collection
   public $displayName;
   protected $errorType = Status::class;
   protected $errorDataType = '';
-  protected $expirationType = Expiration::class;
-  protected $expirationDataType = '';
   /**
    * @var string
    */
@@ -228,20 +226,6 @@ class MigratingVm extends \Google\Collection
   public function getError()
   {
     return $this->error;
-  }
-  /**
-   * @param Expiration
-   */
-  public function setExpiration(Expiration $expiration)
-  {
-    $this->expiration = $expiration;
-  }
-  /**
-   * @return Expiration
-   */
-  public function getExpiration()
-  {
-    return $this->expiration;
   }
   /**
    * @param string

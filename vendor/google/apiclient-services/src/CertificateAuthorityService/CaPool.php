@@ -19,8 +19,6 @@ namespace Google\Service\CertificateAuthorityService;
 
 class CaPool extends \Google\Model
 {
-  protected $encryptionSpecType = EncryptionSpec::class;
-  protected $encryptionSpecDataType = '';
   protected $issuancePolicyType = IssuancePolicy::class;
   protected $issuancePolicyDataType = '';
   /**
@@ -38,20 +36,6 @@ class CaPool extends \Google\Model
    */
   public $tier;
 
-  /**
-   * @param EncryptionSpec
-   */
-  public function setEncryptionSpec(EncryptionSpec $encryptionSpec)
-  {
-    $this->encryptionSpec = $encryptionSpec;
-  }
-  /**
-   * @return EncryptionSpec
-   */
-  public function getEncryptionSpec()
-  {
-    return $this->encryptionSpec;
-  }
   /**
    * @param IssuancePolicy
    */

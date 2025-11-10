@@ -19,7 +19,7 @@ namespace Google\Service\ContainerAnalysis;
 
 class DiscoveryOccurrence extends \Google\Collection
 {
-  protected $collection_key = 'files';
+  protected $collection_key = 'analysisError';
   protected $analysisCompletedType = AnalysisCompleted::class;
   protected $analysisCompletedDataType = '';
   protected $analysisErrorType = Status::class;
@@ -42,8 +42,6 @@ class DiscoveryOccurrence extends \Google\Collection
    * @var string
    */
   public $cpe;
-  protected $filesType = ContaineranalysisFile::class;
-  protected $filesDataType = 'array';
   /**
    * @var string
    */
@@ -148,20 +146,6 @@ class DiscoveryOccurrence extends \Google\Collection
   public function getCpe()
   {
     return $this->cpe;
-  }
-  /**
-   * @param ContaineranalysisFile[]
-   */
-  public function setFiles($files)
-  {
-    $this->files = $files;
-  }
-  /**
-   * @return ContaineranalysisFile[]
-   */
-  public function getFiles()
-  {
-    return $this->files;
   }
   /**
    * @param string

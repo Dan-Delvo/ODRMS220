@@ -20,10 +20,6 @@ namespace Google\Service\AnalyticsHub;
 class Listing extends \Google\Collection
 {
   protected $collection_key = 'categories';
-  /**
-   * @var bool
-   */
-  public $allowOnlyMetadataSharing;
   protected $bigqueryDatasetType = BigQueryDatasetSource::class;
   protected $bigqueryDatasetDataType = '';
   /**
@@ -55,10 +51,6 @@ class Listing extends \Google\Collection
    */
   public $icon;
   /**
-   * @var bool
-   */
-  public $logLinkedDatasetQueryUserEmail;
-  /**
    * @var string
    */
   public $name;
@@ -84,23 +76,7 @@ class Listing extends \Google\Collection
    * @var string
    */
   public $state;
-  protected $storedProcedureConfigType = StoredProcedureConfig::class;
-  protected $storedProcedureConfigDataType = '';
 
-  /**
-   * @param bool
-   */
-  public function setAllowOnlyMetadataSharing($allowOnlyMetadataSharing)
-  {
-    $this->allowOnlyMetadataSharing = $allowOnlyMetadataSharing;
-  }
-  /**
-   * @return bool
-   */
-  public function getAllowOnlyMetadataSharing()
-  {
-    return $this->allowOnlyMetadataSharing;
-  }
   /**
    * @param BigQueryDatasetSource
    */
@@ -228,20 +204,6 @@ class Listing extends \Google\Collection
     return $this->icon;
   }
   /**
-   * @param bool
-   */
-  public function setLogLinkedDatasetQueryUserEmail($logLinkedDatasetQueryUserEmail)
-  {
-    $this->logLinkedDatasetQueryUserEmail = $logLinkedDatasetQueryUserEmail;
-  }
-  /**
-   * @return bool
-   */
-  public function getLogLinkedDatasetQueryUserEmail()
-  {
-    return $this->logLinkedDatasetQueryUserEmail;
-  }
-  /**
    * @param string
    */
   public function setName($name)
@@ -352,20 +314,6 @@ class Listing extends \Google\Collection
   public function getState()
   {
     return $this->state;
-  }
-  /**
-   * @param StoredProcedureConfig
-   */
-  public function setStoredProcedureConfig(StoredProcedureConfig $storedProcedureConfig)
-  {
-    $this->storedProcedureConfig = $storedProcedureConfig;
-  }
-  /**
-   * @return StoredProcedureConfig
-   */
-  public function getStoredProcedureConfig()
-  {
-    return $this->storedProcedureConfig;
   }
 }
 

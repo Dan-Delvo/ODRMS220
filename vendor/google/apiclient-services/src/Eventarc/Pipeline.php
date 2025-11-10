@@ -59,10 +59,6 @@ class Pipeline extends \Google\Collection
   protected $retryPolicyType = GoogleCloudEventarcV1PipelineRetryPolicy::class;
   protected $retryPolicyDataType = '';
   /**
-   * @var bool
-   */
-  public $satisfiesPzs;
-  /**
    * @var string
    */
   public $uid;
@@ -238,20 +234,6 @@ class Pipeline extends \Google\Collection
   public function getRetryPolicy()
   {
     return $this->retryPolicy;
-  }
-  /**
-   * @param bool
-   */
-  public function setSatisfiesPzs($satisfiesPzs)
-  {
-    $this->satisfiesPzs = $satisfiesPzs;
-  }
-  /**
-   * @return bool
-   */
-  public function getSatisfiesPzs()
-  {
-    return $this->satisfiesPzs;
   }
   /**
    * @param string

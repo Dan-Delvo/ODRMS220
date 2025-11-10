@@ -34,10 +34,6 @@ class Repository extends \Google\Model
   /**
    * @var string
    */
-  public $internalMetadata;
-  /**
-   * @var string
-   */
   public $kmsKeyName;
   /**
    * @var string[]
@@ -117,20 +113,6 @@ class Repository extends \Google\Model
   public function getGitRemoteSettings()
   {
     return $this->gitRemoteSettings;
-  }
-  /**
-   * @param string
-   */
-  public function setInternalMetadata($internalMetadata)
-  {
-    $this->internalMetadata = $internalMetadata;
-  }
-  /**
-   * @return string
-   */
-  public function getInternalMetadata()
-  {
-    return $this->internalMetadata;
   }
   /**
    * @param string

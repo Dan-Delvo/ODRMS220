@@ -22,10 +22,6 @@ class AuthorizationAttemptInfo extends \Google\Model
   /**
    * @var string
    */
-  public $attemptTime;
-  /**
-   * @var string
-   */
   public $details;
   /**
    * @var string
@@ -39,23 +35,7 @@ class AuthorizationAttemptInfo extends \Google\Model
    * @var string
    */
   public $state;
-  protected $troubleshootingType = Troubleshooting::class;
-  protected $troubleshootingDataType = '';
 
-  /**
-   * @param string
-   */
-  public function setAttemptTime($attemptTime)
-  {
-    $this->attemptTime = $attemptTime;
-  }
-  /**
-   * @return string
-   */
-  public function getAttemptTime()
-  {
-    return $this->attemptTime;
-  }
   /**
    * @param string
    */
@@ -111,20 +91,6 @@ class AuthorizationAttemptInfo extends \Google\Model
   public function getState()
   {
     return $this->state;
-  }
-  /**
-   * @param Troubleshooting
-   */
-  public function setTroubleshooting(Troubleshooting $troubleshooting)
-  {
-    $this->troubleshooting = $troubleshooting;
-  }
-  /**
-   * @return Troubleshooting
-   */
-  public function getTroubleshooting()
-  {
-    return $this->troubleshooting;
   }
 }
 

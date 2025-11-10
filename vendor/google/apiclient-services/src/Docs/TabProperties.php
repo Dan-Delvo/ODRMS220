@@ -20,10 +20,6 @@ namespace Google\Service\Docs;
 class TabProperties extends \Google\Model
 {
   /**
-   * @var string
-   */
-  public $iconEmoji;
-  /**
    * @var int
    */
   public $index;
@@ -44,20 +40,6 @@ class TabProperties extends \Google\Model
    */
   public $title;
 
-  /**
-   * @param string
-   */
-  public function setIconEmoji($iconEmoji)
-  {
-    $this->iconEmoji = $iconEmoji;
-  }
-  /**
-   * @return string
-   */
-  public function getIconEmoji()
-  {
-    return $this->iconEmoji;
-  }
   /**
    * @param int
    */

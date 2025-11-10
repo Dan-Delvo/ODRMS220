@@ -109,11 +109,6 @@ class DatabaseMigrationService extends \Google\Service
                   'type' => 'string',
                   'required' => true,
                 ],
-                'extraLocationTypes' => [
-                  'location' => 'query',
-                  'type' => 'string',
-                  'repeated' => true,
-                ],
                 'filter' => [
                   'location' => 'query',
                   'type' => 'string',
@@ -1017,10 +1012,6 @@ class DatabaseMigrationService extends \Google\Service
                   'type' => 'string',
                 ],
                 'skipValidation' => [
-                  'location' => 'query',
-                  'type' => 'boolean',
-                ],
-                'validateOnly' => [
                   'location' => 'query',
                   'type' => 'boolean',
                 ],

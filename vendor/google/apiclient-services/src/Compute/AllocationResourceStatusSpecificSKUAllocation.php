@@ -23,10 +23,6 @@ class AllocationResourceStatusSpecificSKUAllocation extends \Google\Model
    * @var string
    */
   public $sourceInstanceTemplateId;
-  /**
-   * @var string[]
-   */
-  public $utilizations;
 
   /**
    * @param string
@@ -41,20 +37,6 @@ class AllocationResourceStatusSpecificSKUAllocation extends \Google\Model
   public function getSourceInstanceTemplateId()
   {
     return $this->sourceInstanceTemplateId;
-  }
-  /**
-   * @param string[]
-   */
-  public function setUtilizations($utilizations)
-  {
-    $this->utilizations = $utilizations;
-  }
-  /**
-   * @return string[]
-   */
-  public function getUtilizations()
-  {
-    return $this->utilizations;
   }
 }
 

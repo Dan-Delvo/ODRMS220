@@ -18,8 +18,11 @@ use Throwable;
  */
 final class AppCheckApiExceptionConverter
 {
-    public function __construct(private readonly ErrorResponseParser $responseParser)
+    private readonly ErrorResponseParser $responseParser;
+
+    public function __construct()
     {
+        $this->responseParser = new ErrorResponseParser();
     }
 
     public function convertException(Throwable $exception): AppCheckException

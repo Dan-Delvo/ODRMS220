@@ -33,10 +33,6 @@ class Settings extends \Google\Collection
    */
   public $authorizedGaeApplications;
   /**
-   * @var bool
-   */
-  public $autoUpgradeEnabled;
-  /**
    * @var string
    */
   public $availabilityType;
@@ -46,8 +42,6 @@ class Settings extends \Google\Collection
    * @var string
    */
   public $collation;
-  protected $connectionPoolConfigType = ConnectionPoolConfig::class;
-  protected $connectionPoolConfigDataType = '';
   /**
    * @var string
    */
@@ -58,14 +52,6 @@ class Settings extends \Google\Collection
   public $crashSafeReplicationEnabled;
   protected $dataCacheConfigType = DataCacheConfig::class;
   protected $dataCacheConfigDataType = '';
-  /**
-   * @var string
-   */
-  public $dataDiskProvisionedIops;
-  /**
-   * @var string
-   */
-  public $dataDiskProvisionedThroughput;
   /**
    * @var string
    */
@@ -98,8 +84,6 @@ class Settings extends \Google\Collection
    * @var bool
    */
   public $enableGoogleMlIntegration;
-  protected $finalBackupConfigType = FinalBackupConfig::class;
-  protected $finalBackupConfigDataType = '';
   protected $insightsConfigType = InsightsConfig::class;
   protected $insightsConfigDataType = '';
   protected $ipConfigurationType = IpConfiguration::class;
@@ -118,20 +102,10 @@ class Settings extends \Google\Collection
    * @var string
    */
   public $pricingPlan;
-  protected $readPoolAutoScaleConfigType = ReadPoolAutoScaleConfig::class;
-  protected $readPoolAutoScaleConfigDataType = '';
-  /**
-   * @var int
-   */
-  public $replicationLagMaxSeconds;
   /**
    * @var string
    */
   public $replicationType;
-  /**
-   * @var bool
-   */
-  public $retainBackupsOnDelete;
   /**
    * @var string
    */
@@ -216,20 +190,6 @@ class Settings extends \Google\Collection
     return $this->authorizedGaeApplications;
   }
   /**
-   * @param bool
-   */
-  public function setAutoUpgradeEnabled($autoUpgradeEnabled)
-  {
-    $this->autoUpgradeEnabled = $autoUpgradeEnabled;
-  }
-  /**
-   * @return bool
-   */
-  public function getAutoUpgradeEnabled()
-  {
-    return $this->autoUpgradeEnabled;
-  }
-  /**
    * @param string
    */
   public function setAvailabilityType($availabilityType)
@@ -272,20 +232,6 @@ class Settings extends \Google\Collection
     return $this->collation;
   }
   /**
-   * @param ConnectionPoolConfig
-   */
-  public function setConnectionPoolConfig(ConnectionPoolConfig $connectionPoolConfig)
-  {
-    $this->connectionPoolConfig = $connectionPoolConfig;
-  }
-  /**
-   * @return ConnectionPoolConfig
-   */
-  public function getConnectionPoolConfig()
-  {
-    return $this->connectionPoolConfig;
-  }
-  /**
    * @param string
    */
   public function setConnectorEnforcement($connectorEnforcement)
@@ -326,34 +272,6 @@ class Settings extends \Google\Collection
   public function getDataCacheConfig()
   {
     return $this->dataCacheConfig;
-  }
-  /**
-   * @param string
-   */
-  public function setDataDiskProvisionedIops($dataDiskProvisionedIops)
-  {
-    $this->dataDiskProvisionedIops = $dataDiskProvisionedIops;
-  }
-  /**
-   * @return string
-   */
-  public function getDataDiskProvisionedIops()
-  {
-    return $this->dataDiskProvisionedIops;
-  }
-  /**
-   * @param string
-   */
-  public function setDataDiskProvisionedThroughput($dataDiskProvisionedThroughput)
-  {
-    $this->dataDiskProvisionedThroughput = $dataDiskProvisionedThroughput;
-  }
-  /**
-   * @return string
-   */
-  public function getDataDiskProvisionedThroughput()
-  {
-    return $this->dataDiskProvisionedThroughput;
   }
   /**
    * @param string
@@ -482,20 +400,6 @@ class Settings extends \Google\Collection
     return $this->enableGoogleMlIntegration;
   }
   /**
-   * @param FinalBackupConfig
-   */
-  public function setFinalBackupConfig(FinalBackupConfig $finalBackupConfig)
-  {
-    $this->finalBackupConfig = $finalBackupConfig;
-  }
-  /**
-   * @return FinalBackupConfig
-   */
-  public function getFinalBackupConfig()
-  {
-    return $this->finalBackupConfig;
-  }
-  /**
    * @param InsightsConfig
    */
   public function setInsightsConfig(InsightsConfig $insightsConfig)
@@ -594,34 +498,6 @@ class Settings extends \Google\Collection
     return $this->pricingPlan;
   }
   /**
-   * @param ReadPoolAutoScaleConfig
-   */
-  public function setReadPoolAutoScaleConfig(ReadPoolAutoScaleConfig $readPoolAutoScaleConfig)
-  {
-    $this->readPoolAutoScaleConfig = $readPoolAutoScaleConfig;
-  }
-  /**
-   * @return ReadPoolAutoScaleConfig
-   */
-  public function getReadPoolAutoScaleConfig()
-  {
-    return $this->readPoolAutoScaleConfig;
-  }
-  /**
-   * @param int
-   */
-  public function setReplicationLagMaxSeconds($replicationLagMaxSeconds)
-  {
-    $this->replicationLagMaxSeconds = $replicationLagMaxSeconds;
-  }
-  /**
-   * @return int
-   */
-  public function getReplicationLagMaxSeconds()
-  {
-    return $this->replicationLagMaxSeconds;
-  }
-  /**
    * @param string
    */
   public function setReplicationType($replicationType)
@@ -634,20 +510,6 @@ class Settings extends \Google\Collection
   public function getReplicationType()
   {
     return $this->replicationType;
-  }
-  /**
-   * @param bool
-   */
-  public function setRetainBackupsOnDelete($retainBackupsOnDelete)
-  {
-    $this->retainBackupsOnDelete = $retainBackupsOnDelete;
-  }
-  /**
-   * @return bool
-   */
-  public function getRetainBackupsOnDelete()
-  {
-    return $this->retainBackupsOnDelete;
   }
   /**
    * @param string

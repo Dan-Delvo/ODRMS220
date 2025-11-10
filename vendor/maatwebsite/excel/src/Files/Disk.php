@@ -68,10 +68,6 @@ class Disk
     {
         $readStream = $source->readStream();
 
-        if (!is_resource($readStream)) {
-            return false;
-        }
-
         if (realpath($destination)) {
             $tempStream = fopen($destination, 'rb+');
             $success    = stream_copy_to_stream($readStream, $tempStream) !== false;

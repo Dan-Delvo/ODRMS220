@@ -24,10 +24,6 @@ class IssuancePolicy extends \Google\Collection
   protected $allowedIssuanceModesDataType = '';
   protected $allowedKeyTypesType = AllowedKeyType::class;
   protected $allowedKeyTypesDataType = 'array';
-  /**
-   * @var string
-   */
-  public $backdateDuration;
   protected $baselineValuesType = X509Parameters::class;
   protected $baselineValuesDataType = '';
   protected $identityConstraintsType = CertificateIdentityConstraints::class;
@@ -66,20 +62,6 @@ class IssuancePolicy extends \Google\Collection
   public function getAllowedKeyTypes()
   {
     return $this->allowedKeyTypes;
-  }
-  /**
-   * @param string
-   */
-  public function setBackdateDuration($backdateDuration)
-  {
-    $this->backdateDuration = $backdateDuration;
-  }
-  /**
-   * @return string
-   */
-  public function getBackdateDuration()
-  {
-    return $this->backdateDuration;
   }
   /**
    * @param X509Parameters

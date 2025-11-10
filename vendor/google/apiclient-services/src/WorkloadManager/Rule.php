@@ -23,10 +23,6 @@ class Rule extends \Google\Collection
   /**
    * @var string
    */
-  public $assetType;
-  /**
-   * @var string
-   */
   public $description;
   /**
    * @var string
@@ -55,10 +51,6 @@ class Rule extends \Google\Collection
   /**
    * @var string
    */
-  public $ruleType;
-  /**
-   * @var string
-   */
   public $secondaryCategory;
   /**
    * @var string
@@ -73,20 +65,6 @@ class Rule extends \Google\Collection
    */
   public $uri;
 
-  /**
-   * @param string
-   */
-  public function setAssetType($assetType)
-  {
-    $this->assetType = $assetType;
-  }
-  /**
-   * @return string
-   */
-  public function getAssetType()
-  {
-    return $this->assetType;
-  }
   /**
    * @param string
    */
@@ -184,20 +162,6 @@ class Rule extends \Google\Collection
   public function getRevisionId()
   {
     return $this->revisionId;
-  }
-  /**
-   * @param string
-   */
-  public function setRuleType($ruleType)
-  {
-    $this->ruleType = $ruleType;
-  }
-  /**
-   * @return string
-   */
-  public function getRuleType()
-  {
-    return $this->ruleType;
   }
   /**
    * @param string

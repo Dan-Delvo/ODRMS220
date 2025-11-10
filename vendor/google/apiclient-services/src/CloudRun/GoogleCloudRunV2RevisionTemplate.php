@@ -45,10 +45,6 @@ class GoogleCloudRunV2RevisionTemplate extends \Google\Collection
   /**
    * @var bool
    */
-  public $gpuZonalRedundancyDisabled;
-  /**
-   * @var bool
-   */
   public $healthCheckDisabled;
   /**
    * @var string[]
@@ -168,20 +164,6 @@ class GoogleCloudRunV2RevisionTemplate extends \Google\Collection
   public function getExecutionEnvironment()
   {
     return $this->executionEnvironment;
-  }
-  /**
-   * @param bool
-   */
-  public function setGpuZonalRedundancyDisabled($gpuZonalRedundancyDisabled)
-  {
-    $this->gpuZonalRedundancyDisabled = $gpuZonalRedundancyDisabled;
-  }
-  /**
-   * @return bool
-   */
-  public function getGpuZonalRedundancyDisabled()
-  {
-    return $this->gpuZonalRedundancyDisabled;
   }
   /**
    * @param bool

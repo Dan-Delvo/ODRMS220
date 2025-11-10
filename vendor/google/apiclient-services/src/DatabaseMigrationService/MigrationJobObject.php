@@ -25,8 +25,6 @@ class MigrationJobObject extends \Google\Model
   public $createTime;
   protected $errorType = Status::class;
   protected $errorDataType = '';
-  protected $heterogeneousMetadataType = HeterogeneousMetadata::class;
-  protected $heterogeneousMetadataDataType = '';
   /**
    * @var string
    */
@@ -73,20 +71,6 @@ class MigrationJobObject extends \Google\Model
   public function getError()
   {
     return $this->error;
-  }
-  /**
-   * @param HeterogeneousMetadata
-   */
-  public function setHeterogeneousMetadata(HeterogeneousMetadata $heterogeneousMetadata)
-  {
-    $this->heterogeneousMetadata = $heterogeneousMetadata;
-  }
-  /**
-   * @return HeterogeneousMetadata
-   */
-  public function getHeterogeneousMetadata()
-  {
-    return $this->heterogeneousMetadata;
   }
   /**
    * @param string

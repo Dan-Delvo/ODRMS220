@@ -19,10 +19,12 @@ use Throwable;
  */
 final class ApiClient
 {
+    private readonly AppCheckApiExceptionConverter $errorHandler;
+
     public function __construct(
         private readonly ClientInterface $client,
-        private readonly AppCheckApiExceptionConverter $errorHandler,
     ) {
+        $this->errorHandler = new AppCheckApiExceptionConverter();
     }
 
     /**
@@ -41,10 +43,7 @@ final class ApiClient
             ]),
         ]);
 
-        /** @var AppCheckTokenShape $decoded */
-        $decoded = Json::decode((string) $response->getBody(), true);
-
-        return $decoded;
+        return Json::decode((string) $response->getBody(), true);
     }
 
     /**

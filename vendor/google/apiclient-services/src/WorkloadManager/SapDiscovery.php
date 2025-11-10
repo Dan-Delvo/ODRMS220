@@ -37,10 +37,6 @@ class SapDiscovery extends \Google\Model
    * @var string
    */
   public $updateTime;
-  /**
-   * @var bool
-   */
-  public $useDrReconciliation;
   protected $workloadPropertiesType = SapDiscoveryWorkloadProperties::class;
   protected $workloadPropertiesDataType = '';
 
@@ -127,20 +123,6 @@ class SapDiscovery extends \Google\Model
   public function getUpdateTime()
   {
     return $this->updateTime;
-  }
-  /**
-   * @param bool
-   */
-  public function setUseDrReconciliation($useDrReconciliation)
-  {
-    $this->useDrReconciliation = $useDrReconciliation;
-  }
-  /**
-   * @return bool
-   */
-  public function getUseDrReconciliation()
-  {
-    return $this->useDrReconciliation;
   }
   /**
    * @param SapDiscoveryWorkloadProperties

@@ -17,11 +17,8 @@
 
 namespace Google\Service\Aiplatform;
 
-class GoogleCloudAiplatformV1CountTokensResponse extends \Google\Collection
+class GoogleCloudAiplatformV1CountTokensResponse extends \Google\Model
 {
-  protected $collection_key = 'promptTokensDetails';
-  protected $promptTokensDetailsType = GoogleCloudAiplatformV1ModalityTokenCount::class;
-  protected $promptTokensDetailsDataType = 'array';
   /**
    * @var int
    */
@@ -31,20 +28,6 @@ class GoogleCloudAiplatformV1CountTokensResponse extends \Google\Collection
    */
   public $totalTokens;
 
-  /**
-   * @param GoogleCloudAiplatformV1ModalityTokenCount[]
-   */
-  public function setPromptTokensDetails($promptTokensDetails)
-  {
-    $this->promptTokensDetails = $promptTokensDetails;
-  }
-  /**
-   * @return GoogleCloudAiplatformV1ModalityTokenCount[]
-   */
-  public function getPromptTokensDetails()
-  {
-    return $this->promptTokensDetails;
-  }
   /**
    * @param int
    */

@@ -19,15 +19,13 @@ namespace Google\Service\Contactcenterinsights;
 
 class GoogleCloudContactcenterinsightsV1ConversationQualityMetadata extends \Google\Collection
 {
-  protected $collection_key = 'feedbackLabels';
+  protected $collection_key = 'agentInfo';
   protected $agentInfoType = GoogleCloudContactcenterinsightsV1ConversationQualityMetadataAgentInfo::class;
   protected $agentInfoDataType = 'array';
   /**
    * @var int
    */
   public $customerSatisfactionRating;
-  protected $feedbackLabelsType = GoogleCloudContactcenterinsightsV1FeedbackLabel::class;
-  protected $feedbackLabelsDataType = 'array';
   /**
    * @var string
    */
@@ -64,20 +62,6 @@ class GoogleCloudContactcenterinsightsV1ConversationQualityMetadata extends \Goo
   public function getCustomerSatisfactionRating()
   {
     return $this->customerSatisfactionRating;
-  }
-  /**
-   * @param GoogleCloudContactcenterinsightsV1FeedbackLabel[]
-   */
-  public function setFeedbackLabels($feedbackLabels)
-  {
-    $this->feedbackLabels = $feedbackLabels;
-  }
-  /**
-   * @return GoogleCloudContactcenterinsightsV1FeedbackLabel[]
-   */
-  public function getFeedbackLabels()
-  {
-    return $this->feedbackLabels;
   }
   /**
    * @param string

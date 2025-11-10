@@ -87,11 +87,9 @@ class DeepCopy
     /**
      * Deep copies the given object.
      *
-     * @template TObject
+     * @param mixed $object
      *
-     * @param TObject $object
-     *
-     * @return TObject
+     * @return mixed
      */
     public function copy($object)
     {
@@ -122,14 +120,6 @@ class DeepCopy
             'matcher' => $matcher,
             'filter'  => $filter,
         ];
-    }
-
-    public function prependTypeFilter(TypeFilter $filter, TypeMatcher $matcher)
-    {
-        array_unshift($this->typeFilters, [
-            'matcher' => $matcher,
-            'filter'  => $filter,
-        ]);
     }
 
     private function recursiveCopy($var)
@@ -267,9 +257,7 @@ class DeepCopy
             }
         }
 
-        if (PHP_VERSION_ID < 80100) {
-            $property->setAccessible(true);
-        }
+        $property->setAccessible(true);
 
         // Ignore uninitialized properties (for PHP >7.4)
         if (method_exists($property, 'isInitialized') && !$property->isInitialized($object)) {

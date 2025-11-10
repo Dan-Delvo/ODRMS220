@@ -72,7 +72,7 @@ class Signals
     /**
      * Gets the signal's existing handler in array format.
      *
-     * @return array<int, callable(int $signal): void>|null
+     * @return array<int, callable(int $signal): void>
      */
     protected function initializeSignal($signal)
     {

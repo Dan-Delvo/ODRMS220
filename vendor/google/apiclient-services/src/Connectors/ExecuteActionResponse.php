@@ -23,26 +23,8 @@ class ExecuteActionResponse extends \Google\Collection
   /**
    * @var array[]
    */
-  public $metadata;
-  /**
-   * @var array[]
-   */
   public $results;
 
-  /**
-   * @param array[]
-   */
-  public function setMetadata($metadata)
-  {
-    $this->metadata = $metadata;
-  }
-  /**
-   * @return array[]
-   */
-  public function getMetadata()
-  {
-    return $this->metadata;
-  }
   /**
    * @param array[]
    */

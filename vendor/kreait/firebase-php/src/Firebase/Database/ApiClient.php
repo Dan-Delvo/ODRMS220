@@ -19,11 +19,13 @@ use Throwable;
  */
 class ApiClient
 {
+    protected DatabaseApiExceptionConverter $errorHandler;
+
     public function __construct(
         private readonly ClientInterface $client,
         private readonly UrlBuilder $resourceUrlBuilder,
-        private readonly DatabaseApiExceptionConverter $errorHandler,
     ) {
+        $this->errorHandler = new DatabaseApiExceptionConverter();
     }
 
     /**

@@ -20,6 +20,8 @@ namespace Google\Service\Merchant;
 class ProductReview extends \Google\Collection
 {
   protected $collection_key = 'customAttributes';
+  protected $attributesType = ProductReviewAttributes::class;
+  protected $attributesDataType = '';
   protected $customAttributesType = CustomAttribute::class;
   protected $customAttributesDataType = 'array';
   /**
@@ -30,8 +32,6 @@ class ProductReview extends \Google\Collection
    * @var string
    */
   public $name;
-  protected $productReviewAttributesType = ProductReviewAttributes::class;
-  protected $productReviewAttributesDataType = '';
   /**
    * @var string
    */
@@ -39,6 +39,20 @@ class ProductReview extends \Google\Collection
   protected $productReviewStatusType = ProductReviewStatus::class;
   protected $productReviewStatusDataType = '';
 
+  /**
+   * @param ProductReviewAttributes
+   */
+  public function setAttributes(ProductReviewAttributes $attributes)
+  {
+    $this->attributes = $attributes;
+  }
+  /**
+   * @return ProductReviewAttributes
+   */
+  public function getAttributes()
+  {
+    return $this->attributes;
+  }
   /**
    * @param CustomAttribute[]
    */
@@ -80,20 +94,6 @@ class ProductReview extends \Google\Collection
   public function getName()
   {
     return $this->name;
-  }
-  /**
-   * @param ProductReviewAttributes
-   */
-  public function setProductReviewAttributes(ProductReviewAttributes $productReviewAttributes)
-  {
-    $this->productReviewAttributes = $productReviewAttributes;
-  }
-  /**
-   * @return ProductReviewAttributes
-   */
-  public function getProductReviewAttributes()
-  {
-    return $this->productReviewAttributes;
   }
   /**
    * @param string

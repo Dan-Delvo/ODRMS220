@@ -17,11 +17,8 @@
 
 namespace Google\Service\Aiplatform;
 
-class GoogleCloudAiplatformV1EvaluateInstancesRequest extends \Google\Collection
+class GoogleCloudAiplatformV1EvaluateInstancesRequest extends \Google\Model
 {
-  protected $collection_key = 'metrics';
-  protected $autoraterConfigType = GoogleCloudAiplatformV1AutoraterConfig::class;
-  protected $autoraterConfigDataType = '';
   protected $bleuInputType = GoogleCloudAiplatformV1BleuInput::class;
   protected $bleuInputDataType = '';
   protected $coherenceInputType = GoogleCloudAiplatformV1CoherenceInput::class;
@@ -36,10 +33,6 @@ class GoogleCloudAiplatformV1EvaluateInstancesRequest extends \Google\Collection
   protected $fulfillmentInputDataType = '';
   protected $groundednessInputType = GoogleCloudAiplatformV1GroundednessInput::class;
   protected $groundednessInputDataType = '';
-  protected $instanceType = GoogleCloudAiplatformV1EvaluationInstance::class;
-  protected $instanceDataType = '';
-  protected $metricsType = GoogleCloudAiplatformV1Metric::class;
-  protected $metricsDataType = 'array';
   protected $metricxInputType = GoogleCloudAiplatformV1MetricxInput::class;
   protected $metricxInputDataType = '';
   protected $pairwiseMetricInputType = GoogleCloudAiplatformV1PairwiseMetricInput::class;
@@ -60,8 +53,6 @@ class GoogleCloudAiplatformV1EvaluateInstancesRequest extends \Google\Collection
   protected $questionAnsweringRelevanceInputDataType = '';
   protected $rougeInputType = GoogleCloudAiplatformV1RougeInput::class;
   protected $rougeInputDataType = '';
-  protected $rubricBasedInstructionFollowingInputType = GoogleCloudAiplatformV1RubricBasedInstructionFollowingInput::class;
-  protected $rubricBasedInstructionFollowingInputDataType = '';
   protected $safetyInputType = GoogleCloudAiplatformV1SafetyInput::class;
   protected $safetyInputDataType = '';
   protected $summarizationHelpfulnessInputType = GoogleCloudAiplatformV1SummarizationHelpfulnessInput::class;
@@ -91,20 +82,6 @@ class GoogleCloudAiplatformV1EvaluateInstancesRequest extends \Google\Collection
   protected $trajectorySingleToolUseInputType = GoogleCloudAiplatformV1TrajectorySingleToolUseInput::class;
   protected $trajectorySingleToolUseInputDataType = '';
 
-  /**
-   * @param GoogleCloudAiplatformV1AutoraterConfig
-   */
-  public function setAutoraterConfig(GoogleCloudAiplatformV1AutoraterConfig $autoraterConfig)
-  {
-    $this->autoraterConfig = $autoraterConfig;
-  }
-  /**
-   * @return GoogleCloudAiplatformV1AutoraterConfig
-   */
-  public function getAutoraterConfig()
-  {
-    return $this->autoraterConfig;
-  }
   /**
    * @param GoogleCloudAiplatformV1BleuInput
    */
@@ -202,34 +179,6 @@ class GoogleCloudAiplatformV1EvaluateInstancesRequest extends \Google\Collection
   public function getGroundednessInput()
   {
     return $this->groundednessInput;
-  }
-  /**
-   * @param GoogleCloudAiplatformV1EvaluationInstance
-   */
-  public function setInstance(GoogleCloudAiplatformV1EvaluationInstance $instance)
-  {
-    $this->instance = $instance;
-  }
-  /**
-   * @return GoogleCloudAiplatformV1EvaluationInstance
-   */
-  public function getInstance()
-  {
-    return $this->instance;
-  }
-  /**
-   * @param GoogleCloudAiplatformV1Metric[]
-   */
-  public function setMetrics($metrics)
-  {
-    $this->metrics = $metrics;
-  }
-  /**
-   * @return GoogleCloudAiplatformV1Metric[]
-   */
-  public function getMetrics()
-  {
-    return $this->metrics;
   }
   /**
    * @param GoogleCloudAiplatformV1MetricxInput
@@ -370,20 +319,6 @@ class GoogleCloudAiplatformV1EvaluateInstancesRequest extends \Google\Collection
   public function getRougeInput()
   {
     return $this->rougeInput;
-  }
-  /**
-   * @param GoogleCloudAiplatformV1RubricBasedInstructionFollowingInput
-   */
-  public function setRubricBasedInstructionFollowingInput(GoogleCloudAiplatformV1RubricBasedInstructionFollowingInput $rubricBasedInstructionFollowingInput)
-  {
-    $this->rubricBasedInstructionFollowingInput = $rubricBasedInstructionFollowingInput;
-  }
-  /**
-   * @return GoogleCloudAiplatformV1RubricBasedInstructionFollowingInput
-   */
-  public function getRubricBasedInstructionFollowingInput()
-  {
-    return $this->rubricBasedInstructionFollowingInput;
   }
   /**
    * @param GoogleCloudAiplatformV1SafetyInput

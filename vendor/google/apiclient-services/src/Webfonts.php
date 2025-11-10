@@ -72,10 +72,6 @@ class Webfonts extends \Google\Service
                   'type' => 'string',
                   'repeated' => true,
                 ],
-                'category' => [
-                  'location' => 'query',
-                  'type' => 'string',
-                ],
                 'family' => [
                   'location' => 'query',
                   'type' => 'string',

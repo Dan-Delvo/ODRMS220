@@ -34,11 +34,9 @@ class FoldersLocationsLogScopes extends \Google\Service\Resource
   /**
    * Creates a log scope. (logScopes.create)
    *
-   * @param string $parent Required. The parent resource in which to create the
-   * log scope: "projects/[PROJECT_ID]/locations/[LOCATION_ID]"
-   * "organizations/[ORGANIZATION_ID]/locations/[LOCATION_ID]"
-   * "folders/[FOLDER_ID]/locations/[LOCATION_ID]" For example:"projects/my-
-   * project/locations/global"
+   * @param string $parent Required. The parent project in which to create the log
+   * scope "projects/[PROJECT_ID]/locations/[LOCATION_ID]" For
+   * example:"projects/my-project/locations/global"
    * @param LogScope $postBody
    * @param array $optParams Optional parameters.
    *
@@ -59,10 +57,8 @@ class FoldersLocationsLogScopes extends \Google\Service\Resource
    * Deletes a log scope. (logScopes.delete)
    *
    * @param string $name Required. The resource name of the log scope to delete:
-   * "projects/[PROJECT_ID]/locations/[LOCATION_ID]"
-   * "organizations/[ORGANIZATION_ID]/locations/[LOCATION_ID]"
-   * "folders/[FOLDER_ID]/locations/[LOCATION_ID]" For example:"projects/my-
-   * project/locations/global/logScopes/my-log-scope"
+   * "projects/[PROJECT_ID]/locations/[LOCATION_ID]/logScopes/[LOG_SCOPE_ID]" For
+   * example:"projects/my-project/locations/global/logScopes/my-log-scope"
    * @param array $optParams Optional parameters.
    * @return LoggingEmpty
    * @throws \Google\Service\Exception
@@ -77,10 +73,8 @@ class FoldersLocationsLogScopes extends \Google\Service\Resource
    * Gets a log scope. (logScopes.get)
    *
    * @param string $name Required. The resource name of the log scope:
-   * "projects/[PROJECT_ID]/locations/[LOCATION_ID]"
-   * "organizations/[ORGANIZATION_ID]/locations/[LOCATION_ID]"
-   * "folders/[FOLDER_ID]/locations/[LOCATION_ID]" For example:"projects/my-
-   * project/locations/global/logScopes/my-log-scope"
+   * "projects/[PROJECT_ID]/locations/[LOCATION_ID]/logScopes/[LOG_SCOPE_ID]" For
+   * example:"projects/my-project/locations/global/logScopes/my-log-scope"
    * @param array $optParams Optional parameters.
    * @return LogScope
    * @throws \Google\Service\Exception

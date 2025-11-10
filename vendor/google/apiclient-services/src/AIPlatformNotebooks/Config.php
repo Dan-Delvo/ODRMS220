@@ -24,10 +24,6 @@ class Config extends \Google\Collection
   protected $availableImagesDataType = 'array';
   protected $defaultValuesType = DefaultValues::class;
   protected $defaultValuesDataType = '';
-  /**
-   * @var bool
-   */
-  public $disableWorkbenchLegacyCreation;
   protected $supportedValuesType = SupportedValues::class;
   protected $supportedValuesDataType = '';
 
@@ -58,20 +54,6 @@ class Config extends \Google\Collection
   public function getDefaultValues()
   {
     return $this->defaultValues;
-  }
-  /**
-   * @param bool
-   */
-  public function setDisableWorkbenchLegacyCreation($disableWorkbenchLegacyCreation)
-  {
-    $this->disableWorkbenchLegacyCreation = $disableWorkbenchLegacyCreation;
-  }
-  /**
-   * @return bool
-   */
-  public function getDisableWorkbenchLegacyCreation()
-  {
-    return $this->disableWorkbenchLegacyCreation;
   }
   /**
    * @param SupportedValues

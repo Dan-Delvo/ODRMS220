@@ -23,7 +23,7 @@
         }
     ],
     "require": {
-        "php": "~8.1.0 || ~8.2.0 || ~8.3.0 || ~8.4.0 || ~8.5.0",
+        "php": "~8.1.0 || ~8.2.0 || ~8.3.0 || ~8.4.0",
         "ext-ctype": "*",
         "ext-filter": "*",
         "ext-json": "*",
@@ -31,7 +31,6 @@
         "beste/clock": "^3.0",
         "beste/in-memory-cache": "^1.3.1",
         "beste/json": "^1.5.1",
-        "cuyz/valinor": "^2.2.1",
         "fig/http-message-util": "^1.1.5",
         "firebase/php-jwt": "^6.10.2",
         "google/auth": "^v1.45",
@@ -50,18 +49,17 @@
         "psr/log": "^1.1|^2.0|^3.0.2"
     },
     "require-dev": {
-        "php-cs-fixer/shim": "^3.88.2",
-        "google/cloud-firestore": "^1.54.2",
+        "friendsofphp/php-cs-fixer": "^3.65.0",
+        "google/cloud-firestore": "^1.47.2",
         "phpstan/extension-installer": "^1.4.3",
-        "phpstan/phpstan": "^2.1.31",
-        "phpstan/phpstan-deprecation-rules": "^2.0.3",
-        "phpstan/phpstan-strict-rules": "^2.0.7",
-        "phpstan/phpstan-phpunit": "^2.0.7",
-        "phpunit/phpunit": "^10.5.58",
-        "rector/rector": "^2.2.2",
-        "shipmonk/composer-dependency-analyser": "^1.8.3",
-        "symfony/var-dumper": "^6.4.15 || ^7.3.4",
-        "vlucas/phpdotenv": "^5.6.2"
+        "phpstan/phpstan": "^2.0.4",
+        "phpstan/phpstan-deprecation-rules": "^2.0.1",
+        "phpstan/phpstan-phpunit": "^2.0.3",
+        "phpunit/phpunit": "^10.5.39",
+        "rector/rector": "^2.0.3",
+        "shipmonk/composer-dependency-analyser": "^1.8.1",
+        "symfony/var-dumper": "^6.4.15 || ^7.2.0",
+        "vlucas/phpdotenv": "^5.6.1"
     },
     "suggest": {
         "google/cloud-firestore": "^1.0 to use the Firestore component"
@@ -88,27 +86,10 @@
         ],
         "analyze": "@analyse",
         "cs": [
-            "vendor/bin/php-cs-fixer fix --diff --verbose"
+            "PHP_CS_FIXER_IGNORE_ENV=true vendor/bin/php-cs-fixer fix --diff --verbose"
         ],
         "docs": [
-            "@docs:clean",
-            "@docs:setup",
-            "@docs:build"
-        ],
-        "docs:build": [
-            "cd docs && uv run sphinx-build -b html . _build/html"
-        ],
-        "docs:clean": [
-            "cd docs && rm -rf _build/*"
-        ],
-        "docs:linkcheck": [
-            "cd docs && uv run sphinx-build -b linkcheck . _build/linkcheck"
-        ],
-        "docs:serve": [
-            "cd docs && uv run sphinx-autobuild . _build/html --host 0.0.0.0 --port 8000"
-        ],
-        "docs:setup": [
-            "cd docs && uv sync"
+            "cd docs && make html"
         ],
         "pre-push": [
             "@rector-fix",
@@ -134,21 +115,18 @@
         "test-bc": [
             "docker run -it --rm -v `pwd`:/app nyholm/roave-bc-check"
         ],
+        "test-dependencies": [
+            "vendor/bin/composer-dependency-analyser"
+        ],
         "test-coverage": [
             "Composer\\Config::disableProcessTimeout",
             "XDEBUG_MODE=coverage vendor/bin/phpunit --coverage-html=.build/coverage"
         ],
-        "test-dependencies": [
-            "vendor/bin/composer-dependency-analyser"
-        ],
-        "test-emulator": [
-            "FIREBASE_AUTH_EMULATOR_HOST=localhost:9099 FIREBASE_DATABASE_EMULATOR_HOST=localhost:9100 firebase emulators:exec --only auth,database --project beste-firebase 'vendor/bin/phpunit --group=emulator'"
+        "test-units": [
+            "vendor/bin/phpunit --testsuite=unit"
         ],
         "test-integration": [
             "vendor/bin/phpunit --testsuite=integration"
-        ],
-        "test-units": [
-            "vendor/bin/phpunit --testsuite=unit"
         ]
     },
     "extra": {

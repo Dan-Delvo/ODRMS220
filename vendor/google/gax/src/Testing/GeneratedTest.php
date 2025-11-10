@@ -34,7 +34,7 @@ namespace Google\ApiCore\Testing;
 use Google\ApiCore\Serializer;
 use Google\Protobuf\DescriptorPool;
 use Google\Protobuf\Internal\Message;
-use Google\Protobuf\RepeatedField;
+use Google\Protobuf\Internal\RepeatedField;
 use PHPUnit\Framework\TestCase;
 
 /**

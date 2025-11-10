@@ -19,14 +19,10 @@ namespace Google\Service\WorkloadManager;
 
 class Insight extends \Google\Model
 {
-  protected $agentStatusType = AgentStatus::class;
-  protected $agentStatusDataType = '';
   /**
    * @var string
    */
   public $instanceId;
-  protected $openShiftValidationType = OpenShiftValidation::class;
-  protected $openShiftValidationDataType = '';
   protected $sapDiscoveryType = SapDiscovery::class;
   protected $sapDiscoveryDataType = '';
   protected $sapValidationType = SapValidation::class;
@@ -41,20 +37,6 @@ class Insight extends \Google\Model
   protected $torsoValidationDataType = '';
 
   /**
-   * @param AgentStatus
-   */
-  public function setAgentStatus(AgentStatus $agentStatus)
-  {
-    $this->agentStatus = $agentStatus;
-  }
-  /**
-   * @return AgentStatus
-   */
-  public function getAgentStatus()
-  {
-    return $this->agentStatus;
-  }
-  /**
    * @param string
    */
   public function setInstanceId($instanceId)
@@ -67,20 +49,6 @@ class Insight extends \Google\Model
   public function getInstanceId()
   {
     return $this->instanceId;
-  }
-  /**
-   * @param OpenShiftValidation
-   */
-  public function setOpenShiftValidation(OpenShiftValidation $openShiftValidation)
-  {
-    $this->openShiftValidation = $openShiftValidation;
-  }
-  /**
-   * @return OpenShiftValidation
-   */
-  public function getOpenShiftValidation()
-  {
-    return $this->openShiftValidation;
   }
   /**
    * @param SapDiscovery

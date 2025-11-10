@@ -22,6 +22,7 @@ use RuntimeException;
 /**
  * @template TValue
  *
+ * @mixin \Illuminate\Database\Eloquent\Builder
  * @mixin \Illuminate\Database\Query\Builder
  */
 trait BuildsQueries
@@ -223,7 +224,7 @@ trait BuildsQueries
      * Query lazily, by chunks of the given size.
      *
      * @param  int  $chunkSize
-     * @return \Illuminate\Support\LazyCollection<int, TValue>
+     * @return \Illuminate\Support\LazyCollection
      *
      * @throws \InvalidArgumentException
      */
@@ -258,7 +259,7 @@ trait BuildsQueries
      * @param  int  $chunkSize
      * @param  string|null  $column
      * @param  string|null  $alias
-     * @return \Illuminate\Support\LazyCollection<int, TValue>
+     * @return \Illuminate\Support\LazyCollection
      *
      * @throws \InvalidArgumentException
      */
@@ -273,7 +274,7 @@ trait BuildsQueries
      * @param  int  $chunkSize
      * @param  string|null  $column
      * @param  string|null  $alias
-     * @return \Illuminate\Support\LazyCollection<int, TValue>
+     * @return \Illuminate\Support\LazyCollection
      *
      * @throws \InvalidArgumentException
      */

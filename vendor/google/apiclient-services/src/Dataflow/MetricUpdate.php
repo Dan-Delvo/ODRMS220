@@ -20,10 +20,6 @@ namespace Google\Service\Dataflow;
 class MetricUpdate extends \Google\Model
 {
   /**
-   * @var array
-   */
-  public $boundedTrie;
-  /**
    * @var bool
    */
   public $cumulative;
@@ -70,20 +66,6 @@ class MetricUpdate extends \Google\Model
    */
   public $updateTime;
 
-  /**
-   * @param array
-   */
-  public function setBoundedTrie($boundedTrie)
-  {
-    $this->boundedTrie = $boundedTrie;
-  }
-  /**
-   * @return array
-   */
-  public function getBoundedTrie()
-  {
-    return $this->boundedTrie;
-  }
   /**
    * @param bool
    */

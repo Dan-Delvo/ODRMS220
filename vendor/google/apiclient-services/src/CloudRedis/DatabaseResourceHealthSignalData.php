@@ -41,10 +41,6 @@ class DatabaseResourceHealthSignalData extends \Google\Collection
   /**
    * @var string
    */
-  public $location;
-  /**
-   * @var string
-   */
   public $name;
   /**
    * @var string
@@ -148,20 +144,6 @@ class DatabaseResourceHealthSignalData extends \Google\Collection
   public function getExternalUri()
   {
     return $this->externalUri;
-  }
-  /**
-   * @param string
-   */
-  public function setLocation($location)
-  {
-    $this->location = $location;
-  }
-  /**
-   * @return string
-   */
-  public function getLocation()
-  {
-    return $this->location;
   }
   /**
    * @param string

@@ -32,10 +32,6 @@ class Space extends \Google\Model
   /**
    * @var string
    */
-  public $customer;
-  /**
-   * @var string
-   */
   public $displayName;
   /**
    * @var bool
@@ -137,20 +133,6 @@ class Space extends \Google\Model
   public function getCreateTime()
   {
     return $this->createTime;
-  }
-  /**
-   * @param string
-   */
-  public function setCustomer($customer)
-  {
-    $this->customer = $customer;
-  }
-  /**
-   * @return string
-   */
-  public function getCustomer()
-  {
-    return $this->customer;
   }
   /**
    * @param string

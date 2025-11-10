@@ -33,10 +33,6 @@ class Flag extends \Google\Collection
    */
   public $appliesTo;
   /**
-   * @var string
-   */
-  public $flagScope;
-  /**
    * @var bool
    */
   public $inBeta;
@@ -56,14 +52,6 @@ class Flag extends \Google\Collection
    * @var string
    */
   public $name;
-  /**
-   * @var string
-   */
-  public $recommendedIntValue;
-  /**
-   * @var string
-   */
-  public $recommendedStringValue;
   /**
    * @var bool
    */
@@ -114,20 +102,6 @@ class Flag extends \Google\Collection
   public function getAppliesTo()
   {
     return $this->appliesTo;
-  }
-  /**
-   * @param string
-   */
-  public function setFlagScope($flagScope)
-  {
-    $this->flagScope = $flagScope;
-  }
-  /**
-   * @return string
-   */
-  public function getFlagScope()
-  {
-    return $this->flagScope;
   }
   /**
    * @param bool
@@ -198,34 +172,6 @@ class Flag extends \Google\Collection
   public function getName()
   {
     return $this->name;
-  }
-  /**
-   * @param string
-   */
-  public function setRecommendedIntValue($recommendedIntValue)
-  {
-    $this->recommendedIntValue = $recommendedIntValue;
-  }
-  /**
-   * @return string
-   */
-  public function getRecommendedIntValue()
-  {
-    return $this->recommendedIntValue;
-  }
-  /**
-   * @param string
-   */
-  public function setRecommendedStringValue($recommendedStringValue)
-  {
-    $this->recommendedStringValue = $recommendedStringValue;
-  }
-  /**
-   * @return string
-   */
-  public function getRecommendedStringValue()
-  {
-    return $this->recommendedStringValue;
   }
   /**
    * @param bool

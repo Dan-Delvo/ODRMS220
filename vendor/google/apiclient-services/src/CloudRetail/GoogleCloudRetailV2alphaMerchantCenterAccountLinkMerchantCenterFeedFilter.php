@@ -22,30 +22,12 @@ class GoogleCloudRetailV2alphaMerchantCenterAccountLinkMerchantCenterFeedFilter 
   /**
    * @var string
    */
-  public $dataSourceId;
-  /**
-   * @var string
-   */
   public $primaryFeedId;
   /**
    * @var string
    */
   public $primaryFeedName;
 
-  /**
-   * @param string
-   */
-  public function setDataSourceId($dataSourceId)
-  {
-    $this->dataSourceId = $dataSourceId;
-  }
-  /**
-   * @return string
-   */
-  public function getDataSourceId()
-  {
-    return $this->dataSourceId;
-  }
   /**
    * @param string
    */

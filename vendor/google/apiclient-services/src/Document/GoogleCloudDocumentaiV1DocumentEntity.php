@@ -36,10 +36,6 @@ class GoogleCloudDocumentaiV1DocumentEntity extends \Google\Collection
    * @var string
    */
   public $mentionText;
-  /**
-   * @var string
-   */
-  public $method;
   protected $normalizedValueType = GoogleCloudDocumentaiV1DocumentEntityNormalizedValue::class;
   protected $normalizedValueDataType = '';
   protected $pageAnchorType = GoogleCloudDocumentaiV1DocumentPageAnchor::class;
@@ -114,20 +110,6 @@ class GoogleCloudDocumentaiV1DocumentEntity extends \Google\Collection
   public function getMentionText()
   {
     return $this->mentionText;
-  }
-  /**
-   * @param string
-   */
-  public function setMethod($method)
-  {
-    $this->method = $method;
-  }
-  /**
-   * @return string
-   */
-  public function getMethod()
-  {
-    return $this->method;
   }
   /**
    * @param GoogleCloudDocumentaiV1DocumentEntityNormalizedValue

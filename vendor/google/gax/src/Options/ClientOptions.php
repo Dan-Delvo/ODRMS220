@@ -59,7 +59,7 @@ use Psr\Log\LoggerInterface;
  * Note: It's possible to pass an associative array to the API clients as well,
  * as ClientOptions will still be used internally for validation.
  */
-class ClientOptions implements ArrayAccess, OptionsInterface
+class ClientOptions implements ArrayAccess
 {
     use OptionsTrait;
 
@@ -112,22 +112,14 @@ class ClientOptions implements ArrayAccess, OptionsInterface
      *           path to a JSON file, or a PHP array containing the decoded JSON data.
      *           By default this settings points to the default client config file, which is provided
      *           in the resources folder.
-     *     @type FetchAuthTokenInterface|CredentialsWrapper $credentials
-     *           This option should only be used with a pre-constructed \Google\Auth\FetchAuthTokenInterface
-     *           object or \Google\ApiCore\CredentialsWrapper object. Note that when one of these objects
-     *           are provided, any settings in $authConfig will be ignored.
-     *           **Important**: If you are providing a path to a credentials file, or a decoded credentials
-     *           file as a PHP array, this usage is now DEPRECATED. Providing an unvalidated credential
-     *           configuration to Google APIs can compromise the security of your systems and data. It is now
-     *           recommended to create the credentials explicitly:
-     *           ```
-     *           use Google\Auth\Credentials\ServiceAccountCredentials;
-     *           use Google\ApiCore\Options\ClientOptions;
-     *           $creds = new ServiceAccountCredentials($scopes, $json);
-     *           $options = new ClientOptions(['credentials' => $creds]);
-     *           ```
-     *           For more information
-     *           {@see https://cloud.google.com/docs/authentication/external/externally-sourced-credentials}
+     *     @type string|array|FetchAuthTokenInterface|CredentialsWrapper $credentials
+     *           The credentials to be used by the client to authorize API calls. This option
+     *           accepts either a path to a credentials file, or a decoded credentials file as a
+     *           PHP array.
+     *           *Advanced usage*: In addition, this option can also accept a pre-constructed
+     *           \Google\Auth\FetchAuthTokenInterface object or \Google\ApiCore\CredentialsWrapper
+     *           object. Note that when one of these objects are provided, any settings in
+     *           $authConfig will be ignored.
      *     @type array $credentialsConfig
      *           Options used to configure credentials, including auth token caching, for the client.
      *           For a full list of supporting configuration options, see
@@ -204,35 +196,25 @@ class ClientOptions implements ArrayAccess, OptionsInterface
 
     /**
      * @param ?string $apiEndpoint
-     *
-     * @return $this
      */
-    public function setApiEndpoint(?string $apiEndpoint): self
+    public function setApiEndpoint(?string $apiEndpoint): void
     {
         $this->apiEndpoint = $apiEndpoint;
-
-        return $this;
     }
 
     /**
      * @param bool $disableRetries
-     *
-     * @return $this
      */
-    public function setDisableRetries(bool $disableRetries): self
+    public function setDisableRetries(bool $disableRetries): void
     {
         $this->disableRetries = $disableRetries;
-
-        return $this;
     }
 
     /**
      * @param string|array $clientConfig
-     *
-     * @return $this
      * @throws InvalidArgumentException
      */
-    public function setClientConfig($clientConfig): self
+    public function setClientConfig($clientConfig): void
     {
         if (is_string($clientConfig)) {
             $this->clientConfig = json_decode(file_get_contents($clientConfig), true);
@@ -241,181 +223,123 @@ class ClientOptions implements ArrayAccess, OptionsInterface
         } else {
             throw new InvalidArgumentException('Invalid client config');
         }
-
-        return $this;
     }
 
     /**
      * @param string|array|FetchAuthTokenInterface|CredentialsWrapper|null $credentials
-     *
-     * @return $this
      */
-    public function setCredentials($credentials): self
+    public function setCredentials($credentials): void
     {
         $this->credentials = $credentials;
-
-        return $this;
     }
 
     /**
      * @param array $credentialsConfig
-     *
-     * @return $this
      */
-    public function setCredentialsConfig(array $credentialsConfig): self
+    public function setCredentialsConfig(array $credentialsConfig): void
     {
         $this->credentialsConfig = $credentialsConfig;
-
-        return $this;
     }
 
     /**
      * @param string|TransportInterface|null $transport
-     *
-     * @return $this
      */
-    public function setTransport($transport): self
+    public function setTransport($transport): void
     {
         $this->transport = $transport;
-
-        return $this;
     }
 
     /**
      * @param TransportOptions $transportConfig
-     *
-     * @return $this
      */
-    public function setTransportConfig(TransportOptions $transportConfig): self
+    public function setTransportConfig(TransportOptions $transportConfig): void
     {
         $this->transportConfig = $transportConfig;
-
-        return $this;
     }
 
     /**
      * @param ?string $versionFile
-     *
-     * @return $this
      */
-    public function setVersionFile(?string $versionFile): self
+    public function setVersionFile(?string $versionFile): void
     {
         $this->versionFile = $versionFile;
-
-        return $this;
     }
 
     /**
      * @param ?string $descriptorsConfigPath
-     *
-     * @return $this
      */
-    private function setDescriptorsConfigPath(?string $descriptorsConfigPath): self
+    private function setDescriptorsConfigPath(?string $descriptorsConfigPath)
     {
         if (!is_null($descriptorsConfigPath)) {
             self::validateFileExists($descriptorsConfigPath);
         }
         $this->descriptorsConfigPath = $descriptorsConfigPath;
-
-        return $this;
     }
 
     /**
      * @param ?string $serviceName
-     *
-     * @return $this
      */
-    public function setServiceName(?string $serviceName): self
+    public function setServiceName(?string $serviceName): void
     {
         $this->serviceName = $serviceName;
-
-        return $this;
     }
 
     /**
      * @param ?string $libName
-     *
-     * @return $this
      */
-    public function setLibName(?string $libName): self
+    public function setLibName(?string $libName): void
     {
         $this->libName = $libName;
-
-        return $this;
     }
 
     /**
      * @param ?string $libVersion
-     *
-     * @return $this
      */
-    public function setLibVersion(?string $libVersion): self
+    public function setLibVersion(?string $libVersion): void
     {
         $this->libVersion = $libVersion;
-
-        return $this;
     }
 
     /**
      * @param ?string $gapicVersion
-     *
-     * @return $this
      */
-    public function setGapicVersion(?string $gapicVersion): self
+    public function setGapicVersion(?string $gapicVersion): void
     {
         $this->gapicVersion = $gapicVersion;
-
-        return $this;
     }
 
     /**
      * @param ?callable $clientCertSource
-     *
-     * @return $this
      */
-    public function setClientCertSource(?callable $clientCertSource): self
+    public function setClientCertSource(?callable $clientCertSource)
     {
         if (!is_null($clientCertSource)) {
             $clientCertSource = Closure::fromCallable($clientCertSource);
         }
         $this->clientCertSource = $clientCertSource;
-
-        return $this;
     }
 
     /**
      * @param string $universeDomain
-     *
-     * @return $this
      */
-    public function setUniverseDomain(?string $universeDomain): self
+    public function setUniverseDomain(?string $universeDomain)
     {
         $this->universeDomain = $universeDomain;
-
-        return $this;
     }
 
     /**
      * @param string $apiKey
-     *
-     * @return $this
      */
-    public function setApiKey(?string $apiKey): self
+    public function setApiKey(?string $apiKey)
     {
         $this->apiKey = $apiKey;
-
-        return $this;
     }
 
     /**
      * @param null|false|LoggerInterface $logger
-     *
-     * @return $this
      */
-    public function setLogger(null|false|LoggerInterface $logger): self
+    public function setLogger(null|false|LoggerInterface $logger)
     {
         $this->logger = $logger;
-
-        return $this;
     }
 }

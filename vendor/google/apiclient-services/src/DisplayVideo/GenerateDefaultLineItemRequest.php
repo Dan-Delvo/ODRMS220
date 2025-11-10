@@ -22,10 +22,6 @@ class GenerateDefaultLineItemRequest extends \Google\Model
   /**
    * @var string
    */
-  public $containsEuPoliticalAds;
-  /**
-   * @var string
-   */
   public $displayName;
   /**
    * @var string
@@ -38,20 +34,6 @@ class GenerateDefaultLineItemRequest extends \Google\Model
   protected $mobileAppType = MobileApp::class;
   protected $mobileAppDataType = '';
 
-  /**
-   * @param string
-   */
-  public function setContainsEuPoliticalAds($containsEuPoliticalAds)
-  {
-    $this->containsEuPoliticalAds = $containsEuPoliticalAds;
-  }
-  /**
-   * @return string
-   */
-  public function getContainsEuPoliticalAds()
-  {
-    return $this->containsEuPoliticalAds;
-  }
   /**
    * @param string
    */

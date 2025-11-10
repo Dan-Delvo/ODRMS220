@@ -19,15 +19,13 @@ namespace Google\Service\Bigquery;
 
 class VectorSearchStatistics extends \Google\Collection
 {
-  protected $collection_key = 'storedColumnsUsages';
+  protected $collection_key = 'indexUnusedReasons';
   protected $indexUnusedReasonsType = IndexUnusedReason::class;
   protected $indexUnusedReasonsDataType = 'array';
   /**
    * @var string
    */
   public $indexUsageMode;
-  protected $storedColumnsUsagesType = StoredColumnsUsage::class;
-  protected $storedColumnsUsagesDataType = 'array';
 
   /**
    * @param IndexUnusedReason[]
@@ -56,20 +54,6 @@ class VectorSearchStatistics extends \Google\Collection
   public function getIndexUsageMode()
   {
     return $this->indexUsageMode;
-  }
-  /**
-   * @param StoredColumnsUsage[]
-   */
-  public function setStoredColumnsUsages($storedColumnsUsages)
-  {
-    $this->storedColumnsUsages = $storedColumnsUsages;
-  }
-  /**
-   * @return StoredColumnsUsage[]
-   */
-  public function getStoredColumnsUsages()
-  {
-    return $this->storedColumnsUsages;
   }
 }
 

@@ -48,8 +48,6 @@ class HardwareInfo extends \Google\Collection
    * @var string
    */
   public $enterpriseSpecificId;
-  protected $euiccChipInfoType = EuiccChipInfo::class;
-  protected $euiccChipInfoDataType = 'array';
   /**
    * @var float[]
    */
@@ -180,20 +178,6 @@ class HardwareInfo extends \Google\Collection
   public function getEnterpriseSpecificId()
   {
     return $this->enterpriseSpecificId;
-  }
-  /**
-   * @param EuiccChipInfo[]
-   */
-  public function setEuiccChipInfo($euiccChipInfo)
-  {
-    $this->euiccChipInfo = $euiccChipInfo;
-  }
-  /**
-   * @return EuiccChipInfo[]
-   */
-  public function getEuiccChipInfo()
-  {
-    return $this->euiccChipInfo;
   }
   /**
    * @param float[]

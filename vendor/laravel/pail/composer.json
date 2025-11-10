@@ -1,7 +1,7 @@
 {
     "name": "laravel/pail",
     "description": "Easily delve into your Laravel application's log files directly from the command line.",
-    "keywords": ["php", "tail", "laravel", "logs", "dev"],
+    "keywords": ["php", "tail", "laravel", "logs"],
     "homepage": "https://github.com/laravel/pail",
     "license": "MIT",
     "support": {
@@ -21,21 +21,21 @@
     "require": {
         "php": "^8.2",
         "ext-mbstring": "*",
-        "illuminate/console": "^10.24|^11.0|^12.0",
-        "illuminate/contracts": "^10.24|^11.0|^12.0",
-        "illuminate/log": "^10.24|^11.0|^12.0",
-        "illuminate/process": "^10.24|^11.0|^12.0",
-        "illuminate/support": "^10.24|^11.0|^12.0",
+        "illuminate/console": "^10.24|^11.0",
+        "illuminate/contracts": "^10.24|^11.0",
+        "illuminate/log": "^10.24|^11.0",
+        "illuminate/process": "^10.24|^11.0",
+        "illuminate/support": "^10.24|^11.0",
         "nunomaduro/termwind": "^1.15|^2.0",
         "symfony/console": "^6.0|^7.0"
     },
     "require-dev": {
-        "laravel/framework": "^10.24|^11.0|^12.0",
+        "laravel/framework": "^10.24|^11.0",
         "laravel/pint": "^1.13",
-        "orchestra/testbench-core": "^8.13|^9.0|^10.0",
-        "pestphp/pest": "^2.20|^3.0",
-        "pestphp/pest-plugin-type-coverage": "^2.3|^3.0",
-        "phpstan/phpstan": "^1.12.27",
+        "orchestra/testbench-core": "^8.12|^9.0",
+        "pestphp/pest": "^2.20",
+        "pestphp/pest-plugin-type-coverage": "^2.3",
+        "phpstan/phpstan": "^1.10",
         "symfony/var-dumper": "^6.3|^7.0"
     },
     "autoload": {

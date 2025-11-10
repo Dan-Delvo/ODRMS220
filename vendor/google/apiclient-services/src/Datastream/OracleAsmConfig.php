@@ -44,10 +44,6 @@ class OracleAsmConfig extends \Google\Model
   /**
    * @var string
    */
-  public $secretManagerStoredPassword;
-  /**
-   * @var string
-   */
   public $username;
 
   /**
@@ -133,20 +129,6 @@ class OracleAsmConfig extends \Google\Model
   public function getPort()
   {
     return $this->port;
-  }
-  /**
-   * @param string
-   */
-  public function setSecretManagerStoredPassword($secretManagerStoredPassword)
-  {
-    $this->secretManagerStoredPassword = $secretManagerStoredPassword;
-  }
-  /**
-   * @return string
-   */
-  public function getSecretManagerStoredPassword()
-  {
-    return $this->secretManagerStoredPassword;
   }
   /**
    * @param string

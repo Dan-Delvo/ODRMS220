@@ -17,15 +17,10 @@
 
 namespace Google\Service\Container;
 
-class IPAllocationPolicy extends \Google\Collection
+class IPAllocationPolicy extends \Google\Model
 {
-  protected $collection_key = 'additionalIpRangesConfigs';
-  protected $additionalIpRangesConfigsType = AdditionalIPRangesConfig::class;
-  protected $additionalIpRangesConfigsDataType = 'array';
   protected $additionalPodRangesConfigType = AdditionalPodRangesConfig::class;
   protected $additionalPodRangesConfigDataType = '';
-  protected $autoIpamConfigType = AutoIpamConfig::class;
-  protected $autoIpamConfigDataType = '';
   /**
    * @var string
    */
@@ -47,8 +42,6 @@ class IPAllocationPolicy extends \Google\Collection
    * @var string
    */
   public $ipv6AccessType;
-  protected $networkTierConfigType = NetworkTierConfig::class;
-  protected $networkTierConfigDataType = '';
   /**
    * @var string
    */
@@ -101,20 +94,6 @@ class IPAllocationPolicy extends \Google\Collection
   public $useRoutes;
 
   /**
-   * @param AdditionalIPRangesConfig[]
-   */
-  public function setAdditionalIpRangesConfigs($additionalIpRangesConfigs)
-  {
-    $this->additionalIpRangesConfigs = $additionalIpRangesConfigs;
-  }
-  /**
-   * @return AdditionalIPRangesConfig[]
-   */
-  public function getAdditionalIpRangesConfigs()
-  {
-    return $this->additionalIpRangesConfigs;
-  }
-  /**
    * @param AdditionalPodRangesConfig
    */
   public function setAdditionalPodRangesConfig(AdditionalPodRangesConfig $additionalPodRangesConfig)
@@ -127,20 +106,6 @@ class IPAllocationPolicy extends \Google\Collection
   public function getAdditionalPodRangesConfig()
   {
     return $this->additionalPodRangesConfig;
-  }
-  /**
-   * @param AutoIpamConfig
-   */
-  public function setAutoIpamConfig(AutoIpamConfig $autoIpamConfig)
-  {
-    $this->autoIpamConfig = $autoIpamConfig;
-  }
-  /**
-   * @return AutoIpamConfig
-   */
-  public function getAutoIpamConfig()
-  {
-    return $this->autoIpamConfig;
   }
   /**
    * @param string
@@ -219,20 +184,6 @@ class IPAllocationPolicy extends \Google\Collection
   public function getIpv6AccessType()
   {
     return $this->ipv6AccessType;
-  }
-  /**
-   * @param NetworkTierConfig
-   */
-  public function setNetworkTierConfig(NetworkTierConfig $networkTierConfig)
-  {
-    $this->networkTierConfig = $networkTierConfig;
-  }
-  /**
-   * @return NetworkTierConfig
-   */
-  public function getNetworkTierConfig()
-  {
-    return $this->networkTierConfig;
   }
   /**
    * @param string

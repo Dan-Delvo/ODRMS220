@@ -34,18 +34,6 @@ class HybridPeeringDetails extends \Google\Model
   /**
    * @var string
    */
-  public $peerClusterName;
-  /**
-   * @var string
-   */
-  public $peerSvmName;
-  /**
-   * @var string
-   */
-  public $peerVolumeName;
-  /**
-   * @var string
-   */
   public $subnetIp;
 
   /**
@@ -89,48 +77,6 @@ class HybridPeeringDetails extends \Google\Model
   public function getPassphrase()
   {
     return $this->passphrase;
-  }
-  /**
-   * @param string
-   */
-  public function setPeerClusterName($peerClusterName)
-  {
-    $this->peerClusterName = $peerClusterName;
-  }
-  /**
-   * @return string
-   */
-  public function getPeerClusterName()
-  {
-    return $this->peerClusterName;
-  }
-  /**
-   * @param string
-   */
-  public function setPeerSvmName($peerSvmName)
-  {
-    $this->peerSvmName = $peerSvmName;
-  }
-  /**
-   * @return string
-   */
-  public function getPeerSvmName()
-  {
-    return $this->peerSvmName;
-  }
-  /**
-   * @param string
-   */
-  public function setPeerVolumeName($peerVolumeName)
-  {
-    $this->peerVolumeName = $peerVolumeName;
-  }
-  /**
-   * @return string
-   */
-  public function getPeerVolumeName()
-  {
-    return $this->peerVolumeName;
   }
   /**
    * @param string

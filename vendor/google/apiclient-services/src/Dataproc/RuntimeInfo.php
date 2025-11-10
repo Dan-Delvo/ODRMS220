@@ -35,8 +35,6 @@ class RuntimeInfo extends \Google\Model
    * @var string
    */
   public $outputUri;
-  protected $propertiesInfoType = PropertiesInfo::class;
-  protected $propertiesInfoDataType = '';
 
   /**
    * @param UsageMetrics
@@ -107,20 +105,6 @@ class RuntimeInfo extends \Google\Model
   public function getOutputUri()
   {
     return $this->outputUri;
-  }
-  /**
-   * @param PropertiesInfo
-   */
-  public function setPropertiesInfo(PropertiesInfo $propertiesInfo)
-  {
-    $this->propertiesInfo = $propertiesInfo;
-  }
-  /**
-   * @return PropertiesInfo
-   */
-  public function getPropertiesInfo()
-  {
-    return $this->propertiesInfo;
   }
 }
 

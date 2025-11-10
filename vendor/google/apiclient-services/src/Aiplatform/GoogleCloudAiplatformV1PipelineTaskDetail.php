@@ -60,10 +60,6 @@ class GoogleCloudAiplatformV1PipelineTaskDetail extends \Google\Collection
    * @var string
    */
   public $taskName;
-  /**
-   * @var string
-   */
-  public $taskUniqueName;
 
   /**
    * @param string
@@ -246,20 +242,6 @@ class GoogleCloudAiplatformV1PipelineTaskDetail extends \Google\Collection
   public function getTaskName()
   {
     return $this->taskName;
-  }
-  /**
-   * @param string
-   */
-  public function setTaskUniqueName($taskUniqueName)
-  {
-    $this->taskUniqueName = $taskUniqueName;
-  }
-  /**
-   * @return string
-   */
-  public function getTaskUniqueName()
-  {
-    return $this->taskUniqueName;
   }
 }
 

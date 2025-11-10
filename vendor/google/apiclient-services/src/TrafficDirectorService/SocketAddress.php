@@ -34,10 +34,6 @@ class SocketAddress extends \Google\Model
   /**
    * @var string
    */
-  public $networkNamespaceFilepath;
-  /**
-   * @var string
-   */
   public $portValue;
   /**
    * @var string
@@ -89,20 +85,6 @@ class SocketAddress extends \Google\Model
   public function getNamedPort()
   {
     return $this->namedPort;
-  }
-  /**
-   * @param string
-   */
-  public function setNetworkNamespaceFilepath($networkNamespaceFilepath)
-  {
-    $this->networkNamespaceFilepath = $networkNamespaceFilepath;
-  }
-  /**
-   * @return string
-   */
-  public function getNetworkNamespaceFilepath()
-  {
-    return $this->networkNamespaceFilepath;
   }
   /**
    * @param string

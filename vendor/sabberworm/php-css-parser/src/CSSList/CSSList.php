@@ -4,14 +4,11 @@ namespace Sabberworm\CSS\CSSList;
 
 use Sabberworm\CSS\Comment\Comment;
 use Sabberworm\CSS\Comment\Commentable;
-use Sabberworm\CSS\CSSElement;
 use Sabberworm\CSS\OutputFormat;
 use Sabberworm\CSS\Parsing\ParserState;
 use Sabberworm\CSS\Parsing\SourceException;
 use Sabberworm\CSS\Parsing\UnexpectedEOFException;
 use Sabberworm\CSS\Parsing\UnexpectedTokenException;
-use Sabberworm\CSS\Position\Position;
-use Sabberworm\CSS\Position\Positionable;
 use Sabberworm\CSS\Property\AtRule;
 use Sabberworm\CSS\Property\Charset;
 use Sabberworm\CSS\Property\CSSNamespace;
@@ -32,23 +29,22 @@ use Sabberworm\CSS\Value\Value;
  *
  * It can also contain `Import` and `Charset` objects stemming from at-rules.
  */
-abstract class CSSList implements Commentable, CSSElement, Positionable
+abstract class CSSList implements Renderable, Commentable
 {
-    use Position;
-
     /**
      * @var array<array-key, Comment>
-     *
-     * @internal since 8.8.0
      */
     protected $aComments;
 
     /**
      * @var array<int, RuleSet|CSSList|Import|Charset>
-     *
-     * @internal since 8.8.0
      */
     protected $aContents;
+
+    /**
+     * @var int
+     */
+    protected $iLineNo;
 
     /**
      * @param int $iLineNo
@@ -57,7 +53,7 @@ abstract class CSSList implements Commentable, CSSElement, Positionable
     {
         $this->aComments = [];
         $this->aContents = [];
-        $this->setPosition($iLineNo);
+        $this->iLineNo = $iLineNo;
     }
 
     /**
@@ -65,8 +61,6 @@ abstract class CSSList implements Commentable, CSSElement, Positionable
      *
      * @throws UnexpectedTokenException
      * @throws SourceException
-     *
-     * @internal since V8.8.0
      */
     public static function parseList(ParserState $oParserState, CSSList $oList)
     {
@@ -257,6 +251,14 @@ abstract class CSSList implements Commentable, CSSElement, Positionable
     }
 
     /**
+     * @return int
+     */
+    public function getLineNo()
+    {
+        return $this->iLineNo;
+    }
+
+    /**
      * Prepends an item to the list of contents.
      *
      * @param RuleSet|CSSList|Import|Charset $oItem
@@ -406,8 +408,6 @@ abstract class CSSList implements Commentable, CSSElement, Positionable
 
     /**
      * @return string
-     *
-     * @deprecated in V8.8.0, will be removed in V9.0.0. Use `render` instead.
      */
     public function __toString()
     {

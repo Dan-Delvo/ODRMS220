@@ -39,8 +39,6 @@ class Request extends \Google\Model
   protected $addSheetDataType = '';
   protected $addSlicerType = AddSlicerRequest::class;
   protected $addSlicerDataType = '';
-  protected $addTableType = AddTableRequest::class;
-  protected $addTableDataType = '';
   protected $appendCellsType = AppendCellsRequest::class;
   protected $appendCellsDataType = '';
   protected $appendDimensionType = AppendDimensionRequest::class;
@@ -85,8 +83,6 @@ class Request extends \Google\Model
   protected $deleteRangeDataType = '';
   protected $deleteSheetType = DeleteSheetRequest::class;
   protected $deleteSheetDataType = '';
-  protected $deleteTableType = DeleteTableRequest::class;
-  protected $deleteTableDataType = '';
   protected $duplicateFilterViewType = DuplicateFilterViewRequest::class;
   protected $duplicateFilterViewDataType = '';
   protected $duplicateSheetType = DuplicateSheetRequest::class;
@@ -155,8 +151,6 @@ class Request extends \Google\Model
   protected $updateSlicerSpecDataType = '';
   protected $updateSpreadsheetPropertiesType = UpdateSpreadsheetPropertiesRequest::class;
   protected $updateSpreadsheetPropertiesDataType = '';
-  protected $updateTableType = UpdateTableRequest::class;
-  protected $updateTableDataType = '';
 
   /**
    * @param AddBandingRequest
@@ -297,20 +291,6 @@ class Request extends \Google\Model
   public function getAddSlicer()
   {
     return $this->addSlicer;
-  }
-  /**
-   * @param AddTableRequest
-   */
-  public function setAddTable(AddTableRequest $addTable)
-  {
-    $this->addTable = $addTable;
-  }
-  /**
-   * @return AddTableRequest
-   */
-  public function getAddTable()
-  {
-    return $this->addTable;
   }
   /**
    * @param AppendCellsRequest
@@ -619,20 +599,6 @@ class Request extends \Google\Model
   public function getDeleteSheet()
   {
     return $this->deleteSheet;
-  }
-  /**
-   * @param DeleteTableRequest
-   */
-  public function setDeleteTable(DeleteTableRequest $deleteTable)
-  {
-    $this->deleteTable = $deleteTable;
-  }
-  /**
-   * @return DeleteTableRequest
-   */
-  public function getDeleteTable()
-  {
-    return $this->deleteTable;
   }
   /**
    * @param DuplicateFilterViewRequest
@@ -1109,20 +1075,6 @@ class Request extends \Google\Model
   public function getUpdateSpreadsheetProperties()
   {
     return $this->updateSpreadsheetProperties;
-  }
-  /**
-   * @param UpdateTableRequest
-   */
-  public function setUpdateTable(UpdateTableRequest $updateTable)
-  {
-    $this->updateTable = $updateTable;
-  }
-  /**
-   * @return UpdateTableRequest
-   */
-  public function getUpdateTable()
-  {
-    return $this->updateTable;
   }
 }
 

@@ -43,8 +43,6 @@ class GoogleCloudAiplatformV1Candidate extends \Google\Collection
   protected $logprobsResultDataType = '';
   protected $safetyRatingsType = GoogleCloudAiplatformV1SafetyRating::class;
   protected $safetyRatingsDataType = 'array';
-  protected $urlContextMetadataType = GoogleCloudAiplatformV1UrlContextMetadata::class;
-  protected $urlContextMetadataDataType = '';
 
   public function setAvgLogprobs($avgLogprobs)
   {
@@ -165,20 +163,6 @@ class GoogleCloudAiplatformV1Candidate extends \Google\Collection
   public function getSafetyRatings()
   {
     return $this->safetyRatings;
-  }
-  /**
-   * @param GoogleCloudAiplatformV1UrlContextMetadata
-   */
-  public function setUrlContextMetadata(GoogleCloudAiplatformV1UrlContextMetadata $urlContextMetadata)
-  {
-    $this->urlContextMetadata = $urlContextMetadata;
-  }
-  /**
-   * @return GoogleCloudAiplatformV1UrlContextMetadata
-   */
-  public function getUrlContextMetadata()
-  {
-    return $this->urlContextMetadata;
   }
 }
 

@@ -3,7 +3,7 @@
 /*
  * This file is part of Psy Shell.
  *
- * (c) 2012-2025 Justin Hileman
+ * (c) 2012-2023 Justin Hileman
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -57,8 +57,6 @@ class UseStatementPass extends CodeCleanerPass
                 $this->aliases = $this->lastAliases;
             }
         }
-
-        return null;
     }
 
     /**
@@ -102,17 +100,16 @@ class UseStatementPass extends CodeCleanerPass
             $this->lastAliases = $this->aliases;
             $this->aliases = [];
 
-            return null;
+            return;
         }
 
         // Do nothing with UseItem; this an entry in the list of uses in the use statement.
         // @todo Remove UseUse once we drop support for PHP-Parser 4.x
         if ($node instanceof UseUse || $node instanceof UseItem) {
-            return null;
+            return;
         }
 
         // For everything else, we'll implicitly thunk all aliases into fully-qualified names.
-        // @phpstan-ignore-next-line foreach.nonIterable (Node implements Traversable)
         foreach ($node as $name => $subNode) {
             if ($subNode instanceof Name) {
                 if ($replacement = $this->findAlias($subNode)) {
@@ -141,7 +138,5 @@ class UseStatementPass extends CodeCleanerPass
                 return new FullyQualifiedName($prefix->toString().\substr($name, \strlen($alias)));
             }
         }
-
-        return null;
     }
 }

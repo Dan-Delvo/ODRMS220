@@ -59,12 +59,12 @@ class QueuedClosure
     /**
      * Set the desired connection for the job.
      *
-     * @param  \UnitEnum|string|null  $connection
+     * @param  string|null  $connection
      * @return $this
      */
     public function onConnection($connection)
     {
-        $this->connection = enum_value($connection);
+        $this->connection = $connection;
 
         return $this;
     }
@@ -72,7 +72,7 @@ class QueuedClosure
     /**
      * Set the desired queue for the job.
      *
-     * @param  \UnitEnum|string|null  $queue
+     * @param  \BackedEnum|string|null  $queue
      * @return $this
      */
     public function onQueue($queue)

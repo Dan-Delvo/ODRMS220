@@ -4,7 +4,6 @@ namespace Maatwebsite\Excel\Jobs;
 
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
-use Illuminate\Queue\InteractsWithQueue;
 use Maatwebsite\Excel\Concerns\WithMultipleSheets;
 use Maatwebsite\Excel\Exceptions\NoSheetsFoundException;
 use Maatwebsite\Excel\Files\TemporaryFile;
@@ -14,7 +13,7 @@ use Throwable;
 
 class QueueExport implements ShouldQueue
 {
-    use ExtendedQueueable, Dispatchable, InteractsWithQueue;
+    use ExtendedQueueable, Dispatchable;
 
     /**
      * @var object

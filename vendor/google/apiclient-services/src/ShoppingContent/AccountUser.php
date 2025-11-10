@@ -42,10 +42,6 @@ class AccountUser extends \Google\Model
   /**
    * @var bool
    */
-  public $readOnly;
-  /**
-   * @var bool
-   */
   public $reportingManager;
 
   /**
@@ -117,20 +113,6 @@ class AccountUser extends \Google\Model
   public function getPaymentsManager()
   {
     return $this->paymentsManager;
-  }
-  /**
-   * @param bool
-   */
-  public function setReadOnly($readOnly)
-  {
-    $this->readOnly = $readOnly;
-  }
-  /**
-   * @return bool
-   */
-  public function getReadOnly()
-  {
-    return $this->readOnly;
   }
   /**
    * @param bool

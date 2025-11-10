@@ -23,8 +23,6 @@ use Google\Cloud\Core\Iterator\ItemIteratorTrait;
  * ObjectIterator
  *
  * Iterates over a set of {@see StorageObject} items.
- *
- * @implements \Iterator<int, StorageObject>
  */
 class ObjectIterator implements \Iterator
 {

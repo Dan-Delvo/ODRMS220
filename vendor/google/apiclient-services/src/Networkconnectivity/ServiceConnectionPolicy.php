@@ -20,8 +20,6 @@ namespace Google\Service\Networkconnectivity;
 class ServiceConnectionPolicy extends \Google\Collection
 {
   protected $collection_key = 'pscConnections';
-  protected $autoCreatedSubnetInfoType = AutoCreatedSubnetworkInfo::class;
-  protected $autoCreatedSubnetInfoDataType = '';
   /**
    * @var string
    */
@@ -63,20 +61,6 @@ class ServiceConnectionPolicy extends \Google\Collection
    */
   public $updateTime;
 
-  /**
-   * @param AutoCreatedSubnetworkInfo
-   */
-  public function setAutoCreatedSubnetInfo(AutoCreatedSubnetworkInfo $autoCreatedSubnetInfo)
-  {
-    $this->autoCreatedSubnetInfo = $autoCreatedSubnetInfo;
-  }
-  /**
-   * @return AutoCreatedSubnetworkInfo
-   */
-  public function getAutoCreatedSubnetInfo()
-  {
-    return $this->autoCreatedSubnetInfo;
-  }
   /**
    * @param string
    */

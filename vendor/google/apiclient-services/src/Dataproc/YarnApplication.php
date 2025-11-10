@@ -22,10 +22,6 @@ class YarnApplication extends \Google\Model
   /**
    * @var string
    */
-  public $memoryMbSeconds;
-  /**
-   * @var string
-   */
   public $name;
   /**
    * @var float
@@ -39,25 +35,7 @@ class YarnApplication extends \Google\Model
    * @var string
    */
   public $trackingUrl;
-  /**
-   * @var string
-   */
-  public $vcoreSeconds;
 
-  /**
-   * @param string
-   */
-  public function setMemoryMbSeconds($memoryMbSeconds)
-  {
-    $this->memoryMbSeconds = $memoryMbSeconds;
-  }
-  /**
-   * @return string
-   */
-  public function getMemoryMbSeconds()
-  {
-    return $this->memoryMbSeconds;
-  }
   /**
    * @param string
    */
@@ -113,20 +91,6 @@ class YarnApplication extends \Google\Model
   public function getTrackingUrl()
   {
     return $this->trackingUrl;
-  }
-  /**
-   * @param string
-   */
-  public function setVcoreSeconds($vcoreSeconds)
-  {
-    $this->vcoreSeconds = $vcoreSeconds;
-  }
-  /**
-   * @return string
-   */
-  public function getVcoreSeconds()
-  {
-    return $this->vcoreSeconds;
   }
 }
 

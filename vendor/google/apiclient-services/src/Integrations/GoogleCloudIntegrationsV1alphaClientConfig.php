@@ -33,8 +33,6 @@ class GoogleCloudIntegrationsV1alphaClientConfig extends \Google\Model
    * @var string
    */
   public $createTime;
-  protected $customerConfigType = GoogleCloudIntegrationsV1alphaCustomerConfig::class;
-  protected $customerConfigDataType = '';
   /**
    * @var string
    */
@@ -42,15 +40,7 @@ class GoogleCloudIntegrationsV1alphaClientConfig extends \Google\Model
   /**
    * @var bool
    */
-  public $enableHttpCall;
-  /**
-   * @var bool
-   */
   public $enableInternalIp;
-  /**
-   * @var bool
-   */
-  public $enableManagedAiFeatures;
   /**
    * @var bool
    */
@@ -137,20 +127,6 @@ class GoogleCloudIntegrationsV1alphaClientConfig extends \Google\Model
     return $this->createTime;
   }
   /**
-   * @param GoogleCloudIntegrationsV1alphaCustomerConfig
-   */
-  public function setCustomerConfig(GoogleCloudIntegrationsV1alphaCustomerConfig $customerConfig)
-  {
-    $this->customerConfig = $customerConfig;
-  }
-  /**
-   * @return GoogleCloudIntegrationsV1alphaCustomerConfig
-   */
-  public function getCustomerConfig()
-  {
-    return $this->customerConfig;
-  }
-  /**
    * @param string
    */
   public function setDescription($description)
@@ -167,20 +143,6 @@ class GoogleCloudIntegrationsV1alphaClientConfig extends \Google\Model
   /**
    * @param bool
    */
-  public function setEnableHttpCall($enableHttpCall)
-  {
-    $this->enableHttpCall = $enableHttpCall;
-  }
-  /**
-   * @return bool
-   */
-  public function getEnableHttpCall()
-  {
-    return $this->enableHttpCall;
-  }
-  /**
-   * @param bool
-   */
   public function setEnableInternalIp($enableInternalIp)
   {
     $this->enableInternalIp = $enableInternalIp;
@@ -191,20 +153,6 @@ class GoogleCloudIntegrationsV1alphaClientConfig extends \Google\Model
   public function getEnableInternalIp()
   {
     return $this->enableInternalIp;
-  }
-  /**
-   * @param bool
-   */
-  public function setEnableManagedAiFeatures($enableManagedAiFeatures)
-  {
-    $this->enableManagedAiFeatures = $enableManagedAiFeatures;
-  }
-  /**
-   * @return bool
-   */
-  public function getEnableManagedAiFeatures()
-  {
-    return $this->enableManagedAiFeatures;
   }
   /**
    * @param bool

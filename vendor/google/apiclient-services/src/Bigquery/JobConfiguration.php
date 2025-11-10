@@ -41,16 +41,8 @@ class JobConfiguration extends \Google\Model
   public $labels;
   protected $loadType = JobConfigurationLoad::class;
   protected $loadDataType = '';
-  /**
-   * @var int
-   */
-  public $maxSlots;
   protected $queryType = JobConfigurationQuery::class;
   protected $queryDataType = '';
-  /**
-   * @var string
-   */
-  public $reservation;
 
   /**
    * @param JobConfigurationTableCopy
@@ -151,20 +143,6 @@ class JobConfiguration extends \Google\Model
     return $this->load;
   }
   /**
-   * @param int
-   */
-  public function setMaxSlots($maxSlots)
-  {
-    $this->maxSlots = $maxSlots;
-  }
-  /**
-   * @return int
-   */
-  public function getMaxSlots()
-  {
-    return $this->maxSlots;
-  }
-  /**
    * @param JobConfigurationQuery
    */
   public function setQuery(JobConfigurationQuery $query)
@@ -177,20 +155,6 @@ class JobConfiguration extends \Google\Model
   public function getQuery()
   {
     return $this->query;
-  }
-  /**
-   * @param string
-   */
-  public function setReservation($reservation)
-  {
-    $this->reservation = $reservation;
-  }
-  /**
-   * @return string
-   */
-  public function getReservation()
-  {
-    return $this->reservation;
   }
 }
 

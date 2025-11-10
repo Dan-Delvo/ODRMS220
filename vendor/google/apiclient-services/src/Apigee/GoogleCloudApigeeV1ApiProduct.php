@@ -84,10 +84,6 @@ class GoogleCloudApigeeV1ApiProduct extends \Google\Collection
    * @var string[]
    */
   public $scopes;
-  /**
-   * @var string
-   */
-  public $space;
 
   /**
    * @param string[]
@@ -340,20 +336,6 @@ class GoogleCloudApigeeV1ApiProduct extends \Google\Collection
   public function getScopes()
   {
     return $this->scopes;
-  }
-  /**
-   * @param string
-   */
-  public function setSpace($space)
-  {
-    $this->space = $space;
-  }
-  /**
-   * @return string
-   */
-  public function getSpace()
-  {
-    return $this->space;
   }
 }
 

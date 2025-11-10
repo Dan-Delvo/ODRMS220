@@ -40,10 +40,6 @@ class Request extends \Google\Model
   /**
    * @var string
    */
-  public $origin;
-  /**
-   * @var string
-   */
   public $path;
   /**
    * @var string
@@ -139,20 +135,6 @@ class Request extends \Google\Model
   public function getMethod()
   {
     return $this->method;
-  }
-  /**
-   * @param string
-   */
-  public function setOrigin($origin)
-  {
-    $this->origin = $origin;
-  }
-  /**
-   * @return string
-   */
-  public function getOrigin()
-  {
-    return $this->origin;
   }
   /**
    * @param string

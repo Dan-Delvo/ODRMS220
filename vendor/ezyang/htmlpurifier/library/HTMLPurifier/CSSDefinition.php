@@ -26,11 +26,6 @@ class HTMLPurifier_CSSDefinition extends HTMLPurifier_Definition
             false
         );
 
-        $this->info['direction'] = new HTMLPurifier_AttrDef_Enum(
-            ['ltr', 'rtl'],
-            false
-        );
-
         $border_style =
             $this->info['border-bottom-style'] =
             $this->info['border-right-style'] =

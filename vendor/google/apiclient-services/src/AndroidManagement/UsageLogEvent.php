@@ -25,8 +25,6 @@ class UsageLogEvent extends \Google\Model
   protected $adbShellInteractiveEventDataType = '';
   protected $appProcessStartEventType = AppProcessStartEvent::class;
   protected $appProcessStartEventDataType = '';
-  protected $backupServiceToggledEventType = BackupServiceToggledEvent::class;
-  protected $backupServiceToggledEventDataType = '';
   protected $certAuthorityInstalledEventType = CertAuthorityInstalledEvent::class;
   protected $certAuthorityInstalledEventDataType = '';
   protected $certAuthorityRemovedEventType = CertAuthorityRemovedEvent::class;
@@ -137,20 +135,6 @@ class UsageLogEvent extends \Google\Model
   public function getAppProcessStartEvent()
   {
     return $this->appProcessStartEvent;
-  }
-  /**
-   * @param BackupServiceToggledEvent
-   */
-  public function setBackupServiceToggledEvent(BackupServiceToggledEvent $backupServiceToggledEvent)
-  {
-    $this->backupServiceToggledEvent = $backupServiceToggledEvent;
-  }
-  /**
-   * @return BackupServiceToggledEvent
-   */
-  public function getBackupServiceToggledEvent()
-  {
-    return $this->backupServiceToggledEvent;
   }
   /**
    * @param CertAuthorityInstalledEvent

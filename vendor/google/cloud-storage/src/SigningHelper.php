@@ -628,7 +628,6 @@ class SigningHelper
             'headers' => [],
             'keyFile' => null,
             'keyFilePath' => null,
-            'credentialsFetcher' => null,
             'method' => 'GET',
             'queryParams' => [],
             'responseDisposition' => null,
@@ -823,8 +822,6 @@ class SigningHelper
             $scopes = $options['scopes'] ?? $rw->scopes();
 
             $credentials = CredentialsLoader::makeCredentials($scopes, $keyFile);
-        } elseif (isset($options['credentialsFetcher'])) {
-            $credentials = $options['credentialsFetcher'];
         } else {
             $credentials = $rw->getCredentialsFetcher();
         }
@@ -841,7 +838,6 @@ class SigningHelper
         unset(
             $options['keyFilePath'],
             $options['keyFile'],
-            $options['credentialsFetcher'],
             $options['scopes']
         );
 

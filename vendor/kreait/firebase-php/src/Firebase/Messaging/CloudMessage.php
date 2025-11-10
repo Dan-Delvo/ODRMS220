@@ -81,33 +81,27 @@ final class CloudMessage implements Message
 
         $new = new self(self::determineTargetFromArray($data));
 
-        $messageData = $data['data'] ?? null;
-        if ($messageData !== null) {
+        if ($messageData = ($data['data'] ?? null)) {
             $new = $new->withData($messageData);
         }
 
-        $notification = $data['notification'] ?? null;
-        if ($notification !== null) {
+        if ($notification = ($data['notification'] ?? null)) {
             $new = $new->withNotification($notification);
         }
 
-        $androidConfig = $data['android'] ?? null;
-        if ($androidConfig !== null) {
+        if ($androidConfig = ($data['android'] ?? null)) {
             $new = $new->withAndroidConfig($androidConfig);
         }
 
-        $apnsConfig = $data['apns'] ?? null;
-        if ($apnsConfig !== null) {
+        if ($apnsConfig = ($data['apns'] ?? null)) {
             $new = $new->withApnsConfig($apnsConfig);
         }
 
-        $webPushConfig = $data['webpush'] ?? null;
-        if ($webPushConfig !== null) {
+        if ($webPushConfig = ($data['webpush'] ?? null)) {
             $new = $new->withWebPushConfig($webPushConfig);
         }
 
-        $fcmOptions = $data['fcm_options'] ?? null;
-        if ($fcmOptions !== null) {
+        if ($fcmOptions = ($data['fcm_options'] ?? null)) {
             return $new->withFcmOptions($fcmOptions);
         }
 
@@ -313,18 +307,15 @@ final class CloudMessage implements Message
      */
     private static function determineTargetFromArray(array $data): MessageTarget
     {
-        $targetValue = $data[MessageTarget::CONDITION] ?? null;
-        if ($targetValue !== null) {
+        if ($targetValue = $data[MessageTarget::CONDITION] ?? null) {
             return MessageTarget::with(MessageTarget::CONDITION, $targetValue);
         }
 
-        $targetValue = $data[MessageTarget::TOKEN] ?? null;
-        if ($targetValue !== null) {
+        if ($targetValue = $data[MessageTarget::TOKEN] ?? null) {
             return MessageTarget::with(MessageTarget::TOKEN, $targetValue);
         }
 
-        $targetValue = $data[MessageTarget::TOPIC] ?? null;
-        if ($targetValue) {
+        if ($targetValue = $data[MessageTarget::TOPIC] ?? null) {
             return MessageTarget::with(MessageTarget::TOPIC, $targetValue);
         }
 

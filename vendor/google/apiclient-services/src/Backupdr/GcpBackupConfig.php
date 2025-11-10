@@ -33,14 +33,6 @@ class GcpBackupConfig extends \Google\Collection
    */
   public $backupPlanDescription;
   /**
-   * @var string
-   */
-  public $backupPlanRevisionId;
-  /**
-   * @var string
-   */
-  public $backupPlanRevisionName;
-  /**
    * @var string[]
    */
   public $backupPlanRules;
@@ -86,34 +78,6 @@ class GcpBackupConfig extends \Google\Collection
   public function getBackupPlanDescription()
   {
     return $this->backupPlanDescription;
-  }
-  /**
-   * @param string
-   */
-  public function setBackupPlanRevisionId($backupPlanRevisionId)
-  {
-    $this->backupPlanRevisionId = $backupPlanRevisionId;
-  }
-  /**
-   * @return string
-   */
-  public function getBackupPlanRevisionId()
-  {
-    return $this->backupPlanRevisionId;
-  }
-  /**
-   * @param string
-   */
-  public function setBackupPlanRevisionName($backupPlanRevisionName)
-  {
-    $this->backupPlanRevisionName = $backupPlanRevisionName;
-  }
-  /**
-   * @return string
-   */
-  public function getBackupPlanRevisionName()
-  {
-    return $this->backupPlanRevisionName;
   }
   /**
    * @param string[]

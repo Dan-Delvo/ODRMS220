@@ -19,19 +19,15 @@ namespace Google\Service\CloudAlloyDBAdmin;
 
 class PscInstanceConfig extends \Google\Collection
 {
-  protected $collection_key = 'pscInterfaceConfigs';
+  protected $collection_key = 'allowedConsumerProjects';
   /**
    * @var string[]
    */
   public $allowedConsumerProjects;
-  protected $pscAutoConnectionsType = PscAutoConnectionConfig::class;
-  protected $pscAutoConnectionsDataType = 'array';
   /**
    * @var string
    */
   public $pscDnsName;
-  protected $pscInterfaceConfigsType = PscInterfaceConfig::class;
-  protected $pscInterfaceConfigsDataType = 'array';
   /**
    * @var string
    */
@@ -52,20 +48,6 @@ class PscInstanceConfig extends \Google\Collection
     return $this->allowedConsumerProjects;
   }
   /**
-   * @param PscAutoConnectionConfig[]
-   */
-  public function setPscAutoConnections($pscAutoConnections)
-  {
-    $this->pscAutoConnections = $pscAutoConnections;
-  }
-  /**
-   * @return PscAutoConnectionConfig[]
-   */
-  public function getPscAutoConnections()
-  {
-    return $this->pscAutoConnections;
-  }
-  /**
    * @param string
    */
   public function setPscDnsName($pscDnsName)
@@ -78,20 +60,6 @@ class PscInstanceConfig extends \Google\Collection
   public function getPscDnsName()
   {
     return $this->pscDnsName;
-  }
-  /**
-   * @param PscInterfaceConfig[]
-   */
-  public function setPscInterfaceConfigs($pscInterfaceConfigs)
-  {
-    $this->pscInterfaceConfigs = $pscInterfaceConfigs;
-  }
-  /**
-   * @return PscInterfaceConfig[]
-   */
-  public function getPscInterfaceConfigs()
-  {
-    return $this->pscInterfaceConfigs;
   }
   /**
    * @param string

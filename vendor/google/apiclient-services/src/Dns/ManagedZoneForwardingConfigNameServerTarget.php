@@ -22,10 +22,6 @@ class ManagedZoneForwardingConfigNameServerTarget extends \Google\Model
   /**
    * @var string
    */
-  public $domainName;
-  /**
-   * @var string
-   */
   public $forwardingPath;
   /**
    * @var string
@@ -40,20 +36,6 @@ class ManagedZoneForwardingConfigNameServerTarget extends \Google\Model
    */
   public $kind;
 
-  /**
-   * @param string
-   */
-  public function setDomainName($domainName)
-  {
-    $this->domainName = $domainName;
-  }
-  /**
-   * @return string
-   */
-  public function getDomainName()
-  {
-    return $this->domainName;
-  }
   /**
    * @param string
    */

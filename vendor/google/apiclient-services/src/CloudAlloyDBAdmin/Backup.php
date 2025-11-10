@@ -34,10 +34,6 @@ class Backup extends \Google\Model
   /**
    * @var string
    */
-  public $createCompletionTime;
-  /**
-   * @var string
-   */
   public $createTime;
   /**
    * @var string
@@ -151,20 +147,6 @@ class Backup extends \Google\Model
   public function getClusterUid()
   {
     return $this->clusterUid;
-  }
-  /**
-   * @param string
-   */
-  public function setCreateCompletionTime($createCompletionTime)
-  {
-    $this->createCompletionTime = $createCompletionTime;
-  }
-  /**
-   * @return string
-   */
-  public function getCreateCompletionTime()
-  {
-    return $this->createCompletionTime;
   }
   /**
    * @param string

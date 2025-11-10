@@ -50,7 +50,7 @@ class RoundRobinTransport implements TransportInterface
 
         while ($transport = $this->getNextTransport()) {
             try {
-                return $transport->send(clone $message, $envelope);
+                return $transport->send($message, $envelope);
             } catch (TransportExceptionInterface $e) {
                 $exception ??= new TransportException('All transports failed.');
                 $exception->appendDebug(\sprintf("Transport \"%s\": %s\n", $transport, $e->getDebug()));
@@ -84,7 +84,7 @@ class RoundRobinTransport implements TransportInterface
             }
 
             if ((microtime(true) - $this->deadTransports[$transport]) > $this->retryPeriod) {
-                unset($this->deadTransports[$transport]);
+                $this->deadTransports->detach($transport);
 
                 break;
             }
@@ -101,7 +101,7 @@ class RoundRobinTransport implements TransportInterface
 
     protected function isTransportDead(TransportInterface $transport): bool
     {
-        return $this->deadTransports->offsetExists($transport);
+        return $this->deadTransports->contains($transport);
     }
 
     protected function getInitialCursor(): int

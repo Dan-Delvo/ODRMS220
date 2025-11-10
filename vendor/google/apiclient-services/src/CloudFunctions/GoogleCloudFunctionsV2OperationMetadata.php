@@ -37,10 +37,6 @@ class GoogleCloudFunctionsV2OperationMetadata extends \Google\Collection
    */
   public $createTime;
   /**
-   * @var bool
-   */
-  public $customIamRoleDetected;
-  /**
    * @var string
    */
   public $endTime;
@@ -126,20 +122,6 @@ class GoogleCloudFunctionsV2OperationMetadata extends \Google\Collection
   public function getCreateTime()
   {
     return $this->createTime;
-  }
-  /**
-   * @param bool
-   */
-  public function setCustomIamRoleDetected($customIamRoleDetected)
-  {
-    $this->customIamRoleDetected = $customIamRoleDetected;
-  }
-  /**
-   * @return bool
-   */
-  public function getCustomIamRoleDetected()
-  {
-    return $this->customIamRoleDetected;
   }
   /**
    * @param string

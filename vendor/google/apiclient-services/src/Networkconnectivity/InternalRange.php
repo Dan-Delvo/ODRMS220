@@ -20,8 +20,6 @@ namespace Google\Service\Networkconnectivity;
 class InternalRange extends \Google\Collection
 {
   protected $collection_key = 'users';
-  protected $allocationOptionsType = AllocationOptions::class;
-  protected $allocationOptionsDataType = '';
   /**
    * @var string
    */
@@ -30,14 +28,6 @@ class InternalRange extends \Google\Collection
    * @var string
    */
   public $description;
-  /**
-   * @var string[]
-   */
-  public $excludeCidrRanges;
-  /**
-   * @var bool
-   */
-  public $immutable;
   /**
    * @var string
    */
@@ -86,20 +76,6 @@ class InternalRange extends \Google\Collection
   public $users;
 
   /**
-   * @param AllocationOptions
-   */
-  public function setAllocationOptions(AllocationOptions $allocationOptions)
-  {
-    $this->allocationOptions = $allocationOptions;
-  }
-  /**
-   * @return AllocationOptions
-   */
-  public function getAllocationOptions()
-  {
-    return $this->allocationOptions;
-  }
-  /**
    * @param string
    */
   public function setCreateTime($createTime)
@@ -126,34 +102,6 @@ class InternalRange extends \Google\Collection
   public function getDescription()
   {
     return $this->description;
-  }
-  /**
-   * @param string[]
-   */
-  public function setExcludeCidrRanges($excludeCidrRanges)
-  {
-    $this->excludeCidrRanges = $excludeCidrRanges;
-  }
-  /**
-   * @return string[]
-   */
-  public function getExcludeCidrRanges()
-  {
-    return $this->excludeCidrRanges;
-  }
-  /**
-   * @param bool
-   */
-  public function setImmutable($immutable)
-  {
-    $this->immutable = $immutable;
-  }
-  /**
-   * @return bool
-   */
-  public function getImmutable()
-  {
-    return $this->immutable;
   }
   /**
    * @param string

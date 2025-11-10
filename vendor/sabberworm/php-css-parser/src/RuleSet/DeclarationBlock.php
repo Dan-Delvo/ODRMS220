@@ -49,8 +49,6 @@ class DeclarationBlock extends RuleSet
      *
      * @throws UnexpectedTokenException
      * @throws UnexpectedEOFException
-     *
-     * @internal since V8.8.0
      */
     public static function parse(ParserState $oParserState, $oList = null)
     {
@@ -434,8 +432,8 @@ class DeclarationBlock extends RuleSet
             'background-repeat' => ['repeat'],
             'background-attachment' => ['scroll'],
             'background-position' => [
-                new Size(0, '%', false, $this->getLineNo()),
-                new Size(0, '%', false, $this->getLineNo()),
+                new Size(0, '%', null, false, $this->iLineNo),
+                new Size(0, '%', null, false, $this->iLineNo),
             ],
         ];
         $mRuleValue = $oRule->getValue();
@@ -801,7 +799,7 @@ class DeclarationBlock extends RuleSet
                 $aLHValues = $mRuleValue->getListComponents();
             }
             if ($aLHValues[0] !== 'normal') {
-                $val = new RuleValueList('/', $this->getLineNo());
+                $val = new RuleValueList('/', $this->iLineNo);
                 $val->addListComponent($aFSValues[0]);
                 $val->addListComponent($aLHValues[0]);
                 $oNewRule->addValue($val);
@@ -817,7 +815,7 @@ class DeclarationBlock extends RuleSet
         } else {
             $aFFValues = $mRuleValue->getListComponents();
         }
-        $oFFValue = new RuleValueList(',', $this->getLineNo());
+        $oFFValue = new RuleValueList(',', $this->iLineNo);
         $oFFValue->setListComponents($aFFValues);
         $oNewRule->addValue($oFFValue);
 
@@ -831,8 +829,6 @@ class DeclarationBlock extends RuleSet
      * @return string
      *
      * @throws OutputException
-     *
-     * @deprecated in V8.8.0, will be removed in V9.0.0. Use `render` instead.
      */
     public function __toString()
     {
@@ -851,10 +847,7 @@ class DeclarationBlock extends RuleSet
         $sResult = $oOutputFormat->comments($this);
         if (count($this->aSelectors) === 0) {
             // If all the selectors have been removed, this declaration block becomes invalid
-            throw new OutputException(
-                'Attempt to print declaration block with missing selector',
-                $this->getLineNumber()
-            );
+            throw new OutputException("Attempt to print declaration block with missing selector", $this->iLineNo);
         }
         $sResult .= $oOutputFormat->sBeforeDeclarationBlock;
         $sResult .= $oOutputFormat->implode(

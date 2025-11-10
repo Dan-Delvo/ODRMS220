@@ -17,9 +17,8 @@
 
 namespace Google\Service\Compute;
 
-class UpcomingMaintenance extends \Google\Collection
+class UpcomingMaintenance extends \Google\Model
 {
-  protected $collection_key = 'maintenanceReasons';
   /**
    * @var bool
    */
@@ -28,14 +27,6 @@ class UpcomingMaintenance extends \Google\Collection
    * @var string
    */
   public $latestWindowStartTime;
-  /**
-   * @var bool
-   */
-  public $maintenanceOnShutdown;
-  /**
-   * @var string[]
-   */
-  public $maintenanceReasons;
   /**
    * @var string
    */
@@ -80,34 +71,6 @@ class UpcomingMaintenance extends \Google\Collection
   public function getLatestWindowStartTime()
   {
     return $this->latestWindowStartTime;
-  }
-  /**
-   * @param bool
-   */
-  public function setMaintenanceOnShutdown($maintenanceOnShutdown)
-  {
-    $this->maintenanceOnShutdown = $maintenanceOnShutdown;
-  }
-  /**
-   * @return bool
-   */
-  public function getMaintenanceOnShutdown()
-  {
-    return $this->maintenanceOnShutdown;
-  }
-  /**
-   * @param string[]
-   */
-  public function setMaintenanceReasons($maintenanceReasons)
-  {
-    $this->maintenanceReasons = $maintenanceReasons;
-  }
-  /**
-   * @return string[]
-   */
-  public function getMaintenanceReasons()
-  {
-    return $this->maintenanceReasons;
   }
   /**
    * @param string

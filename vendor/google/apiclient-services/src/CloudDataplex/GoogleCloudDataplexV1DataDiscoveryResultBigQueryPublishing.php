@@ -23,10 +23,6 @@ class GoogleCloudDataplexV1DataDiscoveryResultBigQueryPublishing extends \Google
    * @var string
    */
   public $dataset;
-  /**
-   * @var string
-   */
-  public $location;
 
   /**
    * @param string
@@ -41,20 +37,6 @@ class GoogleCloudDataplexV1DataDiscoveryResultBigQueryPublishing extends \Google
   public function getDataset()
   {
     return $this->dataset;
-  }
-  /**
-   * @param string
-   */
-  public function setLocation($location)
-  {
-    $this->location = $location;
-  }
-  /**
-   * @return string
-   */
-  public function getLocation()
-  {
-    return $this->location;
   }
 }
 

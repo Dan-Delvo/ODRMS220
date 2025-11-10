@@ -30,6 +30,10 @@ class BigQueryConfig extends \Google\Model
   /**
    * @var string
    */
+  public $state;
+  /**
+   * @var string
+   */
   public $table;
   /**
    * @var bool
@@ -71,6 +75,20 @@ class BigQueryConfig extends \Google\Model
   public function getServiceAccountEmail()
   {
     return $this->serviceAccountEmail;
+  }
+  /**
+   * @param string
+   */
+  public function setState($state)
+  {
+    $this->state = $state;
+  }
+  /**
+   * @return string
+   */
+  public function getState()
+  {
+    return $this->state;
   }
   /**
    * @param string

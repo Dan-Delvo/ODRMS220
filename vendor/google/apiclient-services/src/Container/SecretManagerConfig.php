@@ -23,8 +23,6 @@ class SecretManagerConfig extends \Google\Model
    * @var bool
    */
   public $enabled;
-  protected $rotationConfigType = RotationConfig::class;
-  protected $rotationConfigDataType = '';
 
   /**
    * @param bool
@@ -39,20 +37,6 @@ class SecretManagerConfig extends \Google\Model
   public function getEnabled()
   {
     return $this->enabled;
-  }
-  /**
-   * @param RotationConfig
-   */
-  public function setRotationConfig(RotationConfig $rotationConfig)
-  {
-    $this->rotationConfig = $rotationConfig;
-  }
-  /**
-   * @return RotationConfig
-   */
-  public function getRotationConfig()
-  {
-    return $this->rotationConfig;
   }
 }
 

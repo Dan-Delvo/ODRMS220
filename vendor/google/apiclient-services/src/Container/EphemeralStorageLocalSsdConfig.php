@@ -22,26 +22,8 @@ class EphemeralStorageLocalSsdConfig extends \Google\Model
   /**
    * @var int
    */
-  public $dataCacheCount;
-  /**
-   * @var int
-   */
   public $localSsdCount;
 
-  /**
-   * @param int
-   */
-  public function setDataCacheCount($dataCacheCount)
-  {
-    $this->dataCacheCount = $dataCacheCount;
-  }
-  /**
-   * @return int
-   */
-  public function getDataCacheCount()
-  {
-    return $this->dataCacheCount;
-  }
   /**
    * @param int
    */

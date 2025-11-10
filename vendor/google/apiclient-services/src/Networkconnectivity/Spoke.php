@@ -31,14 +31,6 @@ class Spoke extends \Google\Collection
   /**
    * @var string
    */
-  public $etag;
-  /**
-   * @var string[]
-   */
-  public $fieldPathsPendingUpdate;
-  /**
-   * @var string
-   */
   public $group;
   /**
    * @var string
@@ -108,34 +100,6 @@ class Spoke extends \Google\Collection
   public function getDescription()
   {
     return $this->description;
-  }
-  /**
-   * @param string
-   */
-  public function setEtag($etag)
-  {
-    $this->etag = $etag;
-  }
-  /**
-   * @return string
-   */
-  public function getEtag()
-  {
-    return $this->etag;
-  }
-  /**
-   * @param string[]
-   */
-  public function setFieldPathsPendingUpdate($fieldPathsPendingUpdate)
-  {
-    $this->fieldPathsPendingUpdate = $fieldPathsPendingUpdate;
-  }
-  /**
-   * @return string[]
-   */
-  public function getFieldPathsPendingUpdate()
-  {
-    return $this->fieldPathsPendingUpdate;
   }
   /**
    * @param string

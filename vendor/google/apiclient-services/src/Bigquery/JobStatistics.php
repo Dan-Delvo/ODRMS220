@@ -62,10 +62,6 @@ class JobStatistics extends \Google\Collection
    * @var string[]
    */
   public $quotaDeferments;
-  /**
-   * @var string[]
-   */
-  public $reservationGroupPath;
   protected $reservationUsageType = JobStatisticsReservationUsage::class;
   protected $reservationUsageDataType = 'array';
   /**
@@ -268,20 +264,6 @@ class JobStatistics extends \Google\Collection
   public function getQuotaDeferments()
   {
     return $this->quotaDeferments;
-  }
-  /**
-   * @param string[]
-   */
-  public function setReservationGroupPath($reservationGroupPath)
-  {
-    $this->reservationGroupPath = $reservationGroupPath;
-  }
-  /**
-   * @return string[]
-   */
-  public function getReservationGroupPath()
-  {
-    return $this->reservationGroupPath;
   }
   /**
    * @param JobStatisticsReservationUsage[]

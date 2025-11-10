@@ -229,10 +229,6 @@ class Testing extends \Google\Service
                   'type' => 'string',
                   'required' => true,
                 ],
-                'includeViewableModels' => [
-                  'location' => 'query',
-                  'type' => 'boolean',
-                ],
                 'projectId' => [
                   'location' => 'query',
                   'type' => 'string',

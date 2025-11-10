@@ -24,10 +24,6 @@ class PartialResultSet extends \Google\Collection
    * @var bool
    */
   public $chunkedValue;
-  /**
-   * @var bool
-   */
-  public $last;
   protected $metadataType = ResultSetMetadata::class;
   protected $metadataDataType = '';
   protected $precommitTokenType = MultiplexedSessionPrecommitToken::class;
@@ -56,20 +52,6 @@ class PartialResultSet extends \Google\Collection
   public function getChunkedValue()
   {
     return $this->chunkedValue;
-  }
-  /**
-   * @param bool
-   */
-  public function setLast($last)
-  {
-    $this->last = $last;
-  }
-  /**
-   * @return bool
-   */
-  public function getLast()
-  {
-    return $this->last;
   }
   /**
    * @param ResultSetMetadata

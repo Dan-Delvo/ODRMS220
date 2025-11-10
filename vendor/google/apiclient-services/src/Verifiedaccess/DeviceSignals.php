@@ -24,8 +24,6 @@ class DeviceSignals extends \Google\Collection
    * @var bool
    */
   public $allowScreenLock;
-  protected $antivirusType = Antivirus::class;
-  protected $antivirusDataType = '';
   /**
    * @var string
    */
@@ -162,20 +160,6 @@ class DeviceSignals extends \Google\Collection
   public function getAllowScreenLock()
   {
     return $this->allowScreenLock;
-  }
-  /**
-   * @param Antivirus
-   */
-  public function setAntivirus(Antivirus $antivirus)
-  {
-    $this->antivirus = $antivirus;
-  }
-  /**
-   * @return Antivirus
-   */
-  public function getAntivirus()
-  {
-    return $this->antivirus;
   }
   /**
    * @param string

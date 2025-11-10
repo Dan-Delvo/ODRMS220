@@ -22,10 +22,6 @@ class CrossProfilePolicies extends \Google\Model
   /**
    * @var string
    */
-  public $crossProfileAppFunctions;
-  /**
-   * @var string
-   */
   public $crossProfileCopyPaste;
   /**
    * @var string
@@ -42,20 +38,6 @@ class CrossProfilePolicies extends \Google\Model
    */
   public $workProfileWidgetsDefault;
 
-  /**
-   * @param string
-   */
-  public function setCrossProfileAppFunctions($crossProfileAppFunctions)
-  {
-    $this->crossProfileAppFunctions = $crossProfileAppFunctions;
-  }
-  /**
-   * @return string
-   */
-  public function getCrossProfileAppFunctions()
-  {
-    return $this->crossProfileAppFunctions;
-  }
   /**
    * @param string
    */

@@ -20,8 +20,6 @@ namespace Google\Service\WorkloadManager;
 class SapComponent extends \Google\Collection
 {
   protected $collection_key = 'resources';
-  protected $databasePropertiesType = DatabaseProperties::class;
-  protected $databasePropertiesDataType = '';
   /**
    * @var string[]
    */
@@ -37,20 +35,6 @@ class SapComponent extends \Google\Collection
    */
   public $topologyType;
 
-  /**
-   * @param DatabaseProperties
-   */
-  public function setDatabaseProperties(DatabaseProperties $databaseProperties)
-  {
-    $this->databaseProperties = $databaseProperties;
-  }
-  /**
-   * @return DatabaseProperties
-   */
-  public function getDatabaseProperties()
-  {
-    return $this->databaseProperties;
-  }
   /**
    * @param string[]
    */

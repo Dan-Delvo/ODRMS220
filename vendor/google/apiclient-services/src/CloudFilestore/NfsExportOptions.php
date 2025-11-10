@@ -39,10 +39,6 @@ class NfsExportOptions extends \Google\Collection
   /**
    * @var string
    */
-  public $network;
-  /**
-   * @var string
-   */
   public $squashMode;
 
   /**
@@ -100,20 +96,6 @@ class NfsExportOptions extends \Google\Collection
   public function getIpRanges()
   {
     return $this->ipRanges;
-  }
-  /**
-   * @param string
-   */
-  public function setNetwork($network)
-  {
-    $this->network = $network;
-  }
-  /**
-   * @return string
-   */
-  public function getNetwork()
-  {
-    return $this->network;
   }
   /**
    * @param string

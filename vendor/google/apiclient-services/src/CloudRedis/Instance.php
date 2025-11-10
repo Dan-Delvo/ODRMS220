@@ -151,10 +151,6 @@ class Instance extends \Google\Collection
    */
   public $suspensionReasons;
   /**
-   * @var string[]
-   */
-  public $tags;
-  /**
    * @var string
    */
   public $tier;
@@ -652,20 +648,6 @@ class Instance extends \Google\Collection
   public function getSuspensionReasons()
   {
     return $this->suspensionReasons;
-  }
-  /**
-   * @param string[]
-   */
-  public function setTags($tags)
-  {
-    $this->tags = $tags;
-  }
-  /**
-   * @return string[]
-   */
-  public function getTags()
-  {
-    return $this->tags;
   }
   /**
    * @param string

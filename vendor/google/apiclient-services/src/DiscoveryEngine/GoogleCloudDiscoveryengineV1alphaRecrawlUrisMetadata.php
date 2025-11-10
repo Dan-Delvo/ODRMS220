@@ -33,14 +33,6 @@ class GoogleCloudDiscoveryengineV1alphaRecrawlUrisMetadata extends \Google\Colle
    */
   public $invalidUrisCount;
   /**
-   * @var string[]
-   */
-  public $noindexUris;
-  /**
-   * @var int
-   */
-  public $noindexUrisCount;
-  /**
    * @var int
    */
   public $pendingCount;
@@ -110,34 +102,6 @@ class GoogleCloudDiscoveryengineV1alphaRecrawlUrisMetadata extends \Google\Colle
   public function getInvalidUrisCount()
   {
     return $this->invalidUrisCount;
-  }
-  /**
-   * @param string[]
-   */
-  public function setNoindexUris($noindexUris)
-  {
-    $this->noindexUris = $noindexUris;
-  }
-  /**
-   * @return string[]
-   */
-  public function getNoindexUris()
-  {
-    return $this->noindexUris;
-  }
-  /**
-   * @param int
-   */
-  public function setNoindexUrisCount($noindexUrisCount)
-  {
-    $this->noindexUrisCount = $noindexUrisCount;
-  }
-  /**
-   * @return int
-   */
-  public function getNoindexUrisCount()
-  {
-    return $this->noindexUrisCount;
   }
   /**
    * @param int

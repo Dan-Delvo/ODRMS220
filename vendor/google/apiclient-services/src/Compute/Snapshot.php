@@ -56,10 +56,6 @@ class Snapshot extends \Google\Collection
    * @var bool
    */
   public $enableConfidentialCompute;
-  /**
-   * @var bool
-   */
-  public $guestFlush;
   protected $guestOsFeaturesType = GuestOsFeature::class;
   protected $guestOsFeaturesDataType = 'array';
   /**
@@ -94,8 +90,6 @@ class Snapshot extends \Google\Collection
    * @var string
    */
   public $name;
-  protected $paramsType = SnapshotParams::class;
-  protected $paramsDataType = '';
   /**
    * @var bool
    */
@@ -290,20 +284,6 @@ class Snapshot extends \Google\Collection
     return $this->enableConfidentialCompute;
   }
   /**
-   * @param bool
-   */
-  public function setGuestFlush($guestFlush)
-  {
-    $this->guestFlush = $guestFlush;
-  }
-  /**
-   * @return bool
-   */
-  public function getGuestFlush()
-  {
-    return $this->guestFlush;
-  }
-  /**
    * @param GuestOsFeature[]
    */
   public function setGuestOsFeatures($guestOsFeatures)
@@ -428,20 +408,6 @@ class Snapshot extends \Google\Collection
   public function getName()
   {
     return $this->name;
-  }
-  /**
-   * @param SnapshotParams
-   */
-  public function setParams(SnapshotParams $params)
-  {
-    $this->params = $params;
-  }
-  /**
-   * @return SnapshotParams
-   */
-  public function getParams()
-  {
-    return $this->params;
   }
   /**
    * @param bool

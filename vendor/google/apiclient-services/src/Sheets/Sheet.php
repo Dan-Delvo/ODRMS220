@@ -19,7 +19,7 @@ namespace Google\Service\Sheets;
 
 class Sheet extends \Google\Collection
 {
-  protected $collection_key = 'tables';
+  protected $collection_key = 'slicers';
   protected $bandedRangesType = BandedRange::class;
   protected $bandedRangesDataType = 'array';
   protected $basicFilterType = BasicFilter::class;
@@ -46,8 +46,6 @@ class Sheet extends \Google\Collection
   protected $rowGroupsDataType = 'array';
   protected $slicersType = Slicer::class;
   protected $slicersDataType = 'array';
-  protected $tablesType = Table::class;
-  protected $tablesDataType = 'array';
 
   /**
    * @param BandedRange[]
@@ -230,20 +228,6 @@ class Sheet extends \Google\Collection
   public function getSlicers()
   {
     return $this->slicers;
-  }
-  /**
-   * @param Table[]
-   */
-  public function setTables($tables)
-  {
-    $this->tables = $tables;
-  }
-  /**
-   * @return Table[]
-   */
-  public function getTables()
-  {
-    return $this->tables;
   }
 }
 

@@ -28,10 +28,6 @@ class SqlInstancesStartExternalSyncRequest extends \Google\Model
   /**
    * @var bool
    */
-  public $replicaOverwriteEnabled;
-  /**
-   * @var bool
-   */
   public $skipVerification;
   /**
    * @var string
@@ -69,20 +65,6 @@ class SqlInstancesStartExternalSyncRequest extends \Google\Model
   public function getMysqlSyncConfig()
   {
     return $this->mysqlSyncConfig;
-  }
-  /**
-   * @param bool
-   */
-  public function setReplicaOverwriteEnabled($replicaOverwriteEnabled)
-  {
-    $this->replicaOverwriteEnabled = $replicaOverwriteEnabled;
-  }
-  /**
-   * @return bool
-   */
-  public function getReplicaOverwriteEnabled()
-  {
-    return $this->replicaOverwriteEnabled;
   }
   /**
    * @param bool

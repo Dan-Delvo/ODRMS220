@@ -19,8 +19,6 @@ namespace Google\Service\CloudDataplex;
 
 class GoogleCloudDataplexV1DataScanEvent extends \Google\Model
 {
-  protected $catalogPublishingStatusType = GoogleCloudDataplexV1DataScanCatalogPublishingStatus::class;
-  protected $catalogPublishingStatusDataType = '';
   /**
    * @var string
    */
@@ -76,20 +74,6 @@ class GoogleCloudDataplexV1DataScanEvent extends \Google\Model
    */
   public $type;
 
-  /**
-   * @param GoogleCloudDataplexV1DataScanCatalogPublishingStatus
-   */
-  public function setCatalogPublishingStatus(GoogleCloudDataplexV1DataScanCatalogPublishingStatus $catalogPublishingStatus)
-  {
-    $this->catalogPublishingStatus = $catalogPublishingStatus;
-  }
-  /**
-   * @return GoogleCloudDataplexV1DataScanCatalogPublishingStatus
-   */
-  public function getCatalogPublishingStatus()
-  {
-    return $this->catalogPublishingStatus;
-  }
   /**
    * @param string
    */

@@ -113,8 +113,7 @@ class CustomBiddingAlgorithms extends \Google\Service\Resource
   }
   /**
    * Updates an existing custom bidding algorithm. Returns the updated custom
-   * bidding algorithm if successful. Requests updating a custom bidding algorithm
-   * assigned to a line item will return an error. (customBiddingAlgorithms.patch)
+   * bidding algorithm if successful. (customBiddingAlgorithms.patch)
    *
    * @param string $customBiddingAlgorithmId Output only. The unique ID of the
    * custom bidding algorithm. Assigned by the system.

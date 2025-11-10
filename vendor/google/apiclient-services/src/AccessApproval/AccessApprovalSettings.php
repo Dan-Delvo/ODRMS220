@@ -28,10 +28,6 @@ class AccessApprovalSettings extends \Google\Collection
    * @var bool
    */
   public $ancestorHasActiveKeyVersion;
-  protected $approvalPolicyType = CustomerApprovalApprovalPolicy::class;
-  protected $approvalPolicyDataType = '';
-  protected $effectiveApprovalPolicyType = CustomerApprovalApprovalPolicy::class;
-  protected $effectiveApprovalPolicyDataType = '';
   /**
    * @var bool
    */
@@ -98,34 +94,6 @@ class AccessApprovalSettings extends \Google\Collection
   public function getAncestorHasActiveKeyVersion()
   {
     return $this->ancestorHasActiveKeyVersion;
-  }
-  /**
-   * @param CustomerApprovalApprovalPolicy
-   */
-  public function setApprovalPolicy(CustomerApprovalApprovalPolicy $approvalPolicy)
-  {
-    $this->approvalPolicy = $approvalPolicy;
-  }
-  /**
-   * @return CustomerApprovalApprovalPolicy
-   */
-  public function getApprovalPolicy()
-  {
-    return $this->approvalPolicy;
-  }
-  /**
-   * @param CustomerApprovalApprovalPolicy
-   */
-  public function setEffectiveApprovalPolicy(CustomerApprovalApprovalPolicy $effectiveApprovalPolicy)
-  {
-    $this->effectiveApprovalPolicy = $effectiveApprovalPolicy;
-  }
-  /**
-   * @return CustomerApprovalApprovalPolicy
-   */
-  public function getEffectiveApprovalPolicy()
-  {
-    return $this->effectiveApprovalPolicy;
   }
   /**
    * @param bool

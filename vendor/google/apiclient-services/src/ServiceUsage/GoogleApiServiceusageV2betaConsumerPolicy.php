@@ -21,6 +21,10 @@ class GoogleApiServiceusageV2betaConsumerPolicy extends \Google\Collection
 {
   protected $collection_key = 'enableRules';
   /**
+   * @var string[]
+   */
+  public $annotations;
+  /**
    * @var string
    */
   public $createTime;
@@ -39,6 +43,20 @@ class GoogleApiServiceusageV2betaConsumerPolicy extends \Google\Collection
    */
   public $updateTime;
 
+  /**
+   * @param string[]
+   */
+  public function setAnnotations($annotations)
+  {
+    $this->annotations = $annotations;
+  }
+  /**
+   * @return string[]
+   */
+  public function getAnnotations()
+  {
+    return $this->annotations;
+  }
   /**
    * @param string
    */

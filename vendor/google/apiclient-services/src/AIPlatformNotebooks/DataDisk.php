@@ -17,9 +17,8 @@
 
 namespace Google\Service\AIPlatformNotebooks;
 
-class DataDisk extends \Google\Collection
+class DataDisk extends \Google\Model
 {
-  protected $collection_key = 'resourcePolicies';
   /**
    * @var string
    */
@@ -36,10 +35,6 @@ class DataDisk extends \Google\Collection
    * @var string
    */
   public $kmsKey;
-  /**
-   * @var string[]
-   */
-  public $resourcePolicies;
 
   /**
    * @param string
@@ -96,20 +91,6 @@ class DataDisk extends \Google\Collection
   public function getKmsKey()
   {
     return $this->kmsKey;
-  }
-  /**
-   * @param string[]
-   */
-  public function setResourcePolicies($resourcePolicies)
-  {
-    $this->resourcePolicies = $resourcePolicies;
-  }
-  /**
-   * @return string[]
-   */
-  public function getResourcePolicies()
-  {
-    return $this->resourcePolicies;
   }
 }
 

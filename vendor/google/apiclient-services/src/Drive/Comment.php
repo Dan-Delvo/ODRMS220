@@ -24,10 +24,6 @@ class Comment extends \Google\Collection
    * @var string
    */
   public $anchor;
-  /**
-   * @var string
-   */
-  public $assigneeEmailAddress;
   protected $authorType = User::class;
   protected $authorDataType = '';
   /**
@@ -55,10 +51,6 @@ class Comment extends \Google\Collection
    */
   public $kind;
   /**
-   * @var string[]
-   */
-  public $mentionedEmailAddresses;
-  /**
    * @var string
    */
   public $modifiedTime;
@@ -84,20 +76,6 @@ class Comment extends \Google\Collection
   public function getAnchor()
   {
     return $this->anchor;
-  }
-  /**
-   * @param string
-   */
-  public function setAssigneeEmailAddress($assigneeEmailAddress)
-  {
-    $this->assigneeEmailAddress = $assigneeEmailAddress;
-  }
-  /**
-   * @return string
-   */
-  public function getAssigneeEmailAddress()
-  {
-    return $this->assigneeEmailAddress;
   }
   /**
    * @param User
@@ -196,20 +174,6 @@ class Comment extends \Google\Collection
   public function getKind()
   {
     return $this->kind;
-  }
-  /**
-   * @param string[]
-   */
-  public function setMentionedEmailAddresses($mentionedEmailAddresses)
-  {
-    $this->mentionedEmailAddresses = $mentionedEmailAddresses;
-  }
-  /**
-   * @return string[]
-   */
-  public function getMentionedEmailAddresses()
-  {
-    return $this->mentionedEmailAddresses;
   }
   /**
    * @param string

@@ -87,10 +87,6 @@ class GoogleCloudDialogflowCxV3Agent extends \Google\Collection
    */
   public $startFlow;
   /**
-   * @var string
-   */
-  public $startPlaybook;
-  /**
    * @var string[]
    */
   public $supportedLanguageCodes;
@@ -380,20 +376,6 @@ class GoogleCloudDialogflowCxV3Agent extends \Google\Collection
   public function getStartFlow()
   {
     return $this->startFlow;
-  }
-  /**
-   * @param string
-   */
-  public function setStartPlaybook($startPlaybook)
-  {
-    $this->startPlaybook = $startPlaybook;
-  }
-  /**
-   * @return string
-   */
-  public function getStartPlaybook()
-  {
-    return $this->startPlaybook;
   }
   /**
    * @param string[]

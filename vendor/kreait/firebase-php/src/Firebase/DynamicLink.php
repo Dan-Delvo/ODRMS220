@@ -14,10 +14,6 @@ use Stringable;
 use function trim;
 
 /**
- * @deprecated 7.14.0 Firebase Dynamic Links is deprecated and should not be used in new projects. The service will
- *                     shut down on August 25, 2025. The component will remain in the SDK until then, but as the
- *                     Firebase service is deprecated, this component is also deprecated
- *
  * @see https://github.com/googleapis/google-api-nodejs-client/blob/main/src/apis/firebasedynamiclinks/v1.ts
  *
  * @phpstan-type DynamicLinkWarningShape array{
@@ -50,10 +46,7 @@ final class DynamicLink implements JsonSerializable, Stringable
      */
     public static function fromApiResponse(ResponseInterface $response): self
     {
-        /** @var DynamicLinkShape $decoded */
-        $decoded = Json::decode((string) $response->getBody(), true);
-
-        return new self($decoded);
+        return new self(Json::decode((string) $response->getBody(), true));
     }
 
     public function uri(): UriInterface
@@ -93,7 +86,7 @@ final class DynamicLink implements JsonSerializable, Stringable
 
     public function hasWarnings(): bool
     {
-        return $this->warnings() !== [];
+        return !empty($this->warnings());
     }
 
     public function jsonSerialize(): array

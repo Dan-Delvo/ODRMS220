@@ -24,10 +24,6 @@ class GoogleCloudDiscoveryengineV1alphaSearchLinkPromotion extends \Google\Model
    */
   public $description;
   /**
-   * @var string
-   */
-  public $document;
-  /**
    * @var bool
    */
   public $enabled;
@@ -57,20 +53,6 @@ class GoogleCloudDiscoveryengineV1alphaSearchLinkPromotion extends \Google\Model
   public function getDescription()
   {
     return $this->description;
-  }
-  /**
-   * @param string
-   */
-  public function setDocument($document)
-  {
-    $this->document = $document;
-  }
-  /**
-   * @return string
-   */
-  public function getDocument()
-  {
-    return $this->document;
   }
   /**
    * @param bool

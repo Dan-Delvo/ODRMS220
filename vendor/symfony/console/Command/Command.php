@@ -32,7 +32,7 @@ use Symfony\Component\Console\Output\OutputInterface;
  *
  * @author Fabien Potencier <fabien@symfony.com>
  */
-class Command implements SignalableCommandInterface
+class Command
 {
     // see https://tldp.org/LDP/abs/html/exitcodes.html
     public const SUCCESS = 0;
@@ -49,18 +49,13 @@ class Command implements SignalableCommandInterface
     private string $description = '';
     private ?InputDefinition $fullDefinition = null;
     private bool $ignoreValidationErrors = false;
-    private ?InvokableCommand $code = null;
+    private ?\Closure $code = null;
     private array $synopsis = [];
     private array $usages = [];
     private ?HelperSet $helperSet = null;
 
-    /**
-     * @deprecated since Symfony 7.3, use the #[AsCommand] attribute instead
-     */
     public static function getDefaultName(): ?string
     {
-        trigger_deprecation('symfony/console', '7.3', 'Method "%s()" is deprecated and will be removed in Symfony 8.0, use the #[AsCommand] attribute instead.', __METHOD__);
-
         if ($attribute = (new \ReflectionClass(static::class))->getAttributes(AsCommand::class)) {
             return $attribute[0]->newInstance()->name;
         }
@@ -68,13 +63,8 @@ class Command implements SignalableCommandInterface
         return null;
     }
 
-    /**
-     * @deprecated since Symfony 7.3, use the #[AsCommand] attribute instead
-     */
     public static function getDefaultDescription(): ?string
     {
-        trigger_deprecation('symfony/console', '7.3', 'Method "%s()" is deprecated and will be removed in Symfony 8.0, use the #[AsCommand] attribute instead.', __METHOD__);
-
         if ($attribute = (new \ReflectionClass(static::class))->getAttributes(AsCommand::class)) {
             return $attribute[0]->newInstance()->description;
         }
@@ -91,19 +81,7 @@ class Command implements SignalableCommandInterface
     {
         $this->definition = new InputDefinition();
 
-        $attribute = ((new \ReflectionClass(static::class))->getAttributes(AsCommand::class)[0] ?? null)?->newInstance();
-
-        if (null === $name) {
-            if (self::class !== (new \ReflectionMethod($this, 'getDefaultName'))->class) {
-                trigger_deprecation('symfony/console', '7.3', 'Overriding "Command::getDefaultName()" in "%s" is deprecated and will be removed in Symfony 8.0, use the #[AsCommand] attribute instead.', static::class);
-
-                $defaultName = static::getDefaultName();
-            } else {
-                $defaultName = $attribute?->name;
-            }
-        }
-
-        if (null === $name && null !== $name = $defaultName) {
+        if (null === $name && null !== $name = static::getDefaultName()) {
             $aliases = explode('|', $name);
 
             if ('' === $name = array_shift($aliases)) {
@@ -119,23 +97,7 @@ class Command implements SignalableCommandInterface
         }
 
         if ('' === $this->description) {
-            if (self::class !== (new \ReflectionMethod($this, 'getDefaultDescription'))->class) {
-                trigger_deprecation('symfony/console', '7.3', 'Overriding "Command::getDefaultDescription()" in "%s" is deprecated and will be removed in Symfony 8.0, use the #[AsCommand] attribute instead.', static::class);
-
-                $defaultDescription = static::getDefaultDescription();
-            } else {
-                $defaultDescription = $attribute?->description;
-            }
-
-            $this->setDescription($defaultDescription ?? '');
-        }
-
-        if ('' === $this->help) {
-            $this->setHelp($attribute?->help ?? '');
-        }
-
-        if (\is_callable($this) && self::class === (new \ReflectionMethod($this, 'execute'))->getDeclaringClass()->name) {
-            $this->code = new InvokableCommand($this, $this(...));
+            $this->setDescription(static::getDefaultDescription() ?? '');
         }
 
         $this->configure();
@@ -312,10 +274,12 @@ class Command implements SignalableCommandInterface
         $input->validate();
 
         if ($this->code) {
-            return ($this->code)($input, $output);
+            $statusCode = ($this->code)($input, $output);
+        } else {
+            $statusCode = $this->execute($input, $output);
         }
 
-        return $this->execute($input, $output);
+        return is_numeric($statusCode) ? (int) $statusCode : 0;
     }
 
     /**
@@ -347,7 +311,23 @@ class Command implements SignalableCommandInterface
      */
     public function setCode(callable $code): static
     {
-        $this->code = new InvokableCommand($this, $code);
+        if ($code instanceof \Closure) {
+            $r = new \ReflectionFunction($code);
+            if (null === $r->getClosureThis()) {
+                set_error_handler(static function () {});
+                try {
+                    if ($c = \Closure::bind($code, $this)) {
+                        $code = $c;
+                    }
+                } finally {
+                    restore_error_handler();
+                }
+            }
+        } else {
+            $code = $code(...);
+        }
+
+        $this->code = $code;
 
         return $this;
     }
@@ -415,13 +395,7 @@ class Command implements SignalableCommandInterface
      */
     public function getNativeDefinition(): InputDefinition
     {
-        $definition = $this->definition ?? throw new LogicException(\sprintf('Command class "%s" is not correctly initialized. You probably forgot to call the parent constructor.', static::class));
-
-        if ($this->code && !$definition->getArguments() && !$definition->getOptions()) {
-            $this->code->configure($definition);
-        }
-
-        return $definition;
+        return $this->definition ?? throw new LogicException(\sprintf('Command class "%s" is not correctly initialized. You probably forgot to call the parent constructor.', static::class));
     }
 
     /**
@@ -672,16 +646,6 @@ class Command implements SignalableCommandInterface
         }
 
         return $this->helperSet->get($name);
-    }
-
-    public function getSubscribedSignals(): array
-    {
-        return $this->code?->getSubscribedSignals() ?? [];
-    }
-
-    public function handleSignal(int $signal, int|false $previousExitCode = 0): int|false
-    {
-        return $this->code?->handleSignal($signal, $previousExitCode) ?? false;
     }
 
     /**

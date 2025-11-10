@@ -24,10 +24,6 @@ class ImportContextBakImportOptionsEncryptionOptions extends \Google\Model
    */
   public $certPath;
   /**
-   * @var bool
-   */
-  public $keepEncrypted;
-  /**
    * @var string
    */
   public $pvkPassword;
@@ -49,20 +45,6 @@ class ImportContextBakImportOptionsEncryptionOptions extends \Google\Model
   public function getCertPath()
   {
     return $this->certPath;
-  }
-  /**
-   * @param bool
-   */
-  public function setKeepEncrypted($keepEncrypted)
-  {
-    $this->keepEncrypted = $keepEncrypted;
-  }
-  /**
-   * @return bool
-   */
-  public function getKeepEncrypted()
-  {
-    return $this->keepEncrypted;
   }
   /**
    * @param string

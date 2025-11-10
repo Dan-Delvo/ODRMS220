@@ -93,11 +93,6 @@ class DataFusion extends \Google\Service
                   'type' => 'string',
                   'required' => true,
                 ],
-                'extraLocationTypes' => [
-                  'location' => 'query',
-                  'type' => 'string',
-                  'repeated' => true,
-                ],
                 'filter' => [
                   'location' => 'query',
                   'type' => 'string',
@@ -143,10 +138,6 @@ class DataFusion extends \Google\Service
                   'location' => 'path',
                   'type' => 'string',
                   'required' => true,
-                ],
-                'force' => [
-                  'location' => 'query',
-                  'type' => 'boolean',
                 ],
               ],
             ],'get' => [

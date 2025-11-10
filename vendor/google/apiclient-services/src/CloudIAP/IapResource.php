@@ -17,9 +17,8 @@
 
 namespace Google\Service\CloudIAP;
 
-class IapResource extends \Google\Collection
+class IapResource extends \Google\Model
 {
-  protected $collection_key = 'locations';
   /**
    * @var array[]
    */
@@ -28,10 +27,6 @@ class IapResource extends \Google\Collection
    * @var string[]
    */
   public $labels;
-  /**
-   * @var string[]
-   */
-  public $locations;
   /**
    * @var string
    */
@@ -74,20 +69,6 @@ class IapResource extends \Google\Collection
   public function getLabels()
   {
     return $this->labels;
-  }
-  /**
-   * @param string[]
-   */
-  public function setLocations($locations)
-  {
-    $this->locations = $locations;
-  }
-  /**
-   * @return string[]
-   */
-  public function getLocations()
-  {
-    return $this->locations;
   }
   /**
    * @param string

@@ -104,10 +104,6 @@ class JobConfigurationQuery extends \Google\Collection
    * @var string
    */
   public $writeDisposition;
-  /**
-   * @var bool
-   */
-  public $writeIncrementalResults;
 
   /**
    * @param bool
@@ -486,20 +482,6 @@ class JobConfigurationQuery extends \Google\Collection
   public function getWriteDisposition()
   {
     return $this->writeDisposition;
-  }
-  /**
-   * @param bool
-   */
-  public function setWriteIncrementalResults($writeIncrementalResults)
-  {
-    $this->writeIncrementalResults = $writeIncrementalResults;
-  }
-  /**
-   * @return bool
-   */
-  public function getWriteIncrementalResults()
-  {
-    return $this->writeIncrementalResults;
   }
 }
 

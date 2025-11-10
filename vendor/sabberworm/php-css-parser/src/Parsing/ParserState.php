@@ -141,8 +141,6 @@ class ParserState
      * @return string
      *
      * @throws UnexpectedTokenException
-     *
-     * @internal since V8.8.0
      */
     public function parseIdentifier($bIgnoreCase = true)
     {
@@ -174,8 +172,6 @@ class ParserState
      *
      * @throws UnexpectedEOFException
      * @throws UnexpectedTokenException
-     *
-     * @internal since V8.8.0
      */
     public function parseCharacter($bIsForIdentifier)
     {

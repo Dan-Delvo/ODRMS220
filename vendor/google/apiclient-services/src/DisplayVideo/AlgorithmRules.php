@@ -19,29 +19,9 @@ namespace Google\Service\DisplayVideo;
 
 class AlgorithmRules extends \Google\Model
 {
-  /**
-   * @var string
-   */
-  public $attributionModelId;
   protected $impressionSignalRulesetType = AlgorithmRulesRuleset::class;
   protected $impressionSignalRulesetDataType = '';
-  protected $postImpressionSignalRulesetType = AlgorithmRulesRuleset::class;
-  protected $postImpressionSignalRulesetDataType = '';
 
-  /**
-   * @param string
-   */
-  public function setAttributionModelId($attributionModelId)
-  {
-    $this->attributionModelId = $attributionModelId;
-  }
-  /**
-   * @return string
-   */
-  public function getAttributionModelId()
-  {
-    return $this->attributionModelId;
-  }
   /**
    * @param AlgorithmRulesRuleset
    */
@@ -55,20 +35,6 @@ class AlgorithmRules extends \Google\Model
   public function getImpressionSignalRuleset()
   {
     return $this->impressionSignalRuleset;
-  }
-  /**
-   * @param AlgorithmRulesRuleset
-   */
-  public function setPostImpressionSignalRuleset(AlgorithmRulesRuleset $postImpressionSignalRuleset)
-  {
-    $this->postImpressionSignalRuleset = $postImpressionSignalRuleset;
-  }
-  /**
-   * @return AlgorithmRulesRuleset
-   */
-  public function getPostImpressionSignalRuleset()
-  {
-    return $this->postImpressionSignalRuleset;
   }
 }
 

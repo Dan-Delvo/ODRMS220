@@ -19,7 +19,7 @@ namespace Google\Service\AndroidManagement;
 
 class ApplicationPolicy extends \Google\Collection
 {
-  protected $collection_key = 'signingKeyCerts';
+  protected $collection_key = 'permissionGrants';
   /**
    * @var string[]
    */
@@ -40,8 +40,6 @@ class ApplicationPolicy extends \Google\Collection
    * @var string
    */
   public $credentialProviderPolicy;
-  protected $customAppConfigType = CustomAppConfig::class;
-  protected $customAppConfigDataType = '';
   /**
    * @var string
    */
@@ -86,14 +84,6 @@ class ApplicationPolicy extends \Google\Collection
   public $packageName;
   protected $permissionGrantsType = PermissionGrant::class;
   protected $permissionGrantsDataType = 'array';
-  /**
-   * @var string
-   */
-  public $preferentialNetworkId;
-  protected $rolesType = Role::class;
-  protected $rolesDataType = 'array';
-  protected $signingKeyCertsType = ApplicationSigningKeyCert::class;
-  protected $signingKeyCertsDataType = 'array';
   /**
    * @var string
    */
@@ -172,20 +162,6 @@ class ApplicationPolicy extends \Google\Collection
   public function getCredentialProviderPolicy()
   {
     return $this->credentialProviderPolicy;
-  }
-  /**
-   * @param CustomAppConfig
-   */
-  public function setCustomAppConfig(CustomAppConfig $customAppConfig)
-  {
-    $this->customAppConfig = $customAppConfig;
-  }
-  /**
-   * @return CustomAppConfig
-   */
-  public function getCustomAppConfig()
-  {
-    return $this->customAppConfig;
   }
   /**
    * @param string
@@ -368,48 +344,6 @@ class ApplicationPolicy extends \Google\Collection
   public function getPermissionGrants()
   {
     return $this->permissionGrants;
-  }
-  /**
-   * @param string
-   */
-  public function setPreferentialNetworkId($preferentialNetworkId)
-  {
-    $this->preferentialNetworkId = $preferentialNetworkId;
-  }
-  /**
-   * @return string
-   */
-  public function getPreferentialNetworkId()
-  {
-    return $this->preferentialNetworkId;
-  }
-  /**
-   * @param Role[]
-   */
-  public function setRoles($roles)
-  {
-    $this->roles = $roles;
-  }
-  /**
-   * @return Role[]
-   */
-  public function getRoles()
-  {
-    return $this->roles;
-  }
-  /**
-   * @param ApplicationSigningKeyCert[]
-   */
-  public function setSigningKeyCerts($signingKeyCerts)
-  {
-    $this->signingKeyCerts = $signingKeyCerts;
-  }
-  /**
-   * @return ApplicationSigningKeyCert[]
-   */
-  public function getSigningKeyCerts()
-  {
-    return $this->signingKeyCerts;
   }
   /**
    * @param string

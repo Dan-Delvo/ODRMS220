@@ -34,8 +34,6 @@ class GoogleDevtoolsCloudbuildV1Results extends \Google\Collection
    * @var string[]
    */
   public $buildStepOutputs;
-  protected $goModulesType = GoogleDevtoolsCloudbuildV1UploadedGoModule::class;
-  protected $goModulesDataType = 'array';
   protected $imagesType = GoogleDevtoolsCloudbuildV1BuiltImage::class;
   protected $imagesDataType = 'array';
   protected $mavenArtifactsType = GoogleDevtoolsCloudbuildV1UploadedMavenArtifact::class;
@@ -104,20 +102,6 @@ class GoogleDevtoolsCloudbuildV1Results extends \Google\Collection
   public function getBuildStepOutputs()
   {
     return $this->buildStepOutputs;
-  }
-  /**
-   * @param GoogleDevtoolsCloudbuildV1UploadedGoModule[]
-   */
-  public function setGoModules($goModules)
-  {
-    $this->goModules = $goModules;
-  }
-  /**
-   * @return GoogleDevtoolsCloudbuildV1UploadedGoModule[]
-   */
-  public function getGoModules()
-  {
-    return $this->goModules;
   }
   /**
    * @param GoogleDevtoolsCloudbuildV1BuiltImage[]

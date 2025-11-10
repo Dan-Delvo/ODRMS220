@@ -46,8 +46,6 @@ class Routine extends \Google\Collection
    * @var string
    */
   public $etag;
-  protected $externalRuntimeOptionsType = ExternalRuntimeOptions::class;
-  protected $externalRuntimeOptionsDataType = '';
   /**
    * @var string[]
    */
@@ -60,8 +58,6 @@ class Routine extends \Google\Collection
    * @var string
    */
   public $lastModifiedTime;
-  protected $pythonOptionsType = PythonOptions::class;
-  protected $pythonOptionsDataType = '';
   protected $remoteFunctionOptionsType = RemoteFunctionOptions::class;
   protected $remoteFunctionOptionsDataType = '';
   protected $returnTableTypeType = StandardSqlTableType::class;
@@ -184,20 +180,6 @@ class Routine extends \Google\Collection
     return $this->etag;
   }
   /**
-   * @param ExternalRuntimeOptions
-   */
-  public function setExternalRuntimeOptions(ExternalRuntimeOptions $externalRuntimeOptions)
-  {
-    $this->externalRuntimeOptions = $externalRuntimeOptions;
-  }
-  /**
-   * @return ExternalRuntimeOptions
-   */
-  public function getExternalRuntimeOptions()
-  {
-    return $this->externalRuntimeOptions;
-  }
-  /**
    * @param string[]
    */
   public function setImportedLibraries($importedLibraries)
@@ -238,20 +220,6 @@ class Routine extends \Google\Collection
   public function getLastModifiedTime()
   {
     return $this->lastModifiedTime;
-  }
-  /**
-   * @param PythonOptions
-   */
-  public function setPythonOptions(PythonOptions $pythonOptions)
-  {
-    $this->pythonOptions = $pythonOptions;
-  }
-  /**
-   * @return PythonOptions
-   */
-  public function getPythonOptions()
-  {
-    return $this->pythonOptions;
   }
   /**
    * @param RemoteFunctionOptions

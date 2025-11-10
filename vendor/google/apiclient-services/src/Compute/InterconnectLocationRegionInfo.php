@@ -24,10 +24,6 @@ class InterconnectLocationRegionInfo extends \Google\Model
    */
   public $expectedRttMs;
   /**
-   * @var bool
-   */
-  public $l2ForwardingEnabled;
-  /**
    * @var string
    */
   public $locationPresence;
@@ -49,20 +45,6 @@ class InterconnectLocationRegionInfo extends \Google\Model
   public function getExpectedRttMs()
   {
     return $this->expectedRttMs;
-  }
-  /**
-   * @param bool
-   */
-  public function setL2ForwardingEnabled($l2ForwardingEnabled)
-  {
-    $this->l2ForwardingEnabled = $l2ForwardingEnabled;
-  }
-  /**
-   * @return bool
-   */
-  public function getL2ForwardingEnabled()
-  {
-    return $this->l2ForwardingEnabled;
   }
   /**
    * @param string

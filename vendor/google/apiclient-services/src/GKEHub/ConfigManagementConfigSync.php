@@ -17,11 +17,8 @@
 
 namespace Google\Service\GKEHub;
 
-class ConfigManagementConfigSync extends \Google\Collection
+class ConfigManagementConfigSync extends \Google\Model
 {
-  protected $collection_key = 'deploymentOverrides';
-  protected $deploymentOverridesType = ConfigManagementDeploymentOverride::class;
-  protected $deploymentOverridesDataType = 'array';
   /**
    * @var bool
    */
@@ -47,20 +44,6 @@ class ConfigManagementConfigSync extends \Google\Collection
    */
   public $stopSyncing;
 
-  /**
-   * @param ConfigManagementDeploymentOverride[]
-   */
-  public function setDeploymentOverrides($deploymentOverrides)
-  {
-    $this->deploymentOverrides = $deploymentOverrides;
-  }
-  /**
-   * @return ConfigManagementDeploymentOverride[]
-   */
-  public function getDeploymentOverrides()
-  {
-    return $this->deploymentOverrides;
-  }
   /**
    * @param bool
    */

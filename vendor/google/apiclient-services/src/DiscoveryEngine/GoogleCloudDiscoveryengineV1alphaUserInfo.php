@@ -22,30 +22,12 @@ class GoogleCloudDiscoveryengineV1alphaUserInfo extends \Google\Model
   /**
    * @var string
    */
-  public $timeZone;
-  /**
-   * @var string
-   */
   public $userAgent;
   /**
    * @var string
    */
   public $userId;
 
-  /**
-   * @param string
-   */
-  public function setTimeZone($timeZone)
-  {
-    $this->timeZone = $timeZone;
-  }
-  /**
-   * @return string
-   */
-  public function getTimeZone()
-  {
-    return $this->timeZone;
-  }
   /**
    * @param string
    */

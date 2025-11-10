@@ -19,25 +19,6 @@ namespace Google\Service\BigQueryReservation;
 
 class FailoverReservationRequest extends \Google\Model
 {
-  /**
-   * @var string
-   */
-  public $failoverMode;
-
-  /**
-   * @param string
-   */
-  public function setFailoverMode($failoverMode)
-  {
-    $this->failoverMode = $failoverMode;
-  }
-  /**
-   * @return string
-   */
-  public function getFailoverMode()
-  {
-    return $this->failoverMode;
-  }
 }
 
 // Adding a class alias for backwards compatibility with the previous class name.

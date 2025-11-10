@@ -60,10 +60,6 @@ class TransferJob extends \Google\Model
   /**
    * @var string
    */
-  public $serviceAccount;
-  /**
-   * @var string
-   */
   public $status;
   protected $transferSpecType = TransferSpec::class;
   protected $transferSpecDataType = '';
@@ -235,20 +231,6 @@ class TransferJob extends \Google\Model
   public function getSchedule()
   {
     return $this->schedule;
-  }
-  /**
-   * @param string
-   */
-  public function setServiceAccount($serviceAccount)
-  {
-    $this->serviceAccount = $serviceAccount;
-  }
-  /**
-   * @return string
-   */
-  public function getServiceAccount()
-  {
-    return $this->serviceAccount;
   }
   /**
    * @param string

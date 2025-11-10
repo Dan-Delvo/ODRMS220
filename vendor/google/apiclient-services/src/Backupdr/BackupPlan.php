@@ -19,7 +19,7 @@ namespace Google\Service\Backupdr;
 
 class BackupPlan extends \Google\Collection
 {
-  protected $collection_key = 'supportedResourceTypes';
+  protected $collection_key = 'backupRules';
   protected $backupRulesType = BackupRule::class;
   protected $backupRulesDataType = 'array';
   /**
@@ -49,10 +49,6 @@ class BackupPlan extends \Google\Collection
   /**
    * @var string
    */
-  public $logRetentionDays;
-  /**
-   * @var string
-   */
   public $name;
   /**
    * @var string
@@ -61,19 +57,7 @@ class BackupPlan extends \Google\Collection
   /**
    * @var string
    */
-  public $revisionId;
-  /**
-   * @var string
-   */
-  public $revisionName;
-  /**
-   * @var string
-   */
   public $state;
-  /**
-   * @var string[]
-   */
-  public $supportedResourceTypes;
   /**
    * @var string
    */
@@ -180,20 +164,6 @@ class BackupPlan extends \Google\Collection
   /**
    * @param string
    */
-  public function setLogRetentionDays($logRetentionDays)
-  {
-    $this->logRetentionDays = $logRetentionDays;
-  }
-  /**
-   * @return string
-   */
-  public function getLogRetentionDays()
-  {
-    return $this->logRetentionDays;
-  }
-  /**
-   * @param string
-   */
   public function setName($name)
   {
     $this->name = $name;
@@ -222,34 +192,6 @@ class BackupPlan extends \Google\Collection
   /**
    * @param string
    */
-  public function setRevisionId($revisionId)
-  {
-    $this->revisionId = $revisionId;
-  }
-  /**
-   * @return string
-   */
-  public function getRevisionId()
-  {
-    return $this->revisionId;
-  }
-  /**
-   * @param string
-   */
-  public function setRevisionName($revisionName)
-  {
-    $this->revisionName = $revisionName;
-  }
-  /**
-   * @return string
-   */
-  public function getRevisionName()
-  {
-    return $this->revisionName;
-  }
-  /**
-   * @param string
-   */
   public function setState($state)
   {
     $this->state = $state;
@@ -260,20 +202,6 @@ class BackupPlan extends \Google\Collection
   public function getState()
   {
     return $this->state;
-  }
-  /**
-   * @param string[]
-   */
-  public function setSupportedResourceTypes($supportedResourceTypes)
-  {
-    $this->supportedResourceTypes = $supportedResourceTypes;
-  }
-  /**
-   * @return string[]
-   */
-  public function getSupportedResourceTypes()
-  {
-    return $this->supportedResourceTypes;
   }
   /**
    * @param string

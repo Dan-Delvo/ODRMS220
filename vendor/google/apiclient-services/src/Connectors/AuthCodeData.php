@@ -17,9 +17,8 @@
 
 namespace Google\Service\Connectors;
 
-class AuthCodeData extends \Google\Collection
+class AuthCodeData extends \Google\Model
 {
-  protected $collection_key = 'scopes';
   /**
    * @var string
    */
@@ -32,10 +31,6 @@ class AuthCodeData extends \Google\Collection
    * @var string
    */
   public $redirectUri;
-  /**
-   * @var string[]
-   */
-  public $scopes;
 
   /**
    * @param string
@@ -78,20 +73,6 @@ class AuthCodeData extends \Google\Collection
   public function getRedirectUri()
   {
     return $this->redirectUri;
-  }
-  /**
-   * @param string[]
-   */
-  public function setScopes($scopes)
-  {
-    $this->scopes = $scopes;
-  }
-  /**
-   * @return string[]
-   */
-  public function getScopes()
-  {
-    return $this->scopes;
   }
 }
 

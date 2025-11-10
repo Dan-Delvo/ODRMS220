@@ -50,16 +50,10 @@ class FirewallPolicy extends \Google\Collection
    * @var string
    */
   public $name;
-  protected $packetMirroringRulesType = FirewallPolicyRule::class;
-  protected $packetMirroringRulesDataType = 'array';
   /**
    * @var string
    */
   public $parent;
-  /**
-   * @var string
-   */
-  public $policyType;
   /**
    * @var string
    */
@@ -196,20 +190,6 @@ class FirewallPolicy extends \Google\Collection
     return $this->name;
   }
   /**
-   * @param FirewallPolicyRule[]
-   */
-  public function setPacketMirroringRules($packetMirroringRules)
-  {
-    $this->packetMirroringRules = $packetMirroringRules;
-  }
-  /**
-   * @return FirewallPolicyRule[]
-   */
-  public function getPacketMirroringRules()
-  {
-    return $this->packetMirroringRules;
-  }
-  /**
    * @param string
    */
   public function setParent($parent)
@@ -222,20 +202,6 @@ class FirewallPolicy extends \Google\Collection
   public function getParent()
   {
     return $this->parent;
-  }
-  /**
-   * @param string
-   */
-  public function setPolicyType($policyType)
-  {
-    $this->policyType = $policyType;
-  }
-  /**
-   * @return string
-   */
-  public function getPolicyType()
-  {
-    return $this->policyType;
   }
   /**
    * @param string

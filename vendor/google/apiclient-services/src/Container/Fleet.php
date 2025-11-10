@@ -24,10 +24,6 @@ class Fleet extends \Google\Model
    */
   public $membership;
   /**
-   * @var string
-   */
-  public $membershipType;
-  /**
    * @var bool
    */
   public $preRegistered;
@@ -49,20 +45,6 @@ class Fleet extends \Google\Model
   public function getMembership()
   {
     return $this->membership;
-  }
-  /**
-   * @param string
-   */
-  public function setMembershipType($membershipType)
-  {
-    $this->membershipType = $membershipType;
-  }
-  /**
-   * @return string
-   */
-  public function getMembershipType()
-  {
-    return $this->membershipType;
   }
   /**
    * @param bool

@@ -47,10 +47,6 @@ class RestorePlan extends \Google\Model
    * @var string
    */
   public $name;
-  /**
-   * @var string
-   */
-  public $restoreChannel;
   protected $restoreConfigType = RestoreConfig::class;
   protected $restoreConfigDataType = '';
   /**
@@ -167,20 +163,6 @@ class RestorePlan extends \Google\Model
   public function getName()
   {
     return $this->name;
-  }
-  /**
-   * @param string
-   */
-  public function setRestoreChannel($restoreChannel)
-  {
-    $this->restoreChannel = $restoreChannel;
-  }
-  /**
-   * @return string
-   */
-  public function getRestoreChannel()
-  {
-    return $this->restoreChannel;
   }
   /**
    * @param RestoreConfig

@@ -31,15 +31,9 @@ class GoogleCloudRunV2TaskTemplate extends \Google\Collection
    */
   public $executionEnvironment;
   /**
-   * @var bool
-   */
-  public $gpuZonalRedundancyDisabled;
-  /**
    * @var int
    */
   public $maxRetries;
-  protected $nodeSelectorType = GoogleCloudRunV2NodeSelector::class;
-  protected $nodeSelectorDataType = '';
   /**
    * @var string
    */
@@ -96,20 +90,6 @@ class GoogleCloudRunV2TaskTemplate extends \Google\Collection
     return $this->executionEnvironment;
   }
   /**
-   * @param bool
-   */
-  public function setGpuZonalRedundancyDisabled($gpuZonalRedundancyDisabled)
-  {
-    $this->gpuZonalRedundancyDisabled = $gpuZonalRedundancyDisabled;
-  }
-  /**
-   * @return bool
-   */
-  public function getGpuZonalRedundancyDisabled()
-  {
-    return $this->gpuZonalRedundancyDisabled;
-  }
-  /**
    * @param int
    */
   public function setMaxRetries($maxRetries)
@@ -122,20 +102,6 @@ class GoogleCloudRunV2TaskTemplate extends \Google\Collection
   public function getMaxRetries()
   {
     return $this->maxRetries;
-  }
-  /**
-   * @param GoogleCloudRunV2NodeSelector
-   */
-  public function setNodeSelector(GoogleCloudRunV2NodeSelector $nodeSelector)
-  {
-    $this->nodeSelector = $nodeSelector;
-  }
-  /**
-   * @return GoogleCloudRunV2NodeSelector
-   */
-  public function getNodeSelector()
-  {
-    return $this->nodeSelector;
   }
   /**
    * @param string

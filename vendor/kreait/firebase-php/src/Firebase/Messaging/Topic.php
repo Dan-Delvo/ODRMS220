@@ -41,9 +41,7 @@ final class Topic implements JsonSerializable, Stringable
             throw new InvalidArgument('The topic name cannot be empty');
         }
 
-        $check = preg_match('/[^a-zA-Z0-9-_.~]$/', $value);
-
-        if ($check !== false && $check > 0) {
+        if (preg_match('/[^a-zA-Z0-9-_.~]$/', $value)) {
             throw new InvalidArgument(sprintf('Malformed topic name "%s".', $value));
         }
 

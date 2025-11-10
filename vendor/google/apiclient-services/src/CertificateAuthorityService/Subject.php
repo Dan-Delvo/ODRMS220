@@ -17,9 +17,8 @@
 
 namespace Google\Service\CertificateAuthorityService;
 
-class Subject extends \Google\Collection
+class Subject extends \Google\Model
 {
-  protected $collection_key = 'rdnSequence';
   /**
    * @var string
    */
@@ -48,8 +47,6 @@ class Subject extends \Google\Collection
    * @var string
    */
   public $province;
-  protected $rdnSequenceType = RelativeDistinguishedName::class;
-  protected $rdnSequenceDataType = 'array';
   /**
    * @var string
    */
@@ -152,20 +149,6 @@ class Subject extends \Google\Collection
   public function getProvince()
   {
     return $this->province;
-  }
-  /**
-   * @param RelativeDistinguishedName[]
-   */
-  public function setRdnSequence($rdnSequence)
-  {
-    $this->rdnSequence = $rdnSequence;
-  }
-  /**
-   * @return RelativeDistinguishedName[]
-   */
-  public function getRdnSequence()
-  {
-    return $this->rdnSequence;
   }
   /**
    * @param string

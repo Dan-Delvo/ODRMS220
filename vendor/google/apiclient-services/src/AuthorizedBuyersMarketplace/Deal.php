@@ -31,10 +31,6 @@ class Deal extends \Google\Collection
   /**
    * @var string
    */
-  public $buyerPermissionType;
-  /**
-   * @var string
-   */
   public $client;
   /**
    * @var string
@@ -126,20 +122,6 @@ class Deal extends \Google\Collection
   public function getBuyer()
   {
     return $this->buyer;
-  }
-  /**
-   * @param string
-   */
-  public function setBuyerPermissionType($buyerPermissionType)
-  {
-    $this->buyerPermissionType = $buyerPermissionType;
-  }
-  /**
-   * @return string
-   */
-  public function getBuyerPermissionType()
-  {
-    return $this->buyerPermissionType;
   }
   /**
    * @param string

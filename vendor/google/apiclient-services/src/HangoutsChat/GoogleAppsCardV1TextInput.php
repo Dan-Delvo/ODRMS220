@@ -25,8 +25,6 @@ class GoogleAppsCardV1TextInput extends \Google\Model
    * @var string
    */
   public $hintText;
-  protected $hostAppDataSourceType = HostAppDataSourceMarkup::class;
-  protected $hostAppDataSourceDataType = '';
   protected $initialSuggestionsType = GoogleAppsCardV1Suggestions::class;
   protected $initialSuggestionsDataType = '';
   /**
@@ -81,20 +79,6 @@ class GoogleAppsCardV1TextInput extends \Google\Model
   public function getHintText()
   {
     return $this->hintText;
-  }
-  /**
-   * @param HostAppDataSourceMarkup
-   */
-  public function setHostAppDataSource(HostAppDataSourceMarkup $hostAppDataSource)
-  {
-    $this->hostAppDataSource = $hostAppDataSource;
-  }
-  /**
-   * @return HostAppDataSourceMarkup
-   */
-  public function getHostAppDataSource()
-  {
-    return $this->hostAppDataSource;
   }
   /**
    * @param GoogleAppsCardV1Suggestions

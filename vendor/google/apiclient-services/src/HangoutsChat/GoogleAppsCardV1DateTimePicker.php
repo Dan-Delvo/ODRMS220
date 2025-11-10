@@ -19,8 +19,6 @@ namespace Google\Service\HangoutsChat;
 
 class GoogleAppsCardV1DateTimePicker extends \Google\Model
 {
-  protected $hostAppDataSourceType = HostAppDataSourceMarkup::class;
-  protected $hostAppDataSourceDataType = '';
   /**
    * @var string
    */
@@ -44,20 +42,6 @@ class GoogleAppsCardV1DateTimePicker extends \Google\Model
    */
   public $valueMsEpoch;
 
-  /**
-   * @param HostAppDataSourceMarkup
-   */
-  public function setHostAppDataSource(HostAppDataSourceMarkup $hostAppDataSource)
-  {
-    $this->hostAppDataSource = $hostAppDataSource;
-  }
-  /**
-   * @return HostAppDataSourceMarkup
-   */
-  public function getHostAppDataSource()
-  {
-    return $this->hostAppDataSource;
-  }
   /**
    * @param string
    */

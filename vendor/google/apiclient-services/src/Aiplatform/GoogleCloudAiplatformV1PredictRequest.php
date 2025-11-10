@@ -25,10 +25,6 @@ class GoogleCloudAiplatformV1PredictRequest extends \Google\Collection
    */
   public $instances;
   /**
-   * @var string[]
-   */
-  public $labels;
-  /**
    * @var array
    */
   public $parameters;
@@ -46,20 +42,6 @@ class GoogleCloudAiplatformV1PredictRequest extends \Google\Collection
   public function getInstances()
   {
     return $this->instances;
-  }
-  /**
-   * @param string[]
-   */
-  public function setLabels($labels)
-  {
-    $this->labels = $labels;
-  }
-  /**
-   * @return string[]
-   */
-  public function getLabels()
-  {
-    return $this->labels;
   }
   /**
    * @param array

@@ -17,13 +17,8 @@
 
 namespace Google\Service\CloudResourceManager;
 
-class Folder extends \Google\Collection
+class Folder extends \Google\Model
 {
-  protected $collection_key = 'configuredCapabilities';
-  /**
-   * @var string[]
-   */
-  public $configuredCapabilities;
   /**
    * @var string
    */
@@ -40,10 +35,6 @@ class Folder extends \Google\Collection
    * @var string
    */
   public $etag;
-  /**
-   * @var string
-   */
-  public $managementProject;
   /**
    * @var string
    */
@@ -65,20 +56,6 @@ class Folder extends \Google\Collection
    */
   public $updateTime;
 
-  /**
-   * @param string[]
-   */
-  public function setConfiguredCapabilities($configuredCapabilities)
-  {
-    $this->configuredCapabilities = $configuredCapabilities;
-  }
-  /**
-   * @return string[]
-   */
-  public function getConfiguredCapabilities()
-  {
-    return $this->configuredCapabilities;
-  }
   /**
    * @param string
    */
@@ -134,20 +111,6 @@ class Folder extends \Google\Collection
   public function getEtag()
   {
     return $this->etag;
-  }
-  /**
-   * @param string
-   */
-  public function setManagementProject($managementProject)
-  {
-    $this->managementProject = $managementProject;
-  }
-  /**
-   * @return string
-   */
-  public function getManagementProject()
-  {
-    return $this->managementProject;
   }
   /**
    * @param string

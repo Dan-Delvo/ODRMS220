@@ -44,14 +44,6 @@ class GoogleCloudAiplatformV1FeatureGroup extends \Google\Model
   /**
    * @var string
    */
-  public $serviceAccountEmail;
-  /**
-   * @var string
-   */
-  public $serviceAgentType;
-  /**
-   * @var string
-   */
   public $updateTime;
 
   /**
@@ -137,34 +129,6 @@ class GoogleCloudAiplatformV1FeatureGroup extends \Google\Model
   public function getName()
   {
     return $this->name;
-  }
-  /**
-   * @param string
-   */
-  public function setServiceAccountEmail($serviceAccountEmail)
-  {
-    $this->serviceAccountEmail = $serviceAccountEmail;
-  }
-  /**
-   * @return string
-   */
-  public function getServiceAccountEmail()
-  {
-    return $this->serviceAccountEmail;
-  }
-  /**
-   * @param string
-   */
-  public function setServiceAgentType($serviceAgentType)
-  {
-    $this->serviceAgentType = $serviceAgentType;
-  }
-  /**
-   * @return string
-   */
-  public function getServiceAgentType()
-  {
-    return $this->serviceAgentType;
   }
   /**
    * @param string

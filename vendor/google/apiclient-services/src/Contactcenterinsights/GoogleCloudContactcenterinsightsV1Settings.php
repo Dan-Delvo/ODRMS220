@@ -43,10 +43,6 @@ class GoogleCloudContactcenterinsightsV1Settings extends \Google\Model
   public $pubsubNotificationSettings;
   protected $redactionConfigType = GoogleCloudContactcenterinsightsV1RedactionConfig::class;
   protected $redactionConfigDataType = '';
-  /**
-   * @var string
-   */
-  public $screenRecordingBucketUri;
   protected $speechConfigType = GoogleCloudContactcenterinsightsV1SpeechConfig::class;
   protected $speechConfigDataType = '';
   /**
@@ -151,20 +147,6 @@ class GoogleCloudContactcenterinsightsV1Settings extends \Google\Model
   public function getRedactionConfig()
   {
     return $this->redactionConfig;
-  }
-  /**
-   * @param string
-   */
-  public function setScreenRecordingBucketUri($screenRecordingBucketUri)
-  {
-    $this->screenRecordingBucketUri = $screenRecordingBucketUri;
-  }
-  /**
-   * @return string
-   */
-  public function getScreenRecordingBucketUri()
-  {
-    return $this->screenRecordingBucketUri;
   }
   /**
    * @param GoogleCloudContactcenterinsightsV1SpeechConfig

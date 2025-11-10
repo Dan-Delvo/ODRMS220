@@ -22,23 +22,11 @@ class GoogleAdsSearchads360V0ResourcesCustomer extends \Google\Model
   /**
    * @var string
    */
-  public $accountLevel;
-  /**
-   * @var string
-   */
   public $accountStatus;
   /**
    * @var string
    */
   public $accountType;
-  /**
-   * @var string
-   */
-  public $associateManagerDescriptiveName;
-  /**
-   * @var string
-   */
-  public $associateManagerId;
   /**
    * @var bool
    */
@@ -82,27 +70,11 @@ class GoogleAdsSearchads360V0ResourcesCustomer extends \Google\Model
   /**
    * @var string
    */
-  public $managerDescriptiveName;
-  /**
-   * @var string
-   */
-  public $managerId;
-  /**
-   * @var string
-   */
   public $resourceName;
   /**
    * @var string
    */
   public $status;
-  /**
-   * @var string
-   */
-  public $subManagerDescriptiveName;
-  /**
-   * @var string
-   */
-  public $subManagerId;
   /**
    * @var string
    */
@@ -112,20 +84,6 @@ class GoogleAdsSearchads360V0ResourcesCustomer extends \Google\Model
    */
   public $trackingUrlTemplate;
 
-  /**
-   * @param string
-   */
-  public function setAccountLevel($accountLevel)
-  {
-    $this->accountLevel = $accountLevel;
-  }
-  /**
-   * @return string
-   */
-  public function getAccountLevel()
-  {
-    return $this->accountLevel;
-  }
   /**
    * @param string
    */
@@ -153,34 +111,6 @@ class GoogleAdsSearchads360V0ResourcesCustomer extends \Google\Model
   public function getAccountType()
   {
     return $this->accountType;
-  }
-  /**
-   * @param string
-   */
-  public function setAssociateManagerDescriptiveName($associateManagerDescriptiveName)
-  {
-    $this->associateManagerDescriptiveName = $associateManagerDescriptiveName;
-  }
-  /**
-   * @return string
-   */
-  public function getAssociateManagerDescriptiveName()
-  {
-    return $this->associateManagerDescriptiveName;
-  }
-  /**
-   * @param string
-   */
-  public function setAssociateManagerId($associateManagerId)
-  {
-    $this->associateManagerId = $associateManagerId;
-  }
-  /**
-   * @return string
-   */
-  public function getAssociateManagerId()
-  {
-    return $this->associateManagerId;
   }
   /**
    * @param bool
@@ -339,34 +269,6 @@ class GoogleAdsSearchads360V0ResourcesCustomer extends \Google\Model
   /**
    * @param string
    */
-  public function setManagerDescriptiveName($managerDescriptiveName)
-  {
-    $this->managerDescriptiveName = $managerDescriptiveName;
-  }
-  /**
-   * @return string
-   */
-  public function getManagerDescriptiveName()
-  {
-    return $this->managerDescriptiveName;
-  }
-  /**
-   * @param string
-   */
-  public function setManagerId($managerId)
-  {
-    $this->managerId = $managerId;
-  }
-  /**
-   * @return string
-   */
-  public function getManagerId()
-  {
-    return $this->managerId;
-  }
-  /**
-   * @param string
-   */
   public function setResourceName($resourceName)
   {
     $this->resourceName = $resourceName;
@@ -391,34 +293,6 @@ class GoogleAdsSearchads360V0ResourcesCustomer extends \Google\Model
   public function getStatus()
   {
     return $this->status;
-  }
-  /**
-   * @param string
-   */
-  public function setSubManagerDescriptiveName($subManagerDescriptiveName)
-  {
-    $this->subManagerDescriptiveName = $subManagerDescriptiveName;
-  }
-  /**
-   * @return string
-   */
-  public function getSubManagerDescriptiveName()
-  {
-    return $this->subManagerDescriptiveName;
-  }
-  /**
-   * @param string
-   */
-  public function setSubManagerId($subManagerId)
-  {
-    $this->subManagerId = $subManagerId;
-  }
-  /**
-   * @return string
-   */
-  public function getSubManagerId()
-  {
-    return $this->subManagerId;
   }
   /**
    * @param string

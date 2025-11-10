@@ -53,10 +53,6 @@ class GoogleCloudAiplatformV1RagFile extends \Google\Model
    * @var string
    */
   public $updateTime;
-  /**
-   * @var string
-   */
-  public $userMetadata;
 
   /**
    * @param string
@@ -225,20 +221,6 @@ class GoogleCloudAiplatformV1RagFile extends \Google\Model
   public function getUpdateTime()
   {
     return $this->updateTime;
-  }
-  /**
-   * @param string
-   */
-  public function setUserMetadata($userMetadata)
-  {
-    $this->userMetadata = $userMetadata;
-  }
-  /**
-   * @return string
-   */
-  public function getUserMetadata()
-  {
-    return $this->userMetadata;
   }
 }
 

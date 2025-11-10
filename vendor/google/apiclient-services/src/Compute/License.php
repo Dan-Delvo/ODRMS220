@@ -17,17 +17,8 @@
 
 namespace Google\Service\Compute;
 
-class License extends \Google\Collection
+class License extends \Google\Model
 {
-  protected $collection_key = 'requiredCoattachedLicenses';
-  /**
-   * @var string[]
-   */
-  public $allowedReplacementLicenses;
-  /**
-   * @var bool
-   */
-  public $appendableToDisk;
   /**
    * @var bool
    */
@@ -45,10 +36,6 @@ class License extends \Google\Collection
    */
   public $id;
   /**
-   * @var string[]
-   */
-  public $incompatibleLicenses;
-  /**
    * @var string
    */
   public $kind;
@@ -56,28 +43,10 @@ class License extends \Google\Collection
    * @var string
    */
   public $licenseCode;
-  protected $minimumRetentionType = Duration::class;
-  protected $minimumRetentionDataType = '';
-  /**
-   * @var bool
-   */
-  public $multiTenantOnly;
   /**
    * @var string
    */
   public $name;
-  /**
-   * @var bool
-   */
-  public $osLicense;
-  /**
-   * @var bool
-   */
-  public $removableFromDisk;
-  /**
-   * @var string[]
-   */
-  public $requiredCoattachedLicenses;
   protected $resourceRequirementsType = LicenseResourceRequirements::class;
   protected $resourceRequirementsDataType = '';
   /**
@@ -85,50 +54,10 @@ class License extends \Google\Collection
    */
   public $selfLink;
   /**
-   * @var string
-   */
-  public $selfLinkWithId;
-  /**
-   * @var bool
-   */
-  public $soleTenantOnly;
-  /**
    * @var bool
    */
   public $transferable;
-  /**
-   * @var string
-   */
-  public $updateTimestamp;
 
-  /**
-   * @param string[]
-   */
-  public function setAllowedReplacementLicenses($allowedReplacementLicenses)
-  {
-    $this->allowedReplacementLicenses = $allowedReplacementLicenses;
-  }
-  /**
-   * @return string[]
-   */
-  public function getAllowedReplacementLicenses()
-  {
-    return $this->allowedReplacementLicenses;
-  }
-  /**
-   * @param bool
-   */
-  public function setAppendableToDisk($appendableToDisk)
-  {
-    $this->appendableToDisk = $appendableToDisk;
-  }
-  /**
-   * @return bool
-   */
-  public function getAppendableToDisk()
-  {
-    return $this->appendableToDisk;
-  }
   /**
    * @param bool
    */
@@ -186,20 +115,6 @@ class License extends \Google\Collection
     return $this->id;
   }
   /**
-   * @param string[]
-   */
-  public function setIncompatibleLicenses($incompatibleLicenses)
-  {
-    $this->incompatibleLicenses = $incompatibleLicenses;
-  }
-  /**
-   * @return string[]
-   */
-  public function getIncompatibleLicenses()
-  {
-    return $this->incompatibleLicenses;
-  }
-  /**
    * @param string
    */
   public function setKind($kind)
@@ -228,34 +143,6 @@ class License extends \Google\Collection
     return $this->licenseCode;
   }
   /**
-   * @param Duration
-   */
-  public function setMinimumRetention(Duration $minimumRetention)
-  {
-    $this->minimumRetention = $minimumRetention;
-  }
-  /**
-   * @return Duration
-   */
-  public function getMinimumRetention()
-  {
-    return $this->minimumRetention;
-  }
-  /**
-   * @param bool
-   */
-  public function setMultiTenantOnly($multiTenantOnly)
-  {
-    $this->multiTenantOnly = $multiTenantOnly;
-  }
-  /**
-   * @return bool
-   */
-  public function getMultiTenantOnly()
-  {
-    return $this->multiTenantOnly;
-  }
-  /**
    * @param string
    */
   public function setName($name)
@@ -268,48 +155,6 @@ class License extends \Google\Collection
   public function getName()
   {
     return $this->name;
-  }
-  /**
-   * @param bool
-   */
-  public function setOsLicense($osLicense)
-  {
-    $this->osLicense = $osLicense;
-  }
-  /**
-   * @return bool
-   */
-  public function getOsLicense()
-  {
-    return $this->osLicense;
-  }
-  /**
-   * @param bool
-   */
-  public function setRemovableFromDisk($removableFromDisk)
-  {
-    $this->removableFromDisk = $removableFromDisk;
-  }
-  /**
-   * @return bool
-   */
-  public function getRemovableFromDisk()
-  {
-    return $this->removableFromDisk;
-  }
-  /**
-   * @param string[]
-   */
-  public function setRequiredCoattachedLicenses($requiredCoattachedLicenses)
-  {
-    $this->requiredCoattachedLicenses = $requiredCoattachedLicenses;
-  }
-  /**
-   * @return string[]
-   */
-  public function getRequiredCoattachedLicenses()
-  {
-    return $this->requiredCoattachedLicenses;
   }
   /**
    * @param LicenseResourceRequirements
@@ -340,34 +185,6 @@ class License extends \Google\Collection
     return $this->selfLink;
   }
   /**
-   * @param string
-   */
-  public function setSelfLinkWithId($selfLinkWithId)
-  {
-    $this->selfLinkWithId = $selfLinkWithId;
-  }
-  /**
-   * @return string
-   */
-  public function getSelfLinkWithId()
-  {
-    return $this->selfLinkWithId;
-  }
-  /**
-   * @param bool
-   */
-  public function setSoleTenantOnly($soleTenantOnly)
-  {
-    $this->soleTenantOnly = $soleTenantOnly;
-  }
-  /**
-   * @return bool
-   */
-  public function getSoleTenantOnly()
-  {
-    return $this->soleTenantOnly;
-  }
-  /**
    * @param bool
    */
   public function setTransferable($transferable)
@@ -380,20 +197,6 @@ class License extends \Google\Collection
   public function getTransferable()
   {
     return $this->transferable;
-  }
-  /**
-   * @param string
-   */
-  public function setUpdateTimestamp($updateTimestamp)
-  {
-    $this->updateTimestamp = $updateTimestamp;
-  }
-  /**
-   * @return string
-   */
-  public function getUpdateTimestamp()
-  {
-    return $this->updateTimestamp;
   }
 }
 

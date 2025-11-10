@@ -27,7 +27,7 @@ use Google\Client;
  *
  * <p>
  * For more information about this service, see the API
- * <a href="https://developers.google.com/workspace/classroom/" target="_blank">Documentation</a>
+ * <a href="https://developers.google.com/classroom/" target="_blank">Documentation</a>
  * </p>
  *
  * @author Google, Inc.
@@ -178,16 +178,6 @@ class Classroom extends \Google\Service
                   'required' => true,
                 ],
               ],
-            ],'getGradingPeriodSettings' => [
-              'path' => 'v1/courses/{courseId}/gradingPeriodSettings',
-              'httpMethod' => 'GET',
-              'parameters' => [
-                'courseId' => [
-                  'location' => 'path',
-                  'type' => 'string',
-                  'required' => true,
-                ],
-              ],
             ],'list' => [
               'path' => 'v1/courses',
               'httpMethod' => 'GET',
@@ -236,20 +226,6 @@ class Classroom extends \Google\Service
                   'location' => 'path',
                   'type' => 'string',
                   'required' => true,
-                ],
-              ],
-            ],'updateGradingPeriodSettings' => [
-              'path' => 'v1/courses/{courseId}/gradingPeriodSettings',
-              'httpMethod' => 'PATCH',
-              'parameters' => [
-                'courseId' => [
-                  'location' => 'path',
-                  'type' => 'string',
-                  'required' => true,
-                ],
-                'updateMask' => [
-                  'location' => 'query',
-                  'type' => 'string',
                 ],
               ],
             ],

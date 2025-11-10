@@ -66,9 +66,7 @@ class CommonLanguageSettings extends \Google\Protobuf\Internal\Message
      */
     public function getReferenceDocsUri()
     {
-        if ($this->reference_docs_uri !== '') {
-            @trigger_error('reference_docs_uri is deprecated.', E_USER_DEPRECATED);
-        }
+        @trigger_error('reference_docs_uri is deprecated.', E_USER_DEPRECATED);
         return $this->reference_docs_uri;
     }
 

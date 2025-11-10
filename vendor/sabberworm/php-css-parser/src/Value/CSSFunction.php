@@ -4,9 +4,6 @@ namespace Sabberworm\CSS\Value;
 
 use Sabberworm\CSS\OutputFormat;
 use Sabberworm\CSS\Parsing\ParserState;
-use Sabberworm\CSS\Parsing\SourceException;
-use Sabberworm\CSS\Parsing\UnexpectedEOFException;
-use Sabberworm\CSS\Parsing\UnexpectedTokenException;
 
 /**
  * A `CSSFunction` represents a special kind of value that also contains a function name and where the values are the
@@ -16,8 +13,6 @@ class CSSFunction extends ValueList
 {
     /**
      * @var string
-     *
-     * @internal since 8.8.0
      */
     protected $sName;
 
@@ -34,7 +29,7 @@ class CSSFunction extends ValueList
             $aArguments = $aArguments->getListComponents();
         }
         $this->sName = $sName;
-        $this->setPosition($iLineNo); // TODO: redundant?
+        $this->iLineNo = $iLineNo;
         parent::__construct($aArguments, $sSeparator, $iLineNo);
     }
 
@@ -47,8 +42,6 @@ class CSSFunction extends ValueList
      * @throws SourceException
      * @throws UnexpectedEOFException
      * @throws UnexpectedTokenException
-     *
-     * @internal since V8.8.0
      */
     public static function parse(ParserState $oParserState, $bIgnoreCase = false)
     {
@@ -88,8 +81,6 @@ class CSSFunction extends ValueList
 
     /**
      * @return string
-     *
-     * @deprecated in V8.8.0, will be removed in V9.0.0. Use `render` instead.
      */
     public function __toString()
     {

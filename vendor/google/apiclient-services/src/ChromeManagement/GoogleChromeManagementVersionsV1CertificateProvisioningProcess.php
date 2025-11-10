@@ -19,6 +19,10 @@ namespace Google\Service\ChromeManagement;
 
 class GoogleChromeManagementVersionsV1CertificateProvisioningProcess extends \Google\Model
 {
+  /**
+   * @var string
+   */
+  public $caConnectionAdapterConfigReference;
   protected $chromeOsDeviceType = GoogleChromeManagementVersionsV1ChromeOsDevice::class;
   protected $chromeOsDeviceDataType = '';
   protected $chromeOsUserSessionType = GoogleChromeManagementVersionsV1ChromeOsUserSession::class;
@@ -27,10 +31,6 @@ class GoogleChromeManagementVersionsV1CertificateProvisioningProcess extends \Go
    * @var string
    */
   public $failureMessage;
-  protected $genericCaConnectionType = GoogleChromeManagementVersionsV1GenericCaConnection::class;
-  protected $genericCaConnectionDataType = '';
-  protected $genericProfileType = GoogleChromeManagementVersionsV1GenericProfile::class;
-  protected $genericProfileDataType = '';
   /**
    * @var string
    */
@@ -42,11 +42,11 @@ class GoogleChromeManagementVersionsV1CertificateProvisioningProcess extends \Go
   /**
    * @var string
    */
+  public $profileAdapterConfigReference;
+  /**
+   * @var string
+   */
   public $provisioningProfileId;
-  protected $scepCaConnectionType = GoogleChromeManagementVersionsV1ScepCaConnection::class;
-  protected $scepCaConnectionDataType = '';
-  protected $scepProfileType = GoogleChromeManagementVersionsV1ScepProfile::class;
-  protected $scepProfileDataType = '';
   /**
    * @var string
    */
@@ -68,6 +68,20 @@ class GoogleChromeManagementVersionsV1CertificateProvisioningProcess extends \Go
    */
   public $subjectPublicKeyInfo;
 
+  /**
+   * @param string
+   */
+  public function setCaConnectionAdapterConfigReference($caConnectionAdapterConfigReference)
+  {
+    $this->caConnectionAdapterConfigReference = $caConnectionAdapterConfigReference;
+  }
+  /**
+   * @return string
+   */
+  public function getCaConnectionAdapterConfigReference()
+  {
+    return $this->caConnectionAdapterConfigReference;
+  }
   /**
    * @param GoogleChromeManagementVersionsV1ChromeOsDevice
    */
@@ -111,34 +125,6 @@ class GoogleChromeManagementVersionsV1CertificateProvisioningProcess extends \Go
     return $this->failureMessage;
   }
   /**
-   * @param GoogleChromeManagementVersionsV1GenericCaConnection
-   */
-  public function setGenericCaConnection(GoogleChromeManagementVersionsV1GenericCaConnection $genericCaConnection)
-  {
-    $this->genericCaConnection = $genericCaConnection;
-  }
-  /**
-   * @return GoogleChromeManagementVersionsV1GenericCaConnection
-   */
-  public function getGenericCaConnection()
-  {
-    return $this->genericCaConnection;
-  }
-  /**
-   * @param GoogleChromeManagementVersionsV1GenericProfile
-   */
-  public function setGenericProfile(GoogleChromeManagementVersionsV1GenericProfile $genericProfile)
-  {
-    $this->genericProfile = $genericProfile;
-  }
-  /**
-   * @return GoogleChromeManagementVersionsV1GenericProfile
-   */
-  public function getGenericProfile()
-  {
-    return $this->genericProfile;
-  }
-  /**
    * @param string
    */
   public function setIssuedCertificate($issuedCertificate)
@@ -169,6 +155,20 @@ class GoogleChromeManagementVersionsV1CertificateProvisioningProcess extends \Go
   /**
    * @param string
    */
+  public function setProfileAdapterConfigReference($profileAdapterConfigReference)
+  {
+    $this->profileAdapterConfigReference = $profileAdapterConfigReference;
+  }
+  /**
+   * @return string
+   */
+  public function getProfileAdapterConfigReference()
+  {
+    return $this->profileAdapterConfigReference;
+  }
+  /**
+   * @param string
+   */
   public function setProvisioningProfileId($provisioningProfileId)
   {
     $this->provisioningProfileId = $provisioningProfileId;
@@ -179,34 +179,6 @@ class GoogleChromeManagementVersionsV1CertificateProvisioningProcess extends \Go
   public function getProvisioningProfileId()
   {
     return $this->provisioningProfileId;
-  }
-  /**
-   * @param GoogleChromeManagementVersionsV1ScepCaConnection
-   */
-  public function setScepCaConnection(GoogleChromeManagementVersionsV1ScepCaConnection $scepCaConnection)
-  {
-    $this->scepCaConnection = $scepCaConnection;
-  }
-  /**
-   * @return GoogleChromeManagementVersionsV1ScepCaConnection
-   */
-  public function getScepCaConnection()
-  {
-    return $this->scepCaConnection;
-  }
-  /**
-   * @param GoogleChromeManagementVersionsV1ScepProfile
-   */
-  public function setScepProfile(GoogleChromeManagementVersionsV1ScepProfile $scepProfile)
-  {
-    $this->scepProfile = $scepProfile;
-  }
-  /**
-   * @return GoogleChromeManagementVersionsV1ScepProfile
-   */
-  public function getScepProfile()
-  {
-    return $this->scepProfile;
   }
   /**
    * @param string

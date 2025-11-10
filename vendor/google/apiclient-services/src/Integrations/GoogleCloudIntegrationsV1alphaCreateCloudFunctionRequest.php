@@ -30,10 +30,6 @@ class GoogleCloudIntegrationsV1alphaCreateCloudFunctionRequest extends \Google\M
   /**
    * @var string
    */
-  public $gcfApiVersion;
-  /**
-   * @var string
-   */
   public $projectId;
 
   /**
@@ -63,20 +59,6 @@ class GoogleCloudIntegrationsV1alphaCreateCloudFunctionRequest extends \Google\M
   public function getFunctionRegion()
   {
     return $this->functionRegion;
-  }
-  /**
-   * @param string
-   */
-  public function setGcfApiVersion($gcfApiVersion)
-  {
-    $this->gcfApiVersion = $gcfApiVersion;
-  }
-  /**
-   * @return string
-   */
-  public function getGcfApiVersion()
-  {
-    return $this->gcfApiVersion;
   }
   /**
    * @param string

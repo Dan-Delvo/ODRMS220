@@ -17,11 +17,8 @@
 
 namespace Google\Service\Aiplatform;
 
-class GoogleCloudAiplatformV1TunedModel extends \Google\Collection
+class GoogleCloudAiplatformV1TunedModel extends \Google\Model
 {
-  protected $collection_key = 'checkpoints';
-  protected $checkpointsType = GoogleCloudAiplatformV1TunedModelCheckpoint::class;
-  protected $checkpointsDataType = 'array';
   /**
    * @var string
    */
@@ -31,20 +28,6 @@ class GoogleCloudAiplatformV1TunedModel extends \Google\Collection
    */
   public $model;
 
-  /**
-   * @param GoogleCloudAiplatformV1TunedModelCheckpoint[]
-   */
-  public function setCheckpoints($checkpoints)
-  {
-    $this->checkpoints = $checkpoints;
-  }
-  /**
-   * @return GoogleCloudAiplatformV1TunedModelCheckpoint[]
-   */
-  public function getCheckpoints()
-  {
-    return $this->checkpoints;
-  }
   /**
    * @param string
    */

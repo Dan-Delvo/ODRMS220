@@ -62,8 +62,6 @@ class Firewall extends \Google\Collection
    * @var string
    */
   public $network;
-  protected $paramsType = FirewallParams::class;
-  protected $paramsDataType = '';
   /**
    * @var int
    */
@@ -260,20 +258,6 @@ class Firewall extends \Google\Collection
   public function getNetwork()
   {
     return $this->network;
-  }
-  /**
-   * @param FirewallParams
-   */
-  public function setParams(FirewallParams $params)
-  {
-    $this->params = $params;
-  }
-  /**
-   * @return FirewallParams
-   */
-  public function getParams()
-  {
-    return $this->params;
   }
   /**
    * @param int

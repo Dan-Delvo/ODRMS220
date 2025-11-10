@@ -29,8 +29,6 @@ class MachineDetails extends \Google\Model
    * @var string
    */
   public $createTime;
-  protected $diskPartitionsType = DiskPartitionDetails::class;
-  protected $diskPartitionsDataType = '';
   protected $disksType = MachineDiskDetails::class;
   protected $disksDataType = '';
   protected $guestOsType = GuestOsDetails::class;
@@ -97,20 +95,6 @@ class MachineDetails extends \Google\Model
   public function getCreateTime()
   {
     return $this->createTime;
-  }
-  /**
-   * @param DiskPartitionDetails
-   */
-  public function setDiskPartitions(DiskPartitionDetails $diskPartitions)
-  {
-    $this->diskPartitions = $diskPartitions;
-  }
-  /**
-   * @return DiskPartitionDetails
-   */
-  public function getDiskPartitions()
-  {
-    return $this->diskPartitions;
   }
   /**
    * @param MachineDiskDetails

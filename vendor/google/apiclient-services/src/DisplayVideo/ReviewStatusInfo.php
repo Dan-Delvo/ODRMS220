@@ -19,7 +19,7 @@ namespace Google\Service\DisplayVideo;
 
 class ReviewStatusInfo extends \Google\Collection
 {
-  protected $collection_key = 'exchangeReviewStatuses';
+  protected $collection_key = 'publisherReviewStatuses';
   /**
    * @var string
    */
@@ -34,6 +34,8 @@ class ReviewStatusInfo extends \Google\Collection
   public $creativeAndLandingPageReviewStatus;
   protected $exchangeReviewStatusesType = ExchangeReviewStatus::class;
   protected $exchangeReviewStatusesDataType = 'array';
+  protected $publisherReviewStatusesType = PublisherReviewStatus::class;
+  protected $publisherReviewStatusesDataType = 'array';
 
   /**
    * @param string
@@ -90,6 +92,20 @@ class ReviewStatusInfo extends \Google\Collection
   public function getExchangeReviewStatuses()
   {
     return $this->exchangeReviewStatuses;
+  }
+  /**
+   * @param PublisherReviewStatus[]
+   */
+  public function setPublisherReviewStatuses($publisherReviewStatuses)
+  {
+    $this->publisherReviewStatuses = $publisherReviewStatuses;
+  }
+  /**
+   * @return PublisherReviewStatus[]
+   */
+  public function getPublisherReviewStatuses()
+  {
+    return $this->publisherReviewStatuses;
   }
 }
 

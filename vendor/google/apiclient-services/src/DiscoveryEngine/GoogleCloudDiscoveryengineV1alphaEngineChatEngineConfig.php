@@ -22,10 +22,6 @@ class GoogleCloudDiscoveryengineV1alphaEngineChatEngineConfig extends \Google\Mo
   protected $agentCreationConfigType = GoogleCloudDiscoveryengineV1alphaEngineChatEngineConfigAgentCreationConfig::class;
   protected $agentCreationConfigDataType = '';
   /**
-   * @var bool
-   */
-  public $allowCrossRegion;
-  /**
    * @var string
    */
   public $dialogflowAgentToLink;
@@ -43,20 +39,6 @@ class GoogleCloudDiscoveryengineV1alphaEngineChatEngineConfig extends \Google\Mo
   public function getAgentCreationConfig()
   {
     return $this->agentCreationConfig;
-  }
-  /**
-   * @param bool
-   */
-  public function setAllowCrossRegion($allowCrossRegion)
-  {
-    $this->allowCrossRegion = $allowCrossRegion;
-  }
-  /**
-   * @return bool
-   */
-  public function getAllowCrossRegion()
-  {
-    return $this->allowCrossRegion;
   }
   /**
    * @param string

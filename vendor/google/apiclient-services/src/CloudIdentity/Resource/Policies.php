@@ -31,7 +31,7 @@ use Google\Service\CloudIdentity\Policy;
 class Policies extends \Google\Service\Resource
 {
   /**
-   * Get a policy. (policies.get)
+   * Get a Policy (policies.get)
    *
    * @param string $name Required. The name of the policy to retrieve. Format:
    * "policies/{policy}".
@@ -46,18 +46,17 @@ class Policies extends \Google\Service\Resource
     return $this->call('get', [$params], Policy::class);
   }
   /**
-   * List policies. (policies.listPolicies)
+   * List Policies (policies.listPolicies)
    *
    * @param array $optParams Optional parameters.
    *
    * @opt_param string filter Optional. A CEL expression for filtering the
    * results. Policies can be filtered by application with this expression:
-   * setting.type.matches('^settings/gmail\\..*$') Policies can be filtered by
-   * setting type with this expression:
-   * setting.type.matches('^.*\\.service_status$') A maximum of one of the above
-   * setting.type clauses can be used. Policies can be filtered by customer with
-   * this expression: customer == "customers/{customer}" Where `customer` is the
-   * `id` from the [Admin SDK `Customer`
+   * setting.name = 'settings/gmail.*' Policies can be filtered by setting type
+   * with this expression: setting.name = '*.service_status' A maximum of one of
+   * the above setting.name clauses can be used. Policies can be filtered by
+   * customer with this expression: customer = "customers/{customer}" Where
+   * `customer` is the `id` from the [Admin SDK `Customer`
    * resource](https://developers.google.com/admin-
    * sdk/directory/reference/rest/v1/customers). You may use
    * `customers/my_customer` to specify your own organization. When no customer is

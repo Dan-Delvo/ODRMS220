@@ -23,8 +23,6 @@ class GoogleCloudDiscoveryengineV1betaProject extends \Google\Model
    * @var string
    */
   public $createTime;
-  protected $customerProvidedConfigType = GoogleCloudDiscoveryengineV1betaProjectCustomerProvidedConfig::class;
-  protected $customerProvidedConfigDataType = '';
   /**
    * @var string
    */
@@ -49,20 +47,6 @@ class GoogleCloudDiscoveryengineV1betaProject extends \Google\Model
   public function getCreateTime()
   {
     return $this->createTime;
-  }
-  /**
-   * @param GoogleCloudDiscoveryengineV1betaProjectCustomerProvidedConfig
-   */
-  public function setCustomerProvidedConfig(GoogleCloudDiscoveryengineV1betaProjectCustomerProvidedConfig $customerProvidedConfig)
-  {
-    $this->customerProvidedConfig = $customerProvidedConfig;
-  }
-  /**
-   * @return GoogleCloudDiscoveryengineV1betaProjectCustomerProvidedConfig
-   */
-  public function getCustomerProvidedConfig()
-  {
-    return $this->customerProvidedConfig;
   }
   /**
    * @param string

@@ -49,14 +49,12 @@ final class GuzzleApiClientHandler
 
     private function createRequest(SendActionLink $action): RequestInterface
     {
-        $data = [
+        $data = array_filter([
             'requestType' => $action->type(),
             'email' => $action->email(),
-            ...$action->settings()->toArray(),
-        ];
+        ]) + $action->settings()->toArray();
 
-        $tenantId = $action->tenantId();
-        if (is_string($tenantId) && $tenantId !== '') {
+        if ($tenantId = $action->tenantId()) {
             $urlBuilder = TenantAwareAuthResourceUrlBuilder::forProjectAndTenant($this->projectId, $tenantId);
             $data['tenantId'] = $tenantId;
         } else {
@@ -65,8 +63,7 @@ final class GuzzleApiClientHandler
 
         $url = $urlBuilder->getUrl('/accounts:sendOobCode');
 
-        $idTokenString = $action->idTokenString();
-        if ($idTokenString !== null) {
+        if ($idTokenString = $action->idTokenString()) {
             $data['idToken'] = $idTokenString;
         }
 
@@ -76,7 +73,7 @@ final class GuzzleApiClientHandler
             'Content-Type' => 'application/json; charset=UTF-8',
             'Content-Length' => (string) $body->getSize(),
             'X-Firebase-Locale' => $action->locale(),
-        ], fn(?string $value): bool => !in_array($value, ['', null, '0'], true));
+        ]);
 
         return new Request('POST', $url, $headers, $body);
     }

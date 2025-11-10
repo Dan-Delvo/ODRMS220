@@ -32,10 +32,6 @@ class StatusReportingSettings extends \Google\Model
   /**
    * @var bool
    */
-  public $defaultApplicationInfoReportingEnabled;
-  /**
-   * @var bool
-   */
   public $deviceSettingsEnabled;
   /**
    * @var bool
@@ -107,20 +103,6 @@ class StatusReportingSettings extends \Google\Model
   public function getCommonCriteriaModeEnabled()
   {
     return $this->commonCriteriaModeEnabled;
-  }
-  /**
-   * @param bool
-   */
-  public function setDefaultApplicationInfoReportingEnabled($defaultApplicationInfoReportingEnabled)
-  {
-    $this->defaultApplicationInfoReportingEnabled = $defaultApplicationInfoReportingEnabled;
-  }
-  /**
-   * @return bool
-   */
-  public function getDefaultApplicationInfoReportingEnabled()
-  {
-    return $this->defaultApplicationInfoReportingEnabled;
   }
   /**
    * @param bool

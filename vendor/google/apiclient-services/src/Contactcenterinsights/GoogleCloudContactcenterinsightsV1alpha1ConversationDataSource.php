@@ -23,10 +23,6 @@ class GoogleCloudContactcenterinsightsV1alpha1ConversationDataSource extends \Go
   protected $dialogflowSourceDataType = '';
   protected $gcsSourceType = GoogleCloudContactcenterinsightsV1alpha1GcsSource::class;
   protected $gcsSourceDataType = '';
-  /**
-   * @var string
-   */
-  public $metadataUri;
 
   /**
    * @param GoogleCloudContactcenterinsightsV1alpha1DialogflowSource
@@ -55,20 +51,6 @@ class GoogleCloudContactcenterinsightsV1alpha1ConversationDataSource extends \Go
   public function getGcsSource()
   {
     return $this->gcsSource;
-  }
-  /**
-   * @param string
-   */
-  public function setMetadataUri($metadataUri)
-  {
-    $this->metadataUri = $metadataUri;
-  }
-  /**
-   * @return string
-   */
-  public function getMetadataUri()
-  {
-    return $this->metadataUri;
   }
 }
 

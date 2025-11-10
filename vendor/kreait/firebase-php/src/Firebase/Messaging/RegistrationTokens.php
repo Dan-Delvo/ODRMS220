@@ -11,6 +11,7 @@ use Traversable;
 
 use function array_map;
 use function count;
+use function is_array;
 use function is_string;
 
 /**
@@ -46,7 +47,7 @@ final class RegistrationTokens implements Countable, IteratorAggregate
             $tokens = [$values];
         } elseif (is_string($values)) {
             $tokens = [RegistrationToken::fromValue($values)];
-        } else {
+        } elseif (is_array($values)) {
             foreach ($values as $value) {
                 if ($value instanceof RegistrationToken) {
                     $tokens[] = $value;
@@ -89,7 +90,11 @@ final class RegistrationTokens implements Countable, IteratorAggregate
      */
     public function asStrings(): array
     {
-        return array_map(fn(RegistrationToken $token): string => $token->value(), $this->tokens);
+        return array_values(
+            array_filter(
+                array_map(strval(...), $this->tokens),
+            ),
+        );
     }
 
     public function count(): int

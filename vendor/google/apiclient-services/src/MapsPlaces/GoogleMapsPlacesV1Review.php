@@ -46,8 +46,6 @@ class GoogleMapsPlacesV1Review extends \Google\Model
   public $relativePublishTimeDescription;
   protected $textType = GoogleTypeLocalizedText::class;
   protected $textDataType = '';
-  protected $visitDateType = GoogleTypeDate::class;
-  protected $visitDateDataType = '';
 
   /**
    * @param GoogleMapsPlacesV1AuthorAttribution
@@ -168,20 +166,6 @@ class GoogleMapsPlacesV1Review extends \Google\Model
   public function getText()
   {
     return $this->text;
-  }
-  /**
-   * @param GoogleTypeDate
-   */
-  public function setVisitDate(GoogleTypeDate $visitDate)
-  {
-    $this->visitDate = $visitDate;
-  }
-  /**
-   * @return GoogleTypeDate
-   */
-  public function getVisitDate()
-  {
-    return $this->visitDate;
   }
 }
 

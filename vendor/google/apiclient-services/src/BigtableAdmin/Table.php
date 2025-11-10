@@ -41,12 +41,8 @@ class Table extends \Google\Model
   public $name;
   protected $restoreInfoType = RestoreInfo::class;
   protected $restoreInfoDataType = '';
-  protected $rowKeySchemaType = GoogleBigtableAdminV2TypeStruct::class;
-  protected $rowKeySchemaDataType = '';
   protected $statsType = TableStats::class;
   protected $statsDataType = '';
-  protected $tieredStorageConfigType = TieredStorageConfig::class;
-  protected $tieredStorageConfigDataType = '';
 
   /**
    * @param AutomatedBackupPolicy
@@ -161,20 +157,6 @@ class Table extends \Google\Model
     return $this->restoreInfo;
   }
   /**
-   * @param GoogleBigtableAdminV2TypeStruct
-   */
-  public function setRowKeySchema(GoogleBigtableAdminV2TypeStruct $rowKeySchema)
-  {
-    $this->rowKeySchema = $rowKeySchema;
-  }
-  /**
-   * @return GoogleBigtableAdminV2TypeStruct
-   */
-  public function getRowKeySchema()
-  {
-    return $this->rowKeySchema;
-  }
-  /**
    * @param TableStats
    */
   public function setStats(TableStats $stats)
@@ -187,20 +169,6 @@ class Table extends \Google\Model
   public function getStats()
   {
     return $this->stats;
-  }
-  /**
-   * @param TieredStorageConfig
-   */
-  public function setTieredStorageConfig(TieredStorageConfig $tieredStorageConfig)
-  {
-    $this->tieredStorageConfig = $tieredStorageConfig;
-  }
-  /**
-   * @return TieredStorageConfig
-   */
-  public function getTieredStorageConfig()
-  {
-    return $this->tieredStorageConfig;
   }
 }
 

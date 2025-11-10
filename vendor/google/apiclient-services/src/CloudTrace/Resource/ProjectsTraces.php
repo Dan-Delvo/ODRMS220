@@ -32,8 +32,7 @@ class ProjectsTraces extends \Google\Service\Resource
 {
   /**
    * Batch writes new spans to new or existing traces. You cannot update existing
-   * spans. If a span ID already exists, an additional copy of the span will be
-   * stored. (traces.batchWrite)
+   * spans. (traces.batchWrite)
    *
    * @param string $name Required. The name of the project where the spans belong.
    * The format is `projects/[PROJECT_ID]`.

@@ -23,18 +23,6 @@ class AlgorithmRulesComparisonValue extends \Google\Model
    * @var bool
    */
   public $boolValue;
-  /**
-   * @var string
-   */
-  public $contentDurationValue;
-  /**
-   * @var string
-   */
-  public $contentGenreIdValue;
-  /**
-   * @var string
-   */
-  public $contentStreamTypeValue;
   protected $creativeDimensionValueType = Dimensions::class;
   protected $creativeDimensionValueDataType = '';
   protected $dayAndTimeValueType = DayAndTime::class;
@@ -64,10 +52,6 @@ class AlgorithmRulesComparisonValue extends \Google\Model
    * @var string
    */
   public $stringValue;
-  /**
-   * @var string
-   */
-  public $videoPlayerSizeValue;
 
   /**
    * @param bool
@@ -82,48 +66,6 @@ class AlgorithmRulesComparisonValue extends \Google\Model
   public function getBoolValue()
   {
     return $this->boolValue;
-  }
-  /**
-   * @param string
-   */
-  public function setContentDurationValue($contentDurationValue)
-  {
-    $this->contentDurationValue = $contentDurationValue;
-  }
-  /**
-   * @return string
-   */
-  public function getContentDurationValue()
-  {
-    return $this->contentDurationValue;
-  }
-  /**
-   * @param string
-   */
-  public function setContentGenreIdValue($contentGenreIdValue)
-  {
-    $this->contentGenreIdValue = $contentGenreIdValue;
-  }
-  /**
-   * @return string
-   */
-  public function getContentGenreIdValue()
-  {
-    return $this->contentGenreIdValue;
-  }
-  /**
-   * @param string
-   */
-  public function setContentStreamTypeValue($contentStreamTypeValue)
-  {
-    $this->contentStreamTypeValue = $contentStreamTypeValue;
-  }
-  /**
-   * @return string
-   */
-  public function getContentStreamTypeValue()
-  {
-    return $this->contentStreamTypeValue;
   }
   /**
    * @param Dimensions
@@ -244,20 +186,6 @@ class AlgorithmRulesComparisonValue extends \Google\Model
   public function getStringValue()
   {
     return $this->stringValue;
-  }
-  /**
-   * @param string
-   */
-  public function setVideoPlayerSizeValue($videoPlayerSizeValue)
-  {
-    $this->videoPlayerSizeValue = $videoPlayerSizeValue;
-  }
-  /**
-   * @return string
-   */
-  public function getVideoPlayerSizeValue()
-  {
-    return $this->videoPlayerSizeValue;
   }
 }
 

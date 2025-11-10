@@ -17,9 +17,8 @@
 
 namespace Google\Service\BigQueryDataPolicyService;
 
-class DataPolicy extends \Google\Collection
+class DataPolicy extends \Google\Model
 {
-  protected $collection_key = 'grantees';
   protected $dataMaskingPolicyType = DataMaskingPolicy::class;
   protected $dataMaskingPolicyDataType = '';
   /**
@@ -33,23 +32,11 @@ class DataPolicy extends \Google\Collection
   /**
    * @var string
    */
-  public $etag;
-  /**
-   * @var string[]
-   */
-  public $grantees;
-  /**
-   * @var string
-   */
   public $name;
   /**
    * @var string
    */
   public $policyTag;
-  /**
-   * @var string
-   */
-  public $version;
 
   /**
    * @param DataMaskingPolicy
@@ -96,34 +83,6 @@ class DataPolicy extends \Google\Collection
   /**
    * @param string
    */
-  public function setEtag($etag)
-  {
-    $this->etag = $etag;
-  }
-  /**
-   * @return string
-   */
-  public function getEtag()
-  {
-    return $this->etag;
-  }
-  /**
-   * @param string[]
-   */
-  public function setGrantees($grantees)
-  {
-    $this->grantees = $grantees;
-  }
-  /**
-   * @return string[]
-   */
-  public function getGrantees()
-  {
-    return $this->grantees;
-  }
-  /**
-   * @param string
-   */
   public function setName($name)
   {
     $this->name = $name;
@@ -148,20 +107,6 @@ class DataPolicy extends \Google\Collection
   public function getPolicyTag()
   {
     return $this->policyTag;
-  }
-  /**
-   * @param string
-   */
-  public function setVersion($version)
-  {
-    $this->version = $version;
-  }
-  /**
-   * @return string
-   */
-  public function getVersion()
-  {
-    return $this->version;
   }
 }
 

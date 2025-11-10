@@ -27,10 +27,6 @@ class GoogleCloudDialogflowCxV3DataStoreConnection extends \Google\Model
    * @var string
    */
   public $dataStoreType;
-  /**
-   * @var string
-   */
-  public $documentProcessingMode;
 
   /**
    * @param string
@@ -59,20 +55,6 @@ class GoogleCloudDialogflowCxV3DataStoreConnection extends \Google\Model
   public function getDataStoreType()
   {
     return $this->dataStoreType;
-  }
-  /**
-   * @param string
-   */
-  public function setDocumentProcessingMode($documentProcessingMode)
-  {
-    $this->documentProcessingMode = $documentProcessingMode;
-  }
-  /**
-   * @return string
-   */
-  public function getDocumentProcessingMode()
-  {
-    return $this->documentProcessingMode;
   }
 }
 

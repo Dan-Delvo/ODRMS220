@@ -23,7 +23,7 @@ final class Email
 
     private function __construct(string $value)
     {
-        if ($value === '' || filter_var($value, FILTER_VALIDATE_EMAIL) === false) {
+        if ($value === '' || !filter_var($value, FILTER_VALIDATE_EMAIL)) {
             throw new InvalidArgumentException('The email address is invalid.');
         }
 

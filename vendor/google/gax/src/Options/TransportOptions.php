@@ -37,7 +37,7 @@ use Google\ApiCore\Options\TransportOptions\GrpcFallbackTransportOptions;
 use Google\ApiCore\Options\TransportOptions\GrpcTransportOptions;
 use Google\ApiCore\Options\TransportOptions\RestTransportOptions;
 
-class TransportOptions implements ArrayAccess, OptionsInterface
+class TransportOptions implements ArrayAccess
 {
     use OptionsTrait;
 
@@ -73,39 +73,18 @@ class TransportOptions implements ArrayAccess, OptionsInterface
         $this->setRest(new RestTransportOptions($arr['rest'] ?? []));
     }
 
-    /**
-     * @param GrpcTransportOptions $grpc
-     *
-     * @return $this
-     */
-    public function setGrpc(GrpcTransportOptions $grpc): self
+    public function setGrpc(GrpcTransportOptions $grpc): void
     {
         $this->grpc = $grpc;
-
-        return $this;
     }
 
-    /**
-     * @param GrpcFallbackTransportOptions $grpcFallback
-     *
-     * @return $this
-     */
-    public function setGrpcFallback(GrpcFallbackTransportOptions $grpcFallback): self
+    public function setGrpcFallback(GrpcFallbackTransportOptions $grpcFallback): void
     {
         $this->grpcFallback = $grpcFallback;
-
-        return $this;
     }
 
-    /**
-     * @param RestTransportOptions $rest
-     *
-     * @return $this
-     */
-    public function setRest(RestTransportOptions $rest): self
+    public function setRest(RestTransportOptions $rest): void
     {
         $this->rest = $rest;
-
-        return $this;
     }
 }

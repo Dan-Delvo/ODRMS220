@@ -154,21 +154,30 @@ final class GuzzleHandler
     {
         $url = AuthResourceUrlBuilder::create()->getUrl('/accounts:signInWithIdp');
 
-        $postBody = array_filter([
+        $postBody = [
             'access_token' => $action->accessToken(),
             'id_token' => $action->idToken(),
             'providerId' => $action->provider(),
-            'oauth_token_secret' => $action->oauthTokenSecret(),
-            'nonce' => $action->rawNonce(),
-        ], fn(?string $value): bool => $value !== null);
+        ];
 
-        $rawBody = array_filter([
+        if ($oauthTokenSecret = $action->oauthTokenSecret()) {
+            $postBody['oauth_token_secret'] = $oauthTokenSecret;
+        }
+
+        if ($rawNonce = $action->rawNonce()) {
+            $postBody['nonce'] = $rawNonce;
+        }
+
+        $rawBody = [
             ...$this->prepareBody($action),
             'postBody' => http_build_query($postBody),
             'returnIdpCredential' => true,
             'requestUri' => $action->requestUri(),
-            'idToken' => $action->linkingIdToken(),
-        ], fn($value): bool => $value !== null);
+        ];
+
+        if ($action->linkingIdToken()) {
+            $rawBody['idToken'] = $action->linkingIdToken();
+        }
 
         $body = Utils::streamFor(Json::encode($rawBody, JSON_FORCE_OBJECT));
 
@@ -209,9 +218,7 @@ final class GuzzleHandler
         $body = self::$defaultBody;
         $body['targetProjectId'] = $this->projectId;
 
-        $tenantId = $action->tenantId();
-
-        if ($action instanceof IsTenantAware && $tenantId !== null) {
+        if ($action instanceof IsTenantAware && $tenantId = $action->tenantId()) {
             $body['tenantId'] = $tenantId;
         }
 

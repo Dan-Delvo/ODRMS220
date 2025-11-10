@@ -19,8 +19,6 @@ namespace Google\Service\Compute;
 
 class FutureReservation extends \Google\Model
 {
-  protected $aggregateReservationType = AllocationAggregateReservation::class;
-  protected $aggregateReservationDataType = '';
   /**
    * @var string
    */
@@ -31,8 +29,6 @@ class FutureReservation extends \Google\Model
    * @var bool
    */
   public $autoDeleteAutoCreatedReservations;
-  protected $commitmentInfoType = FutureReservationCommitmentInfo::class;
-  protected $commitmentInfoDataType = '';
   /**
    * @var string
    */
@@ -40,15 +36,7 @@ class FutureReservation extends \Google\Model
   /**
    * @var string
    */
-  public $deploymentType;
-  /**
-   * @var string
-   */
   public $description;
-  /**
-   * @var bool
-   */
-  public $enableEmergentMaintenance;
   /**
    * @var string
    */
@@ -72,18 +60,6 @@ class FutureReservation extends \Google\Model
   /**
    * @var string
    */
-  public $reservationMode;
-  /**
-   * @var string
-   */
-  public $reservationName;
-  /**
-   * @var string
-   */
-  public $schedulingType;
-  /**
-   * @var string
-   */
   public $selfLink;
   /**
    * @var string
@@ -91,10 +67,6 @@ class FutureReservation extends \Google\Model
   public $selfLinkWithId;
   protected $shareSettingsType = ShareSettings::class;
   protected $shareSettingsDataType = '';
-  /**
-   * @var bool
-   */
-  public $specificReservationRequired;
   protected $specificSkuPropertiesType = FutureReservationSpecificSKUProperties::class;
   protected $specificSkuPropertiesDataType = '';
   protected $statusType = FutureReservationStatus::class;
@@ -106,20 +78,6 @@ class FutureReservation extends \Google\Model
    */
   public $zone;
 
-  /**
-   * @param AllocationAggregateReservation
-   */
-  public function setAggregateReservation(AllocationAggregateReservation $aggregateReservation)
-  {
-    $this->aggregateReservation = $aggregateReservation;
-  }
-  /**
-   * @return AllocationAggregateReservation
-   */
-  public function getAggregateReservation()
-  {
-    return $this->aggregateReservation;
-  }
   /**
    * @param string
    */
@@ -163,20 +121,6 @@ class FutureReservation extends \Google\Model
     return $this->autoDeleteAutoCreatedReservations;
   }
   /**
-   * @param FutureReservationCommitmentInfo
-   */
-  public function setCommitmentInfo(FutureReservationCommitmentInfo $commitmentInfo)
-  {
-    $this->commitmentInfo = $commitmentInfo;
-  }
-  /**
-   * @return FutureReservationCommitmentInfo
-   */
-  public function getCommitmentInfo()
-  {
-    return $this->commitmentInfo;
-  }
-  /**
    * @param string
    */
   public function setCreationTimestamp($creationTimestamp)
@@ -193,20 +137,6 @@ class FutureReservation extends \Google\Model
   /**
    * @param string
    */
-  public function setDeploymentType($deploymentType)
-  {
-    $this->deploymentType = $deploymentType;
-  }
-  /**
-   * @return string
-   */
-  public function getDeploymentType()
-  {
-    return $this->deploymentType;
-  }
-  /**
-   * @param string
-   */
   public function setDescription($description)
   {
     $this->description = $description;
@@ -217,20 +147,6 @@ class FutureReservation extends \Google\Model
   public function getDescription()
   {
     return $this->description;
-  }
-  /**
-   * @param bool
-   */
-  public function setEnableEmergentMaintenance($enableEmergentMaintenance)
-  {
-    $this->enableEmergentMaintenance = $enableEmergentMaintenance;
-  }
-  /**
-   * @return bool
-   */
-  public function getEnableEmergentMaintenance()
-  {
-    return $this->enableEmergentMaintenance;
   }
   /**
    * @param string
@@ -305,48 +221,6 @@ class FutureReservation extends \Google\Model
   /**
    * @param string
    */
-  public function setReservationMode($reservationMode)
-  {
-    $this->reservationMode = $reservationMode;
-  }
-  /**
-   * @return string
-   */
-  public function getReservationMode()
-  {
-    return $this->reservationMode;
-  }
-  /**
-   * @param string
-   */
-  public function setReservationName($reservationName)
-  {
-    $this->reservationName = $reservationName;
-  }
-  /**
-   * @return string
-   */
-  public function getReservationName()
-  {
-    return $this->reservationName;
-  }
-  /**
-   * @param string
-   */
-  public function setSchedulingType($schedulingType)
-  {
-    $this->schedulingType = $schedulingType;
-  }
-  /**
-   * @return string
-   */
-  public function getSchedulingType()
-  {
-    return $this->schedulingType;
-  }
-  /**
-   * @param string
-   */
   public function setSelfLink($selfLink)
   {
     $this->selfLink = $selfLink;
@@ -385,20 +259,6 @@ class FutureReservation extends \Google\Model
   public function getShareSettings()
   {
     return $this->shareSettings;
-  }
-  /**
-   * @param bool
-   */
-  public function setSpecificReservationRequired($specificReservationRequired)
-  {
-    $this->specificReservationRequired = $specificReservationRequired;
-  }
-  /**
-   * @return bool
-   */
-  public function getSpecificReservationRequired()
-  {
-    return $this->specificReservationRequired;
   }
   /**
    * @param FutureReservationSpecificSKUProperties

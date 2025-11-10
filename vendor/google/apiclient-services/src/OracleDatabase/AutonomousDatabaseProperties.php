@@ -22,10 +22,6 @@ class AutonomousDatabaseProperties extends \Google\Collection
   protected $collection_key = 'supportedCloneRegions';
   public $actualUsedDataStorageSizeTb;
   public $allocatedStorageSizeTb;
-  /**
-   * @var string[]
-   */
-  public $allowlistedIps;
   protected $apexDetailsType = AutonomousDatabaseApex::class;
   protected $apexDetailsDataType = '';
   /**
@@ -65,10 +61,6 @@ class AutonomousDatabaseProperties extends \Google\Collection
   /**
    * @var string
    */
-  public $dataGuardRoleChangedTime;
-  /**
-   * @var string
-   */
   public $dataSafeState;
   /**
    * @var int
@@ -94,14 +86,6 @@ class AutonomousDatabaseProperties extends \Google\Collection
    * @var string
    */
   public $dbWorkload;
-  /**
-   * @var string
-   */
-  public $disasterRecoveryRoleChangedTime;
-  protected $encryptionKeyType = EncryptionKey::class;
-  protected $encryptionKeyDataType = '';
-  protected $encryptionKeyHistoryEntriesType = EncryptionKeyHistoryEntry::class;
-  protected $encryptionKeyHistoryEntriesDataType = 'array';
   /**
    * @var string
    */
@@ -225,10 +209,6 @@ class AutonomousDatabaseProperties extends \Google\Collection
   /**
    * @var string
    */
-  public $serviceAgentEmail;
-  /**
-   * @var string
-   */
   public $sqlWebDeveloperUrl;
   /**
    * @var string
@@ -266,20 +246,6 @@ class AutonomousDatabaseProperties extends \Google\Collection
   public function getAllocatedStorageSizeTb()
   {
     return $this->allocatedStorageSizeTb;
-  }
-  /**
-   * @param string[]
-   */
-  public function setAllowlistedIps($allowlistedIps)
-  {
-    $this->allowlistedIps = $allowlistedIps;
-  }
-  /**
-   * @return string[]
-   */
-  public function getAllowlistedIps()
-  {
-    return $this->allowlistedIps;
   }
   /**
    * @param AutonomousDatabaseApex
@@ -438,20 +404,6 @@ class AutonomousDatabaseProperties extends \Google\Collection
   /**
    * @param string
    */
-  public function setDataGuardRoleChangedTime($dataGuardRoleChangedTime)
-  {
-    $this->dataGuardRoleChangedTime = $dataGuardRoleChangedTime;
-  }
-  /**
-   * @return string
-   */
-  public function getDataGuardRoleChangedTime()
-  {
-    return $this->dataGuardRoleChangedTime;
-  }
-  /**
-   * @param string
-   */
   public function setDataSafeState($dataSafeState)
   {
     $this->dataSafeState = $dataSafeState;
@@ -546,48 +498,6 @@ class AutonomousDatabaseProperties extends \Google\Collection
   public function getDbWorkload()
   {
     return $this->dbWorkload;
-  }
-  /**
-   * @param string
-   */
-  public function setDisasterRecoveryRoleChangedTime($disasterRecoveryRoleChangedTime)
-  {
-    $this->disasterRecoveryRoleChangedTime = $disasterRecoveryRoleChangedTime;
-  }
-  /**
-   * @return string
-   */
-  public function getDisasterRecoveryRoleChangedTime()
-  {
-    return $this->disasterRecoveryRoleChangedTime;
-  }
-  /**
-   * @param EncryptionKey
-   */
-  public function setEncryptionKey(EncryptionKey $encryptionKey)
-  {
-    $this->encryptionKey = $encryptionKey;
-  }
-  /**
-   * @return EncryptionKey
-   */
-  public function getEncryptionKey()
-  {
-    return $this->encryptionKey;
-  }
-  /**
-   * @param EncryptionKeyHistoryEntry[]
-   */
-  public function setEncryptionKeyHistoryEntries($encryptionKeyHistoryEntries)
-  {
-    $this->encryptionKeyHistoryEntries = $encryptionKeyHistoryEntries;
-  }
-  /**
-   * @return EncryptionKeyHistoryEntry[]
-   */
-  public function getEncryptionKeyHistoryEntries()
-  {
-    return $this->encryptionKeyHistoryEntries;
   }
   /**
    * @param string
@@ -1022,20 +932,6 @@ class AutonomousDatabaseProperties extends \Google\Collection
   public function getSecretId()
   {
     return $this->secretId;
-  }
-  /**
-   * @param string
-   */
-  public function setServiceAgentEmail($serviceAgentEmail)
-  {
-    $this->serviceAgentEmail = $serviceAgentEmail;
-  }
-  /**
-   * @return string
-   */
-  public function getServiceAgentEmail()
-  {
-    return $this->serviceAgentEmail;
   }
   /**
    * @param string

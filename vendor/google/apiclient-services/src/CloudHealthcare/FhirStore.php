@@ -20,8 +20,6 @@ namespace Google\Service\CloudHealthcare;
 class FhirStore extends \Google\Collection
 {
   protected $collection_key = 'streamConfigs';
-  protected $bulkExportGcsDestinationType = BulkExportGcsDestination::class;
-  protected $bulkExportGcsDestinationDataType = '';
   /**
    * @var string
    */
@@ -65,20 +63,6 @@ class FhirStore extends \Google\Collection
    */
   public $version;
 
-  /**
-   * @param BulkExportGcsDestination
-   */
-  public function setBulkExportGcsDestination(BulkExportGcsDestination $bulkExportGcsDestination)
-  {
-    $this->bulkExportGcsDestination = $bulkExportGcsDestination;
-  }
-  /**
-   * @return BulkExportGcsDestination
-   */
-  public function getBulkExportGcsDestination()
-  {
-    return $this->bulkExportGcsDestination;
-  }
   /**
    * @param string
    */

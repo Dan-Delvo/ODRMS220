@@ -19,7 +19,7 @@ namespace Google\Service\CloudAsset;
 
 class GoogleIdentityAccesscontextmanagerV1EgressTo extends \Google\Collection
 {
-  protected $collection_key = 'roles';
+  protected $collection_key = 'resources';
   /**
    * @var string[]
    */
@@ -30,10 +30,6 @@ class GoogleIdentityAccesscontextmanagerV1EgressTo extends \Google\Collection
    * @var string[]
    */
   public $resources;
-  /**
-   * @var string[]
-   */
-  public $roles;
 
   /**
    * @param string[]
@@ -76,20 +72,6 @@ class GoogleIdentityAccesscontextmanagerV1EgressTo extends \Google\Collection
   public function getResources()
   {
     return $this->resources;
-  }
-  /**
-   * @param string[]
-   */
-  public function setRoles($roles)
-  {
-    $this->roles = $roles;
-  }
-  /**
-   * @return string[]
-   */
-  public function getRoles()
-  {
-    return $this->roles;
   }
 }
 

@@ -24,8 +24,6 @@ class BatchDeleteAssetsRequest extends \Google\Collection
    * @var bool
    */
   public $allowMissing;
-  protected $cascadingRulesType = CascadingRule::class;
-  protected $cascadingRulesDataType = 'array';
   /**
    * @var string[]
    */
@@ -44,20 +42,6 @@ class BatchDeleteAssetsRequest extends \Google\Collection
   public function getAllowMissing()
   {
     return $this->allowMissing;
-  }
-  /**
-   * @param CascadingRule[]
-   */
-  public function setCascadingRules($cascadingRules)
-  {
-    $this->cascadingRules = $cascadingRules;
-  }
-  /**
-   * @return CascadingRule[]
-   */
-  public function getCascadingRules()
-  {
-    return $this->cascadingRules;
   }
   /**
    * @param string[]

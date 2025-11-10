@@ -32,8 +32,6 @@ class GoogleCloudRecaptchaenterpriseV1AnnotateAssessmentRequest extends \Google\
    * @var string
    */
   public $hashedAccountId;
-  protected $phoneAuthenticationEventType = GoogleCloudRecaptchaenterpriseV1PhoneAuthenticationEvent::class;
-  protected $phoneAuthenticationEventDataType = '';
   /**
    * @var string[]
    */
@@ -82,20 +80,6 @@ class GoogleCloudRecaptchaenterpriseV1AnnotateAssessmentRequest extends \Google\
   public function getHashedAccountId()
   {
     return $this->hashedAccountId;
-  }
-  /**
-   * @param GoogleCloudRecaptchaenterpriseV1PhoneAuthenticationEvent
-   */
-  public function setPhoneAuthenticationEvent(GoogleCloudRecaptchaenterpriseV1PhoneAuthenticationEvent $phoneAuthenticationEvent)
-  {
-    $this->phoneAuthenticationEvent = $phoneAuthenticationEvent;
-  }
-  /**
-   * @return GoogleCloudRecaptchaenterpriseV1PhoneAuthenticationEvent
-   */
-  public function getPhoneAuthenticationEvent()
-  {
-    return $this->phoneAuthenticationEvent;
   }
   /**
    * @param string[]

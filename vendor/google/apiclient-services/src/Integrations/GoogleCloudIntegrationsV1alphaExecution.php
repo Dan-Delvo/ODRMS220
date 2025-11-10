@@ -20,10 +20,6 @@ namespace Google\Service\Integrations;
 class GoogleCloudIntegrationsV1alphaExecution extends \Google\Collection
 {
   protected $collection_key = 'responseParams';
-  /**
-   * @var string
-   */
-  public $cloudKmsKey;
   protected $cloudLoggingDetailsType = GoogleCloudIntegrationsV1alphaCloudLoggingDetails::class;
   protected $cloudLoggingDetailsDataType = '';
   /**
@@ -71,20 +67,6 @@ class GoogleCloudIntegrationsV1alphaExecution extends \Google\Collection
    */
   public $updateTime;
 
-  /**
-   * @param string
-   */
-  public function setCloudKmsKey($cloudKmsKey)
-  {
-    $this->cloudKmsKey = $cloudKmsKey;
-  }
-  /**
-   * @return string
-   */
-  public function getCloudKmsKey()
-  {
-    return $this->cloudKmsKey;
-  }
   /**
    * @param GoogleCloudIntegrationsV1alphaCloudLoggingDetails
    */

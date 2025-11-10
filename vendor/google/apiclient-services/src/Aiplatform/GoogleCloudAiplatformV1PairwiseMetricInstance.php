@@ -19,27 +19,11 @@ namespace Google\Service\Aiplatform;
 
 class GoogleCloudAiplatformV1PairwiseMetricInstance extends \Google\Model
 {
-  protected $contentMapInstanceType = GoogleCloudAiplatformV1ContentMap::class;
-  protected $contentMapInstanceDataType = '';
   /**
    * @var string
    */
   public $jsonInstance;
 
-  /**
-   * @param GoogleCloudAiplatformV1ContentMap
-   */
-  public function setContentMapInstance(GoogleCloudAiplatformV1ContentMap $contentMapInstance)
-  {
-    $this->contentMapInstance = $contentMapInstance;
-  }
-  /**
-   * @return GoogleCloudAiplatformV1ContentMap
-   */
-  public function getContentMapInstance()
-  {
-    return $this->contentMapInstance;
-  }
   /**
    * @param string
    */

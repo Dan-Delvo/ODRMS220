@@ -19,10 +19,6 @@ namespace Google\Service\Dialogflow;
 
 class GoogleCloudDialogflowV2KnowledgeOperationMetadata extends \Google\Model
 {
-  /**
-   * @var string
-   */
-  public $doneTime;
   protected $exportOperationMetadataType = GoogleCloudDialogflowV2ExportOperationMetadata::class;
   protected $exportOperationMetadataDataType = '';
   /**
@@ -34,20 +30,6 @@ class GoogleCloudDialogflowV2KnowledgeOperationMetadata extends \Google\Model
    */
   public $state;
 
-  /**
-   * @param string
-   */
-  public function setDoneTime($doneTime)
-  {
-    $this->doneTime = $doneTime;
-  }
-  /**
-   * @return string
-   */
-  public function getDoneTime()
-  {
-    return $this->doneTime;
-  }
   /**
    * @param GoogleCloudDialogflowV2ExportOperationMetadata
    */

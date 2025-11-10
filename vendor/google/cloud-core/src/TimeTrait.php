@@ -73,18 +73,15 @@ trait TimeTrait
      */
     private function formatTimeAsString(\DateTimeInterface $dateTime, $ns)
     {
-        if (!$dateTime instanceof \DateTimeImmutable) {
-            $dateTime = clone $dateTime;
-        }
         $dateTime = $dateTime->setTimeZone(new \DateTimeZone('UTC'));
         if ($ns === null) {
             return $dateTime->format(Timestamp::FORMAT);
+        } else {
+            return sprintf(
+                $dateTime->format(Timestamp::FORMAT_INTERPOLATE),
+                $this->convertNanoSecondsToFraction($ns)
+            );
         }
-
-        return sprintf(
-            $dateTime->format(Timestamp::FORMAT_INTERPOLATE),
-            $this->convertNanoSecondsToFraction($ns)
-        );
     }
 
     /**
@@ -95,10 +92,10 @@ trait TimeTrait
      *        $dateTime will be used instead.
      * @return array
      */
-    private function formatTimeAsArray(\DateTimeInterface $dateTime, $ns = null)
+    private function formatTimeAsArray(\DateTimeInterface $dateTime, $ns)
     {
         if ($ns === null) {
-            $ns = $this->convertFractionToNanoSeconds($dateTime->format('u'));
+            $ns = $dateTime->format('u');
         }
         return [
             'seconds' => (int) $dateTime->format('U'),

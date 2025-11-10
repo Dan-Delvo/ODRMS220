@@ -34,7 +34,6 @@ namespace Google\ApiCore\Testing;
 
 use Google\ApiCore\Transport\GrpcTransport;
 use Grpc\ChannelCredentials;
-use Psr\Log\LoggerInterface;
 
 /**
  * @internal
@@ -47,11 +46,11 @@ class MockGrpcTransport extends GrpcTransport
     /**
      * @param mixed $mockCall
      */
-    public function __construct($mockCall = null, ?LoggerInterface $logger = null)
+    public function __construct($mockCall = null)
     {
         $this->mockCall = $mockCall;
         $opts = ['credentials' => ChannelCredentials::createSsl()];
-        parent::__construct('', $opts, logger: $logger);
+        parent::__construct('', $opts);
     }
 
     /**

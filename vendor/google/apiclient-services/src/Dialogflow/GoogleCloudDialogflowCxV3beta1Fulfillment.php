@@ -28,8 +28,6 @@ class GoogleCloudDialogflowCxV3beta1Fulfillment extends \Google\Collection
    * @var bool
    */
   public $enableGenerativeFallback;
-  protected $generatorsType = GoogleCloudDialogflowCxV3beta1FulfillmentGeneratorSettings::class;
-  protected $generatorsDataType = 'array';
   protected $messagesType = GoogleCloudDialogflowCxV3beta1ResponseMessage::class;
   protected $messagesDataType = 'array';
   /**
@@ -88,20 +86,6 @@ class GoogleCloudDialogflowCxV3beta1Fulfillment extends \Google\Collection
   public function getEnableGenerativeFallback()
   {
     return $this->enableGenerativeFallback;
-  }
-  /**
-   * @param GoogleCloudDialogflowCxV3beta1FulfillmentGeneratorSettings[]
-   */
-  public function setGenerators($generators)
-  {
-    $this->generators = $generators;
-  }
-  /**
-   * @return GoogleCloudDialogflowCxV3beta1FulfillmentGeneratorSettings[]
-   */
-  public function getGenerators()
-  {
-    return $this->generators;
   }
   /**
    * @param GoogleCloudDialogflowCxV3beta1ResponseMessage[]

@@ -36,18 +36,6 @@ class Asset extends \Google\Collection
   protected $databaseDeploymentDetailsDataType = '';
   protected $databaseDetailsType = DatabaseDetails::class;
   protected $databaseDetailsDataType = '';
-  /**
-   * @var bool
-   */
-  public $hidden;
-  /**
-   * @var string
-   */
-  public $hideReason;
-  /**
-   * @var string
-   */
-  public $hideTime;
   protected $insightListType = InsightList::class;
   protected $insightListDataType = '';
   /**
@@ -144,48 +132,6 @@ class Asset extends \Google\Collection
   public function getDatabaseDetails()
   {
     return $this->databaseDetails;
-  }
-  /**
-   * @param bool
-   */
-  public function setHidden($hidden)
-  {
-    $this->hidden = $hidden;
-  }
-  /**
-   * @return bool
-   */
-  public function getHidden()
-  {
-    return $this->hidden;
-  }
-  /**
-   * @param string
-   */
-  public function setHideReason($hideReason)
-  {
-    $this->hideReason = $hideReason;
-  }
-  /**
-   * @return string
-   */
-  public function getHideReason()
-  {
-    return $this->hideReason;
-  }
-  /**
-   * @param string
-   */
-  public function setHideTime($hideTime)
-  {
-    $this->hideTime = $hideTime;
-  }
-  /**
-   * @return string
-   */
-  public function getHideTime()
-  {
-    return $this->hideTime;
   }
   /**
    * @param InsightList

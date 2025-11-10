@@ -17,9 +17,8 @@
 
 namespace Google\Service\HangoutsChat;
 
-class GoogleAppsCardV1Widget extends \Google\Collection
+class GoogleAppsCardV1Widget extends \Google\Model
 {
-  protected $collection_key = 'eventActions';
   protected $buttonListType = GoogleAppsCardV1ButtonList::class;
   protected $buttonListDataType = '';
   protected $carouselType = GoogleAppsCardV1Carousel::class;
@@ -34,18 +33,12 @@ class GoogleAppsCardV1Widget extends \Google\Collection
   protected $decoratedTextDataType = '';
   protected $dividerType = GoogleAppsCardV1Divider::class;
   protected $dividerDataType = '';
-  protected $eventActionsType = GoogleAppsCardV1EventAction::class;
-  protected $eventActionsDataType = 'array';
   protected $gridType = GoogleAppsCardV1Grid::class;
   protected $gridDataType = '';
   /**
    * @var string
    */
   public $horizontalAlignment;
-  /**
-   * @var string
-   */
-  public $id;
   protected $imageType = GoogleAppsCardV1Image::class;
   protected $imageDataType = '';
   protected $selectionInputType = GoogleAppsCardV1SelectionInput::class;
@@ -54,10 +47,6 @@ class GoogleAppsCardV1Widget extends \Google\Collection
   protected $textInputDataType = '';
   protected $textParagraphType = GoogleAppsCardV1TextParagraph::class;
   protected $textParagraphDataType = '';
-  /**
-   * @var string
-   */
-  public $visibility;
 
   /**
    * @param GoogleAppsCardV1ButtonList
@@ -158,20 +147,6 @@ class GoogleAppsCardV1Widget extends \Google\Collection
     return $this->divider;
   }
   /**
-   * @param GoogleAppsCardV1EventAction[]
-   */
-  public function setEventActions($eventActions)
-  {
-    $this->eventActions = $eventActions;
-  }
-  /**
-   * @return GoogleAppsCardV1EventAction[]
-   */
-  public function getEventActions()
-  {
-    return $this->eventActions;
-  }
-  /**
    * @param GoogleAppsCardV1Grid
    */
   public function setGrid(GoogleAppsCardV1Grid $grid)
@@ -198,20 +173,6 @@ class GoogleAppsCardV1Widget extends \Google\Collection
   public function getHorizontalAlignment()
   {
     return $this->horizontalAlignment;
-  }
-  /**
-   * @param string
-   */
-  public function setId($id)
-  {
-    $this->id = $id;
-  }
-  /**
-   * @return string
-   */
-  public function getId()
-  {
-    return $this->id;
   }
   /**
    * @param GoogleAppsCardV1Image
@@ -268,20 +229,6 @@ class GoogleAppsCardV1Widget extends \Google\Collection
   public function getTextParagraph()
   {
     return $this->textParagraph;
-  }
-  /**
-   * @param string
-   */
-  public function setVisibility($visibility)
-  {
-    $this->visibility = $visibility;
-  }
-  /**
-   * @return string
-   */
-  public function getVisibility()
-  {
-    return $this->visibility;
   }
 }
 

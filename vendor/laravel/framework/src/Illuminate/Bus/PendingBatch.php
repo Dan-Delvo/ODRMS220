@@ -10,7 +10,6 @@ use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Traits\Conditionable;
 use Laravel\SerializableClosure\SerializableClosure;
-use RuntimeException;
 use Throwable;
 
 use function Illuminate\Support\enum_value;
@@ -48,13 +47,6 @@ class PendingBatch
     public $options = [];
 
     /**
-     * Jobs that have been verified to contain the Batchable trait.
-     *
-     * @var array<class-string, bool>
-     */
-    protected static $batchableClasses = [];
-
-    /**
      * Create a new pending batch instance.
      *
      * @param  \Illuminate\Contracts\Container\Container  $container
@@ -64,10 +56,7 @@ class PendingBatch
     public function __construct(Container $container, Collection $jobs)
     {
         $this->container = $container;
-
-        $this->jobs = $jobs->each(function (object|array $job) {
-            $this->ensureJobIsBatchable($job);
-        });
+        $this->jobs = $jobs;
     }
 
     /**
@@ -81,35 +70,10 @@ class PendingBatch
         $jobs = is_iterable($jobs) ? $jobs : Arr::wrap($jobs);
 
         foreach ($jobs as $job) {
-            $this->ensureJobIsBatchable($job);
-
             $this->jobs->push($job);
         }
 
         return $this;
-    }
-
-    /**
-     * Ensure the given job is batchable.
-     *
-     * @param  object|array  $job
-     * @return void
-     */
-    protected function ensureJobIsBatchable(object|array $job): void
-    {
-        foreach (Arr::wrap($job) as $job) {
-            if ($job instanceof PendingBatch || $job instanceof Closure) {
-                return;
-            }
-
-            if (! (static::$batchableClasses[$job::class] ?? false) && ! in_array(Batchable::class, class_uses_recursive($job))) {
-                static::$batchableClasses[$job::class] = false;
-
-                throw new RuntimeException(sprintf('Attempted to batch job [%s], but it does not use the Batchable trait.', $job::class));
-            }
-
-            static::$batchableClasses[$job::class] = true;
-        }
     }
 
     /**
@@ -299,7 +263,7 @@ class PendingBatch
     /**
      * Specify the queue that the batched jobs should run on.
      *
-     * @param  \UnitEnum|string|null  $queue
+     * @param  \BackedEnum|string|null  $queue
      * @return $this
      */
     public function onQueue($queue)

@@ -20,10 +20,6 @@ namespace Google\Service\CloudDataplex;
 class GoogleCloudDataplexV1DataQualitySpec extends \Google\Collection
 {
   protected $collection_key = 'rules';
-  /**
-   * @var bool
-   */
-  public $catalogPublishingEnabled;
   protected $postScanActionsType = GoogleCloudDataplexV1DataQualitySpecPostScanActions::class;
   protected $postScanActionsDataType = '';
   /**
@@ -37,20 +33,6 @@ class GoogleCloudDataplexV1DataQualitySpec extends \Google\Collection
    */
   public $samplingPercent;
 
-  /**
-   * @param bool
-   */
-  public function setCatalogPublishingEnabled($catalogPublishingEnabled)
-  {
-    $this->catalogPublishingEnabled = $catalogPublishingEnabled;
-  }
-  /**
-   * @return bool
-   */
-  public function getCatalogPublishingEnabled()
-  {
-    return $this->catalogPublishingEnabled;
-  }
   /**
    * @param GoogleCloudDataplexV1DataQualitySpecPostScanActions
    */

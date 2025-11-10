@@ -1,116 +1,11 @@
 # CHANGELOG
 
-**Support the project:** This SDK is downloaded 1M+ times monthly and powers thousands of applications.
-If it saves you or your team time, please consider [sponsoring its development](https://github.com/sponsors/jeromegamez).
+## The future of the Firebase Admin PHP SDK
+
+Please read about the future of the Firebase Admin PHP SDK on the
+[SDK's GitHub Repository](https://github.com/kreait/firebase-php).
 
 ## [Unreleased]
-
-## [7.23.0] - 2025-10-13
-
-* Require `cuyz/valinor:^2.2.1` for better mapping.
-
-## [7.22.0] - 2025-09-21
-
-### Added
-
-* Added support for PHP 8.5
-
-### Changed
-
-* The project now features a custom logo (I came up with it myself, and took the wise decision to not look up if there's something similar already)
-* Refined README for improved clarity, removed outdated documentation sections, and streamlined project support messaging with a more positive call to action
-* Documentation now uses the modern Furo theme, providing a cleaner and more pleasant reading experience
-
-## [7.21.2] - 2025-08-15
-
-### Fixed
-
-* Re-added the `#[SensitiveParameter]` attribute because, while it's not supported in PHP 8.1, it can still be used
-  if placed in a standalone line above the variable or property.
-* Re-added support for JSON files with any file extension
-* With the introduction of Valinor, Service Account credentials were required to have more fields than necessary to
-  work with the SDK, although it only needs the client email, private key, and project ID. 
-
-## [7.21.1] - 2025-07-24
-
-### Fixed
-
-* Removed the `#[SensitiveParameter]` attribute because it's not supported in PHP 8.1.
-
-## [7.21.0] - 2025-07-23
-
-### Changed
-
-* This release introduces [Valinor](https://valinor.cuyz.io/) for type-safe object mapping. The first application is
-  mapping a given service account file, JSON, or array to the newly added internal `ServiceAccount` class, with more
-  to follow in future releases.
-
-## [7.20.0] - 2025-07-18
-
-### Added
-
-* You can now get a user by their federated identity provider (e.g. Google, Facebook, etc.) UID with
-  `Kreait\Firebase\Auth::getUserByProviderUid()`. ([#1000](https://github.com/kreait/firebase-php/pull/1000))
-  Since this method couldn't be added to the `Kreait\Firebase\Contract\Auth` interface without causing a breaking
-  change, a new transitional interface/contract named `Kreait\Firebase\Contract\Transitional\FederatedUserFetcher`
-  was added. This interface will be removed in the next major version of the SDK.
-  There are several ways to check if you can use the `getUserByProviderUid()` method:
-  ```php
-  use Kreait\Firebase\Contract\Transitional\FederatedUserFetcher;
-  use Kreait\Firebase\Factory;
-  
-  $auth = (new Factory())->createAuth();
-  // The return type is Kreait\Firebase\Contract\Auth, which doesn't have the method
-  
-  if (method_exists($auth, 'getUserByProviderUid')) {
-      $user = $auth->getUserByProviderUid('google.com', 'google-uid');
-  }
-
-  if ($auth instanceof \Kreait\Firebase\Auth) { // This is the implementation, not the interface
-      $user = $auth->getUserByProviderUid('google.com', 'google-uid');
-  }
-  
-  if ($auth instanceof FederatedUserFetcher) {
-      $user = $auth->getUserByProviderUid('google.com', 'google-uid');
-  }
-  ```
-* The new method `Kreait\Firebase\Factory::withDefaultCache()` allows you to set a default cache
-  implementation for the SDK. This is useful if you want to use one cache implementation for all components
-  that support caching.
-  ([Documentation](https://firebase-php.readthedocs.io/en/latest/setup.html#caching))
-
-### Deprecated
-
-* `Kreait\Firebase\Factory::getDebugInfo`
-
-## [7.19.0] - 2025-06-14
-
-### Added
-
-* You can now save on method call by passing a custom Firestore database name to
-  `Kreait\Firebase\Factory::createFirestore($databaseName)` instead of having to chain
-  ``::withFirestoreDatabase($databaseName)->createFirestore()``
-* It is now possible to set [live activity tokens](https://firebase.google.com/docs/cloud-messaging/customize-messages/live-activity?hl=en)
-  in Apns configs.
-* `Kreait\Firebase\Http\HttpClientOptions::withGuzzleMiddleware()` and
-  `Kreait\Firebase\Http\HttpClientOptions::withGuzzleMiddlewares()` now accept callable strings, in addition
-  to callables. ([#1004](https://github.com/kreait/firebase-php/pull/1004))
-
-### Deprecated
-
-* `Kreait\Firebase\Factory::withFirestoreDatabase()`
-
-## [7.18.0] - 2025-03-08
-
-### Added
-
-* It is now possible to configure multi factor authentication for a user.
-
-## [7.17.0] - 2025-02-22
-
-### Added
-
-* FCM Error responses with status code `502` are now caught and converted to `ServerUnavailable` exceptions.
 
 ## [7.16.1] - 2025-01-20
 
@@ -404,16 +299,7 @@ See **[UPGRADE-7.0](UPGRADE-7.0.md) for more details on the changes between 6.x 
 
 https://github.com/kreait/firebase-php/blob/6.9.6/CHANGELOG.md
 
-[Unreleased]: https://github.com/kreait/firebase-php/compare/7.22.0...7.x
-[7.22.0]: https://github.com/kreait/firebase-php/compare/7.21.2...7.22.0
-[7.21.2]: https://github.com/kreait/firebase-php/compare/7.21.1...7.21.2
-[7.21.1]: https://github.com/kreait/firebase-php/compare/7.21.0...7.21.1
-[7.21.0]: https://github.com/kreait/firebase-php/compare/7.20.0...7.21.0
-[7.20.0]: https://github.com/kreait/firebase-php/compare/7.19.0...7.20.0
-[7.19.0]: https://github.com/kreait/firebase-php/compare/7.18.0...7.19.0
-[7.18.0]: https://github.com/kreait/firebase-php/compare/7.17.0...7.18.0
-[7.17.0]: https://github.com/kreait/firebase-php/compare/7.16.1...7.17.0
-[7.16.1]: https://github.com/kreait/firebase-php/compare/7.16.0...7.16.1
+[Unreleased]: https://github.com/kreait/firebase-php/compare/7.15.0...7.x
 [7.16.0]: https://github.com/kreait/firebase-php/compare/7.15.0...7.16.0
 [7.15.0]: https://github.com/kreait/firebase-php/compare/7.14.0...7.15.0
 [7.14.0]: https://github.com/kreait/firebase-php/compare/7.13.1...7.14.0

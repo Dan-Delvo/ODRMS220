@@ -19,7 +19,7 @@ namespace Google\Service\ChromePolicy;
 
 class Proto2FileDescriptorProto extends \Google\Collection
 {
-  protected $collection_key = 'optionDependency';
+  protected $collection_key = 'messageType';
   /**
    * @var string
    */
@@ -32,10 +32,6 @@ class Proto2FileDescriptorProto extends \Google\Collection
    * @var string
    */
   public $name;
-  /**
-   * @var string[]
-   */
-  public $optionDependency;
   /**
    * @var string
    */
@@ -100,20 +96,6 @@ class Proto2FileDescriptorProto extends \Google\Collection
   public function getName()
   {
     return $this->name;
-  }
-  /**
-   * @param string[]
-   */
-  public function setOptionDependency($optionDependency)
-  {
-    $this->optionDependency = $optionDependency;
-  }
-  /**
-   * @return string[]
-   */
-  public function getOptionDependency()
-  {
-    return $this->optionDependency;
   }
   /**
    * @param string

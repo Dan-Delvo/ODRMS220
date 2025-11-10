@@ -109,14 +109,12 @@ class ResourceRecordSets extends \Google\Service\Resource
    * @opt_param int maxResults Optional. Maximum number of results to be returned.
    * If unspecified, the server decides how many results to return.
    * @opt_param string name Restricts the list to return only records with this
-   * fully qualified domain name. Mutually exclusive with the {@code filter}
-   * field.
+   * fully qualified domain name.
    * @opt_param string pageToken Optional. A tag returned by a previous list
    * request that was truncated. Use this parameter to continue a previous list
    * request.
    * @opt_param string type Restricts the list to return only records of this
-   * type. If present, the "name" parameter must also be present. Mutually
-   * exclusive with the {@code filter} field.
+   * type. If present, the "name" parameter must also be present.
    * @return ResourceRecordSetsListResponse
    * @throws \Google\Service\Exception
    */

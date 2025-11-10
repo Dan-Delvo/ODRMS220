@@ -26,10 +26,6 @@ class GoogleCloudDiscoveryengineV1alphaEngineRecommendationMetadata extends \Goo
   /**
    * @var string
    */
-  public $lastTrainTime;
-  /**
-   * @var string
-   */
   public $lastTuneTime;
   /**
    * @var string
@@ -53,20 +49,6 @@ class GoogleCloudDiscoveryengineV1alphaEngineRecommendationMetadata extends \Goo
   public function getDataState()
   {
     return $this->dataState;
-  }
-  /**
-   * @param string
-   */
-  public function setLastTrainTime($lastTrainTime)
-  {
-    $this->lastTrainTime = $lastTrainTime;
-  }
-  /**
-   * @return string
-   */
-  public function getLastTrainTime()
-  {
-    return $this->lastTrainTime;
   }
   /**
    * @param string

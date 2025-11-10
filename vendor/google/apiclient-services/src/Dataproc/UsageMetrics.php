@@ -35,10 +35,6 @@ class UsageMetrics extends \Google\Model
    * @var string
    */
   public $shuffleStorageGbSeconds;
-  /**
-   * @var string
-   */
-  public $updateTime;
 
   /**
    * @param string
@@ -95,20 +91,6 @@ class UsageMetrics extends \Google\Model
   public function getShuffleStorageGbSeconds()
   {
     return $this->shuffleStorageGbSeconds;
-  }
-  /**
-   * @param string
-   */
-  public function setUpdateTime($updateTime)
-  {
-    $this->updateTime = $updateTime;
-  }
-  /**
-   * @return string
-   */
-  public function getUpdateTime()
-  {
-    return $this->updateTime;
   }
 }
 

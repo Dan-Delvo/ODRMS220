@@ -24,8 +24,6 @@ class SqlServerHomogeneousMigrationJobConfig extends \Google\Collection
    * @var string
    */
   public $backupFilePattern;
-  protected $dagConfigType = SqlServerDagConfig::class;
-  protected $dagConfigDataType = '';
   protected $databaseBackupsType = SqlServerDatabaseBackup::class;
   protected $databaseBackupsDataType = 'array';
   /**
@@ -50,20 +48,6 @@ class SqlServerHomogeneousMigrationJobConfig extends \Google\Collection
   public function getBackupFilePattern()
   {
     return $this->backupFilePattern;
-  }
-  /**
-   * @param SqlServerDagConfig
-   */
-  public function setDagConfig(SqlServerDagConfig $dagConfig)
-  {
-    $this->dagConfig = $dagConfig;
-  }
-  /**
-   * @return SqlServerDagConfig
-   */
-  public function getDagConfig()
-  {
-    return $this->dagConfig;
   }
   /**
    * @param SqlServerDatabaseBackup[]

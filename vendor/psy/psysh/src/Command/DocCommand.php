@@ -3,7 +3,7 @@
 /*
  * This file is part of Psy Shell.
  *
- * (c) 2012-2025 Justin Hileman
+ * (c) 2012-2023 Justin Hileman
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -12,7 +12,6 @@
 namespace Psy\Command;
 
 use Psy\Formatter\DocblockFormatter;
-use Psy\Formatter\ManualFormatter;
 use Psy\Formatter\SignatureFormatter;
 use Psy\Input\CodeArgument;
 use Psy\Output\ShellOutput;
@@ -70,11 +69,11 @@ HELP
             $reflector = new ReflectionLanguageConstruct($value);
             $doc = $this->getManualDocById($value);
         } else {
-            list($target, $reflector) = $this->getTargetAndReflector($value, $output);
+            list($target, $reflector) = $this->getTargetAndReflector($value);
             $doc = $this->getManualDoc($reflector) ?: DocblockFormatter::format($reflector);
         }
 
-        $hasManual = $this->getShell()->getManual() !== null;
+        $db = $this->getShell()->getManualDb();
 
         if ($output instanceof ShellOutput) {
             $output->startPaging();
@@ -88,7 +87,7 @@ HELP
         $output->writeln(SignatureFormatter::format($reflector));
         $output->writeln('');
 
-        if (empty($doc) && !$hasManual) {
+        if (empty($doc) && !$db) {
             $output->writeln('<warning>PHP manual not found</warning>');
             $output->writeln('    To document core PHP functionality, download the PHP reference manual:');
             $output->writeln('    https://github.com/bobthecow/psysh/wiki/PHP-manual');
@@ -243,54 +242,11 @@ HELP
 
     private function getManualDocById($id)
     {
-        if ($manual = $this->getShell()->getManual()) {
-            switch ($manual->getVersion()) {
-                case 2:
-                    // v2 manual docs are pre-formatted and should be rendered as-is
-                    return $manual->get($id);
-
-                case 3:
-                    if ($doc = $manual->get($id)) {
-                        $width = $this->getTerminalWidth();
-                        $formatter = new ManualFormatter($width, $manual);
-
-                        return $formatter->format($doc);
-                    }
-                    break;
+        if ($db = $this->getShell()->getManualDb()) {
+            $result = $db->query(\sprintf('SELECT doc FROM php_manual WHERE id = %s', $db->quote($id)));
+            if ($result !== false) {
+                return $result->fetchColumn(0);
             }
         }
-
-        return null;
-    }
-
-    /**
-     * Get the current terminal width for text wrapping.
-     *
-     * @return int Terminal width in columns
-     */
-    private function getTerminalWidth(): int
-    {
-        // Query terminal size directly
-        if (\function_exists('shell_exec')) {
-            // Output format: "rows cols"
-            $output = @\shell_exec('stty size </dev/tty 2>/dev/null');
-            if ($output && \preg_match('/^\d+ (\d+)$/', \trim($output), $matches)) {
-                return (int) $matches[1];
-            }
-
-            $width = @\shell_exec('tput cols </dev/tty 2>/dev/null');
-            if ($width && \is_numeric(\trim($width))) {
-                return (int) \trim($width);
-            }
-        }
-
-        // Check COLUMNS environment variable (may be stale after resize)
-        $width = \getenv('COLUMNS');
-        if ($width && \is_numeric(\trim($width))) {
-            return (int) \trim($width);
-        }
-
-        // Fallback to 100 if we can't detect
-        return 100;
     }
 }

@@ -19,17 +19,13 @@ namespace Google\Service\NetworkServices;
 
 class ListServiceBindingsResponse extends \Google\Collection
 {
-  protected $collection_key = 'unreachable';
+  protected $collection_key = 'serviceBindings';
   /**
    * @var string
    */
   public $nextPageToken;
   protected $serviceBindingsType = ServiceBinding::class;
   protected $serviceBindingsDataType = 'array';
-  /**
-   * @var string[]
-   */
-  public $unreachable;
 
   /**
    * @param string
@@ -58,20 +54,6 @@ class ListServiceBindingsResponse extends \Google\Collection
   public function getServiceBindings()
   {
     return $this->serviceBindings;
-  }
-  /**
-   * @param string[]
-   */
-  public function setUnreachable($unreachable)
-  {
-    $this->unreachable = $unreachable;
-  }
-  /**
-   * @return string[]
-   */
-  public function getUnreachable()
-  {
-    return $this->unreachable;
   }
 }
 

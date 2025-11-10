@@ -1,11 +1,5 @@
 # CHANGELOG
 
-## [Unreleased]
-
-## 5.3.0 - 2025-09-12
-
-* Added support for PHP 8.5
-
 ## 5.2.1 - 2024-12-20
 
 * Fixed deprecated implicit nullable parameter

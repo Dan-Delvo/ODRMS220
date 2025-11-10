@@ -29,8 +29,6 @@ class GoogleCloudDialogflowCxV3GenerativeSettings extends \Google\Model
    * @var string
    */
   public $languageCode;
-  protected $llmModelSettingsType = GoogleCloudDialogflowCxV3LlmModelSettings::class;
-  protected $llmModelSettingsDataType = '';
   /**
    * @var string
    */
@@ -91,20 +89,6 @@ class GoogleCloudDialogflowCxV3GenerativeSettings extends \Google\Model
   public function getLanguageCode()
   {
     return $this->languageCode;
-  }
-  /**
-   * @param GoogleCloudDialogflowCxV3LlmModelSettings
-   */
-  public function setLlmModelSettings(GoogleCloudDialogflowCxV3LlmModelSettings $llmModelSettings)
-  {
-    $this->llmModelSettings = $llmModelSettings;
-  }
-  /**
-   * @return GoogleCloudDialogflowCxV3LlmModelSettings
-   */
-  public function getLlmModelSettings()
-  {
-    return $this->llmModelSettings;
   }
   /**
    * @param string

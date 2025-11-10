@@ -32,7 +32,7 @@ class Authorize
     /**
      * Specify the ability and models for the middleware.
      *
-     * @param  \UnitEnum|string  $ability
+     * @param  \BackedEnum|string  $ability
      * @param  string  ...$models
      * @return string
      */

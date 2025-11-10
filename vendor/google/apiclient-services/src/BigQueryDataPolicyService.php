@@ -20,7 +20,7 @@ namespace Google\Service;
 use Google\Client;
 
 /**
- * Service definition for BigQueryDataPolicyService (v2).
+ * Service definition for BigQueryDataPolicyService (v1).
  *
  * <p>
  * Allows users to manage BigQuery data policies.</p>
@@ -59,7 +59,7 @@ class BigQueryDataPolicyService extends \Google\Service
     $this->rootUrlTemplate = $rootUrl ?: 'https://bigquerydatapolicy.UNIVERSE_DOMAIN/';
     $this->servicePath = '';
     $this->batchPath = 'batch';
-    $this->version = 'v2';
+    $this->version = 'v1';
     $this->serviceName = 'bigquerydatapolicy';
 
     $this->projects_locations_dataPolicies = new BigQueryDataPolicyService\Resource\ProjectsLocationsDataPolicies(
@@ -68,18 +68,8 @@ class BigQueryDataPolicyService extends \Google\Service
         'dataPolicies',
         [
           'methods' => [
-            'addGrantees' => [
-              'path' => 'v2/{+dataPolicy}:addGrantees',
-              'httpMethod' => 'POST',
-              'parameters' => [
-                'dataPolicy' => [
-                  'location' => 'path',
-                  'type' => 'string',
-                  'required' => true,
-                ],
-              ],
-            ],'create' => [
-              'path' => 'v2/{+parent}/dataPolicies',
+            'create' => [
+              'path' => 'v1/{+parent}/dataPolicies',
               'httpMethod' => 'POST',
               'parameters' => [
                 'parent' => [
@@ -89,7 +79,7 @@ class BigQueryDataPolicyService extends \Google\Service
                 ],
               ],
             ],'delete' => [
-              'path' => 'v2/{+name}',
+              'path' => 'v1/{+name}',
               'httpMethod' => 'DELETE',
               'parameters' => [
                 'name' => [
@@ -97,9 +87,13 @@ class BigQueryDataPolicyService extends \Google\Service
                   'type' => 'string',
                   'required' => true,
                 ],
+                'force' => [
+                  'location' => 'query',
+                  'type' => 'boolean',
+                ],
               ],
             ],'get' => [
-              'path' => 'v2/{+name}',
+              'path' => 'v1/{+name}',
               'httpMethod' => 'GET',
               'parameters' => [
                 'name' => [
@@ -109,7 +103,7 @@ class BigQueryDataPolicyService extends \Google\Service
                 ],
               ],
             ],'getIamPolicy' => [
-              'path' => 'v2/{+resource}:getIamPolicy',
+              'path' => 'v1/{+resource}:getIamPolicy',
               'httpMethod' => 'POST',
               'parameters' => [
                 'resource' => [
@@ -119,7 +113,7 @@ class BigQueryDataPolicyService extends \Google\Service
                 ],
               ],
             ],'list' => [
-              'path' => 'v2/{+parent}/dataPolicies',
+              'path' => 'v1/{+parent}/dataPolicies',
               'httpMethod' => 'GET',
               'parameters' => [
                 'parent' => [
@@ -141,7 +135,7 @@ class BigQueryDataPolicyService extends \Google\Service
                 ],
               ],
             ],'patch' => [
-              'path' => 'v2/{+name}',
+              'path' => 'v1/{+name}',
               'httpMethod' => 'PATCH',
               'parameters' => [
                 'name' => [
@@ -158,18 +152,18 @@ class BigQueryDataPolicyService extends \Google\Service
                   'type' => 'string',
                 ],
               ],
-            ],'removeGrantees' => [
-              'path' => 'v2/{+dataPolicy}:removeGrantees',
+            ],'rename' => [
+              'path' => 'v1/{+name}:rename',
               'httpMethod' => 'POST',
               'parameters' => [
-                'dataPolicy' => [
+                'name' => [
                   'location' => 'path',
                   'type' => 'string',
                   'required' => true,
                 ],
               ],
             ],'setIamPolicy' => [
-              'path' => 'v2/{+resource}:setIamPolicy',
+              'path' => 'v1/{+resource}:setIamPolicy',
               'httpMethod' => 'POST',
               'parameters' => [
                 'resource' => [
@@ -179,7 +173,7 @@ class BigQueryDataPolicyService extends \Google\Service
                 ],
               ],
             ],'testIamPermissions' => [
-              'path' => 'v2/{+resource}:testIamPermissions',
+              'path' => 'v1/{+resource}:testIamPermissions',
               'httpMethod' => 'POST',
               'parameters' => [
                 'resource' => [

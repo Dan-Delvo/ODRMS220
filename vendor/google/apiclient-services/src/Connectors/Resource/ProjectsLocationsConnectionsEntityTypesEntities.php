@@ -138,8 +138,6 @@ class ProjectsLocationsConnectionsEntityTypesEntities extends \Google\Service\Re
    * request.
    * @opt_param string sortBy List of 'sort_by' columns to use when returning the
    * results.
-   * @opt_param string sortOrder List of 'sort_order' columns to use when
-   * returning the results.
    * @return ListEntitiesResponse
    * @throws \Google\Service\Exception
    */

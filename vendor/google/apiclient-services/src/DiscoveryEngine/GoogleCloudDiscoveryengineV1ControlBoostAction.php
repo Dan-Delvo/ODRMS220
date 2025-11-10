@@ -35,8 +35,6 @@ class GoogleCloudDiscoveryengineV1ControlBoostAction extends \Google\Model
    * @var float
    */
   public $fixedBoost;
-  protected $interpolationBoostSpecType = GoogleCloudDiscoveryengineV1ControlBoostActionInterpolationBoostSpec::class;
-  protected $interpolationBoostSpecDataType = '';
 
   /**
    * @param float
@@ -93,20 +91,6 @@ class GoogleCloudDiscoveryengineV1ControlBoostAction extends \Google\Model
   public function getFixedBoost()
   {
     return $this->fixedBoost;
-  }
-  /**
-   * @param GoogleCloudDiscoveryengineV1ControlBoostActionInterpolationBoostSpec
-   */
-  public function setInterpolationBoostSpec(GoogleCloudDiscoveryengineV1ControlBoostActionInterpolationBoostSpec $interpolationBoostSpec)
-  {
-    $this->interpolationBoostSpec = $interpolationBoostSpec;
-  }
-  /**
-   * @return GoogleCloudDiscoveryengineV1ControlBoostActionInterpolationBoostSpec
-   */
-  public function getInterpolationBoostSpec()
-  {
-    return $this->interpolationBoostSpec;
   }
 }
 

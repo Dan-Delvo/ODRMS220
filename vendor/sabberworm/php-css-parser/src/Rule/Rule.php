@@ -4,13 +4,11 @@ namespace Sabberworm\CSS\Rule;
 
 use Sabberworm\CSS\Comment\Comment;
 use Sabberworm\CSS\Comment\Commentable;
-use Sabberworm\CSS\CSSElement;
 use Sabberworm\CSS\OutputFormat;
 use Sabberworm\CSS\Parsing\ParserState;
 use Sabberworm\CSS\Parsing\UnexpectedEOFException;
 use Sabberworm\CSS\Parsing\UnexpectedTokenException;
-use Sabberworm\CSS\Position\Position;
-use Sabberworm\CSS\Position\Positionable;
+use Sabberworm\CSS\Renderable;
 use Sabberworm\CSS\Value\RuleValueList;
 use Sabberworm\CSS\Value\Value;
 
@@ -19,10 +17,8 @@ use Sabberworm\CSS\Value\Value;
  *
  * In CSS, `Rule`s are expressed as follows: “key: value[0][0] value[0][1], value[1][0] value[1][1];”
  */
-class Rule implements Commentable, CSSElement, Positionable
+class Rule implements Renderable, Commentable
 {
-    use Position;
-
     /**
      * @var string
      */
@@ -44,9 +40,17 @@ class Rule implements Commentable, CSSElement, Positionable
     private $aIeHack;
 
     /**
+     * @var int
+     */
+    protected $iLineNo;
+
+    /**
+     * @var int
+     */
+    protected $iColNo;
+
+    /**
      * @var array<array-key, Comment>
-     *
-     * @internal since 8.8.0
      */
     protected $aComments;
 
@@ -61,23 +65,20 @@ class Rule implements Commentable, CSSElement, Positionable
         $this->mValue = null;
         $this->bIsImportant = false;
         $this->aIeHack = [];
-        $this->setPosition($iLineNo, $iColNo);
+        $this->iLineNo = $iLineNo;
+        $this->iColNo = $iColNo;
         $this->aComments = [];
     }
 
     /**
-     * @param array<int, Comment> $commentsBeforeRule
-     *
      * @return Rule
      *
      * @throws UnexpectedEOFException
      * @throws UnexpectedTokenException
-     *
-     * @internal since V8.8.0
      */
-    public static function parse(ParserState $oParserState, $commentsBeforeRule = [])
+    public static function parse(ParserState $oParserState)
     {
-        $aComments = \array_merge($commentsBeforeRule, $oParserState->consumeWhiteSpace());
+        $aComments = $oParserState->consumeWhiteSpace();
         $oRule = new Rule(
             $oParserState->parseIdentifier(!$oParserState->comes("--")),
             $oParserState->currentLine(),
@@ -107,30 +108,50 @@ class Rule implements Commentable, CSSElement, Positionable
             $oParserState->consume(';');
         }
 
+        $oParserState->consumeWhiteSpace();
+
         return $oRule;
     }
 
     /**
-     * Returns a list of delimiters (or separators).
-     * The first item is the innermost separator (or, put another way, the highest-precedence operator).
-     * The sequence continues to the outermost separator (or lowest-precedence operator).
-     *
      * @param string $sRule
      *
-     * @return list<non-empty-string>
+     * @return array<int, string>
      */
     private static function listDelimiterForRule($sRule)
     {
         if (preg_match('/^font($|-)/', $sRule)) {
             return [',', '/', ' '];
         }
+        return [',', ' ', '/'];
+    }
 
-        switch ($sRule) {
-            case 'src':
-                return [' ', ','];
-            default:
-                return [',', ' ', '/'];
-        }
+    /**
+     * @return int
+     */
+    public function getLineNo()
+    {
+        return $this->iLineNo;
+    }
+
+    /**
+     * @return int
+     */
+    public function getColNo()
+    {
+        return $this->iColNo;
+    }
+
+    /**
+     * @param int $iLine
+     * @param int $iColumn
+     *
+     * @return void
+     */
+    public function setPosition($iLine, $iColumn)
+    {
+        $this->iColNo = $iColumn;
+        $this->iLineNo = $iLine;
     }
 
     /**
@@ -258,7 +279,7 @@ class Rule implements Commentable, CSSElement, Positionable
         }
         if (!$this->mValue instanceof RuleValueList || $this->mValue->getListSeparator() !== $sType) {
             $mCurrentValue = $this->mValue;
-            $this->mValue = new RuleValueList($sType, $this->getLineNumber());
+            $this->mValue = new RuleValueList($sType, $this->iLineNo);
             if ($mCurrentValue) {
                 $this->mValue->addListComponent($mCurrentValue);
             }
@@ -272,8 +293,6 @@ class Rule implements Commentable, CSSElement, Positionable
      * @param int $iModifier
      *
      * @return void
-     *
-     * @deprecated since V8.8.0, will be removed in V9.0
      */
     public function addIeHack($iModifier)
     {
@@ -284,8 +303,6 @@ class Rule implements Commentable, CSSElement, Positionable
      * @param array<int, int> $aModifiers
      *
      * @return void
-     *
-     * @deprecated since V8.8.0, will be removed in V9.0
      */
     public function setIeHack(array $aModifiers)
     {
@@ -294,8 +311,6 @@ class Rule implements Commentable, CSSElement, Positionable
 
     /**
      * @return array<int, int>
-     *
-     * @deprecated since V8.8.0, will be removed in V9.0
      */
     public function getIeHack()
     {
@@ -322,8 +337,6 @@ class Rule implements Commentable, CSSElement, Positionable
 
     /**
      * @return string
-     *
-     * @deprecated in V8.8.0, will be removed in V9.0.0. Use `render` instead.
      */
     public function __toString()
     {

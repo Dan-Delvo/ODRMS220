@@ -42,8 +42,6 @@ class DriveFile extends \Google\Collection
    * @var string
    */
   public $description;
-  protected $downloadRestrictionsType = DownloadRestrictionsMetadata::class;
-  protected $downloadRestrictionsDataType = '';
   /**
    * @var string
    */
@@ -90,10 +88,6 @@ class DriveFile extends \Google\Collection
   public $id;
   protected $imageMediaMetadataType = DriveFileImageMediaMetadata::class;
   protected $imageMediaMetadataDataType = '';
-  /**
-   * @var bool
-   */
-  public $inheritedPermissionsDisabled;
   /**
    * @var bool
    */
@@ -348,20 +342,6 @@ class DriveFile extends \Google\Collection
     return $this->description;
   }
   /**
-   * @param DownloadRestrictionsMetadata
-   */
-  public function setDownloadRestrictions(DownloadRestrictionsMetadata $downloadRestrictions)
-  {
-    $this->downloadRestrictions = $downloadRestrictions;
-  }
-  /**
-   * @return DownloadRestrictionsMetadata
-   */
-  public function getDownloadRestrictions()
-  {
-    return $this->downloadRestrictions;
-  }
-  /**
    * @param string
    */
   public function setDriveId($driveId)
@@ -528,20 +508,6 @@ class DriveFile extends \Google\Collection
   public function getImageMediaMetadata()
   {
     return $this->imageMediaMetadata;
-  }
-  /**
-   * @param bool
-   */
-  public function setInheritedPermissionsDisabled($inheritedPermissionsDisabled)
-  {
-    $this->inheritedPermissionsDisabled = $inheritedPermissionsDisabled;
-  }
-  /**
-   * @return bool
-   */
-  public function getInheritedPermissionsDisabled()
-  {
-    return $this->inheritedPermissionsDisabled;
   }
   /**
    * @param bool

@@ -19,8 +19,6 @@ namespace Google\Service\Transcoder;
 
 class Input extends \Google\Model
 {
-  protected $attributesType = InputAttributes::class;
-  protected $attributesDataType = '';
   /**
    * @var string
    */
@@ -32,20 +30,6 @@ class Input extends \Google\Model
    */
   public $uri;
 
-  /**
-   * @param InputAttributes
-   */
-  public function setAttributes(InputAttributes $attributes)
-  {
-    $this->attributes = $attributes;
-  }
-  /**
-   * @return InputAttributes
-   */
-  public function getAttributes()
-  {
-    return $this->attributes;
-  }
   /**
    * @param string
    */

@@ -27,10 +27,6 @@ class GoogleCloudDatacatalogV1MigrationConfig extends \Google\Model
    * @var string
    */
   public $tagTemplateMigration;
-  /**
-   * @var string
-   */
-  public $templateMigrationEnabledTime;
 
   /**
    * @param string
@@ -59,20 +55,6 @@ class GoogleCloudDatacatalogV1MigrationConfig extends \Google\Model
   public function getTagTemplateMigration()
   {
     return $this->tagTemplateMigration;
-  }
-  /**
-   * @param string
-   */
-  public function setTemplateMigrationEnabledTime($templateMigrationEnabledTime)
-  {
-    $this->templateMigrationEnabledTime = $templateMigrationEnabledTime;
-  }
-  /**
-   * @return string
-   */
-  public function getTemplateMigrationEnabledTime()
-  {
-    return $this->templateMigrationEnabledTime;
   }
 }
 

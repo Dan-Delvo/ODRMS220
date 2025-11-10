@@ -34,14 +34,13 @@ use Google\Client;
  */
 class PaymentsResellerSubscription extends \Google\Service
 {
-  /** See and/or control the devices that you selected. */
-  const SDM_SERVICE =
-      "https://www.googleapis.com/auth/sdm.service";
+  /** Associate you with your personal info on Google. */
+  const OPENID =
+      "openid";
 
   public $partners_products;
   public $partners_promotions;
   public $partners_subscriptions;
-  public $partners_subscriptions_lineItems;
   public $partners_userSessions;
   public $rootUrlTemplate;
 
@@ -206,37 +205,9 @@ class PaymentsResellerSubscription extends \Google\Service
                   'type' => 'string',
                   'required' => true,
                 ],
-                'cycleOptions.initialCycleDuration.count' => [
-                  'location' => 'query',
-                  'type' => 'integer',
-                ],
-                'cycleOptions.initialCycleDuration.unit' => [
-                  'location' => 'query',
-                  'type' => 'string',
-                ],
                 'subscriptionId' => [
                   'location' => 'query',
                   'type' => 'string',
-                ],
-              ],
-            ],'resume' => [
-              'path' => 'v1/{+name}:resume',
-              'httpMethod' => 'POST',
-              'parameters' => [
-                'name' => [
-                  'location' => 'path',
-                  'type' => 'string',
-                  'required' => true,
-                ],
-              ],
-            ],'suspend' => [
-              'path' => 'v1/{+name}:suspend',
-              'httpMethod' => 'POST',
-              'parameters' => [
-                'name' => [
-                  'location' => 'path',
-                  'type' => 'string',
-                  'required' => true,
                 ],
               ],
             ],'undoCancel' => [
@@ -247,30 +218,6 @@ class PaymentsResellerSubscription extends \Google\Service
                   'location' => 'path',
                   'type' => 'string',
                   'required' => true,
-                ],
-              ],
-            ],
-          ]
-        ]
-    );
-    $this->partners_subscriptions_lineItems = new PaymentsResellerSubscription\Resource\PartnersSubscriptionsLineItems(
-        $this,
-        $this->serviceName,
-        'lineItems',
-        [
-          'methods' => [
-            'patch' => [
-              'path' => 'v1/{+name}',
-              'httpMethod' => 'PATCH',
-              'parameters' => [
-                'name' => [
-                  'location' => 'path',
-                  'type' => 'string',
-                  'required' => true,
-                ],
-                'updateMask' => [
-                  'location' => 'query',
-                  'type' => 'string',
                 ],
               ],
             ],

@@ -24,17 +24,7 @@ class Instance extends \Google\Model
   /**
    * @var string
    */
-  public $classType;
-  /**
-   * @var string
-   */
   public $consumerNetwork;
-  protected $controlledEgressConfigType = ControlledEgressConfig::class;
-  protected $controlledEgressConfigDataType = '';
-  /**
-   * @var bool
-   */
-  public $controlledEgressEnabled;
   /**
    * @var string
    */
@@ -112,14 +102,6 @@ class Instance extends \Google\Model
    */
   public $reservedRange;
   /**
-   * @var bool
-   */
-  public $satisfiesPzi;
-  /**
-   * @var bool
-   */
-  public $satisfiesPzs;
-  /**
    * @var string
    */
   public $state;
@@ -147,20 +129,6 @@ class Instance extends \Google\Model
   /**
    * @param string
    */
-  public function setClassType($classType)
-  {
-    $this->classType = $classType;
-  }
-  /**
-   * @return string
-   */
-  public function getClassType()
-  {
-    return $this->classType;
-  }
-  /**
-   * @param string
-   */
   public function setConsumerNetwork($consumerNetwork)
   {
     $this->consumerNetwork = $consumerNetwork;
@@ -171,34 +139,6 @@ class Instance extends \Google\Model
   public function getConsumerNetwork()
   {
     return $this->consumerNetwork;
-  }
-  /**
-   * @param ControlledEgressConfig
-   */
-  public function setControlledEgressConfig(ControlledEgressConfig $controlledEgressConfig)
-  {
-    $this->controlledEgressConfig = $controlledEgressConfig;
-  }
-  /**
-   * @return ControlledEgressConfig
-   */
-  public function getControlledEgressConfig()
-  {
-    return $this->controlledEgressConfig;
-  }
-  /**
-   * @param bool
-   */
-  public function setControlledEgressEnabled($controlledEgressEnabled)
-  {
-    $this->controlledEgressEnabled = $controlledEgressEnabled;
-  }
-  /**
-   * @return bool
-   */
-  public function getControlledEgressEnabled()
-  {
-    return $this->controlledEgressEnabled;
   }
   /**
    * @param string
@@ -521,34 +461,6 @@ class Instance extends \Google\Model
   public function getReservedRange()
   {
     return $this->reservedRange;
-  }
-  /**
-   * @param bool
-   */
-  public function setSatisfiesPzi($satisfiesPzi)
-  {
-    $this->satisfiesPzi = $satisfiesPzi;
-  }
-  /**
-   * @return bool
-   */
-  public function getSatisfiesPzi()
-  {
-    return $this->satisfiesPzi;
-  }
-  /**
-   * @param bool
-   */
-  public function setSatisfiesPzs($satisfiesPzs)
-  {
-    $this->satisfiesPzs = $satisfiesPzs;
-  }
-  /**
-   * @return bool
-   */
-  public function getSatisfiesPzs()
-  {
-    return $this->satisfiesPzs;
   }
   /**
    * @param string

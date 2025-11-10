@@ -95,18 +95,8 @@ class Backup extends \Google\Model
    * @var string
    */
   public $retainExpireTime;
-  /**
-   * @var bool
-   */
-  public $satisfiesPzi;
-  /**
-   * @var bool
-   */
-  public $satisfiesPzs;
   protected $selectedApplicationsType = NamespacedNames::class;
   protected $selectedApplicationsDataType = '';
-  protected $selectedNamespaceLabelsType = ResourceLabels::class;
-  protected $selectedNamespaceLabelsDataType = '';
   protected $selectedNamespacesType = Namespaces::class;
   protected $selectedNamespacesDataType = '';
   /**
@@ -121,8 +111,6 @@ class Backup extends \Google\Model
    * @var string
    */
   public $stateReason;
-  protected $troubleshootingInfoType = TroubleshootingInfo::class;
-  protected $troubleshootingInfoDataType = '';
   /**
    * @var string
    */
@@ -417,34 +405,6 @@ class Backup extends \Google\Model
     return $this->retainExpireTime;
   }
   /**
-   * @param bool
-   */
-  public function setSatisfiesPzi($satisfiesPzi)
-  {
-    $this->satisfiesPzi = $satisfiesPzi;
-  }
-  /**
-   * @return bool
-   */
-  public function getSatisfiesPzi()
-  {
-    return $this->satisfiesPzi;
-  }
-  /**
-   * @param bool
-   */
-  public function setSatisfiesPzs($satisfiesPzs)
-  {
-    $this->satisfiesPzs = $satisfiesPzs;
-  }
-  /**
-   * @return bool
-   */
-  public function getSatisfiesPzs()
-  {
-    return $this->satisfiesPzs;
-  }
-  /**
    * @param NamespacedNames
    */
   public function setSelectedApplications(NamespacedNames $selectedApplications)
@@ -457,20 +417,6 @@ class Backup extends \Google\Model
   public function getSelectedApplications()
   {
     return $this->selectedApplications;
-  }
-  /**
-   * @param ResourceLabels
-   */
-  public function setSelectedNamespaceLabels(ResourceLabels $selectedNamespaceLabels)
-  {
-    $this->selectedNamespaceLabels = $selectedNamespaceLabels;
-  }
-  /**
-   * @return ResourceLabels
-   */
-  public function getSelectedNamespaceLabels()
-  {
-    return $this->selectedNamespaceLabels;
   }
   /**
    * @param Namespaces
@@ -527,20 +473,6 @@ class Backup extends \Google\Model
   public function getStateReason()
   {
     return $this->stateReason;
-  }
-  /**
-   * @param TroubleshootingInfo
-   */
-  public function setTroubleshootingInfo(TroubleshootingInfo $troubleshootingInfo)
-  {
-    $this->troubleshootingInfo = $troubleshootingInfo;
-  }
-  /**
-   * @return TroubleshootingInfo
-   */
-  public function getTroubleshootingInfo()
-  {
-    return $this->troubleshootingInfo;
   }
   /**
    * @param string

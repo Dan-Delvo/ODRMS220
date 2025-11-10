@@ -37,8 +37,6 @@ class Response extends \Google\Model
   protected $addSheetDataType = '';
   protected $addSlicerType = AddSlicerResponse::class;
   protected $addSlicerDataType = '';
-  protected $addTableType = AddTableResponse::class;
-  protected $addTableDataType = '';
   protected $cancelDataSourceRefreshType = CancelDataSourceRefreshResponse::class;
   protected $cancelDataSourceRefreshDataType = '';
   protected $createDeveloperMetadataType = CreateDeveloperMetadataResponse::class;
@@ -195,20 +193,6 @@ class Response extends \Google\Model
   public function getAddSlicer()
   {
     return $this->addSlicer;
-  }
-  /**
-   * @param AddTableResponse
-   */
-  public function setAddTable(AddTableResponse $addTable)
-  {
-    $this->addTable = $addTable;
-  }
-  /**
-   * @return AddTableResponse
-   */
-  public function getAddTable()
-  {
-    return $this->addTable;
   }
   /**
    * @param CancelDataSourceRefreshResponse

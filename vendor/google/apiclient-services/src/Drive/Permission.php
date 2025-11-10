@@ -49,10 +49,6 @@ class Permission extends \Google\Collection
    */
   public $id;
   /**
-   * @var bool
-   */
-  public $inheritedPermissionsDisabled;
-  /**
    * @var string
    */
   public $kind;
@@ -178,20 +174,6 @@ class Permission extends \Google\Collection
   public function getId()
   {
     return $this->id;
-  }
-  /**
-   * @param bool
-   */
-  public function setInheritedPermissionsDisabled($inheritedPermissionsDisabled)
-  {
-    $this->inheritedPermissionsDisabled = $inheritedPermissionsDisabled;
-  }
-  /**
-   * @return bool
-   */
-  public function getInheritedPermissionsDisabled()
-  {
-    return $this->inheritedPermissionsDisabled;
   }
   /**
    * @param string

@@ -28,8 +28,6 @@ class AdGroupAd extends \Google\Collection
    * @var string
    */
   public $adGroupId;
-  protected $adPolicyType = AdPolicy::class;
-  protected $adPolicyDataType = '';
   protected $adUrlsType = AdUrl::class;
   protected $adUrlsDataType = 'array';
   /**
@@ -92,20 +90,6 @@ class AdGroupAd extends \Google\Collection
   public function getAdGroupId()
   {
     return $this->adGroupId;
-  }
-  /**
-   * @param AdPolicy
-   */
-  public function setAdPolicy(AdPolicy $adPolicy)
-  {
-    $this->adPolicy = $adPolicy;
-  }
-  /**
-   * @return AdPolicy
-   */
-  public function getAdPolicy()
-  {
-    return $this->adPolicy;
   }
   /**
    * @param AdUrl[]

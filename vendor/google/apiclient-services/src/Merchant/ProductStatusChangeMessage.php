@@ -33,10 +33,6 @@ class ProductStatusChangeMessage extends \Google\Collection
   /**
    * @var string
    */
-  public $eventTime;
-  /**
-   * @var string
-   */
   public $expirationTime;
   /**
    * @var string
@@ -96,20 +92,6 @@ class ProductStatusChangeMessage extends \Google\Collection
   public function getChanges()
   {
     return $this->changes;
-  }
-  /**
-   * @param string
-   */
-  public function setEventTime($eventTime)
-  {
-    $this->eventTime = $eventTime;
-  }
-  /**
-   * @return string
-   */
-  public function getEventTime()
-  {
-    return $this->eventTime;
   }
   /**
    * @param string

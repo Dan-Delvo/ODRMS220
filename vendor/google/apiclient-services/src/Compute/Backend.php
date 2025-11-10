@@ -17,9 +17,8 @@
 
 namespace Google\Service\Compute;
 
-class Backend extends \Google\Collection
+class Backend extends \Google\Model
 {
-  protected $collection_key = 'customMetrics';
   /**
    * @var string
    */
@@ -28,8 +27,6 @@ class Backend extends \Google\Collection
    * @var float
    */
   public $capacityScaler;
-  protected $customMetricsType = BackendCustomMetric::class;
-  protected $customMetricsDataType = 'array';
   /**
    * @var string
    */
@@ -102,20 +99,6 @@ class Backend extends \Google\Collection
   public function getCapacityScaler()
   {
     return $this->capacityScaler;
-  }
-  /**
-   * @param BackendCustomMetric[]
-   */
-  public function setCustomMetrics($customMetrics)
-  {
-    $this->customMetrics = $customMetrics;
-  }
-  /**
-   * @return BackendCustomMetric[]
-   */
-  public function getCustomMetrics()
-  {
-    return $this->customMetrics;
   }
   /**
    * @param string

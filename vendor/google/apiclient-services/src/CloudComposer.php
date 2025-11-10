@@ -191,16 +191,6 @@ class CloudComposer extends \Google\Service
                   'required' => true,
                 ],
               ],
-            ],'restartWebServer' => [
-              'path' => 'v1/{+name}:restartWebServer',
-              'httpMethod' => 'POST',
-              'parameters' => [
-                'name' => [
-                  'location' => 'path',
-                  'type' => 'string',
-                  'required' => true,
-                ],
-              ],
             ],'saveSnapshot' => [
               'path' => 'v1/{+environment}:saveSnapshot',
               'httpMethod' => 'POST',
@@ -471,10 +461,6 @@ class CloudComposer extends \Google\Service
                 'pageToken' => [
                   'location' => 'query',
                   'type' => 'string',
-                ],
-                'returnPartialSuccess' => [
-                  'location' => 'query',
-                  'type' => 'boolean',
                 ],
               ],
             ],

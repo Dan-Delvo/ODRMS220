@@ -154,10 +154,6 @@ class ProjectsLocationsOccurrences extends \Google\Service\Resource
    * @param array $optParams Optional parameters.
    *
    * @opt_param string filter The filter expression.
-   * @opt_param bool returnPartialSuccess If set, the request will return all
-   * reachable occurrence summaries and report all unreachable regions in the
-   * `unreachable` field in the response. Only applicable for requests in the
-   * global region.
    * @return VulnerabilityOccurrencesSummary
    * @throws \Google\Service\Exception
    */
@@ -181,9 +177,6 @@ class ProjectsLocationsOccurrences extends \Google\Service\Resource
    * to 20.
    * @opt_param string pageToken Token to provide to skip to a particular spot in
    * the list.
-   * @opt_param bool returnPartialSuccess If set, the request will return all
-   * reachable Occurrences and report all unreachable regions in the `unreachable`
-   * field in the response. Only applicable for requests in the global region.
    * @return ListOccurrencesResponse
    * @throws \Google\Service\Exception
    */

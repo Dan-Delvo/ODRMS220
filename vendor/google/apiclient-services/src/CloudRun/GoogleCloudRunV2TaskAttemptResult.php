@@ -25,10 +25,6 @@ class GoogleCloudRunV2TaskAttemptResult extends \Google\Model
   public $exitCode;
   protected $statusType = GoogleRpcStatus::class;
   protected $statusDataType = '';
-  /**
-   * @var int
-   */
-  public $termSignal;
 
   /**
    * @param int
@@ -57,20 +53,6 @@ class GoogleCloudRunV2TaskAttemptResult extends \Google\Model
   public function getStatus()
   {
     return $this->status;
-  }
-  /**
-   * @param int
-   */
-  public function setTermSignal($termSignal)
-  {
-    $this->termSignal = $termSignal;
-  }
-  /**
-   * @return int
-   */
-  public function getTermSignal()
-  {
-    return $this->termSignal;
   }
 }
 

@@ -35,10 +35,6 @@ class Instance extends \Google\Collection
   /**
    * @var string
    */
-  public $daosVersion;
-  /**
-   * @var string
-   */
   public $deploymentType;
   /**
    * @var string
@@ -122,20 +118,6 @@ class Instance extends \Google\Collection
   public function getCreateTime()
   {
     return $this->createTime;
-  }
-  /**
-   * @param string
-   */
-  public function setDaosVersion($daosVersion)
-  {
-    $this->daosVersion = $daosVersion;
-  }
-  /**
-   * @return string
-   */
-  public function getDaosVersion()
-  {
-    return $this->daosVersion;
   }
   /**
    * @param string

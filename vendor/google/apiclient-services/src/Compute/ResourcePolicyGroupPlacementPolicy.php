@@ -28,10 +28,6 @@ class ResourcePolicyGroupPlacementPolicy extends \Google\Model
    */
   public $collocation;
   /**
-   * @var string
-   */
-  public $gpuTopology;
-  /**
    * @var int
    */
   public $vmCount;
@@ -63,20 +59,6 @@ class ResourcePolicyGroupPlacementPolicy extends \Google\Model
   public function getCollocation()
   {
     return $this->collocation;
-  }
-  /**
-   * @param string
-   */
-  public function setGpuTopology($gpuTopology)
-  {
-    $this->gpuTopology = $gpuTopology;
-  }
-  /**
-   * @return string
-   */
-  public function getGpuTopology()
-  {
-    return $this->gpuTopology;
   }
   /**
    * @param int

@@ -98,16 +98,6 @@ class PlayIntegrity extends \Google\Service
                   'required' => true,
                 ],
               ],
-            ],'decodePcIntegrityToken' => [
-              'path' => 'v1/{+packageName}:decodePcIntegrityToken',
-              'httpMethod' => 'POST',
-              'parameters' => [
-                'packageName' => [
-                  'location' => 'path',
-                  'type' => 'string',
-                  'required' => true,
-                ],
-              ],
             ],
           ]
         ]

@@ -27,10 +27,6 @@ class PolicyTopic extends \Google\Model
    * @var string
    */
   public $topic;
-  /**
-   * @var string
-   */
-  public $type;
 
   /**
    * @param bool
@@ -59,20 +55,6 @@ class PolicyTopic extends \Google\Model
   public function getTopic()
   {
     return $this->topic;
-  }
-  /**
-   * @param string
-   */
-  public function setType($type)
-  {
-    $this->type = $type;
-  }
-  /**
-   * @return string
-   */
-  public function getType()
-  {
-    return $this->type;
   }
 }
 

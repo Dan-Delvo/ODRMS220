@@ -26,10 +26,6 @@ class Impersonation extends \Google\Model
   /**
    * @var bool
    */
-  public $includeDebugDetails;
-  /**
-   * @var bool
-   */
   public $unauthenticated;
 
   /**
@@ -45,20 +41,6 @@ class Impersonation extends \Google\Model
   public function getAuthClaims()
   {
     return $this->authClaims;
-  }
-  /**
-   * @param bool
-   */
-  public function setIncludeDebugDetails($includeDebugDetails)
-  {
-    $this->includeDebugDetails = $includeDebugDetails;
-  }
-  /**
-   * @return bool
-   */
-  public function getIncludeDebugDetails()
-  {
-    return $this->includeDebugDetails;
   }
   /**
    * @param bool

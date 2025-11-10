@@ -36,10 +36,6 @@ class Job extends \Google\Model
   protected $errorType = Status::class;
   protected $errorDataType = '';
   /**
-   * @var bool
-   */
-  public $fillContentGaps;
-  /**
    * @var string
    */
   public $inputUri;
@@ -149,20 +145,6 @@ class Job extends \Google\Model
   public function getError()
   {
     return $this->error;
-  }
-  /**
-   * @param bool
-   */
-  public function setFillContentGaps($fillContentGaps)
-  {
-    $this->fillContentGaps = $fillContentGaps;
-  }
-  /**
-   * @return bool
-   */
-  public function getFillContentGaps()
-  {
-    return $this->fillContentGaps;
   }
   /**
    * @param string

@@ -15,7 +15,7 @@ use function array_filter;
  *     sortBy?: self::FIELD_*,
  *     order?: self::ORDER_*,
  *     offset?: int<0, max>,
- *     limit?: positive-int,
+ *     limit?: int<1, self::MAX_LIMIT>,
  *     filter?: array<self::FILTER_*, non-empty-string>
  * }
  */
@@ -44,7 +44,7 @@ class UserQuery implements JsonSerializable
     final public const MAX_LIMIT = 500;
 
     /**
-     * @var positive-int|null
+     * @var int<1, self::MAX_LIMIT>|null
      */
     private ?int $limit = null;
 
@@ -126,7 +126,7 @@ class UserQuery implements JsonSerializable
     }
 
     /**
-     * @param positive-int $limit
+     * @param int<1, self::MAX_LIMIT> $limit
      */
     public function withLimit(int $limit): self
     {
@@ -156,7 +156,7 @@ class UserQuery implements JsonSerializable
             'offset' => $this->offset,
             'sortBy' => $this->sortBy,
             'order' => $this->order,
-        ], fn(int|bool|null|string $value): bool => $value !== null);
+        ]);
 
         if ($this->filter !== null) {
             $data['expression'] = $this->filter;

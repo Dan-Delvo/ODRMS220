@@ -21,7 +21,6 @@ namespace Google\Auth\Credentials;
 use Google\Auth\CacheTrait;
 use Google\Auth\CredentialsLoader;
 use Google\Auth\FetchAuthTokenInterface;
-use Google\Auth\GetUniverseDomainInterface;
 use Google\Auth\HttpHandler\HttpClientCache;
 use Google\Auth\HttpHandler\HttpHandlerFactory;
 use Google\Auth\IamSignerTrait;
@@ -30,26 +29,12 @@ use GuzzleHttp\Psr7\Request;
 use InvalidArgumentException;
 use LogicException;
 
-/**
- * **IMPORTANT**:
- * This class does not validate the credential configuration. A security
- * risk occurs when a credential configuration configured with malicious urls
- * is used.
- * When the credential configuration is accepted from an
- * untrusted source, you should validate it before creating this class.
- * @see https://cloud.google.com/docs/authentication/external/externally-sourced-credentials
- */
-class ImpersonatedServiceAccountCredentials extends CredentialsLoader implements
-    SignBlobInterface,
-    GetUniverseDomainInterface
+class ImpersonatedServiceAccountCredentials extends CredentialsLoader implements SignBlobInterface
 {
     use CacheTrait;
     use IamSignerTrait;
 
     private const CRED_TYPE = 'imp';
-    private const IAM_SCOPE = 'https://www.googleapis.com/auth/iam';
-    private const ID_TOKEN_IMPERSONATION_URL =
-        'https://iamcredentials.UNIVERSE_DOMAIN/v1/projects/-/serviceAccounts/%s:generateIdToken';
 
     /**
      * @var string
@@ -86,15 +71,10 @@ class ImpersonatedServiceAccountCredentials extends CredentialsLoader implements
      *     @type int                            $lifetime The lifetime of the impersonated credentials
      *     @type string[]                       $delegates The delegates to impersonate
      * }
-     * @param string|null $targetAudience The audience to request an ID token.
-     * @param string|string[]|null $defaultScope The scopes to be used if no "scopes" field exists
-     *                                           in the `$jsonKey`.
      */
     public function __construct(
-        string|array|null $scope,
-        string|array $jsonKey,
-        private ?string $targetAudience = null,
-        string|array|null $defaultScope = null,
+        $scope,
+        $jsonKey
     ) {
         if (is_string($jsonKey)) {
             if (!file_exists($jsonKey)) {
@@ -113,33 +93,11 @@ class ImpersonatedServiceAccountCredentials extends CredentialsLoader implements
         if (!array_key_exists('source_credentials', $jsonKey)) {
             throw new LogicException('json key is missing the source_credentials field');
         }
-
-        $jsonKeyScope = $jsonKey['scopes'] ?? null;
-        $scope = $scope ?: $jsonKeyScope ?: $defaultScope;
-        if ($scope && $targetAudience) {
-            throw new InvalidArgumentException(
-                'Scope and targetAudience cannot both be supplied'
-            );
-        }
         if (is_array($jsonKey['source_credentials'])) {
             if (!array_key_exists('type', $jsonKey['source_credentials'])) {
                 throw new InvalidArgumentException('json key source credentials are missing the type field');
             }
-            if (
-                $targetAudience !== null
-                && $jsonKey['source_credentials']['type'] === 'service_account'
-            ) {
-                // Service account tokens MUST request a scope, and as this token is only used to impersonate
-                // an ID token, the narrowest scope we can request is `iam`.
-                $scope = self::IAM_SCOPE;
-            }
-            $jsonKey['source_credentials'] = match ($jsonKey['source_credentials']['type'] ?? null) {
-                // Do not pass $defaultScope to ServiceAccountCredentials
-                'service_account' => new ServiceAccountCredentials($scope, $jsonKey['source_credentials']),
-                'authorized_user' => new UserRefreshCredentials($scope, $jsonKey['source_credentials']),
-                'external_account' => new ExternalAccountCredentials($scope, $jsonKey['source_credentials']),
-                default => throw new \InvalidArgumentException('invalid value in the type field'),
-            };
+            $jsonKey['source_credentials'] = CredentialsLoader::makeCredentials($scope, $jsonKey['source_credentials']);
         }
 
         $this->targetScope = $scope ?? [];
@@ -213,38 +171,17 @@ class ImpersonatedServiceAccountCredentials extends CredentialsLoader implements
             'Content-Type' => 'application/json',
             'Cache-Control' => 'no-store',
             'Authorization' => sprintf('Bearer %s', $authToken['access_token'] ?? $authToken['id_token']),
-        ], $this->isIdTokenRequest() ? 'it' : 'at');
+        ], 'at');
 
-        $body = match ($this->isIdTokenRequest()) {
-            true => [
-                'audience' => $this->targetAudience,
-                'includeEmail' => true,
-            ],
-            false => [
-                'scope' => $this->targetScope,
-                'delegates' => $this->delegates,
-                'lifetime' => sprintf('%ss', $this->lifetime),
-            ]
-        };
-
-        $url = $this->serviceAccountImpersonationUrl;
-        if ($this->isIdTokenRequest()) {
-            $regex = '/serviceAccounts\/(?<email>[^:]+):generateAccessToken$/';
-            if (!preg_match($regex, $url, $matches)) {
-                throw new InvalidArgumentException(
-                    'Invalid service account impersonation URL - unable to parse service account email'
-                );
-            }
-            $url = str_replace(
-                'UNIVERSE_DOMAIN',
-                $this->getUniverseDomain(),
-                sprintf(self::ID_TOKEN_IMPERSONATION_URL, $matches['email'])
-            );
-        }
+        $body = [
+            'scope' => $this->targetScope,
+            'delegates' => $this->delegates,
+            'lifetime' => sprintf('%ss', $this->lifetime),
+        ];
 
         $request = new Request(
             'POST',
-            $url,
+            $this->serviceAccountImpersonationUrl,
             $headers,
             (string) json_encode($body)
         );
@@ -252,13 +189,10 @@ class ImpersonatedServiceAccountCredentials extends CredentialsLoader implements
         $response = $httpHandler($request);
         $body = json_decode((string) $response->getBody(), true);
 
-        return match ($this->isIdTokenRequest()) {
-            true => ['id_token' => $body['token']],
-            false => [
-                'access_token' => $body['accessToken'],
-                'expires_at' => strtotime($body['expireTime']),
-            ]
-        };
+        return [
+            'access_token' => $body['accessToken'],
+            'expires_at' => strtotime($body['expireTime']),
+        ];
     }
 
     /**
@@ -285,17 +219,5 @@ class ImpersonatedServiceAccountCredentials extends CredentialsLoader implements
     protected function getCredType(): string
     {
         return self::CRED_TYPE;
-    }
-
-    private function isIdTokenRequest(): bool
-    {
-        return !is_null($this->targetAudience);
-    }
-
-    public function getUniverseDomain(): string
-    {
-        return $this->sourceCredentials instanceof GetUniverseDomainInterface
-            ? $this->sourceCredentials->getUniverseDomain()
-            : self::DEFAULT_UNIVERSE_DOMAIN;
     }
 }

@@ -22,21 +22,21 @@ class EditCustomerMatchMembersResponse extends \Google\Model
   /**
    * @var string
    */
-  public $firstPartyAndPartnerAudienceId;
+  public $firstAndThirdPartyAudienceId;
 
   /**
    * @param string
    */
-  public function setFirstPartyAndPartnerAudienceId($firstPartyAndPartnerAudienceId)
+  public function setFirstAndThirdPartyAudienceId($firstAndThirdPartyAudienceId)
   {
-    $this->firstPartyAndPartnerAudienceId = $firstPartyAndPartnerAudienceId;
+    $this->firstAndThirdPartyAudienceId = $firstAndThirdPartyAudienceId;
   }
   /**
    * @return string
    */
-  public function getFirstPartyAndPartnerAudienceId()
+  public function getFirstAndThirdPartyAudienceId()
   {
-    return $this->firstPartyAndPartnerAudienceId;
+    return $this->firstAndThirdPartyAudienceId;
   }
 }
 

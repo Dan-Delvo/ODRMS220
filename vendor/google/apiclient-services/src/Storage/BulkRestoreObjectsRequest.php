@@ -29,14 +29,6 @@ class BulkRestoreObjectsRequest extends \Google\Collection
    */
   public $copySourceAcl;
   /**
-   * @var string
-   */
-  public $createdAfterTime;
-  /**
-   * @var string
-   */
-  public $createdBeforeTime;
-  /**
    * @var string[]
    */
   public $matchGlobs;
@@ -76,34 +68,6 @@ class BulkRestoreObjectsRequest extends \Google\Collection
   public function getCopySourceAcl()
   {
     return $this->copySourceAcl;
-  }
-  /**
-   * @param string
-   */
-  public function setCreatedAfterTime($createdAfterTime)
-  {
-    $this->createdAfterTime = $createdAfterTime;
-  }
-  /**
-   * @return string
-   */
-  public function getCreatedAfterTime()
-  {
-    return $this->createdAfterTime;
-  }
-  /**
-   * @param string
-   */
-  public function setCreatedBeforeTime($createdBeforeTime)
-  {
-    $this->createdBeforeTime = $createdBeforeTime;
-  }
-  /**
-   * @return string
-   */
-  public function getCreatedBeforeTime()
-  {
-    return $this->createdBeforeTime;
   }
   /**
    * @param string[]

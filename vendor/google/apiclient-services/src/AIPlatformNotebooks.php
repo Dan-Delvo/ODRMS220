@@ -85,11 +85,6 @@ class AIPlatformNotebooks extends \Google\Service
                   'type' => 'string',
                   'required' => true,
                 ],
-                'extraLocationTypes' => [
-                  'location' => 'query',
-                  'type' => 'string',
-                  'repeated' => true,
-                ],
                 'filter' => [
                   'location' => 'query',
                   'type' => 'string',
@@ -113,17 +108,7 @@ class AIPlatformNotebooks extends \Google\Service
         'instances',
         [
           'methods' => [
-            'checkAuthorization' => [
-              'path' => 'v2/{+name}:checkAuthorization',
-              'httpMethod' => 'POST',
-              'parameters' => [
-                'name' => [
-                  'location' => 'path',
-                  'type' => 'string',
-                  'required' => true,
-                ],
-              ],
-            ],'checkUpgradability' => [
+            'checkUpgradability' => [
               'path' => 'v2/{+notebookInstance}:checkUpgradability',
               'httpMethod' => 'GET',
               'parameters' => [
@@ -167,16 +152,6 @@ class AIPlatformNotebooks extends \Google\Service
               ],
             ],'diagnose' => [
               'path' => 'v2/{+name}:diagnose',
-              'httpMethod' => 'POST',
-              'parameters' => [
-                'name' => [
-                  'location' => 'path',
-                  'type' => 'string',
-                  'required' => true,
-                ],
-              ],
-            ],'generateAccessToken' => [
-              'path' => 'v2/{+name}:generateAccessToken',
               'httpMethod' => 'POST',
               'parameters' => [
                 'name' => [
@@ -433,10 +408,6 @@ class AIPlatformNotebooks extends \Google\Service
                 'pageToken' => [
                   'location' => 'query',
                   'type' => 'string',
-                ],
-                'returnPartialSuccess' => [
-                  'location' => 'query',
-                  'type' => 'boolean',
                 ],
               ],
             ],

@@ -19,8 +19,6 @@ namespace Google\Service\CloudVideoIntelligence;
 
 class GoogleCloudVideointelligenceV1VideoAnnotationProgress extends \Google\Model
 {
-  protected $exportStatusType = GoogleCloudVideointelligenceV1ExportToOutputUriStatus::class;
-  protected $exportStatusDataType = '';
   /**
    * @var string
    */
@@ -44,20 +42,6 @@ class GoogleCloudVideointelligenceV1VideoAnnotationProgress extends \Google\Mode
    */
   public $updateTime;
 
-  /**
-   * @param GoogleCloudVideointelligenceV1ExportToOutputUriStatus
-   */
-  public function setExportStatus(GoogleCloudVideointelligenceV1ExportToOutputUriStatus $exportStatus)
-  {
-    $this->exportStatus = $exportStatus;
-  }
-  /**
-   * @return GoogleCloudVideointelligenceV1ExportToOutputUriStatus
-   */
-  public function getExportStatus()
-  {
-    return $this->exportStatus;
-  }
   /**
    * @param string
    */

@@ -32,8 +32,6 @@ use PHPUnit\Framework\TestCase;
  */
 class SnippetTestCase extends TestCase
 {
-    const PROJECT = 'my-awesome-project';
-
     use CheckForClassTrait;
 
     private static $coverage;

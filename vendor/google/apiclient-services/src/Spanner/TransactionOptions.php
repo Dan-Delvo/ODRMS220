@@ -23,10 +23,6 @@ class TransactionOptions extends \Google\Model
    * @var bool
    */
   public $excludeTxnFromChangeStreams;
-  /**
-   * @var string
-   */
-  public $isolationLevel;
   protected $partitionedDmlType = PartitionedDml::class;
   protected $partitionedDmlDataType = '';
   protected $readOnlyType = SpannerReadOnly::class;
@@ -47,20 +43,6 @@ class TransactionOptions extends \Google\Model
   public function getExcludeTxnFromChangeStreams()
   {
     return $this->excludeTxnFromChangeStreams;
-  }
-  /**
-   * @param string
-   */
-  public function setIsolationLevel($isolationLevel)
-  {
-    $this->isolationLevel = $isolationLevel;
-  }
-  /**
-   * @return string
-   */
-  public function getIsolationLevel()
-  {
-    return $this->isolationLevel;
   }
   /**
    * @param PartitionedDml

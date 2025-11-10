@@ -37,7 +37,6 @@ use function Illuminate\Support\enum_value;
  * @property-read HigherOrderCollectionProxy<TKey, TValue> $flatMap
  * @property-read HigherOrderCollectionProxy<TKey, TValue> $groupBy
  * @property-read HigherOrderCollectionProxy<TKey, TValue> $keyBy
- * @property-read HigherOrderCollectionProxy<TKey, TValue> $last
  * @property-read HigherOrderCollectionProxy<TKey, TValue> $map
  * @property-read HigherOrderCollectionProxy<TKey, TValue> $max
  * @property-read HigherOrderCollectionProxy<TKey, TValue> $min
@@ -85,7 +84,6 @@ trait EnumeratesValues
         'flatMap',
         'groupBy',
         'keyBy',
-        'last',
         'map',
         'max',
         'min',
@@ -342,7 +340,7 @@ trait EnumeratesValues
      *
      * @template TEnsureOfType
      *
-     * @param  class-string<TEnsureOfType>|array<array-key, class-string<TEnsureOfType>>|'string'|'int'|'float'|'bool'|'array'|'null'  $type
+     * @param  class-string<TEnsureOfType>|array<array-key, class-string<TEnsureOfType>>  $type
      * @return static<TKey, TEnsureOfType>
      *
      * @throws \UnexpectedValueException

@@ -19,8 +19,6 @@ namespace Google\Service\DiscoveryEngine;
 
 class GoogleCloudDiscoveryengineLoggingErrorLog extends \Google\Model
 {
-  protected $connectorRunPayloadType = GoogleCloudDiscoveryengineLoggingConnectorRunErrorContext::class;
-  protected $connectorRunPayloadDataType = '';
   protected $contextType = GoogleCloudDiscoveryengineLoggingErrorContext::class;
   protected $contextDataType = '';
   protected $importPayloadType = GoogleCloudDiscoveryengineLoggingImportErrorContext::class;
@@ -42,20 +40,6 @@ class GoogleCloudDiscoveryengineLoggingErrorLog extends \Google\Model
   protected $statusType = GoogleRpcStatus::class;
   protected $statusDataType = '';
 
-  /**
-   * @param GoogleCloudDiscoveryengineLoggingConnectorRunErrorContext
-   */
-  public function setConnectorRunPayload(GoogleCloudDiscoveryengineLoggingConnectorRunErrorContext $connectorRunPayload)
-  {
-    $this->connectorRunPayload = $connectorRunPayload;
-  }
-  /**
-   * @return GoogleCloudDiscoveryengineLoggingConnectorRunErrorContext
-   */
-  public function getConnectorRunPayload()
-  {
-    return $this->connectorRunPayload;
-  }
   /**
    * @param GoogleCloudDiscoveryengineLoggingErrorContext
    */

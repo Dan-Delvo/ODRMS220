@@ -43,8 +43,6 @@ class OperationMetadata extends \Google\Model
    * @var string
    */
   public $target;
-  protected $upgradeClusterStatusType = UpgradeClusterStatus::class;
-  protected $upgradeClusterStatusDataType = '';
   /**
    * @var string
    */
@@ -133,20 +131,6 @@ class OperationMetadata extends \Google\Model
   public function getTarget()
   {
     return $this->target;
-  }
-  /**
-   * @param UpgradeClusterStatus
-   */
-  public function setUpgradeClusterStatus(UpgradeClusterStatus $upgradeClusterStatus)
-  {
-    $this->upgradeClusterStatus = $upgradeClusterStatus;
-  }
-  /**
-   * @return UpgradeClusterStatus
-   */
-  public function getUpgradeClusterStatus()
-  {
-    return $this->upgradeClusterStatus;
   }
   /**
    * @param string

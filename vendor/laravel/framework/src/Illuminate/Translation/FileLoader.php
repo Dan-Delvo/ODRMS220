@@ -205,16 +205,6 @@ class FileLoader implements Loader
     }
 
     /**
-     * Get an array of all the registered paths to translation files.
-     *
-     * @return array
-     */
-    public function paths()
-    {
-        return $this->paths;
-    }
-
-    /**
      * Get an array of all the registered paths to JSON translation files.
      *
      * @return array

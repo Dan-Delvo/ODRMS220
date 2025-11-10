@@ -17,19 +17,12 @@
 
 namespace Google\Service\CloudDataplex;
 
-class GoogleCloudDataplexV1DataQualityColumnResult extends \Google\Collection
+class GoogleCloudDataplexV1DataQualityColumnResult extends \Google\Model
 {
-  protected $collection_key = 'dimensions';
   /**
    * @var string
    */
   public $column;
-  protected $dimensionsType = GoogleCloudDataplexV1DataQualityDimensionResult::class;
-  protected $dimensionsDataType = 'array';
-  /**
-   * @var bool
-   */
-  public $passed;
   /**
    * @var float
    */
@@ -48,34 +41,6 @@ class GoogleCloudDataplexV1DataQualityColumnResult extends \Google\Collection
   public function getColumn()
   {
     return $this->column;
-  }
-  /**
-   * @param GoogleCloudDataplexV1DataQualityDimensionResult[]
-   */
-  public function setDimensions($dimensions)
-  {
-    $this->dimensions = $dimensions;
-  }
-  /**
-   * @return GoogleCloudDataplexV1DataQualityDimensionResult[]
-   */
-  public function getDimensions()
-  {
-    return $this->dimensions;
-  }
-  /**
-   * @param bool
-   */
-  public function setPassed($passed)
-  {
-    $this->passed = $passed;
-  }
-  /**
-   * @return bool
-   */
-  public function getPassed()
-  {
-    return $this->passed;
   }
   /**
    * @param float

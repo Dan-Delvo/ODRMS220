@@ -61,16 +61,6 @@ class Translator implements TranslatorInterface, TranslatorBagInterface, LocaleA
     private bool $hasIntlFormatter;
 
     /**
-     * @var array<string, string|int|float|TranslatableInterface>
-     */
-    private array $globalParameters = [];
-
-    /**
-     * @var array<string, string|int|float>
-     */
-    private array $globalTranslatedParameters = [];
-
-    /**
      * @throws InvalidArgumentException If a locale contains invalid characters
      */
     public function __construct(
@@ -165,17 +155,6 @@ class Translator implements TranslatorInterface, TranslatorBagInterface, LocaleA
         return $this->fallbackLocales;
     }
 
-    public function addGlobalParameter(string $id, string|int|float|TranslatableInterface $value): void
-    {
-        $this->globalParameters[$id] = $value;
-        $this->globalTranslatedParameters = [];
-    }
-
-    public function getGlobalParameters(): array
-    {
-        return $this->globalParameters;
-    }
-
     public function trans(?string $id, array $parameters = [], ?string $domain = null, ?string $locale = null): string
     {
         if (null === $id || '' === $id) {
@@ -195,24 +174,7 @@ class Translator implements TranslatorInterface, TranslatorBagInterface, LocaleA
             }
         }
 
-        foreach ($parameters as $key => $value) {
-            if ($value instanceof TranslatableInterface) {
-                $parameters[$key] = $value->trans($this, $locale);
-            }
-        }
-
-        if (null === $globalParameters = &$this->globalTranslatedParameters[$locale]) {
-            $globalParameters = $this->globalParameters;
-            foreach ($globalParameters as $key => $value) {
-                if ($value instanceof TranslatableInterface) {
-                    $globalParameters[$key] = $value->trans($this, $locale);
-                }
-            }
-        }
-
-        if ($globalParameters) {
-            $parameters += $globalParameters;
-        }
+        $parameters = array_map(fn ($parameter) => $parameter instanceof TranslatableInterface ? $parameter->trans($this, $locale) : $parameter, $parameters);
 
         $len = \strlen(MessageCatalogue::INTL_DOMAIN_SUFFIX);
         if ($this->hasIntlFormatter

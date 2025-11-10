@@ -43,11 +43,7 @@ class OrganizationsApiproductsRateplans extends \Google\Service\Resource
    *
    * @param string $parent Required. Name of the API product that is associated
    * with the rate plan. Use the following structure in your request:
-   * `organizations/{org}/apiproducts/{apiproduct}` If the API Product resource
-   * has the `space` attribute set, IAM permissions are checked against the Space
-   * resource path. To learn more, read the [Apigee Spaces
-   * Overview](https://cloud.google.com/apigee/docs/api-platform/system-
-   * administration/spaces/apigee-spaces-overview).
+   * `organizations/{org}/apiproducts/{apiproduct}`
    * @param GoogleCloudApigeeV1RatePlan $postBody
    * @param array $optParams Optional parameters.
    * @return GoogleCloudApigeeV1RatePlan
@@ -64,11 +60,7 @@ class OrganizationsApiproductsRateplans extends \Google\Service\Resource
    *
    * @param string $name Required. ID of the rate plan. Use the following
    * structure in your request:
-   * `organizations/{org}/apiproducts/{apiproduct}/rateplans/{rateplan}` If the
-   * API Product resource has the `space` attribute set, IAM permissions are
-   * checked against the Space resource path. To learn more, read the [Apigee
-   * Spaces Overview](https://cloud.google.com/apigee/docs/api-platform/system-
-   * administration/spaces/apigee-spaces-overview).
+   * `organizations/{org}/apiproducts/{apiproduct}/rateplans/{rateplan}`
    * @param array $optParams Optional parameters.
    * @return GoogleCloudApigeeV1RatePlan
    * @throws \Google\Service\Exception
@@ -84,11 +76,7 @@ class OrganizationsApiproductsRateplans extends \Google\Service\Resource
    *
    * @param string $name Required. Name of the rate plan. Use the following
    * structure in your request:
-   * `organizations/{org}/apiproducts/{apiproduct}/rateplans/{rateplan}` If the
-   * API Product resource has the `space` attribute set, IAM permissions are
-   * checked against the Space resource path. To learn more, read the [Apigee
-   * Spaces Overview](https://cloud.google.com/apigee/docs/api-platform/system-
-   * administration/spaces/apigee-spaces-overview).
+   * `organizations/{org}/apiproducts/{apiproduct}/rateplans/{rateplan}`
    * @param array $optParams Optional parameters.
    * @return GoogleCloudApigeeV1RatePlan
    * @throws \Google\Service\Exception
@@ -106,11 +94,7 @@ class OrganizationsApiproductsRateplans extends \Google\Service\Resource
    * @param string $parent Required. Name of the API product. Use the following
    * structure in your request: `organizations/{org}/apiproducts/{apiproduct}` Use
    * `organizations/{org}/apiproducts/-` to return rate plans for all API products
-   * within the organization. If the API Product resource has the `space`
-   * attribute set, IAM permissions are checked against the Space resource path.
-   * To learn more, read the [Apigee Spaces
-   * Overview](https://cloud.google.com/apigee/docs/api-platform/system-
-   * administration/spaces/apigee-spaces-overview).
+   * within the organization.
    * @param array $optParams Optional parameters.
    *
    * @opt_param int count Number of rate plans to return in the API call. Use with
@@ -144,11 +128,7 @@ class OrganizationsApiproductsRateplans extends \Google\Service\Resource
    *
    * @param string $name Required. Name of the rate plan. Use the following
    * structure in your request:
-   * `organizations/{org}/apiproducts/{apiproduct}/rateplans/{rateplan}` If the
-   * API Product resource has the `space` attribute set, IAM permissions are
-   * checked against the Space resource path. To learn more, read the [Apigee
-   * Spaces Overview](https://cloud.google.com/apigee/docs/api-platform/system-
-   * administration/spaces/apigee-spaces-overview).
+   * `organizations/{org}/apiproducts/{apiproduct}/rateplans/{rateplan}`
    * @param GoogleCloudApigeeV1RatePlan $postBody
    * @param array $optParams Optional parameters.
    * @return GoogleCloudApigeeV1RatePlan

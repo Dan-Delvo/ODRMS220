@@ -11,7 +11,6 @@
 
 namespace Symfony\Component\Uid\Factory;
 
-use Symfony\Component\Uid\Exception\LogicException;
 use Symfony\Component\Uid\Uuid;
 use Symfony\Component\Uid\UuidV1;
 use Symfony\Component\Uid\UuidV4;
@@ -68,15 +67,12 @@ class UuidFactory
         return new TimeBasedUuidFactory($this->timeBasedClass, $node);
     }
 
-    /**
-     * @throws LogicException When no namespace is defined
-     */
     public function nameBased(Uuid|string|null $namespace = null): NameBasedUuidFactory
     {
         $namespace ??= $this->nameBasedNamespace;
 
         if (null === $namespace) {
-            throw new LogicException(\sprintf('A namespace should be defined when using "%s()".', __METHOD__));
+            throw new \LogicException(\sprintf('A namespace should be defined when using "%s()".', __METHOD__));
         }
 
         return new NameBasedUuidFactory($this->nameBasedClass, $this->getNamespace($namespace));

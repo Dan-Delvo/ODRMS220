@@ -32,10 +32,6 @@ class BackendRule extends \Google\Model
    * @var string
    */
   public $jwtAudience;
-  /**
-   * @var string
-   */
-  public $loadBalancingPolicy;
   public $minDeadline;
   public $operationDeadline;
   protected $overridesByRequestProtocolType = BackendRule::class;
@@ -102,20 +98,6 @@ class BackendRule extends \Google\Model
   public function getJwtAudience()
   {
     return $this->jwtAudience;
-  }
-  /**
-   * @param string
-   */
-  public function setLoadBalancingPolicy($loadBalancingPolicy)
-  {
-    $this->loadBalancingPolicy = $loadBalancingPolicy;
-  }
-  /**
-   * @return string
-   */
-  public function getLoadBalancingPolicy()
-  {
-    return $this->loadBalancingPolicy;
   }
   public function setMinDeadline($minDeadline)
   {

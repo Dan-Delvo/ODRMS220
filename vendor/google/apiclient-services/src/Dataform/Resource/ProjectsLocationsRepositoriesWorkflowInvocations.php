@@ -18,7 +18,6 @@
 namespace Google\Service\Dataform\Resource;
 
 use Google\Service\Dataform\CancelWorkflowInvocationRequest;
-use Google\Service\Dataform\CancelWorkflowInvocationResponse;
 use Google\Service\Dataform\DataformEmpty;
 use Google\Service\Dataform\ListWorkflowInvocationsResponse;
 use Google\Service\Dataform\QueryWorkflowInvocationActionsResponse;
@@ -41,14 +40,14 @@ class ProjectsLocationsRepositoriesWorkflowInvocations extends \Google\Service\R
    * @param string $name Required. The workflow invocation resource's name.
    * @param CancelWorkflowInvocationRequest $postBody
    * @param array $optParams Optional parameters.
-   * @return CancelWorkflowInvocationResponse
+   * @return DataformEmpty
    * @throws \Google\Service\Exception
    */
   public function cancel($name, CancelWorkflowInvocationRequest $postBody, $optParams = [])
   {
     $params = ['name' => $name, 'postBody' => $postBody];
     $params = array_merge($params, $optParams);
-    return $this->call('cancel', [$params], CancelWorkflowInvocationResponse::class);
+    return $this->call('cancel', [$params], DataformEmpty::class);
   }
   /**
    * Creates a new WorkflowInvocation in a given Repository.

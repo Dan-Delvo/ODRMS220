@@ -36,8 +36,6 @@ class NetworkConfig extends \Google\Collection
    * @var string
    */
   public $network;
-  protected $pscConfigType = PscConfig::class;
-  protected $pscConfigDataType = '';
   /**
    * @var string
    */
@@ -98,20 +96,6 @@ class NetworkConfig extends \Google\Collection
   public function getNetwork()
   {
     return $this->network;
-  }
-  /**
-   * @param PscConfig
-   */
-  public function setPscConfig(PscConfig $pscConfig)
-  {
-    $this->pscConfig = $pscConfig;
-  }
-  /**
-   * @return PscConfig
-   */
-  public function getPscConfig()
-  {
-    return $this->pscConfig;
   }
   /**
    * @param string

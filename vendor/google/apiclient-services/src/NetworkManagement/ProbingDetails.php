@@ -17,25 +17,18 @@
 
 namespace Google\Service\NetworkManagement;
 
-class ProbingDetails extends \Google\Collection
+class ProbingDetails extends \Google\Model
 {
-  protected $collection_key = 'edgeResponses';
   /**
    * @var string
    */
   public $abortCause;
   protected $destinationEgressLocationType = EdgeLocation::class;
   protected $destinationEgressLocationDataType = '';
-  protected $edgeResponsesType = SingleEdgeResponse::class;
-  protected $edgeResponsesDataType = 'array';
   protected $endpointInfoType = EndpointInfo::class;
   protected $endpointInfoDataType = '';
   protected $errorType = Status::class;
   protected $errorDataType = '';
-  /**
-   * @var bool
-   */
-  public $probedAllDevices;
   protected $probingLatencyType = LatencyDistribution::class;
   protected $probingLatencyDataType = '';
   /**
@@ -84,20 +77,6 @@ class ProbingDetails extends \Google\Collection
     return $this->destinationEgressLocation;
   }
   /**
-   * @param SingleEdgeResponse[]
-   */
-  public function setEdgeResponses($edgeResponses)
-  {
-    $this->edgeResponses = $edgeResponses;
-  }
-  /**
-   * @return SingleEdgeResponse[]
-   */
-  public function getEdgeResponses()
-  {
-    return $this->edgeResponses;
-  }
-  /**
    * @param EndpointInfo
    */
   public function setEndpointInfo(EndpointInfo $endpointInfo)
@@ -124,20 +103,6 @@ class ProbingDetails extends \Google\Collection
   public function getError()
   {
     return $this->error;
-  }
-  /**
-   * @param bool
-   */
-  public function setProbedAllDevices($probedAllDevices)
-  {
-    $this->probedAllDevices = $probedAllDevices;
-  }
-  /**
-   * @return bool
-   */
-  public function getProbedAllDevices()
-  {
-    return $this->probedAllDevices;
   }
   /**
    * @param LatencyDistribution

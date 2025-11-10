@@ -25,10 +25,6 @@ class Image extends \Google\Model
    * @var string
    */
   public $kind;
-  /**
-   * @var string
-   */
-  public $privateImageId;
   protected $sourceUriType = ImageUri::class;
   protected $sourceUriDataType = '';
 
@@ -59,20 +55,6 @@ class Image extends \Google\Model
   public function getKind()
   {
     return $this->kind;
-  }
-  /**
-   * @param string
-   */
-  public function setPrivateImageId($privateImageId)
-  {
-    $this->privateImageId = $privateImageId;
-  }
-  /**
-   * @return string
-   */
-  public function getPrivateImageId()
-  {
-    return $this->privateImageId;
   }
   /**
    * @param ImageUri

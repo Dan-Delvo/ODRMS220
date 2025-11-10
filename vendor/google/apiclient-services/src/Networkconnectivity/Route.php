@@ -47,8 +47,6 @@ class Route extends \Google\Model
   protected $nextHopInterconnectAttachmentDataType = '';
   protected $nextHopRouterApplianceInstanceType = NextHopRouterApplianceInstance::class;
   protected $nextHopRouterApplianceInstanceDataType = '';
-  protected $nextHopSpokeType = NextHopSpoke::class;
-  protected $nextHopSpokeDataType = '';
   protected $nextHopVpcNetworkType = NextHopVpcNetwork::class;
   protected $nextHopVpcNetworkDataType = '';
   protected $nextHopVpnTunnelType = NextHopVPNTunnel::class;
@@ -189,20 +187,6 @@ class Route extends \Google\Model
   public function getNextHopRouterApplianceInstance()
   {
     return $this->nextHopRouterApplianceInstance;
-  }
-  /**
-   * @param NextHopSpoke
-   */
-  public function setNextHopSpoke(NextHopSpoke $nextHopSpoke)
-  {
-    $this->nextHopSpoke = $nextHopSpoke;
-  }
-  /**
-   * @return NextHopSpoke
-   */
-  public function getNextHopSpoke()
-  {
-    return $this->nextHopSpoke;
   }
   /**
    * @param NextHopVpcNetwork

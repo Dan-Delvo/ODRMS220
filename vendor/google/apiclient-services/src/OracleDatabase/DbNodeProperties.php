@@ -20,10 +20,6 @@ namespace Google\Service\OracleDatabase;
 class DbNodeProperties extends \Google\Model
 {
   /**
-   * @var string
-   */
-  public $createTime;
-  /**
    * @var int
    */
   public $dbNodeStorageSizeGb;
@@ -56,20 +52,6 @@ class DbNodeProperties extends \Google\Model
    */
   public $totalCpuCoreCount;
 
-  /**
-   * @param string
-   */
-  public function setCreateTime($createTime)
-  {
-    $this->createTime = $createTime;
-  }
-  /**
-   * @return string
-   */
-  public function getCreateTime()
-  {
-    return $this->createTime;
-  }
   /**
    * @param int
    */

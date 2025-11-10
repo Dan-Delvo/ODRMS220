@@ -17,9 +17,8 @@
 
 namespace Google\Service\OracleDatabase;
 
-class AutonomousDatabase extends \Google\Collection
+class AutonomousDatabase extends \Google\Model
 {
-  protected $collection_key = 'peerAutonomousDatabases';
   /**
    * @var string
    */
@@ -36,10 +35,6 @@ class AutonomousDatabase extends \Google\Collection
    * @var string
    */
   public $database;
-  /**
-   * @var string[]
-   */
-  public $disasterRecoverySupportedLocations;
   /**
    * @var string
    */
@@ -60,22 +55,8 @@ class AutonomousDatabase extends \Google\Collection
    * @var string
    */
   public $network;
-  /**
-   * @var string
-   */
-  public $odbNetwork;
-  /**
-   * @var string
-   */
-  public $odbSubnet;
-  /**
-   * @var string[]
-   */
-  public $peerAutonomousDatabases;
   protected $propertiesType = AutonomousDatabaseProperties::class;
   protected $propertiesDataType = '';
-  protected $sourceConfigType = SourceConfig::class;
-  protected $sourceConfigDataType = '';
 
   /**
    * @param string
@@ -132,20 +113,6 @@ class AutonomousDatabase extends \Google\Collection
   public function getDatabase()
   {
     return $this->database;
-  }
-  /**
-   * @param string[]
-   */
-  public function setDisasterRecoverySupportedLocations($disasterRecoverySupportedLocations)
-  {
-    $this->disasterRecoverySupportedLocations = $disasterRecoverySupportedLocations;
-  }
-  /**
-   * @return string[]
-   */
-  public function getDisasterRecoverySupportedLocations()
-  {
-    return $this->disasterRecoverySupportedLocations;
   }
   /**
    * @param string
@@ -218,48 +185,6 @@ class AutonomousDatabase extends \Google\Collection
     return $this->network;
   }
   /**
-   * @param string
-   */
-  public function setOdbNetwork($odbNetwork)
-  {
-    $this->odbNetwork = $odbNetwork;
-  }
-  /**
-   * @return string
-   */
-  public function getOdbNetwork()
-  {
-    return $this->odbNetwork;
-  }
-  /**
-   * @param string
-   */
-  public function setOdbSubnet($odbSubnet)
-  {
-    $this->odbSubnet = $odbSubnet;
-  }
-  /**
-   * @return string
-   */
-  public function getOdbSubnet()
-  {
-    return $this->odbSubnet;
-  }
-  /**
-   * @param string[]
-   */
-  public function setPeerAutonomousDatabases($peerAutonomousDatabases)
-  {
-    $this->peerAutonomousDatabases = $peerAutonomousDatabases;
-  }
-  /**
-   * @return string[]
-   */
-  public function getPeerAutonomousDatabases()
-  {
-    return $this->peerAutonomousDatabases;
-  }
-  /**
    * @param AutonomousDatabaseProperties
    */
   public function setProperties(AutonomousDatabaseProperties $properties)
@@ -272,20 +197,6 @@ class AutonomousDatabase extends \Google\Collection
   public function getProperties()
   {
     return $this->properties;
-  }
-  /**
-   * @param SourceConfig
-   */
-  public function setSourceConfig(SourceConfig $sourceConfig)
-  {
-    $this->sourceConfig = $sourceConfig;
-  }
-  /**
-   * @return SourceConfig
-   */
-  public function getSourceConfig()
-  {
-    return $this->sourceConfig;
   }
 }
 

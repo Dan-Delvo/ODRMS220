@@ -22,21 +22,37 @@ class AuthenticationConfig extends \Google\Model
   /**
    * @var string
    */
-  public $userWorkloadAuthenticationType;
+  public $authenticationType;
+  protected $injectableCredentialsConfigType = InjectableCredentialsConfig::class;
+  protected $injectableCredentialsConfigDataType = '';
 
   /**
    * @param string
    */
-  public function setUserWorkloadAuthenticationType($userWorkloadAuthenticationType)
+  public function setAuthenticationType($authenticationType)
   {
-    $this->userWorkloadAuthenticationType = $userWorkloadAuthenticationType;
+    $this->authenticationType = $authenticationType;
   }
   /**
    * @return string
    */
-  public function getUserWorkloadAuthenticationType()
+  public function getAuthenticationType()
   {
-    return $this->userWorkloadAuthenticationType;
+    return $this->authenticationType;
+  }
+  /**
+   * @param InjectableCredentialsConfig
+   */
+  public function setInjectableCredentialsConfig(InjectableCredentialsConfig $injectableCredentialsConfig)
+  {
+    $this->injectableCredentialsConfig = $injectableCredentialsConfig;
+  }
+  /**
+   * @return InjectableCredentialsConfig
+   */
+  public function getInjectableCredentialsConfig()
+  {
+    return $this->injectableCredentialsConfig;
   }
 }
 

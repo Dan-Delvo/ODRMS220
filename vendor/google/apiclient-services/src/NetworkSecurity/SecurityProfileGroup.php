@@ -34,10 +34,6 @@ class SecurityProfileGroup extends \Google\Model
   /**
    * @var string
    */
-  public $dataPathId;
-  /**
-   * @var string
-   */
   public $description;
   /**
    * @var string
@@ -101,20 +97,6 @@ class SecurityProfileGroup extends \Google\Model
   public function getCustomMirroringProfile()
   {
     return $this->customMirroringProfile;
-  }
-  /**
-   * @param string
-   */
-  public function setDataPathId($dataPathId)
-  {
-    $this->dataPathId = $dataPathId;
-  }
-  /**
-   * @return string
-   */
-  public function getDataPathId()
-  {
-    return $this->dataPathId;
   }
   /**
    * @param string

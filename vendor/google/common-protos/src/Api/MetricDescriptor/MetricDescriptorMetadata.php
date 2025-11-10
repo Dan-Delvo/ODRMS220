@@ -87,9 +87,7 @@ class MetricDescriptorMetadata extends \Google\Protobuf\Internal\Message
      */
     public function getLaunchStage()
     {
-        if ($this->launch_stage !== 0) {
-            @trigger_error('launch_stage is deprecated.', E_USER_DEPRECATED);
-        }
+        @trigger_error('launch_stage is deprecated.', E_USER_DEPRECATED);
         return $this->launch_stage;
     }
 

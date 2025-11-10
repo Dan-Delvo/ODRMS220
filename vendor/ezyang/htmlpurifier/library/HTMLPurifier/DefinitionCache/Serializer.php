@@ -139,9 +139,8 @@ class HTMLPurifier_DefinitionCache_Serializer extends HTMLPurifier_DefinitionCac
                 continue;
             }
             $key = substr($filename, 0, strlen($filename) - 4);
-            $file = $dir . '/' . $filename;
-            if ($this->isOld($key, $config) && file_exists($file)) {
-                unlink($file);
+            if ($this->isOld($key, $config)) {
+                unlink($dir . '/' . $filename);
             }
         }
         closedir($dh);

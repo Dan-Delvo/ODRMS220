@@ -63,14 +63,6 @@ class ForwardingRule extends \Google\Collection
   /**
    * @var string
    */
-  public $externalManagedBackendBucketMigrationState;
-  /**
-   * @var float
-   */
-  public $externalManagedBackendBucketMigrationTestingPercentage;
-  /**
-   * @var string
-   */
   public $fingerprint;
   /**
    * @var string
@@ -146,10 +138,6 @@ class ForwardingRule extends \Google\Collection
    * @var string
    */
   public $selfLink;
-  /**
-   * @var string
-   */
-  public $selfLinkWithId;
   protected $serviceDirectoryRegistrationsType = ForwardingRuleServiceDirectoryRegistration::class;
   protected $serviceDirectoryRegistrationsDataType = 'array';
   /**
@@ -298,34 +286,6 @@ class ForwardingRule extends \Google\Collection
   public function getDescription()
   {
     return $this->description;
-  }
-  /**
-   * @param string
-   */
-  public function setExternalManagedBackendBucketMigrationState($externalManagedBackendBucketMigrationState)
-  {
-    $this->externalManagedBackendBucketMigrationState = $externalManagedBackendBucketMigrationState;
-  }
-  /**
-   * @return string
-   */
-  public function getExternalManagedBackendBucketMigrationState()
-  {
-    return $this->externalManagedBackendBucketMigrationState;
-  }
-  /**
-   * @param float
-   */
-  public function setExternalManagedBackendBucketMigrationTestingPercentage($externalManagedBackendBucketMigrationTestingPercentage)
-  {
-    $this->externalManagedBackendBucketMigrationTestingPercentage = $externalManagedBackendBucketMigrationTestingPercentage;
-  }
-  /**
-   * @return float
-   */
-  public function getExternalManagedBackendBucketMigrationTestingPercentage()
-  {
-    return $this->externalManagedBackendBucketMigrationTestingPercentage;
   }
   /**
    * @param string
@@ -606,20 +566,6 @@ class ForwardingRule extends \Google\Collection
   public function getSelfLink()
   {
     return $this->selfLink;
-  }
-  /**
-   * @param string
-   */
-  public function setSelfLinkWithId($selfLinkWithId)
-  {
-    $this->selfLinkWithId = $selfLinkWithId;
-  }
-  /**
-   * @return string
-   */
-  public function getSelfLinkWithId()
-  {
-    return $this->selfLinkWithId;
   }
   /**
    * @param ForwardingRuleServiceDirectoryRegistration[]

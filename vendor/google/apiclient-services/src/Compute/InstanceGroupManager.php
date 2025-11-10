@@ -78,8 +78,6 @@ class InstanceGroupManager extends \Google\Collection
    * @var string
    */
   public $region;
-  protected $resourcePoliciesType = InstanceGroupManagerResourcePolicies::class;
-  protected $resourcePoliciesDataType = '';
   /**
    * @var bool
    */
@@ -374,20 +372,6 @@ class InstanceGroupManager extends \Google\Collection
   public function getRegion()
   {
     return $this->region;
-  }
-  /**
-   * @param InstanceGroupManagerResourcePolicies
-   */
-  public function setResourcePolicies(InstanceGroupManagerResourcePolicies $resourcePolicies)
-  {
-    $this->resourcePolicies = $resourcePolicies;
-  }
-  /**
-   * @return InstanceGroupManagerResourcePolicies
-   */
-  public function getResourcePolicies()
-  {
-    return $this->resourcePolicies;
   }
   /**
    * @param bool

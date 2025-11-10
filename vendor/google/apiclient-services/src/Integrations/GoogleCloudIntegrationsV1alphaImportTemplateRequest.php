@@ -23,6 +23,10 @@ class GoogleCloudIntegrationsV1alphaImportTemplateRequest extends \Google\Model
    * @var string
    */
   public $integration;
+  /**
+   * @var string
+   */
+  public $integrationRegion;
   protected $subIntegrationsType = GoogleCloudIntegrationsV1alphaUseTemplateRequestIntegrationDetails::class;
   protected $subIntegrationsDataType = 'map';
 
@@ -39,6 +43,20 @@ class GoogleCloudIntegrationsV1alphaImportTemplateRequest extends \Google\Model
   public function getIntegration()
   {
     return $this->integration;
+  }
+  /**
+   * @param string
+   */
+  public function setIntegrationRegion($integrationRegion)
+  {
+    $this->integrationRegion = $integrationRegion;
+  }
+  /**
+   * @return string
+   */
+  public function getIntegrationRegion()
+  {
+    return $this->integrationRegion;
   }
   /**
    * @param GoogleCloudIntegrationsV1alphaUseTemplateRequestIntegrationDetails[]

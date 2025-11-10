@@ -30,6 +30,8 @@ class FindVersions
 
     private ?DateTimeImmutable $until = null;
 
+    private ?VersionNumber $upToVersion = null;
+
     /**
      * @var positive-int|null
      */
@@ -39,8 +41,6 @@ class FindVersions
      * @var positive-int|null
      */
     private ?int $pageSize = null;
-
-    private ?VersionNumber $upToVersion = null;
 
     private function __construct()
     {
@@ -58,24 +58,20 @@ class FindVersions
     {
         $query = self::all();
 
-        $value = $params['startingAt'] ?? $params['startTime'] ?? $params['since'] ?? null;
-        if ($value !== null) {
+        if ($value = $params['startingAt'] ?? $params['startTime'] ?? $params['since'] ?? null) {
             $query = $query->startingAt(DT::toUTCDateTimeImmutable($value));
         }
 
-        $value = $params['endingAt'] ?? $params['endTime'] ?? $params['until'] ?? null;
-        if ($value !== null) {
+        if ($value = $params['endingAt'] ?? $params['endTime'] ?? $params['until'] ?? null) {
             $query = $query->endingAt(DT::toUTCDateTimeImmutable($value));
         }
 
-        $value = $params['lastVersionBeing'] ?? $params['endVersionNumber'] ?? $params['up_to_version'] ?? null;
-        if ($value !== null) {
+        if ($value = $params['lastVersionBeing'] ?? $params['endVersionNumber'] ?? $params['up_to_version'] ?? null) {
             $versionNumber = $value instanceof VersionNumber ? $value : VersionNumber::fromValue($value);
             $query = $query->upToVersion($versionNumber);
         }
 
-        $value = $params['pageSize'] ?? $params['page_size'] ?? null;
-        if ($value !== null) {
+        if ($value = $params['pageSize'] ?? $params['page_size'] ?? null) {
             $value = (int) $value;
 
             if ($value >= 1) {
@@ -84,8 +80,7 @@ class FindVersions
             }
         }
 
-        $value = $params['limit'] ?? null;
-        if ($value !== null) {
+        if ($value = $params['limit'] ?? null) {
             $value = (int) $value;
 
             if ($value >= 1) {

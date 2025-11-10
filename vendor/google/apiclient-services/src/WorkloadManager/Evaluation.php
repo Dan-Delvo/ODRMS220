@@ -39,10 +39,6 @@ class Evaluation extends \Google\Collection
    */
   public $evaluationType;
   /**
-   * @var string
-   */
-  public $kmsKey;
-  /**
    * @var string[]
    */
   public $labels;
@@ -140,20 +136,6 @@ class Evaluation extends \Google\Collection
   public function getEvaluationType()
   {
     return $this->evaluationType;
-  }
-  /**
-   * @param string
-   */
-  public function setKmsKey($kmsKey)
-  {
-    $this->kmsKey = $kmsKey;
-  }
-  /**
-   * @return string
-   */
-  public function getKmsKey()
-  {
-    return $this->kmsKey;
   }
   /**
    * @param string[]

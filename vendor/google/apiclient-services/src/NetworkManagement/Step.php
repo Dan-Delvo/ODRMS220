@@ -39,8 +39,6 @@ class Step extends \Google\Model
    * @var string
    */
   public $description;
-  protected $directVpcEgressConnectionType = DirectVpcEgressConnectionInfo::class;
-  protected $directVpcEgressConnectionDataType = '';
   protected $dropType = DropInfo::class;
   protected $dropDataType = '';
   protected $endpointType = EndpointInfo::class;
@@ -55,12 +53,8 @@ class Step extends \Google\Model
   protected $gkeMasterDataType = '';
   protected $googleServiceType = GoogleServiceInfo::class;
   protected $googleServiceDataType = '';
-  protected $hybridSubnetType = HybridSubnetInfo::class;
-  protected $hybridSubnetDataType = '';
   protected $instanceType = InstanceInfo::class;
   protected $instanceDataType = '';
-  protected $interconnectAttachmentType = InterconnectAttachmentInfo::class;
-  protected $interconnectAttachmentDataType = '';
   protected $loadBalancerType = LoadBalancerInfo::class;
   protected $loadBalancerDataType = '';
   protected $loadBalancerBackendInfoType = LoadBalancerBackendInfo::class;
@@ -81,8 +75,6 @@ class Step extends \Google\Model
   protected $redisInstanceDataType = '';
   protected $routeType = RouteInfo::class;
   protected $routeDataType = '';
-  protected $serverlessExternalConnectionType = ServerlessExternalConnectionInfo::class;
-  protected $serverlessExternalConnectionDataType = '';
   protected $serverlessNegType = ServerlessNegInfo::class;
   protected $serverlessNegDataType = '';
   /**
@@ -211,20 +203,6 @@ class Step extends \Google\Model
     return $this->description;
   }
   /**
-   * @param DirectVpcEgressConnectionInfo
-   */
-  public function setDirectVpcEgressConnection(DirectVpcEgressConnectionInfo $directVpcEgressConnection)
-  {
-    $this->directVpcEgressConnection = $directVpcEgressConnection;
-  }
-  /**
-   * @return DirectVpcEgressConnectionInfo
-   */
-  public function getDirectVpcEgressConnection()
-  {
-    return $this->directVpcEgressConnection;
-  }
-  /**
    * @param DropInfo
    */
   public function setDrop(DropInfo $drop)
@@ -323,20 +301,6 @@ class Step extends \Google\Model
     return $this->googleService;
   }
   /**
-   * @param HybridSubnetInfo
-   */
-  public function setHybridSubnet(HybridSubnetInfo $hybridSubnet)
-  {
-    $this->hybridSubnet = $hybridSubnet;
-  }
-  /**
-   * @return HybridSubnetInfo
-   */
-  public function getHybridSubnet()
-  {
-    return $this->hybridSubnet;
-  }
-  /**
    * @param InstanceInfo
    */
   public function setInstance(InstanceInfo $instance)
@@ -349,20 +313,6 @@ class Step extends \Google\Model
   public function getInstance()
   {
     return $this->instance;
-  }
-  /**
-   * @param InterconnectAttachmentInfo
-   */
-  public function setInterconnectAttachment(InterconnectAttachmentInfo $interconnectAttachment)
-  {
-    $this->interconnectAttachment = $interconnectAttachment;
-  }
-  /**
-   * @return InterconnectAttachmentInfo
-   */
-  public function getInterconnectAttachment()
-  {
-    return $this->interconnectAttachment;
   }
   /**
    * @param LoadBalancerInfo
@@ -489,20 +439,6 @@ class Step extends \Google\Model
   public function getRoute()
   {
     return $this->route;
-  }
-  /**
-   * @param ServerlessExternalConnectionInfo
-   */
-  public function setServerlessExternalConnection(ServerlessExternalConnectionInfo $serverlessExternalConnection)
-  {
-    $this->serverlessExternalConnection = $serverlessExternalConnection;
-  }
-  /**
-   * @return ServerlessExternalConnectionInfo
-   */
-  public function getServerlessExternalConnection()
-  {
-    return $this->serverlessExternalConnection;
   }
   /**
    * @param ServerlessNegInfo

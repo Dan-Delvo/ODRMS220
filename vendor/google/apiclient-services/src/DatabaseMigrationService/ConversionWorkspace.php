@@ -28,10 +28,6 @@ class ConversionWorkspace extends \Google\Model
   /**
    * @var string
    */
-  public $destinationProvider;
-  /**
-   * @var string
-   */
   public $displayName;
   /**
    * @var string[]
@@ -55,10 +51,6 @@ class ConversionWorkspace extends \Google\Model
   public $name;
   protected $sourceType = DatabaseEngineInfo::class;
   protected $sourceDataType = '';
-  /**
-   * @var string
-   */
-  public $sourceProvider;
   /**
    * @var string
    */
@@ -91,20 +83,6 @@ class ConversionWorkspace extends \Google\Model
   public function getDestination()
   {
     return $this->destination;
-  }
-  /**
-   * @param string
-   */
-  public function setDestinationProvider($destinationProvider)
-  {
-    $this->destinationProvider = $destinationProvider;
-  }
-  /**
-   * @return string
-   */
-  public function getDestinationProvider()
-  {
-    return $this->destinationProvider;
   }
   /**
    * @param string
@@ -203,20 +181,6 @@ class ConversionWorkspace extends \Google\Model
   public function getSource()
   {
     return $this->source;
-  }
-  /**
-   * @param string
-   */
-  public function setSourceProvider($sourceProvider)
-  {
-    $this->sourceProvider = $sourceProvider;
-  }
-  /**
-   * @return string
-   */
-  public function getSourceProvider()
-  {
-    return $this->sourceProvider;
   }
   /**
    * @param string

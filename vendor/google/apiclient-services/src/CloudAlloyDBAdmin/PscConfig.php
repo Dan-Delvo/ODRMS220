@@ -23,10 +23,6 @@ class PscConfig extends \Google\Model
    * @var bool
    */
   public $pscEnabled;
-  /**
-   * @var string
-   */
-  public $serviceOwnedProjectNumber;
 
   /**
    * @param bool
@@ -41,20 +37,6 @@ class PscConfig extends \Google\Model
   public function getPscEnabled()
   {
     return $this->pscEnabled;
-  }
-  /**
-   * @param string
-   */
-  public function setServiceOwnedProjectNumber($serviceOwnedProjectNumber)
-  {
-    $this->serviceOwnedProjectNumber = $serviceOwnedProjectNumber;
-  }
-  /**
-   * @return string
-   */
-  public function getServiceOwnedProjectNumber()
-  {
-    return $this->serviceOwnedProjectNumber;
   }
 }
 

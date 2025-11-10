@@ -5,7 +5,6 @@ namespace Illuminate\Foundation\Bootstrap;
 use Illuminate\Config\Repository;
 use Illuminate\Contracts\Config\Repository as RepositoryContract;
 use Illuminate\Contracts\Foundation\Application;
-use Illuminate\Support\Collection;
 use SplFileInfo;
 use Symfony\Component\Finder\Finder;
 
@@ -70,7 +69,7 @@ class LoadConfiguration
             ? $this->getBaseConfiguration()
             : [];
 
-        foreach ((new Collection($base))->diffKeys($files) as $name => $config) {
+        foreach (array_diff(array_keys($base), array_keys($files)) as $name => $config) {
             $repository->set($name, $config);
         }
 

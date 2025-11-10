@@ -39,10 +39,6 @@ class FilterView extends \Google\Collection
   /**
    * @var string
    */
-  public $tableId;
-  /**
-   * @var string
-   */
   public $title;
 
   /**
@@ -128,20 +124,6 @@ class FilterView extends \Google\Collection
   public function getSortSpecs()
   {
     return $this->sortSpecs;
-  }
-  /**
-   * @param string
-   */
-  public function setTableId($tableId)
-  {
-    $this->tableId = $tableId;
-  }
-  /**
-   * @return string
-   */
-  public function getTableId()
-  {
-    return $this->tableId;
   }
   /**
    * @param string

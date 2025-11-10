@@ -20,12 +20,10 @@ namespace Google\Service\Dataform;
 class DataPreparation extends \Google\Collection
 {
   protected $collection_key = 'tags';
-  protected $contentsSqlType = SqlDefinition::class;
-  protected $contentsSqlDataType = '';
   /**
    * @var string
    */
-  public $contentsYaml;
+  public $contents;
   protected $dependencyTargetsType = Target::class;
   protected $dependencyTargetsDataType = 'array';
   /**
@@ -38,32 +36,18 @@ class DataPreparation extends \Google\Collection
   public $tags;
 
   /**
-   * @param SqlDefinition
-   */
-  public function setContentsSql(SqlDefinition $contentsSql)
-  {
-    $this->contentsSql = $contentsSql;
-  }
-  /**
-   * @return SqlDefinition
-   */
-  public function getContentsSql()
-  {
-    return $this->contentsSql;
-  }
-  /**
    * @param string
    */
-  public function setContentsYaml($contentsYaml)
+  public function setContents($contents)
   {
-    $this->contentsYaml = $contentsYaml;
+    $this->contents = $contents;
   }
   /**
    * @return string
    */
-  public function getContentsYaml()
+  public function getContents()
   {
-    return $this->contentsYaml;
+    return $this->contents;
   }
   /**
    * @param Target[]

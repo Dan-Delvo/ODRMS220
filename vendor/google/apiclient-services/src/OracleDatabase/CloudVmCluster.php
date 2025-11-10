@@ -22,10 +22,6 @@ class CloudVmCluster extends \Google\Model
   /**
    * @var string
    */
-  public $backupOdbSubnet;
-  /**
-   * @var string
-   */
   public $backupSubnetCidr;
   /**
    * @var string
@@ -47,8 +43,6 @@ class CloudVmCluster extends \Google\Model
    * @var string
    */
   public $gcpOracleZone;
-  protected $identityConnectorType = IdentityConnector::class;
-  protected $identityConnectorDataType = '';
   /**
    * @var string[]
    */
@@ -61,31 +55,9 @@ class CloudVmCluster extends \Google\Model
    * @var string
    */
   public $network;
-  /**
-   * @var string
-   */
-  public $odbNetwork;
-  /**
-   * @var string
-   */
-  public $odbSubnet;
   protected $propertiesType = CloudVmClusterProperties::class;
   protected $propertiesDataType = '';
 
-  /**
-   * @param string
-   */
-  public function setBackupOdbSubnet($backupOdbSubnet)
-  {
-    $this->backupOdbSubnet = $backupOdbSubnet;
-  }
-  /**
-   * @return string
-   */
-  public function getBackupOdbSubnet()
-  {
-    return $this->backupOdbSubnet;
-  }
   /**
    * @param string
    */
@@ -171,20 +143,6 @@ class CloudVmCluster extends \Google\Model
     return $this->gcpOracleZone;
   }
   /**
-   * @param IdentityConnector
-   */
-  public function setIdentityConnector(IdentityConnector $identityConnector)
-  {
-    $this->identityConnector = $identityConnector;
-  }
-  /**
-   * @return IdentityConnector
-   */
-  public function getIdentityConnector()
-  {
-    return $this->identityConnector;
-  }
-  /**
    * @param string[]
    */
   public function setLabels($labels)
@@ -225,34 +183,6 @@ class CloudVmCluster extends \Google\Model
   public function getNetwork()
   {
     return $this->network;
-  }
-  /**
-   * @param string
-   */
-  public function setOdbNetwork($odbNetwork)
-  {
-    $this->odbNetwork = $odbNetwork;
-  }
-  /**
-   * @return string
-   */
-  public function getOdbNetwork()
-  {
-    return $this->odbNetwork;
-  }
-  /**
-   * @param string
-   */
-  public function setOdbSubnet($odbSubnet)
-  {
-    $this->odbSubnet = $odbSubnet;
-  }
-  /**
-   * @return string
-   */
-  public function getOdbSubnet()
-  {
-    return $this->odbSubnet;
   }
   /**
    * @param CloudVmClusterProperties

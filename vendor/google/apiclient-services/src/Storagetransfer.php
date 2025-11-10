@@ -292,10 +292,6 @@ class Storagetransfer extends \Google\Service
                   'location' => 'query',
                   'type' => 'string',
                 ],
-                'returnPartialSuccess' => [
-                  'location' => 'query',
-                  'type' => 'boolean',
-                ],
               ],
             ],'pause' => [
               'path' => 'v1/{+name}:pause',

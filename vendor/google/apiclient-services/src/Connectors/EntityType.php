@@ -20,18 +20,10 @@ namespace Google\Service\Connectors;
 class EntityType extends \Google\Collection
 {
   protected $collection_key = 'operations';
-  /**
-   * @var string
-   */
-  public $defaultSortBy;
   protected $fieldsType = Field::class;
   protected $fieldsDataType = 'array';
   protected $jsonSchemaType = JsonSchema::class;
   protected $jsonSchemaDataType = '';
-  /**
-   * @var array[]
-   */
-  public $metadata;
   /**
    * @var string
    */
@@ -41,20 +33,6 @@ class EntityType extends \Google\Collection
    */
   public $operations;
 
-  /**
-   * @param string
-   */
-  public function setDefaultSortBy($defaultSortBy)
-  {
-    $this->defaultSortBy = $defaultSortBy;
-  }
-  /**
-   * @return string
-   */
-  public function getDefaultSortBy()
-  {
-    return $this->defaultSortBy;
-  }
   /**
    * @param Field[]
    */
@@ -82,20 +60,6 @@ class EntityType extends \Google\Collection
   public function getJsonSchema()
   {
     return $this->jsonSchema;
-  }
-  /**
-   * @param array[]
-   */
-  public function setMetadata($metadata)
-  {
-    $this->metadata = $metadata;
-  }
-  /**
-   * @return array[]
-   */
-  public function getMetadata()
-  {
-    return $this->metadata;
   }
   /**
    * @param string

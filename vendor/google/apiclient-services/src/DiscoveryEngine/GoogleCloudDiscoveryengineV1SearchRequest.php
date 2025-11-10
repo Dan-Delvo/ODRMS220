@@ -34,8 +34,6 @@ class GoogleCloudDiscoveryengineV1SearchRequest extends \Google\Collection
   protected $contentSearchSpecDataType = '';
   protected $dataStoreSpecsType = GoogleCloudDiscoveryengineV1SearchRequestDataStoreSpec::class;
   protected $dataStoreSpecsDataType = 'array';
-  protected $displaySpecType = GoogleCloudDiscoveryengineV1SearchRequestDisplaySpec::class;
-  protected $displaySpecDataType = '';
   protected $facetSpecsType = GoogleCloudDiscoveryengineV1SearchRequestFacetSpec::class;
   protected $facetSpecsDataType = 'array';
   /**
@@ -48,8 +46,6 @@ class GoogleCloudDiscoveryengineV1SearchRequest extends \Google\Collection
    * @var string
    */
   public $languageCode;
-  protected $naturalLanguageQueryUnderstandingSpecType = GoogleCloudDiscoveryengineV1SearchRequestNaturalLanguageQueryUnderstandingSpec::class;
-  protected $naturalLanguageQueryUnderstandingSpecDataType = '';
   /**
    * @var int
    */
@@ -80,20 +76,6 @@ class GoogleCloudDiscoveryengineV1SearchRequest extends \Google\Collection
   public $query;
   protected $queryExpansionSpecType = GoogleCloudDiscoveryengineV1SearchRequestQueryExpansionSpec::class;
   protected $queryExpansionSpecDataType = '';
-  /**
-   * @var string
-   */
-  public $rankingExpression;
-  /**
-   * @var string
-   */
-  public $rankingExpressionBackend;
-  protected $relevanceScoreSpecType = GoogleCloudDiscoveryengineV1SearchRequestRelevanceScoreSpec::class;
-  protected $relevanceScoreSpecDataType = '';
-  /**
-   * @var string
-   */
-  public $relevanceThreshold;
   /**
    * @var bool
    */
@@ -190,20 +172,6 @@ class GoogleCloudDiscoveryengineV1SearchRequest extends \Google\Collection
     return $this->dataStoreSpecs;
   }
   /**
-   * @param GoogleCloudDiscoveryengineV1SearchRequestDisplaySpec
-   */
-  public function setDisplaySpec(GoogleCloudDiscoveryengineV1SearchRequestDisplaySpec $displaySpec)
-  {
-    $this->displaySpec = $displaySpec;
-  }
-  /**
-   * @return GoogleCloudDiscoveryengineV1SearchRequestDisplaySpec
-   */
-  public function getDisplaySpec()
-  {
-    return $this->displaySpec;
-  }
-  /**
    * @param GoogleCloudDiscoveryengineV1SearchRequestFacetSpec[]
    */
   public function setFacetSpecs($facetSpecs)
@@ -258,20 +226,6 @@ class GoogleCloudDiscoveryengineV1SearchRequest extends \Google\Collection
   public function getLanguageCode()
   {
     return $this->languageCode;
-  }
-  /**
-   * @param GoogleCloudDiscoveryengineV1SearchRequestNaturalLanguageQueryUnderstandingSpec
-   */
-  public function setNaturalLanguageQueryUnderstandingSpec(GoogleCloudDiscoveryengineV1SearchRequestNaturalLanguageQueryUnderstandingSpec $naturalLanguageQueryUnderstandingSpec)
-  {
-    $this->naturalLanguageQueryUnderstandingSpec = $naturalLanguageQueryUnderstandingSpec;
-  }
-  /**
-   * @return GoogleCloudDiscoveryengineV1SearchRequestNaturalLanguageQueryUnderstandingSpec
-   */
-  public function getNaturalLanguageQueryUnderstandingSpec()
-  {
-    return $this->naturalLanguageQueryUnderstandingSpec;
   }
   /**
    * @param int
@@ -384,62 +338,6 @@ class GoogleCloudDiscoveryengineV1SearchRequest extends \Google\Collection
   public function getQueryExpansionSpec()
   {
     return $this->queryExpansionSpec;
-  }
-  /**
-   * @param string
-   */
-  public function setRankingExpression($rankingExpression)
-  {
-    $this->rankingExpression = $rankingExpression;
-  }
-  /**
-   * @return string
-   */
-  public function getRankingExpression()
-  {
-    return $this->rankingExpression;
-  }
-  /**
-   * @param string
-   */
-  public function setRankingExpressionBackend($rankingExpressionBackend)
-  {
-    $this->rankingExpressionBackend = $rankingExpressionBackend;
-  }
-  /**
-   * @return string
-   */
-  public function getRankingExpressionBackend()
-  {
-    return $this->rankingExpressionBackend;
-  }
-  /**
-   * @param GoogleCloudDiscoveryengineV1SearchRequestRelevanceScoreSpec
-   */
-  public function setRelevanceScoreSpec(GoogleCloudDiscoveryengineV1SearchRequestRelevanceScoreSpec $relevanceScoreSpec)
-  {
-    $this->relevanceScoreSpec = $relevanceScoreSpec;
-  }
-  /**
-   * @return GoogleCloudDiscoveryengineV1SearchRequestRelevanceScoreSpec
-   */
-  public function getRelevanceScoreSpec()
-  {
-    return $this->relevanceScoreSpec;
-  }
-  /**
-   * @param string
-   */
-  public function setRelevanceThreshold($relevanceThreshold)
-  {
-    $this->relevanceThreshold = $relevanceThreshold;
-  }
-  /**
-   * @return string
-   */
-  public function getRelevanceThreshold()
-  {
-    return $this->relevanceThreshold;
   }
   /**
    * @param bool

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Kreait\Firebase\Auth;
 
+use Kreait\Firebase\Auth\ActionCodeSettings\ValidatedActionCodeSettings;
 use Kreait\Firebase\Value\Email;
 use Stringable;
 
@@ -40,7 +41,7 @@ final class CreateActionLink
 
     public function settings(): ActionCodeSettings
     {
-        return $this->settings;
+        return $this->settings ?? ValidatedActionCodeSettings::empty();
     }
 
     public function tenantId(): ?string

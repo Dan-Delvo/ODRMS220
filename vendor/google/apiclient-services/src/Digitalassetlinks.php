@@ -64,21 +64,13 @@ class Digitalassetlinks extends \Google\Service
         'assetlinks',
         [
           'methods' => [
-            'bulkCheck' => [
-              'path' => 'v1/assetlinks:bulkCheck',
-              'httpMethod' => 'POST',
-              'parameters' => [],
-            ],'check' => [
+            'check' => [
               'path' => 'v1/assetlinks:check',
               'httpMethod' => 'GET',
               'parameters' => [
                 'relation' => [
                   'location' => 'query',
                   'type' => 'string',
-                ],
-                'returnRelationExtensions' => [
-                  'location' => 'query',
-                  'type' => 'boolean',
                 ],
                 'source.androidApp.certificate.sha256Fingerprint' => [
                   'location' => 'query',
@@ -122,10 +114,6 @@ class Digitalassetlinks extends \Google\Service
                 'relation' => [
                   'location' => 'query',
                   'type' => 'string',
-                ],
-                'returnRelationExtensions' => [
-                  'location' => 'query',
-                  'type' => 'boolean',
                 ],
                 'source.androidApp.certificate.sha256Fingerprint' => [
                   'location' => 'query',

@@ -36,8 +36,6 @@ class GoogleCloudRecaptchaenterpriseV1WebKeySettings extends \Google\Collection
    * @var string
    */
   public $challengeSecurityPreference;
-  protected $challengeSettingsType = GoogleCloudRecaptchaenterpriseV1WebKeySettingsChallengeSettings::class;
-  protected $challengeSettingsDataType = '';
   /**
    * @var string
    */
@@ -98,20 +96,6 @@ class GoogleCloudRecaptchaenterpriseV1WebKeySettings extends \Google\Collection
   public function getChallengeSecurityPreference()
   {
     return $this->challengeSecurityPreference;
-  }
-  /**
-   * @param GoogleCloudRecaptchaenterpriseV1WebKeySettingsChallengeSettings
-   */
-  public function setChallengeSettings(GoogleCloudRecaptchaenterpriseV1WebKeySettingsChallengeSettings $challengeSettings)
-  {
-    $this->challengeSettings = $challengeSettings;
-  }
-  /**
-   * @return GoogleCloudRecaptchaenterpriseV1WebKeySettingsChallengeSettings
-   */
-  public function getChallengeSettings()
-  {
-    return $this->challengeSettings;
   }
   /**
    * @param string

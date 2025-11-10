@@ -37,44 +37,14 @@ function getHtmlAttribute($rawValue): string
 
 function getOpenCollectiveSponsors(): string
 {
-    $customSponsorOverride = [
+    $customSponsorImages = [
         // For consistency and equity among sponsors, as of now, we kindly ask our sponsors
         // to provide an image having a width/height ratio between 1/1 and 2/1.
         // By default, we'll show the member picture from OpenCollective, and will resize it if bigger
-        662698 => [
-            // alt attribute
-            'name' => 'Non Gamstop Casinos',
-            // title attribute
-            'description' => 'Casinos not on Gamstop',
-            // src attribute
-            'image' => 'https://lgcnews.com/wp-content/uploads/2018/01/LGC-logo-v8-temp.png',
-            // href attribute
-            'website' => 'https://lgcnews.com/',
-        ],
-        663069 => [
-            // alt attribute
-            'name' => 'Ставки на спорт Favbet',
-            // href attribute
-            'website' => 'https://www.favbet.ua/uk/',
-        ],
-        676798 => [
-            // alt attribute
-            'name' => 'Top Casinos Canada',
-            // title attribute
-            'description' => 'Top Casinos Canada',
-            // src attribute
-            'image' => 'https://topcasino.net/img/topcasino-logo-cover.png',
-            // href attribute
-            'website' => 'https://topcasino.net/',
-        ],
+        // int(OpenCollective.MemberId) => ImageURL
     ];
 
     $members = json_decode(file_get_contents('https://opencollective.com/carbon/members/all.json'), true);
-
-    foreach ($members as &$member) {
-        $member = array_merge($member, $customSponsorOverride[$member['MemberId']] ?? []);
-    }
-
     // Adding sponsors paying via other payment methods
     $members[] = [
         'MemberId' => 1,
@@ -158,10 +128,7 @@ function getOpenCollectiveSponsors(): string
         $status = null;
         $rank = 0;
 
-        if ($monthlyContribution > 50 || $yearlyContribution > 900) {
-            $status = 'sponsor';
-            $rank = 5;
-        } elseif ($monthlyContribution > 29 || $yearlyContribution > 700) {
+        if ($monthlyContribution > 29 || $yearlyContribution > 700) {
             $status = 'sponsor';
             $rank = 4;
         } elseif ($monthlyContribution > 14.5 || $yearlyContribution > 500) {
@@ -193,7 +160,6 @@ function getOpenCollectiveSponsors(): string
 
     $membersByUrl = [];
     $output = '';
-    $extra = '';
 
     foreach ($list as $member) {
         $url = $member['website'] ?? $member['profile'];
@@ -233,30 +199,12 @@ function getOpenCollectiveSponsors(): string
             $height *= 1.5;
         }
 
-        $link = "\n".'<a title="'.$title.'" href="'.$href.'" target="_blank"'.$rel.'>'.
+        $output .= "\n".'<a title="'.$title.'" href="'.$href.'" target="_blank"'.$rel.'>'.
             '<img alt="'.$alt.'" src="'.$src.'" width="'.$width.'" height="'.$height.'">'.
             '</a>';
-
-        if ($member['rank'] >= 5) {
-            $output .= $link;
-
-            continue;
-        }
-
-        $extra .= $link;
     }
 
-    $github = [
-        8343178 => 'ssddanbrown',
-    ];
-
-    foreach ($github as $avatar => $user) {
-        $extra .= "\n".'<a title="'.$user.'" href="https://github.com/'.$user.'" target="_blank">'.
-            '<img alt="'.$user.'" src="https://avatars.githubusercontent.com/u/'.$avatar.'?s=128&v=4" width="42" height="42">'.
-            '</a>';
-    }
-
-    return $output.'<details><summary>See more</summary>'.$extra.'</details>';
+    return $output;
 }
 
 file_put_contents('readme.md', preg_replace_callback(

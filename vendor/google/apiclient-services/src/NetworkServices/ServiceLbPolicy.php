@@ -31,8 +31,6 @@ class ServiceLbPolicy extends \Google\Model
   public $description;
   protected $failoverConfigType = ServiceLbPolicyFailoverConfig::class;
   protected $failoverConfigDataType = '';
-  protected $isolationConfigType = ServiceLbPolicyIsolationConfig::class;
-  protected $isolationConfigDataType = '';
   /**
    * @var string[]
    */
@@ -105,20 +103,6 @@ class ServiceLbPolicy extends \Google\Model
   public function getFailoverConfig()
   {
     return $this->failoverConfig;
-  }
-  /**
-   * @param ServiceLbPolicyIsolationConfig
-   */
-  public function setIsolationConfig(ServiceLbPolicyIsolationConfig $isolationConfig)
-  {
-    $this->isolationConfig = $isolationConfig;
-  }
-  /**
-   * @return ServiceLbPolicyIsolationConfig
-   */
-  public function getIsolationConfig()
-  {
-    return $this->isolationConfig;
   }
   /**
    * @param string[]

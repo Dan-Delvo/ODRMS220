@@ -19,8 +19,6 @@ namespace Google\Cloud\Core;
 
 use Google\Auth\Credentials\GCECredentials;
 use Google\Auth\CredentialsLoader;
-use Google\Auth\FetchAuthTokenInterface;
-use Google\Auth\ProjectIdProviderInterface;
 use Google\Cloud\Core\Compute\Metadata;
 use Google\Cloud\Core\Exception\GoogleException;
 
@@ -95,12 +93,7 @@ trait ClientTrait
      */
     private function configureAuthentication(array $config)
     {
-        $credentialsFetcher = $config['credentialsFetcher'] ?? null;
-
-        if (!($credentialsFetcher instanceof FetchAuthTokenInterface)) {
-            $config['keyFile'] = $this->getKeyFile($config);
-        }
-
+        $config['keyFile'] = $this->getKeyFile($config);
         $this->projectId = $this->detectProjectId($config);
 
         return $config;
@@ -177,7 +170,6 @@ trait ClientTrait
     private function detectProjectId(array $config)
     {
         $config += [
-            'credentialsFetcher' => null,
             'httpHandler' => null,
             'projectId' => null,
             'projectIdRequired' => false,
@@ -192,10 +184,6 @@ trait ClientTrait
 
         if ($config['hasEmulator']) {
             return 'emulator-project';
-        }
-
-        if ($config['credentialsFetcher'] instanceof ProjectIdProviderInterface) {
-            return $config['credentialsFetcher']->getProjectId();
         }
 
         if (isset($config['keyFile'])) {

@@ -32,10 +32,6 @@ class TagSetting extends \Google\Model
    */
   public $includeClickTracking;
   /**
-   * @var bool
-   */
-  public $includeUnescapedlpurlMacro;
-  /**
    * @var string
    */
   public $keywordOption;
@@ -81,20 +77,6 @@ class TagSetting extends \Google\Model
   public function getIncludeClickTracking()
   {
     return $this->includeClickTracking;
-  }
-  /**
-   * @param bool
-   */
-  public function setIncludeUnescapedlpurlMacro($includeUnescapedlpurlMacro)
-  {
-    $this->includeUnescapedlpurlMacro = $includeUnescapedlpurlMacro;
-  }
-  /**
-   * @return bool
-   */
-  public function getIncludeUnescapedlpurlMacro()
-  {
-    return $this->includeUnescapedlpurlMacro;
   }
   /**
    * @param string

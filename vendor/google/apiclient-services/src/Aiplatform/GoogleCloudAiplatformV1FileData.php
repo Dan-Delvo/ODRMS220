@@ -22,30 +22,12 @@ class GoogleCloudAiplatformV1FileData extends \Google\Model
   /**
    * @var string
    */
-  public $displayName;
-  /**
-   * @var string
-   */
   public $fileUri;
   /**
    * @var string
    */
   public $mimeType;
 
-  /**
-   * @param string
-   */
-  public function setDisplayName($displayName)
-  {
-    $this->displayName = $displayName;
-  }
-  /**
-   * @return string
-   */
-  public function getDisplayName()
-  {
-    return $this->displayName;
-  }
   /**
    * @param string
    */

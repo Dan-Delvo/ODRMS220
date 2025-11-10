@@ -17,9 +17,8 @@
 
 namespace Google\Service\Compute;
 
-class ServiceAttachmentConnectedEndpoint extends \Google\Collection
+class ServiceAttachmentConnectedEndpoint extends \Google\Model
 {
-  protected $collection_key = 'natIps';
   /**
    * @var string
    */
@@ -28,10 +27,6 @@ class ServiceAttachmentConnectedEndpoint extends \Google\Collection
    * @var string
    */
   public $endpoint;
-  /**
-   * @var string[]
-   */
-  public $natIps;
   /**
    * @var string
    */
@@ -72,20 +67,6 @@ class ServiceAttachmentConnectedEndpoint extends \Google\Collection
   public function getEndpoint()
   {
     return $this->endpoint;
-  }
-  /**
-   * @param string[]
-   */
-  public function setNatIps($natIps)
-  {
-    $this->natIps = $natIps;
-  }
-  /**
-   * @return string[]
-   */
-  public function getNatIps()
-  {
-    return $this->natIps;
   }
   /**
    * @param string

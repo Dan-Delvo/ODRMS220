@@ -33,8 +33,6 @@ class GoogleChromeManagementV1TelemetryEvent extends \Google\Model
    * @var string
    */
   public $eventType;
-  protected $externalDisplaysEventType = GoogleChromeManagementV1TelemetryExternalDisplayEvent::class;
-  protected $externalDisplaysEventDataType = '';
   protected $httpsLatencyChangeEventType = GoogleChromeManagementV1TelemetryHttpsLatencyChangeEvent::class;
   protected $httpsLatencyChangeEventDataType = '';
   /**
@@ -43,8 +41,6 @@ class GoogleChromeManagementV1TelemetryEvent extends \Google\Model
   public $name;
   protected $networkStateChangeEventType = GoogleChromeManagementV1TelemetryNetworkConnectionStateChangeEvent::class;
   protected $networkStateChangeEventDataType = '';
-  protected $osCrashEventType = GoogleChromeManagementV1TelemetryOsCrashEvent::class;
-  protected $osCrashEventDataType = '';
   /**
    * @var string
    */
@@ -143,20 +139,6 @@ class GoogleChromeManagementV1TelemetryEvent extends \Google\Model
     return $this->eventType;
   }
   /**
-   * @param GoogleChromeManagementV1TelemetryExternalDisplayEvent
-   */
-  public function setExternalDisplaysEvent(GoogleChromeManagementV1TelemetryExternalDisplayEvent $externalDisplaysEvent)
-  {
-    $this->externalDisplaysEvent = $externalDisplaysEvent;
-  }
-  /**
-   * @return GoogleChromeManagementV1TelemetryExternalDisplayEvent
-   */
-  public function getExternalDisplaysEvent()
-  {
-    return $this->externalDisplaysEvent;
-  }
-  /**
    * @param GoogleChromeManagementV1TelemetryHttpsLatencyChangeEvent
    */
   public function setHttpsLatencyChangeEvent(GoogleChromeManagementV1TelemetryHttpsLatencyChangeEvent $httpsLatencyChangeEvent)
@@ -197,20 +179,6 @@ class GoogleChromeManagementV1TelemetryEvent extends \Google\Model
   public function getNetworkStateChangeEvent()
   {
     return $this->networkStateChangeEvent;
-  }
-  /**
-   * @param GoogleChromeManagementV1TelemetryOsCrashEvent
-   */
-  public function setOsCrashEvent(GoogleChromeManagementV1TelemetryOsCrashEvent $osCrashEvent)
-  {
-    $this->osCrashEvent = $osCrashEvent;
-  }
-  /**
-   * @return GoogleChromeManagementV1TelemetryOsCrashEvent
-   */
-  public function getOsCrashEvent()
-  {
-    return $this->osCrashEvent;
   }
   /**
    * @param string

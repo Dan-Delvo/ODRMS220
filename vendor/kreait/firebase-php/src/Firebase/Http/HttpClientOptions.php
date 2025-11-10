@@ -15,7 +15,7 @@ final class HttpClientOptions
 {
     /**
      * @param array<non-empty-string, mixed> $guzzleConfig
-     * @param list<array{middleware: callable|callable-string, name: string}> $guzzleMiddlewares
+     * @param list<array{middleware: callable, name: string}> $guzzleMiddlewares
      */
     private function __construct(
         private readonly array $guzzleConfig,
@@ -154,7 +154,7 @@ final class HttpClientOptions
     }
 
     /**
-     * @return list<array{middleware: callable|callable-string, name: string}>
+     * @return list<array{middleware: callable, name: string}>
      */
     public function guzzleMiddlewares(): array
     {
@@ -162,33 +162,32 @@ final class HttpClientOptions
     }
 
     /**
-     * @param callable|callable-string $middleware
      * @param non-empty-string|null $name
      */
-    public function withGuzzleMiddleware(callable|string $middleware, ?string $name = null): self
+    public function withGuzzleMiddleware(callable $middleware, ?string $name = null): self
     {
-        return $this->withGuzzleMiddlewares([
-            ['middleware' => $middleware, 'name' => $name ?? ''],
-        ]);
+        $middlewares = $this->guzzleMiddlewares;
+        $middlewares[] = ['middleware' => $middleware, 'name' => $name ?? ''];
+
+        return new self($this->guzzleConfig, $middlewares);
     }
 
     /**
      * @param list<array{
-     *     middleware: callable|callable-string,
+     *     middleware: callable,
      *     name: string
-     * }|callable|callable-string> $middlewares
+     * }|callable> $middlewares
      */
     public function withGuzzleMiddlewares(array $middlewares): self
     {
         $newMiddlewares = $this->guzzleMiddlewares;
 
-        foreach ($middlewares as $definition) {
-            if (is_callable($definition)) {
-                $newMiddlewares[] = ['middleware' => $definition, 'name' => ''];
-                continue;
+        foreach ($middlewares as $middleware) {
+            if (is_callable($middleware)) {
+                $middleware = ['middleware' => $middleware, 'name' => ''];
             }
 
-            $newMiddlewares[] = $definition;
+            $newMiddlewares[] = $middleware;
         }
 
         return new self($this->guzzleConfig, $newMiddlewares);

@@ -26,10 +26,6 @@ class CodeCompilationConfig extends \Google\Model
   /**
    * @var string
    */
-  public $builtinAssertionNamePrefix;
-  /**
-   * @var string
-   */
   public $databaseSuffix;
   /**
    * @var string
@@ -71,20 +67,6 @@ class CodeCompilationConfig extends \Google\Model
   public function getAssertionSchema()
   {
     return $this->assertionSchema;
-  }
-  /**
-   * @param string
-   */
-  public function setBuiltinAssertionNamePrefix($builtinAssertionNamePrefix)
-  {
-    $this->builtinAssertionNamePrefix = $builtinAssertionNamePrefix;
-  }
-  /**
-   * @return string
-   */
-  public function getBuiltinAssertionNamePrefix()
-  {
-    return $this->builtinAssertionNamePrefix;
   }
   /**
    * @param string

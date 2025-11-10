@@ -24,10 +24,6 @@ class GoogleCloudDiscoveryengineV1SearchRequestDataStoreSpec extends \Google\Mod
   /**
    * @var string
    */
-  public $customSearchOperators;
-  /**
-   * @var string
-   */
   public $dataStore;
   /**
    * @var string
@@ -47,20 +43,6 @@ class GoogleCloudDiscoveryengineV1SearchRequestDataStoreSpec extends \Google\Mod
   public function getBoostSpec()
   {
     return $this->boostSpec;
-  }
-  /**
-   * @param string
-   */
-  public function setCustomSearchOperators($customSearchOperators)
-  {
-    $this->customSearchOperators = $customSearchOperators;
-  }
-  /**
-   * @return string
-   */
-  public function getCustomSearchOperators()
-  {
-    return $this->customSearchOperators;
   }
   /**
    * @param string

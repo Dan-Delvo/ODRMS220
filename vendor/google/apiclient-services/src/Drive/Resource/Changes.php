@@ -33,8 +33,7 @@ class Changes extends \Google\Service\Resource
 {
   /**
    * Gets the starting pageToken for listing future changes. For more information,
-   * see [Retrieve
-   * changes](https://developers.google.com/workspace/drive/api/guides/manage-
+   * see [Retrieve changes](https://developers.google.com/drive/api/guides/manage-
    * changes). (changes.getStartPageToken)
    *
    * @param array $optParams Optional parameters.
@@ -57,8 +56,7 @@ class Changes extends \Google\Service\Resource
   }
   /**
    * Lists the changes for a user or shared drive. For more information, see
-   * [Retrieve
-   * changes](https://developers.google.com/workspace/drive/api/guides/manage-
+   * [Retrieve changes](https://developers.google.com/drive/api/guides/manage-
    * changes). (changes.listChanges)
    *
    * @param string $pageToken The token for continuing a previous list request on
@@ -107,8 +105,7 @@ class Changes extends \Google\Service\Resource
   }
   /**
    * Subscribes to changes for a user. For more information, see [Notifications
-   * for resource
-   * changes](https://developers.google.com/workspace/drive/api/guides/push).
+   * for resource changes](https://developers.google.com/drive/api/guides/push).
    * (changes.watch)
    *
    * @param string $pageToken The token for continuing a previous list request on

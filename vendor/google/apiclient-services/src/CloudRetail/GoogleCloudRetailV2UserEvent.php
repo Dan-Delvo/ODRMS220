@@ -68,8 +68,6 @@ class GoogleCloudRetailV2UserEvent extends \Google\Collection
    * @var string
    */
   public $pageViewId;
-  protected $panelsType = GoogleCloudRetailV2PanelInfo::class;
-  protected $panelsDataType = 'array';
   protected $productDetailsType = GoogleCloudRetailV2ProductDetail::class;
   protected $productDetailsDataType = 'array';
   protected $purchaseTransactionType = GoogleCloudRetailV2PurchaseTransaction::class;
@@ -278,20 +276,6 @@ class GoogleCloudRetailV2UserEvent extends \Google\Collection
   public function getPageViewId()
   {
     return $this->pageViewId;
-  }
-  /**
-   * @param GoogleCloudRetailV2PanelInfo[]
-   */
-  public function setPanels($panels)
-  {
-    $this->panels = $panels;
-  }
-  /**
-   * @return GoogleCloudRetailV2PanelInfo[]
-   */
-  public function getPanels()
-  {
-    return $this->panels;
   }
   /**
    * @param GoogleCloudRetailV2ProductDetail[]

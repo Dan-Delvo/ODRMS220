@@ -17,9 +17,9 @@
 
 namespace Google\Service\PaymentsResellerSubscription\Resource;
 
-use Google\Service\PaymentsResellerSubscription\FindEligiblePromotionsRequest;
-use Google\Service\PaymentsResellerSubscription\FindEligiblePromotionsResponse;
-use Google\Service\PaymentsResellerSubscription\ListPromotionsResponse;
+use Google\Service\PaymentsResellerSubscription\GoogleCloudPaymentsResellerSubscriptionV1FindEligiblePromotionsRequest;
+use Google\Service\PaymentsResellerSubscription\GoogleCloudPaymentsResellerSubscriptionV1FindEligiblePromotionsResponse;
+use Google\Service\PaymentsResellerSubscription\GoogleCloudPaymentsResellerSubscriptionV1ListPromotionsResponse;
 
 /**
  * The "promotions" collection of methods.
@@ -32,28 +32,27 @@ use Google\Service\PaymentsResellerSubscription\ListPromotionsResponse;
 class PartnersPromotions extends \Google\Service\Resource
 {
   /**
-   * Currently, it is only enabeld for **YouTube**. Finds eligible promotions for
-   * the current user. The API requires user authorization via OAuth. The bare
-   * minimum oauth scope `openid` is sufficient, which will skip the consent
-   * screen. (promotions.findEligible)
+   * To find eligible promotions for the current user. The API requires user
+   * authorization via OAuth. The bare minimum oauth scope `openid` is sufficient,
+   * which will skip the consent screen. (promotions.findEligible)
    *
    * @param string $parent Required. The parent, the partner that can resell.
    * Format: partners/{partner}
-   * @param FindEligiblePromotionsRequest $postBody
+   * @param GoogleCloudPaymentsResellerSubscriptionV1FindEligiblePromotionsRequest $postBody
    * @param array $optParams Optional parameters.
-   * @return FindEligiblePromotionsResponse
+   * @return GoogleCloudPaymentsResellerSubscriptionV1FindEligiblePromotionsResponse
    * @throws \Google\Service\Exception
    */
-  public function findEligible($parent, FindEligiblePromotionsRequest $postBody, $optParams = [])
+  public function findEligible($parent, GoogleCloudPaymentsResellerSubscriptionV1FindEligiblePromotionsRequest $postBody, $optParams = [])
   {
     $params = ['parent' => $parent, 'postBody' => $postBody];
     $params = array_merge($params, $optParams);
-    return $this->call('findEligible', [$params], FindEligiblePromotionsResponse::class);
+    return $this->call('findEligible', [$params], GoogleCloudPaymentsResellerSubscriptionV1FindEligiblePromotionsResponse::class);
   }
   /**
-   * Currently, it doesn't support **YouTube** promotions. Retrieves the
-   * promotions, such as free trial, that can be used by the partner. It should be
-   * autenticated with a service account. (promotions.listPartnersPromotions)
+   * Retrieves the promotions, such as free trial, that can be used by the
+   * partner. - This API doesn't apply to YouTube promotions currently. It should
+   * be autenticated with a service account. (promotions.listPartnersPromotions)
    *
    * @param string $parent Required. The parent, the partner that can resell.
    * Format: partners/{partner}
@@ -78,14 +77,14 @@ class PartnersPromotions extends \Google\Service\Resource
    * `ListPromotions` call. Provide this to retrieve the subsequent page. When
    * paginating, all other parameters provided to `ListPromotions` must match the
    * call that provided the page token.
-   * @return ListPromotionsResponse
+   * @return GoogleCloudPaymentsResellerSubscriptionV1ListPromotionsResponse
    * @throws \Google\Service\Exception
    */
   public function listPartnersPromotions($parent, $optParams = [])
   {
     $params = ['parent' => $parent];
     $params = array_merge($params, $optParams);
-    return $this->call('list', [$params], ListPromotionsResponse::class);
+    return $this->call('list', [$params], GoogleCloudPaymentsResellerSubscriptionV1ListPromotionsResponse::class);
   }
 }
 

@@ -17,9 +17,8 @@
 
 namespace Google\Service\Looker;
 
-class ServiceAttachment extends \Google\Collection
+class ServiceAttachment extends \Google\Model
 {
-  protected $collection_key = 'localFqdns';
   /**
    * @var string
    */
@@ -27,15 +26,7 @@ class ServiceAttachment extends \Google\Collection
   /**
    * @var string
    */
-  public $failureReason;
-  /**
-   * @var string
-   */
   public $localFqdn;
-  /**
-   * @var string[]
-   */
-  public $localFqdns;
   /**
    * @var string
    */
@@ -58,20 +49,6 @@ class ServiceAttachment extends \Google\Collection
   /**
    * @param string
    */
-  public function setFailureReason($failureReason)
-  {
-    $this->failureReason = $failureReason;
-  }
-  /**
-   * @return string
-   */
-  public function getFailureReason()
-  {
-    return $this->failureReason;
-  }
-  /**
-   * @param string
-   */
   public function setLocalFqdn($localFqdn)
   {
     $this->localFqdn = $localFqdn;
@@ -82,20 +59,6 @@ class ServiceAttachment extends \Google\Collection
   public function getLocalFqdn()
   {
     return $this->localFqdn;
-  }
-  /**
-   * @param string[]
-   */
-  public function setLocalFqdns($localFqdns)
-  {
-    $this->localFqdns = $localFqdns;
-  }
-  /**
-   * @return string[]
-   */
-  public function getLocalFqdns()
-  {
-    return $this->localFqdns;
   }
   /**
    * @param string

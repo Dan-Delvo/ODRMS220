@@ -33,8 +33,6 @@ class GoogleCloudAiplatformV1RagCorpus extends \Google\Model
    * @var string
    */
   public $displayName;
-  protected $encryptionSpecType = GoogleCloudAiplatformV1EncryptionSpec::class;
-  protected $encryptionSpecDataType = '';
   /**
    * @var string
    */
@@ -45,8 +43,6 @@ class GoogleCloudAiplatformV1RagCorpus extends \Google\Model
   public $updateTime;
   protected $vectorDbConfigType = GoogleCloudAiplatformV1RagVectorDbConfig::class;
   protected $vectorDbConfigDataType = '';
-  protected $vertexAiSearchConfigType = GoogleCloudAiplatformV1VertexAiSearchConfig::class;
-  protected $vertexAiSearchConfigDataType = '';
 
   /**
    * @param GoogleCloudAiplatformV1CorpusStatus
@@ -105,20 +101,6 @@ class GoogleCloudAiplatformV1RagCorpus extends \Google\Model
     return $this->displayName;
   }
   /**
-   * @param GoogleCloudAiplatformV1EncryptionSpec
-   */
-  public function setEncryptionSpec(GoogleCloudAiplatformV1EncryptionSpec $encryptionSpec)
-  {
-    $this->encryptionSpec = $encryptionSpec;
-  }
-  /**
-   * @return GoogleCloudAiplatformV1EncryptionSpec
-   */
-  public function getEncryptionSpec()
-  {
-    return $this->encryptionSpec;
-  }
-  /**
    * @param string
    */
   public function setName($name)
@@ -159,20 +141,6 @@ class GoogleCloudAiplatformV1RagCorpus extends \Google\Model
   public function getVectorDbConfig()
   {
     return $this->vectorDbConfig;
-  }
-  /**
-   * @param GoogleCloudAiplatformV1VertexAiSearchConfig
-   */
-  public function setVertexAiSearchConfig(GoogleCloudAiplatformV1VertexAiSearchConfig $vertexAiSearchConfig)
-  {
-    $this->vertexAiSearchConfig = $vertexAiSearchConfig;
-  }
-  /**
-   * @return GoogleCloudAiplatformV1VertexAiSearchConfig
-   */
-  public function getVertexAiSearchConfig()
-  {
-    return $this->vertexAiSearchConfig;
   }
 }
 

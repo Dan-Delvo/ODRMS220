@@ -99,8 +99,6 @@ class MigrationJob extends \Google\Model
   protected $sourceDatabaseDataType = '';
   protected $sqlserverHomogeneousMigrationJobConfigType = SqlServerHomogeneousMigrationJobConfig::class;
   protected $sqlserverHomogeneousMigrationJobConfigDataType = '';
-  protected $sqlserverToPostgresConfigType = SqlServerToPostgresConfig::class;
-  protected $sqlserverToPostgresConfigDataType = '';
   /**
    * @var string
    */
@@ -467,20 +465,6 @@ class MigrationJob extends \Google\Model
   public function getSqlserverHomogeneousMigrationJobConfig()
   {
     return $this->sqlserverHomogeneousMigrationJobConfig;
-  }
-  /**
-   * @param SqlServerToPostgresConfig
-   */
-  public function setSqlserverToPostgresConfig(SqlServerToPostgresConfig $sqlserverToPostgresConfig)
-  {
-    $this->sqlserverToPostgresConfig = $sqlserverToPostgresConfig;
-  }
-  /**
-   * @return SqlServerToPostgresConfig
-   */
-  public function getSqlserverToPostgresConfig()
-  {
-    return $this->sqlserverToPostgresConfig;
   }
   /**
    * @param string

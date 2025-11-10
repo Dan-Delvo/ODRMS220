@@ -23,7 +23,6 @@ class GoogleCloudAiplatformV1VideoMetadata extends \Google\Model
    * @var string
    */
   public $endOffset;
-  public $fps;
   /**
    * @var string
    */
@@ -42,14 +41,6 @@ class GoogleCloudAiplatformV1VideoMetadata extends \Google\Model
   public function getEndOffset()
   {
     return $this->endOffset;
-  }
-  public function setFps($fps)
-  {
-    $this->fps = $fps;
-  }
-  public function getFps()
-  {
-    return $this->fps;
   }
   /**
    * @param string

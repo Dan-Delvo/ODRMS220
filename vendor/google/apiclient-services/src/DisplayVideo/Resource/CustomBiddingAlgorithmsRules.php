@@ -32,8 +32,7 @@ class CustomBiddingAlgorithmsRules extends \Google\Service\Resource
 {
   /**
    * Creates a new rules resource. Returns the newly created rules resource if
-   * successful. Requests creating a custom bidding rules resource under an
-   * algorithm assigned to a line item will return an error. (rules.create)
+   * successful. (rules.create)
    *
    * @param string $customBiddingAlgorithmId Required. The ID of the custom
    * bidding algorithm that owns the rules resource.

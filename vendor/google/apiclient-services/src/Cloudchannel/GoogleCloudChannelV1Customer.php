@@ -44,10 +44,6 @@ class GoogleCloudChannelV1Customer extends \Google\Model
   /**
    * @var string
    */
-  public $customerAttestationState;
-  /**
-   * @var string
-   */
   public $domain;
   /**
    * @var string
@@ -153,20 +149,6 @@ class GoogleCloudChannelV1Customer extends \Google\Model
   public function getCreateTime()
   {
     return $this->createTime;
-  }
-  /**
-   * @param string
-   */
-  public function setCustomerAttestationState($customerAttestationState)
-  {
-    $this->customerAttestationState = $customerAttestationState;
-  }
-  /**
-   * @return string
-   */
-  public function getCustomerAttestationState()
-  {
-    return $this->customerAttestationState;
   }
   /**
    * @param string

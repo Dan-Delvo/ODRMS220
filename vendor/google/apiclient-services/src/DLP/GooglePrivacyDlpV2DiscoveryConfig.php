@@ -48,8 +48,6 @@ class GooglePrivacyDlpV2DiscoveryConfig extends \Google\Collection
   protected $orgConfigDataType = '';
   protected $otherCloudStartingLocationType = GooglePrivacyDlpV2OtherCloudDiscoveryStartingLocation::class;
   protected $otherCloudStartingLocationDataType = '';
-  protected $processingLocationType = GooglePrivacyDlpV2ProcessingLocation::class;
-  protected $processingLocationDataType = '';
   /**
    * @var string
    */
@@ -186,20 +184,6 @@ class GooglePrivacyDlpV2DiscoveryConfig extends \Google\Collection
   public function getOtherCloudStartingLocation()
   {
     return $this->otherCloudStartingLocation;
-  }
-  /**
-   * @param GooglePrivacyDlpV2ProcessingLocation
-   */
-  public function setProcessingLocation(GooglePrivacyDlpV2ProcessingLocation $processingLocation)
-  {
-    $this->processingLocation = $processingLocation;
-  }
-  /**
-   * @return GooglePrivacyDlpV2ProcessingLocation
-   */
-  public function getProcessingLocation()
-  {
-    return $this->processingLocation;
   }
   /**
    * @param string

@@ -77,7 +77,7 @@ class HTMLPurifier_AttrTypes
         }
 
         if (!isset($this->info[$type])) {
-            throw new Exception('Cannot retrieve undefined attribute type ' . $type);
+            trigger_error('Cannot retrieve undefined attribute type ' . $type, E_USER_ERROR);
             return;
         }
         return $this->info[$type]->make($string);

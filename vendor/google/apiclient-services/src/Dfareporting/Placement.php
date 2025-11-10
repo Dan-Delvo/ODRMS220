@@ -45,10 +45,6 @@ class Placement extends \Google\Collection
   protected $advertiserIdDimensionValueType = DimensionValue::class;
   protected $advertiserIdDimensionValueDataType = '';
   /**
-   * @var bool
-   */
-  public $allowOnYoutube;
-  /**
    * @var string
    */
   public $campaignId;
@@ -174,8 +170,6 @@ class Placement extends \Google\Collection
    * @var bool
    */
   public $wrappingOptOut;
-  protected $youtubeSettingsType = YoutubeSettings::class;
-  protected $youtubeSettingsDataType = '';
 
   /**
    * @param string
@@ -274,20 +268,6 @@ class Placement extends \Google\Collection
   public function getAdvertiserIdDimensionValue()
   {
     return $this->advertiserIdDimensionValue;
-  }
-  /**
-   * @param bool
-   */
-  public function setAllowOnYoutube($allowOnYoutube)
-  {
-    $this->allowOnYoutube = $allowOnYoutube;
-  }
-  /**
-   * @return bool
-   */
-  public function getAllowOnYoutube()
-  {
-    return $this->allowOnYoutube;
   }
   /**
    * @param string
@@ -834,20 +814,6 @@ class Placement extends \Google\Collection
   public function getWrappingOptOut()
   {
     return $this->wrappingOptOut;
-  }
-  /**
-   * @param YoutubeSettings
-   */
-  public function setYoutubeSettings(YoutubeSettings $youtubeSettings)
-  {
-    $this->youtubeSettings = $youtubeSettings;
-  }
-  /**
-   * @return YoutubeSettings
-   */
-  public function getYoutubeSettings()
-  {
-    return $this->youtubeSettings;
   }
 }
 

@@ -22,26 +22,8 @@ class CloudRunRevisionEndpoint extends \Google\Model
   /**
    * @var string
    */
-  public $serviceUri;
-  /**
-   * @var string
-   */
   public $uri;
 
-  /**
-   * @param string
-   */
-  public function setServiceUri($serviceUri)
-  {
-    $this->serviceUri = $serviceUri;
-  }
-  /**
-   * @return string
-   */
-  public function getServiceUri()
-  {
-    return $this->serviceUri;
-  }
   /**
    * @param string
    */

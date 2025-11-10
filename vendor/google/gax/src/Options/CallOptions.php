@@ -44,7 +44,7 @@ use Google\ApiCore\RetrySettings;
  * {@see \Google\ApiCore\Transport\TransportInterface::startClientStreamingCall()}, and
  * {@see \Google\ApiCore\Transport\TransportInterface::startServerStreamingCall()}.
  */
-class CallOptions implements ArrayAccess, OptionsInterface
+class CallOptions implements ArrayAccess
 {
     use OptionsTrait;
 
@@ -93,21 +93,17 @@ class CallOptions implements ArrayAccess, OptionsInterface
     /**
      * @param array $headers
      */
-    public function setHeaders(array $headers): self
+    public function setHeaders(array $headers)
     {
         $this->headers = $headers;
-
-        return $this;
     }
 
     /**
      * @param int|null $timeoutMillis
      */
-    public function setTimeoutMillis(?int $timeoutMillis): self
+    public function setTimeoutMillis(?int $timeoutMillis)
     {
         $this->timeoutMillis = $timeoutMillis;
-
-        return $this;
     }
 
     /**
@@ -129,32 +125,24 @@ class CallOptions implements ArrayAccess, OptionsInterface
      *           See {@link https://docs.guzzlephp.org/en/stable/request-options.html}.
      * }
      */
-    public function setTransportOptions(array $transportOptions): self
+    public function setTransportOptions(array $transportOptions)
     {
         $this->transportOptions = $transportOptions;
-
-        return $this;
     }
 
     /**
      * @deprecated use CallOptions::setTransportOptions
      */
-    public function setTransportSpecificOptions(array $transportSpecificOptions): self
+    public function setTransportSpecificOptions(array $transportSpecificOptions)
     {
         $this->setTransportOptions($transportSpecificOptions);
-
-        return $this;
     }
 
     /**
      * @param RetrySettings|array|null $retrySettings
-     *
-     * @return $this
      */
-    public function setRetrySettings($retrySettings): self
+    public function setRetrySettings($retrySettings)
     {
         $this->retrySettings = $retrySettings;
-
-        return $this;
     }
 }

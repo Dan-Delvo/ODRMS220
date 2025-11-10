@@ -74,8 +74,7 @@ class ProjectsLocationsDatasets extends \Google\Service\Resource
    *
    * @param string $sourceDataset Required. Source dataset resource name. For
    * example,
-   * `projects/{project_id}/locations/{location_id}/datasets/{dataset_id}`. R5
-   * FHIR stores are not supported and will be skipped.
+   * `projects/{project_id}/locations/{location_id}/datasets/{dataset_id}`.
    * @param DeidentifyDatasetRequest $postBody
    * @param array $optParams Optional parameters.
    * @return Operation

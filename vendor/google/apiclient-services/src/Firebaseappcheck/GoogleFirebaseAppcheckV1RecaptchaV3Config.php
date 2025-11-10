@@ -20,10 +20,6 @@ namespace Google\Service\Firebaseappcheck;
 class GoogleFirebaseAppcheckV1RecaptchaV3Config extends \Google\Model
 {
   /**
-   * @var float
-   */
-  public $minValidScore;
-  /**
    * @var string
    */
   public $name;
@@ -40,20 +36,6 @@ class GoogleFirebaseAppcheckV1RecaptchaV3Config extends \Google\Model
    */
   public $tokenTtl;
 
-  /**
-   * @param float
-   */
-  public function setMinValidScore($minValidScore)
-  {
-    $this->minValidScore = $minValidScore;
-  }
-  /**
-   * @return float
-   */
-  public function getMinValidScore()
-  {
-    return $this->minValidScore;
-  }
   /**
    * @param string
    */

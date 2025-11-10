@@ -19,16 +19,12 @@ namespace Google\Service\Datastream;
 
 class SourceConfig extends \Google\Model
 {
-  protected $mongodbSourceConfigType = MongodbSourceConfig::class;
-  protected $mongodbSourceConfigDataType = '';
   protected $mysqlSourceConfigType = MysqlSourceConfig::class;
   protected $mysqlSourceConfigDataType = '';
   protected $oracleSourceConfigType = OracleSourceConfig::class;
   protected $oracleSourceConfigDataType = '';
   protected $postgresqlSourceConfigType = PostgresqlSourceConfig::class;
   protected $postgresqlSourceConfigDataType = '';
-  protected $salesforceSourceConfigType = SalesforceSourceConfig::class;
-  protected $salesforceSourceConfigDataType = '';
   /**
    * @var string
    */
@@ -36,20 +32,6 @@ class SourceConfig extends \Google\Model
   protected $sqlServerSourceConfigType = SqlServerSourceConfig::class;
   protected $sqlServerSourceConfigDataType = '';
 
-  /**
-   * @param MongodbSourceConfig
-   */
-  public function setMongodbSourceConfig(MongodbSourceConfig $mongodbSourceConfig)
-  {
-    $this->mongodbSourceConfig = $mongodbSourceConfig;
-  }
-  /**
-   * @return MongodbSourceConfig
-   */
-  public function getMongodbSourceConfig()
-  {
-    return $this->mongodbSourceConfig;
-  }
   /**
    * @param MysqlSourceConfig
    */
@@ -91,20 +73,6 @@ class SourceConfig extends \Google\Model
   public function getPostgresqlSourceConfig()
   {
     return $this->postgresqlSourceConfig;
-  }
-  /**
-   * @param SalesforceSourceConfig
-   */
-  public function setSalesforceSourceConfig(SalesforceSourceConfig $salesforceSourceConfig)
-  {
-    $this->salesforceSourceConfig = $salesforceSourceConfig;
-  }
-  /**
-   * @return SalesforceSourceConfig
-   */
-  public function getSalesforceSourceConfig()
-  {
-    return $this->salesforceSourceConfig;
   }
   /**
    * @param string

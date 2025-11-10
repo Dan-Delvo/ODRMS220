@@ -34,8 +34,8 @@ class ProjectsLocationsGatewaysRouteViews extends \Google\Service\Resource
    * Get a single RouteView of a Gateway. (routeViews.get)
    *
    * @param string $name Required. Name of the GatewayRouteView resource. Formats:
-   * projects/{project_number}/locations/{location}/gateways/{gateway}/routeViews/
-   * {route_view}
+   * projects/{project_number}/locations/{location}/gateways/{gateway_name}/routeV
+   * iews/{route_view_name}
    * @param array $optParams Optional parameters.
    * @return GatewayRouteView
    * @throws \Google\Service\Exception
@@ -50,7 +50,8 @@ class ProjectsLocationsGatewaysRouteViews extends \Google\Service\Resource
    * Lists RouteViews (routeViews.listProjectsLocationsGatewaysRouteViews)
    *
    * @param string $parent Required. The Gateway to which a Route is associated.
-   * Formats: projects/{project_number}/locations/{location}/gateways/{gateway}
+   * Formats:
+   * projects/{project_number}/locations/{location}/gateways/{gateway_name}
    * @param array $optParams Optional parameters.
    *
    * @opt_param int pageSize Maximum number of GatewayRouteViews to return per

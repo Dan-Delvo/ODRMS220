@@ -56,8 +56,6 @@ use LogicException;
  * more control is required, it is possible to make calls against the
  * Operations API directly instead of via the OperationResponse object
  * using an Operations Client instance.
- *
- * @template T = mixed
  */
 class OperationResponse
 {
@@ -282,10 +280,9 @@ class OperationResponse
     }
 
     /**
-     * Return the result of the operation. If operationSucceeded() is false,
-     * return null.
+     * Return the result of the operation. If operationSucceeded() is false, return null.
      *
-     * @return T|null
+     * @return mixed|null The result of the operation, or null if operationSucceeded() is false
      */
     public function getResult()
     {
@@ -476,28 +473,16 @@ class OperationResponse
      */
     private function operationsCall(string $method, ?string $requestClass)
     {
-        // V1 GAPIC clients have an empty $requestClass
-        if (empty($requestClass)) {
-            if ($this->additionalArgs) {
-                return $this->operationsClient->$method(
-                    $this->getName(),
-                    ...array_values($this->additionalArgs)
-                );
+        $args = array_merge([$this->getName()], array_values($this->additionalArgs));
+        if ($requestClass) {
+            if (!method_exists($requestClass, 'build')) {
+                throw new LogicException('Request class must support the static build method');
             }
-            return $this->operationsClient->$method($this->getName());
+            $request = call_user_func_array($requestClass . '::build', $args);
+            $args = [$request];
         }
 
-        if (!method_exists($requestClass, 'build')) {
-            throw new LogicException('Request class must support the static build method');
-        }
-        // In V2 of Compute, the Request "build" methods contain the operation ID last instead
-        // of first. Compute is the only API which uses $additionalArgs, so switching the order
-        // will not break anything.
-        $request = $requestClass::build(...array_merge(
-            array_values($this->additionalArgs),
-            [$this->getName()]
-        ));
-        return $this->operationsClient->$method($request);
+        return call_user_func_array([$this->operationsClient, $method], $args);
     }
 
     private function canHaveResult()

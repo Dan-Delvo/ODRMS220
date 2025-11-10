@@ -228,7 +228,7 @@ final class PhptTestCase implements Reorderable, SelfDescribing, Test
                     $diff = $e->getMessage();
                 }
 
-                $hint    = $this->locationHintFromDiff($diff, $sections);
+                $hint    = $this->getLocationHintFromDiff($diff, $sections);
                 $trace   = array_merge($hint, debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS));
                 $failure = new PhptAssertionFailedError(
                     $e->getMessage(),
@@ -278,7 +278,7 @@ final class PhptTestCase implements Reorderable, SelfDescribing, Test
         return $this->filename;
     }
 
-    public function usesDataProvider(): false
+    public function usesDataProvider(): bool
     {
         return false;
     }
@@ -695,7 +695,7 @@ final class PhptTestCase implements Reorderable, SelfDescribing, Test
     /**
      * @return array{coverage: non-empty-string, job: non-empty-string}
      */
-    private function coverageFiles(): array
+    private function getCoverageFiles(): array
     {
         $baseDir  = dirname(realpath($this->filename)) . DIRECTORY_SEPARATOR;
         $basename = basename($this->filename, 'phpt');
@@ -715,7 +715,7 @@ final class PhptTestCase implements Reorderable, SelfDescribing, Test
      */
     private function renderForCoverage(string &$job, bool $pathCoverage, ?string $codeCoverageCacheDirectory): void
     {
-        $files = $this->coverageFiles();
+        $files = $this->getCoverageFiles();
 
         $template = new Template(
             __DIR__ . '/templates/phpt.tpl',
@@ -766,16 +766,10 @@ final class PhptTestCase implements Reorderable, SelfDescribing, Test
         $job = $rendered;
     }
 
-    /**
-     * @phpstan-ignore return.internalClass
-     */
     private function cleanupForCoverage(): RawCodeCoverageData
     {
-        /**
-         * @phpstan-ignore staticMethod.internalClass
-         */
         $coverage = RawCodeCoverageData::fromXdebugWithoutPathCoverage([]);
-        $files    = $this->coverageFiles();
+        $files    = $this->getCoverageFiles();
 
         $buffer = false;
 
@@ -787,9 +781,6 @@ final class PhptTestCase implements Reorderable, SelfDescribing, Test
             $coverage = @unserialize($buffer);
 
             if ($coverage === false) {
-                /**
-                 * @phpstan-ignore staticMethod.internalClass
-                 */
                 $coverage = RawCodeCoverageData::fromXdebugWithoutPathCoverage([]);
             }
         }
@@ -830,7 +821,7 @@ final class PhptTestCase implements Reorderable, SelfDescribing, Test
      *
      * @return non-empty-list<array{file: non-empty-string, line: int}>
      */
-    private function locationHintFromDiff(string $message, array $sections): array
+    private function getLocationHintFromDiff(string $message, array $sections): array
     {
         $needle       = '';
         $previousLine = '';
@@ -849,13 +840,13 @@ final class PhptTestCase implements Reorderable, SelfDescribing, Test
 
             if ($block === 'diff') {
                 if (str_starts_with($line, '+')) {
-                    $needle = $this->cleanDiffLine($previousLine);
+                    $needle = $this->getCleanDiffLine($previousLine);
 
                     break;
                 }
 
                 if (str_starts_with($line, '-')) {
-                    $needle = $this->cleanDiffLine($line);
+                    $needle = $this->getCleanDiffLine($line);
 
                     break;
                 }
@@ -866,10 +857,10 @@ final class PhptTestCase implements Reorderable, SelfDescribing, Test
             }
         }
 
-        return $this->locationHint($needle, $sections);
+        return $this->getLocationHint($needle, $sections);
     }
 
-    private function cleanDiffLine(string $line): string
+    private function getCleanDiffLine(string $line): string
     {
         if (preg_match('/^[\-+]([\'\"]?)(.*)\1$/', $line, $matches)) {
             $line = $matches[2];
@@ -883,7 +874,7 @@ final class PhptTestCase implements Reorderable, SelfDescribing, Test
      *
      * @return non-empty-list<array{file: non-empty-string, line: int}>
      */
-    private function locationHint(string $needle, array $sections): array
+    private function getLocationHint(string $needle, array $sections): array
     {
         $needle = trim($needle);
 
@@ -967,6 +958,7 @@ final class PhptTestCase implements Reorderable, SelfDescribing, Test
             'open_basedir=',
             'output_buffering=Off',
             'output_handler=',
+            'report_memleaks=0',
             'report_zend_debug=0',
         ];
 

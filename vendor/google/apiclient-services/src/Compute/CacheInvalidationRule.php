@@ -17,13 +17,8 @@
 
 namespace Google\Service\Compute;
 
-class CacheInvalidationRule extends \Google\Collection
+class CacheInvalidationRule extends \Google\Model
 {
-  protected $collection_key = 'cacheTags';
-  /**
-   * @var string[]
-   */
-  public $cacheTags;
   /**
    * @var string
    */
@@ -33,20 +28,6 @@ class CacheInvalidationRule extends \Google\Collection
    */
   public $path;
 
-  /**
-   * @param string[]
-   */
-  public function setCacheTags($cacheTags)
-  {
-    $this->cacheTags = $cacheTags;
-  }
-  /**
-   * @return string[]
-   */
-  public function getCacheTags()
-  {
-    return $this->cacheTags;
-  }
   /**
    * @param string
    */

@@ -37,27 +37,14 @@ class DiscoveryEngine extends \Google\Service
   /** See, edit, configure, and delete your Google Cloud data and see the email address for your Google Account.. */
   const CLOUD_PLATFORM =
       "https://www.googleapis.com/auth/cloud-platform";
-  /** Search your organization's data in the Cloud Search index. */
-  const CLOUD_SEARCH_QUERY =
-      "https://www.googleapis.com/auth/cloud_search.query";
-  /** View your Agentspace chat history, including uploaded files and generated reports and visualizations, and interact with the Agentspace assistant on your behalf.. */
-  const DISCOVERYENGINE_ASSIST_READWRITE =
-      "https://www.googleapis.com/auth/discoveryengine.assist.readwrite";
-  /** View, edit, create, and delete all your data associated with any Discovery Engine API product, such as Agentspace, Vertex AI Search, or NotebookLM Enterprise, including both end user data and administration or configuration data.. */
-  const DISCOVERYENGINE_READWRITE =
-      "https://www.googleapis.com/auth/discoveryengine.readwrite";
 
-  public $media;
   public $projects;
   public $projects_locations;
-  public $projects_locations_cmekConfigs;
-  public $projects_locations_collections;
   public $projects_locations_collections_dataConnector_operations;
   public $projects_locations_collections_dataStores;
   public $projects_locations_collections_dataStores_branches;
   public $projects_locations_collections_dataStores_branches_documents;
   public $projects_locations_collections_dataStores_branches_operations;
-  public $projects_locations_collections_dataStores_completionConfig;
   public $projects_locations_collections_dataStores_completionSuggestions;
   public $projects_locations_collections_dataStores_controls;
   public $projects_locations_collections_dataStores_conversations;
@@ -71,14 +58,11 @@ class DiscoveryEngine extends \Google\Service
   public $projects_locations_collections_dataStores_sessions_answers;
   public $projects_locations_collections_dataStores_siteSearchEngine;
   public $projects_locations_collections_dataStores_siteSearchEngine_operations;
-  public $projects_locations_collections_dataStores_siteSearchEngine_sitemaps;
   public $projects_locations_collections_dataStores_siteSearchEngine_targetSites;
   public $projects_locations_collections_dataStores_siteSearchEngine_targetSites_operations;
   public $projects_locations_collections_dataStores_suggestionDenyListEntries;
   public $projects_locations_collections_dataStores_userEvents;
   public $projects_locations_collections_engines;
-  public $projects_locations_collections_engines_assistants;
-  public $projects_locations_collections_engines_completionConfig;
   public $projects_locations_collections_engines_controls;
   public $projects_locations_collections_engines_conversations;
   public $projects_locations_collections_engines_operations;
@@ -90,7 +74,6 @@ class DiscoveryEngine extends \Google\Service
   public $projects_locations_dataStores_branches;
   public $projects_locations_dataStores_branches_documents;
   public $projects_locations_dataStores_branches_operations;
-  public $projects_locations_dataStores_completionConfig;
   public $projects_locations_dataStores_completionSuggestions;
   public $projects_locations_dataStores_controls;
   public $projects_locations_dataStores_conversations;
@@ -101,20 +84,14 @@ class DiscoveryEngine extends \Google\Service
   public $projects_locations_dataStores_sessions;
   public $projects_locations_dataStores_sessions_answers;
   public $projects_locations_dataStores_siteSearchEngine;
-  public $projects_locations_dataStores_siteSearchEngine_sitemaps;
   public $projects_locations_dataStores_siteSearchEngine_targetSites;
   public $projects_locations_dataStores_suggestionDenyListEntries;
   public $projects_locations_dataStores_userEvents;
   public $projects_locations_groundingConfigs;
-  public $projects_locations_identityMappingStores;
   public $projects_locations_identityMappingStores_operations;
-  public $projects_locations_licenseConfigs;
   public $projects_locations_operations;
-  public $projects_locations_podcasts_operations;
   public $projects_locations_rankingConfigs;
   public $projects_locations_userEvents;
-  public $projects_locations_userStores;
-  public $projects_locations_userStores_userLicenses;
   public $projects_operations;
   public $rootUrlTemplate;
 
@@ -135,34 +112,6 @@ class DiscoveryEngine extends \Google\Service
     $this->version = 'v1';
     $this->serviceName = 'discoveryengine';
 
-    $this->media = new DiscoveryEngine\Resource\Media(
-        $this,
-        $this->serviceName,
-        'media',
-        [
-          'methods' => [
-            'download' => [
-              'path' => 'v1/{+name}:downloadFile',
-              'httpMethod' => 'GET',
-              'parameters' => [
-                'name' => [
-                  'location' => 'path',
-                  'type' => 'string',
-                  'required' => true,
-                ],
-                'fileId' => [
-                  'location' => 'query',
-                  'type' => 'string',
-                ],
-                'viewId' => [
-                  'location' => 'query',
-                  'type' => 'string',
-                ],
-              ],
-            ],
-          ]
-        ]
-    );
     $this->projects = new DiscoveryEngine\Resource\Projects(
         $this,
         $this->serviceName,
@@ -189,174 +138,14 @@ class DiscoveryEngine extends \Google\Service
         'locations',
         [
           'methods' => [
-            'getAclConfig' => [
-              'path' => 'v1/{+name}',
-              'httpMethod' => 'GET',
-              'parameters' => [
-                'name' => [
-                  'location' => 'path',
-                  'type' => 'string',
-                  'required' => true,
-                ],
-              ],
-            ],'getCmekConfig' => [
-              'path' => 'v1/{+name}',
-              'httpMethod' => 'GET',
-              'parameters' => [
-                'name' => [
-                  'location' => 'path',
-                  'type' => 'string',
-                  'required' => true,
-                ],
-              ],
-            ],'setUpDataConnector' => [
-              'path' => 'v1/{+parent}:setUpDataConnector',
+            'generateGroundedContent' => [
+              'path' => 'v1/{+location}:generateGroundedContent',
               'httpMethod' => 'POST',
               'parameters' => [
-                'parent' => [
+                'location' => [
                   'location' => 'path',
                   'type' => 'string',
                   'required' => true,
-                ],
-              ],
-            ],'setUpDataConnectorV2' => [
-              'path' => 'v1/{+parent}:setUpDataConnectorV2',
-              'httpMethod' => 'POST',
-              'parameters' => [
-                'parent' => [
-                  'location' => 'path',
-                  'type' => 'string',
-                  'required' => true,
-                ],
-                'collectionDisplayName' => [
-                  'location' => 'query',
-                  'type' => 'string',
-                ],
-                'collectionId' => [
-                  'location' => 'query',
-                  'type' => 'string',
-                ],
-              ],
-            ],'updateAclConfig' => [
-              'path' => 'v1/{+name}',
-              'httpMethod' => 'PATCH',
-              'parameters' => [
-                'name' => [
-                  'location' => 'path',
-                  'type' => 'string',
-                  'required' => true,
-                ],
-              ],
-            ],'updateCmekConfig' => [
-              'path' => 'v1/{+name}',
-              'httpMethod' => 'PATCH',
-              'parameters' => [
-                'name' => [
-                  'location' => 'path',
-                  'type' => 'string',
-                  'required' => true,
-                ],
-                'setDefault' => [
-                  'location' => 'query',
-                  'type' => 'boolean',
-                ],
-              ],
-            ],
-          ]
-        ]
-    );
-    $this->projects_locations_cmekConfigs = new DiscoveryEngine\Resource\ProjectsLocationsCmekConfigs(
-        $this,
-        $this->serviceName,
-        'cmekConfigs',
-        [
-          'methods' => [
-            'delete' => [
-              'path' => 'v1/{+name}',
-              'httpMethod' => 'DELETE',
-              'parameters' => [
-                'name' => [
-                  'location' => 'path',
-                  'type' => 'string',
-                  'required' => true,
-                ],
-              ],
-            ],'get' => [
-              'path' => 'v1/{+name}',
-              'httpMethod' => 'GET',
-              'parameters' => [
-                'name' => [
-                  'location' => 'path',
-                  'type' => 'string',
-                  'required' => true,
-                ],
-              ],
-            ],'list' => [
-              'path' => 'v1/{+parent}/cmekConfigs',
-              'httpMethod' => 'GET',
-              'parameters' => [
-                'parent' => [
-                  'location' => 'path',
-                  'type' => 'string',
-                  'required' => true,
-                ],
-              ],
-            ],'patch' => [
-              'path' => 'v1/{+name}',
-              'httpMethod' => 'PATCH',
-              'parameters' => [
-                'name' => [
-                  'location' => 'path',
-                  'type' => 'string',
-                  'required' => true,
-                ],
-                'setDefault' => [
-                  'location' => 'query',
-                  'type' => 'boolean',
-                ],
-              ],
-            ],
-          ]
-        ]
-    );
-    $this->projects_locations_collections = new DiscoveryEngine\Resource\ProjectsLocationsCollections(
-        $this,
-        $this->serviceName,
-        'collections',
-        [
-          'methods' => [
-            'delete' => [
-              'path' => 'v1/{+name}',
-              'httpMethod' => 'DELETE',
-              'parameters' => [
-                'name' => [
-                  'location' => 'path',
-                  'type' => 'string',
-                  'required' => true,
-                ],
-              ],
-            ],'getDataConnector' => [
-              'path' => 'v1/{+name}',
-              'httpMethod' => 'GET',
-              'parameters' => [
-                'name' => [
-                  'location' => 'path',
-                  'type' => 'string',
-                  'required' => true,
-                ],
-              ],
-            ],'updateDataConnector' => [
-              'path' => 'v1/{+name}',
-              'httpMethod' => 'PATCH',
-              'parameters' => [
-                'name' => [
-                  'location' => 'path',
-                  'type' => 'string',
-                  'required' => true,
-                ],
-                'updateMask' => [
-                  'location' => 'query',
-                  'type' => 'string',
                 ],
               ],
             ],
@@ -399,10 +188,6 @@ class DiscoveryEngine extends \Google\Service
                 'pageToken' => [
                   'location' => 'query',
                   'type' => 'string',
-                ],
-                'returnPartialSuccess' => [
-                  'location' => 'query',
-                  'type' => 'boolean',
                 ],
               ],
             ],
@@ -728,30 +513,6 @@ class DiscoveryEngine extends \Google\Service
                   'location' => 'query',
                   'type' => 'string',
                 ],
-                'returnPartialSuccess' => [
-                  'location' => 'query',
-                  'type' => 'boolean',
-                ],
-              ],
-            ],
-          ]
-        ]
-    );
-    $this->projects_locations_collections_dataStores_completionConfig = new DiscoveryEngine\Resource\ProjectsLocationsCollectionsDataStoresCompletionConfig(
-        $this,
-        $this->serviceName,
-        'completionConfig',
-        [
-          'methods' => [
-            'completeQuery' => [
-              'path' => 'v1/{+completionConfig}:completeQuery',
-              'httpMethod' => 'POST',
-              'parameters' => [
-                'completionConfig' => [
-                  'location' => 'path',
-                  'type' => 'string',
-                  'required' => true,
-                ],
               ],
             ],
           ]
@@ -1014,10 +775,6 @@ class DiscoveryEngine extends \Google\Service
                   'location' => 'query',
                   'type' => 'string',
                 ],
-                'returnPartialSuccess' => [
-                  'location' => 'query',
-                  'type' => 'boolean',
-                ],
               ],
             ],
           ]
@@ -1059,10 +816,6 @@ class DiscoveryEngine extends \Google\Service
                 'pageToken' => [
                   'location' => 'query',
                   'type' => 'string',
-                ],
-                'returnPartialSuccess' => [
-                  'location' => 'query',
-                  'type' => 'boolean',
                 ],
               ],
             ],
@@ -1181,10 +934,6 @@ class DiscoveryEngine extends \Google\Service
                 'pageToken' => [
                   'location' => 'query',
                   'type' => 'string',
-                ],
-                'returnPartialSuccess' => [
-                  'location' => 'query',
-                  'type' => 'boolean',
                 ],
               ],
             ],
@@ -1474,55 +1223,6 @@ class DiscoveryEngine extends \Google\Service
                   'location' => 'query',
                   'type' => 'string',
                 ],
-                'returnPartialSuccess' => [
-                  'location' => 'query',
-                  'type' => 'boolean',
-                ],
-              ],
-            ],
-          ]
-        ]
-    );
-    $this->projects_locations_collections_dataStores_siteSearchEngine_sitemaps = new DiscoveryEngine\Resource\ProjectsLocationsCollectionsDataStoresSiteSearchEngineSitemaps(
-        $this,
-        $this->serviceName,
-        'sitemaps',
-        [
-          'methods' => [
-            'create' => [
-              'path' => 'v1/{+parent}/sitemaps',
-              'httpMethod' => 'POST',
-              'parameters' => [
-                'parent' => [
-                  'location' => 'path',
-                  'type' => 'string',
-                  'required' => true,
-                ],
-              ],
-            ],'delete' => [
-              'path' => 'v1/{+name}',
-              'httpMethod' => 'DELETE',
-              'parameters' => [
-                'name' => [
-                  'location' => 'path',
-                  'type' => 'string',
-                  'required' => true,
-                ],
-              ],
-            ],'fetch' => [
-              'path' => 'v1/{+parent}/sitemaps:fetch',
-              'httpMethod' => 'GET',
-              'parameters' => [
-                'parent' => [
-                  'location' => 'path',
-                  'type' => 'string',
-                  'required' => true,
-                ],
-                'matcher.urisMatcher.uris' => [
-                  'location' => 'query',
-                  'type' => 'string',
-                  'repeated' => true,
-                ],
               ],
             ],
           ]
@@ -1642,10 +1342,6 @@ class DiscoveryEngine extends \Google\Service
                 'pageToken' => [
                   'location' => 'query',
                   'type' => 'string',
-                ],
-                'returnPartialSuccess' => [
-                  'location' => 'query',
-                  'type' => 'boolean',
                 ],
               ],
             ],
@@ -1828,70 +1524,6 @@ class DiscoveryEngine extends \Google\Service
           ]
         ]
     );
-    $this->projects_locations_collections_engines_assistants = new DiscoveryEngine\Resource\ProjectsLocationsCollectionsEnginesAssistants(
-        $this,
-        $this->serviceName,
-        'assistants',
-        [
-          'methods' => [
-            'get' => [
-              'path' => 'v1/{+name}',
-              'httpMethod' => 'GET',
-              'parameters' => [
-                'name' => [
-                  'location' => 'path',
-                  'type' => 'string',
-                  'required' => true,
-                ],
-              ],
-            ],'patch' => [
-              'path' => 'v1/{+name}',
-              'httpMethod' => 'PATCH',
-              'parameters' => [
-                'name' => [
-                  'location' => 'path',
-                  'type' => 'string',
-                  'required' => true,
-                ],
-                'updateMask' => [
-                  'location' => 'query',
-                  'type' => 'string',
-                ],
-              ],
-            ],'streamAssist' => [
-              'path' => 'v1/{+name}:streamAssist',
-              'httpMethod' => 'POST',
-              'parameters' => [
-                'name' => [
-                  'location' => 'path',
-                  'type' => 'string',
-                  'required' => true,
-                ],
-              ],
-            ],
-          ]
-        ]
-    );
-    $this->projects_locations_collections_engines_completionConfig = new DiscoveryEngine\Resource\ProjectsLocationsCollectionsEnginesCompletionConfig(
-        $this,
-        $this->serviceName,
-        'completionConfig',
-        [
-          'methods' => [
-            'completeQuery' => [
-              'path' => 'v1/{+completionConfig}:completeQuery',
-              'httpMethod' => 'POST',
-              'parameters' => [
-                'completionConfig' => [
-                  'location' => 'path',
-                  'type' => 'string',
-                  'required' => true,
-                ],
-              ],
-            ],
-          ]
-        ]
-    );
     $this->projects_locations_collections_engines_controls = new DiscoveryEngine\Resource\ProjectsLocationsCollectionsEnginesControls(
         $this,
         $this->serviceName,
@@ -2068,17 +1700,7 @@ class DiscoveryEngine extends \Google\Service
         'operations',
         [
           'methods' => [
-            'cancel' => [
-              'path' => 'v1/{+name}:cancel',
-              'httpMethod' => 'POST',
-              'parameters' => [
-                'name' => [
-                  'location' => 'path',
-                  'type' => 'string',
-                  'required' => true,
-                ],
-              ],
-            ],'get' => [
+            'get' => [
               'path' => 'v1/{+name}',
               'httpMethod' => 'GET',
               'parameters' => [
@@ -2108,10 +1730,6 @@ class DiscoveryEngine extends \Google\Service
                 'pageToken' => [
                   'location' => 'query',
                   'type' => 'string',
-                ],
-                'returnPartialSuccess' => [
-                  'location' => 'query',
-                  'type' => 'boolean',
                 ],
               ],
             ],
@@ -2332,10 +1950,6 @@ class DiscoveryEngine extends \Google\Service
                 'pageToken' => [
                   'location' => 'query',
                   'type' => 'string',
-                ],
-                'returnPartialSuccess' => [
-                  'location' => 'query',
-                  'type' => 'boolean',
                 ],
               ],
             ],
@@ -2651,30 +2265,6 @@ class DiscoveryEngine extends \Google\Service
                   'location' => 'query',
                   'type' => 'string',
                 ],
-                'returnPartialSuccess' => [
-                  'location' => 'query',
-                  'type' => 'boolean',
-                ],
-              ],
-            ],
-          ]
-        ]
-    );
-    $this->projects_locations_dataStores_completionConfig = new DiscoveryEngine\Resource\ProjectsLocationsDataStoresCompletionConfig(
-        $this,
-        $this->serviceName,
-        'completionConfig',
-        [
-          'methods' => [
-            'completeQuery' => [
-              'path' => 'v1/{+completionConfig}:completeQuery',
-              'httpMethod' => 'POST',
-              'parameters' => [
-                'completionConfig' => [
-                  'location' => 'path',
-                  'type' => 'string',
-                  'required' => true,
-                ],
               ],
             ],
           ]
@@ -2917,10 +2507,6 @@ class DiscoveryEngine extends \Google\Service
                   'location' => 'query',
                   'type' => 'string',
                 ],
-                'returnPartialSuccess' => [
-                  'location' => 'query',
-                  'type' => 'boolean',
-                ],
               ],
             ],
           ]
@@ -2962,10 +2548,6 @@ class DiscoveryEngine extends \Google\Service
                 'pageToken' => [
                   'location' => 'query',
                   'type' => 'string',
-                ],
-                'returnPartialSuccess' => [
-                  'location' => 'query',
-                  'type' => 'boolean',
                 ],
               ],
             ],
@@ -3266,51 +2848,6 @@ class DiscoveryEngine extends \Google\Service
           ]
         ]
     );
-    $this->projects_locations_dataStores_siteSearchEngine_sitemaps = new DiscoveryEngine\Resource\ProjectsLocationsDataStoresSiteSearchEngineSitemaps(
-        $this,
-        $this->serviceName,
-        'sitemaps',
-        [
-          'methods' => [
-            'create' => [
-              'path' => 'v1/{+parent}/sitemaps',
-              'httpMethod' => 'POST',
-              'parameters' => [
-                'parent' => [
-                  'location' => 'path',
-                  'type' => 'string',
-                  'required' => true,
-                ],
-              ],
-            ],'delete' => [
-              'path' => 'v1/{+name}',
-              'httpMethod' => 'DELETE',
-              'parameters' => [
-                'name' => [
-                  'location' => 'path',
-                  'type' => 'string',
-                  'required' => true,
-                ],
-              ],
-            ],'fetch' => [
-              'path' => 'v1/{+parent}/sitemaps:fetch',
-              'httpMethod' => 'GET',
-              'parameters' => [
-                'parent' => [
-                  'location' => 'path',
-                  'type' => 'string',
-                  'required' => true,
-                ],
-                'matcher.urisMatcher.uris' => [
-                  'location' => 'query',
-                  'type' => 'string',
-                  'repeated' => true,
-                ],
-              ],
-            ],
-          ]
-        ]
-    );
     $this->projects_locations_dataStores_siteSearchEngine_targetSites = new DiscoveryEngine\Resource\ProjectsLocationsDataStoresSiteSearchEngineTargetSites(
         $this,
         $this->serviceName,
@@ -3505,114 +3042,6 @@ class DiscoveryEngine extends \Google\Service
           ]
         ]
     );
-    $this->projects_locations_identityMappingStores = new DiscoveryEngine\Resource\ProjectsLocationsIdentityMappingStores(
-        $this,
-        $this->serviceName,
-        'identityMappingStores',
-        [
-          'methods' => [
-            'create' => [
-              'path' => 'v1/{+parent}/identityMappingStores',
-              'httpMethod' => 'POST',
-              'parameters' => [
-                'parent' => [
-                  'location' => 'path',
-                  'type' => 'string',
-                  'required' => true,
-                ],
-                'cmekConfigName' => [
-                  'location' => 'query',
-                  'type' => 'string',
-                ],
-                'disableCmek' => [
-                  'location' => 'query',
-                  'type' => 'boolean',
-                ],
-                'identityMappingStoreId' => [
-                  'location' => 'query',
-                  'type' => 'string',
-                ],
-              ],
-            ],'delete' => [
-              'path' => 'v1/{+name}',
-              'httpMethod' => 'DELETE',
-              'parameters' => [
-                'name' => [
-                  'location' => 'path',
-                  'type' => 'string',
-                  'required' => true,
-                ],
-              ],
-            ],'get' => [
-              'path' => 'v1/{+name}',
-              'httpMethod' => 'GET',
-              'parameters' => [
-                'name' => [
-                  'location' => 'path',
-                  'type' => 'string',
-                  'required' => true,
-                ],
-              ],
-            ],'importIdentityMappings' => [
-              'path' => 'v1/{+identityMappingStore}:importIdentityMappings',
-              'httpMethod' => 'POST',
-              'parameters' => [
-                'identityMappingStore' => [
-                  'location' => 'path',
-                  'type' => 'string',
-                  'required' => true,
-                ],
-              ],
-            ],'list' => [
-              'path' => 'v1/{+parent}/identityMappingStores',
-              'httpMethod' => 'GET',
-              'parameters' => [
-                'parent' => [
-                  'location' => 'path',
-                  'type' => 'string',
-                  'required' => true,
-                ],
-                'pageSize' => [
-                  'location' => 'query',
-                  'type' => 'integer',
-                ],
-                'pageToken' => [
-                  'location' => 'query',
-                  'type' => 'string',
-                ],
-              ],
-            ],'listIdentityMappings' => [
-              'path' => 'v1/{+identityMappingStore}:listIdentityMappings',
-              'httpMethod' => 'GET',
-              'parameters' => [
-                'identityMappingStore' => [
-                  'location' => 'path',
-                  'type' => 'string',
-                  'required' => true,
-                ],
-                'pageSize' => [
-                  'location' => 'query',
-                  'type' => 'integer',
-                ],
-                'pageToken' => [
-                  'location' => 'query',
-                  'type' => 'string',
-                ],
-              ],
-            ],'purgeIdentityMappings' => [
-              'path' => 'v1/{+identityMappingStore}:purgeIdentityMappings',
-              'httpMethod' => 'POST',
-              'parameters' => [
-                'identityMappingStore' => [
-                  'location' => 'path',
-                  'type' => 'string',
-                  'required' => true,
-                ],
-              ],
-            ],
-          ]
-        ]
-    );
     $this->projects_locations_identityMappingStores_operations = new DiscoveryEngine\Resource\ProjectsLocationsIdentityMappingStoresOperations(
         $this,
         $this->serviceName,
@@ -3647,58 +3076,6 @@ class DiscoveryEngine extends \Google\Service
                   'type' => 'integer',
                 ],
                 'pageToken' => [
-                  'location' => 'query',
-                  'type' => 'string',
-                ],
-                'returnPartialSuccess' => [
-                  'location' => 'query',
-                  'type' => 'boolean',
-                ],
-              ],
-            ],
-          ]
-        ]
-    );
-    $this->projects_locations_licenseConfigs = new DiscoveryEngine\Resource\ProjectsLocationsLicenseConfigs(
-        $this,
-        $this->serviceName,
-        'licenseConfigs',
-        [
-          'methods' => [
-            'create' => [
-              'path' => 'v1/{+parent}/licenseConfigs',
-              'httpMethod' => 'POST',
-              'parameters' => [
-                'parent' => [
-                  'location' => 'path',
-                  'type' => 'string',
-                  'required' => true,
-                ],
-                'licenseConfigId' => [
-                  'location' => 'query',
-                  'type' => 'string',
-                ],
-              ],
-            ],'get' => [
-              'path' => 'v1/{+name}',
-              'httpMethod' => 'GET',
-              'parameters' => [
-                'name' => [
-                  'location' => 'path',
-                  'type' => 'string',
-                  'required' => true,
-                ],
-              ],
-            ],'patch' => [
-              'path' => 'v1/{+name}',
-              'httpMethod' => 'PATCH',
-              'parameters' => [
-                'name' => [
-                  'location' => 'path',
-                  'type' => 'string',
-                  'required' => true,
-                ],
-                'updateMask' => [
                   'location' => 'query',
                   'type' => 'string',
                 ],
@@ -3743,30 +3120,6 @@ class DiscoveryEngine extends \Google\Service
                 'pageToken' => [
                   'location' => 'query',
                   'type' => 'string',
-                ],
-                'returnPartialSuccess' => [
-                  'location' => 'query',
-                  'type' => 'boolean',
-                ],
-              ],
-            ],
-          ]
-        ]
-    );
-    $this->projects_locations_podcasts_operations = new DiscoveryEngine\Resource\ProjectsLocationsPodcastsOperations(
-        $this,
-        $this->serviceName,
-        'operations',
-        [
-          'methods' => [
-            'get' => [
-              'path' => 'v1/{+name}',
-              'httpMethod' => 'GET',
-              'parameters' => [
-                'name' => [
-                  'location' => 'path',
-                  'type' => 'string',
-                  'required' => true,
                 ],
               ],
             ],
@@ -3849,106 +3202,6 @@ class DiscoveryEngine extends \Google\Service
           ]
         ]
     );
-    $this->projects_locations_userStores = new DiscoveryEngine\Resource\ProjectsLocationsUserStores(
-        $this,
-        $this->serviceName,
-        'userStores',
-        [
-          'methods' => [
-            'batchUpdateUserLicenses' => [
-              'path' => 'v1/{+parent}:batchUpdateUserLicenses',
-              'httpMethod' => 'POST',
-              'parameters' => [
-                'parent' => [
-                  'location' => 'path',
-                  'type' => 'string',
-                  'required' => true,
-                ],
-              ],
-            ],'create' => [
-              'path' => 'v1/{+parent}/userStores',
-              'httpMethod' => 'POST',
-              'parameters' => [
-                'parent' => [
-                  'location' => 'path',
-                  'type' => 'string',
-                  'required' => true,
-                ],
-                'userStoreId' => [
-                  'location' => 'query',
-                  'type' => 'string',
-                ],
-              ],
-            ],'delete' => [
-              'path' => 'v1/{+name}',
-              'httpMethod' => 'DELETE',
-              'parameters' => [
-                'name' => [
-                  'location' => 'path',
-                  'type' => 'string',
-                  'required' => true,
-                ],
-              ],
-            ],'get' => [
-              'path' => 'v1/{+name}',
-              'httpMethod' => 'GET',
-              'parameters' => [
-                'name' => [
-                  'location' => 'path',
-                  'type' => 'string',
-                  'required' => true,
-                ],
-              ],
-            ],'patch' => [
-              'path' => 'v1/{+name}',
-              'httpMethod' => 'PATCH',
-              'parameters' => [
-                'name' => [
-                  'location' => 'path',
-                  'type' => 'string',
-                  'required' => true,
-                ],
-                'updateMask' => [
-                  'location' => 'query',
-                  'type' => 'string',
-                ],
-              ],
-            ],
-          ]
-        ]
-    );
-    $this->projects_locations_userStores_userLicenses = new DiscoveryEngine\Resource\ProjectsLocationsUserStoresUserLicenses(
-        $this,
-        $this->serviceName,
-        'userLicenses',
-        [
-          'methods' => [
-            'list' => [
-              'path' => 'v1/{+parent}/userLicenses',
-              'httpMethod' => 'GET',
-              'parameters' => [
-                'parent' => [
-                  'location' => 'path',
-                  'type' => 'string',
-                  'required' => true,
-                ],
-                'filter' => [
-                  'location' => 'query',
-                  'type' => 'string',
-                ],
-                'pageSize' => [
-                  'location' => 'query',
-                  'type' => 'integer',
-                ],
-                'pageToken' => [
-                  'location' => 'query',
-                  'type' => 'string',
-                ],
-              ],
-            ],
-          ]
-        ]
-    );
     $this->projects_operations = new DiscoveryEngine\Resource\ProjectsOperations(
         $this,
         $this->serviceName,
@@ -3995,10 +3248,6 @@ class DiscoveryEngine extends \Google\Service
                 'pageToken' => [
                   'location' => 'query',
                   'type' => 'string',
-                ],
-                'returnPartialSuccess' => [
-                  'location' => 'query',
-                  'type' => 'boolean',
                 ],
               ],
             ],

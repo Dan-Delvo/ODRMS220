@@ -34,7 +34,6 @@ namespace Google\ApiCore\Options\TransportOptions;
 
 use ArrayAccess;
 use Closure;
-use Google\ApiCore\Options\OptionsInterface;
 use Google\ApiCore\Options\OptionsTrait;
 use Google\ApiCore\Transport\Grpc\UnaryInterceptorInterface;
 use Grpc\Channel;
@@ -45,7 +44,7 @@ use Psr\Log\LoggerInterface;
  * The GrpcTransportOptions class provides typing to the associative array of options used to
  * configure {@see \Google\ApiCore\Transport\GrpcTransport}.
  */
-class GrpcTransportOptions implements ArrayAccess, OptionsInterface
+class GrpcTransportOptions implements ArrayAccess
 {
     use OptionsTrait;
 
@@ -102,64 +101,44 @@ class GrpcTransportOptions implements ArrayAccess, OptionsInterface
 
     /**
      * @param array $stubOpts
-     *
-     * @return $this
      */
-    public function setStubOpts(array $stubOpts): self
+    public function setStubOpts(array $stubOpts)
     {
         $this->stubOpts = $stubOpts;
-
-        return $this;
     }
 
     /**
      * @param ?Channel $channel
-     *
-     * @return $this
      */
-    public function setChannel(?Channel $channel): self
+    public function setChannel(?Channel $channel)
     {
         $this->channel = $channel;
-
-        return $this;
     }
 
     /**
      * @param Interceptor[]|UnaryInterceptorInterface[] $interceptors
-     *
-     * @return $this
      */
-    public function setInterceptors(array $interceptors): self
+    public function setInterceptors(array $interceptors)
     {
         $this->interceptors = $interceptors;
-
-        return $this;
     }
 
     /**
      * @param ?callable $clientCertSource
-     *
-     * @return $this
      */
-    public function setClientCertSource(?callable $clientCertSource): self
+    public function setClientCertSource(?callable $clientCertSource)
     {
         if (!is_null($clientCertSource)) {
             $clientCertSource = Closure::fromCallable($clientCertSource);
         }
         $this->clientCertSource = $clientCertSource;
-
-        return $this;
     }
 
     /**
      * @param null|false|LoggerInterface $logger
-     *
-     * @return $this
      */
-    public function setLogger(null|false|LoggerInterface $logger): self
+    public function setLogger(null|false|LoggerInterface $logger)
     {
         $this->logger = $logger;
-
-        return $this;
     }
 }

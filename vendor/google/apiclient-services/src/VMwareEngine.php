@@ -40,7 +40,6 @@ class VMwareEngine extends \Google\Service
       "https://www.googleapis.com/auth/cloud-platform";
 
   public $projects_locations;
-  public $projects_locations_announcements;
   public $projects_locations_dnsBindPermission;
   public $projects_locations_networkPeerings;
   public $projects_locations_networkPeerings_peeringRoutes;
@@ -56,7 +55,6 @@ class VMwareEngine extends \Google\Service
   public $projects_locations_privateClouds_loggingServers;
   public $projects_locations_privateClouds_managementDnsZoneBindings;
   public $projects_locations_privateClouds_subnets;
-  public $projects_locations_privateClouds_upgrades;
   public $projects_locations_privateConnections;
   public $projects_locations_privateConnections_peeringRoutes;
   public $projects_locations_vmwareEngineNetworks;
@@ -114,58 +112,7 @@ class VMwareEngine extends \Google\Service
                   'type' => 'string',
                   'required' => true,
                 ],
-                'extraLocationTypes' => [
-                  'location' => 'query',
-                  'type' => 'string',
-                  'repeated' => true,
-                ],
                 'filter' => [
-                  'location' => 'query',
-                  'type' => 'string',
-                ],
-                'pageSize' => [
-                  'location' => 'query',
-                  'type' => 'integer',
-                ],
-                'pageToken' => [
-                  'location' => 'query',
-                  'type' => 'string',
-                ],
-              ],
-            ],
-          ]
-        ]
-    );
-    $this->projects_locations_announcements = new VMwareEngine\Resource\ProjectsLocationsAnnouncements(
-        $this,
-        $this->serviceName,
-        'announcements',
-        [
-          'methods' => [
-            'get' => [
-              'path' => 'v1/{+name}',
-              'httpMethod' => 'GET',
-              'parameters' => [
-                'name' => [
-                  'location' => 'path',
-                  'type' => 'string',
-                  'required' => true,
-                ],
-              ],
-            ],'list' => [
-              'path' => 'v1/{+parent}/announcements',
-              'httpMethod' => 'GET',
-              'parameters' => [
-                'parent' => [
-                  'location' => 'path',
-                  'type' => 'string',
-                  'required' => true,
-                ],
-                'filter' => [
-                  'location' => 'query',
-                  'type' => 'string',
-                ],
-                'orderBy' => [
                   'location' => 'query',
                   'type' => 'string',
                 ],
@@ -770,16 +717,6 @@ class VMwareEngine extends \Google\Service
                 'updateMask' => [
                   'location' => 'query',
                   'type' => 'string',
-                ],
-              ],
-            ],'privateCloudDeletionNow' => [
-              'path' => 'v1/{+name}:privateCloudDeletionNow',
-              'httpMethod' => 'POST',
-              'parameters' => [
-                'name' => [
-                  'location' => 'path',
-                  'type' => 'string',
-                  'required' => true,
                 ],
               ],
             ],'resetNsxCredentials' => [
@@ -1484,70 +1421,6 @@ class VMwareEngine extends \Google\Service
                   'location' => 'path',
                   'type' => 'string',
                   'required' => true,
-                ],
-                'updateMask' => [
-                  'location' => 'query',
-                  'type' => 'string',
-                ],
-              ],
-            ],
-          ]
-        ]
-    );
-    $this->projects_locations_privateClouds_upgrades = new VMwareEngine\Resource\ProjectsLocationsPrivateCloudsUpgrades(
-        $this,
-        $this->serviceName,
-        'upgrades',
-        [
-          'methods' => [
-            'get' => [
-              'path' => 'v1/{+name}',
-              'httpMethod' => 'GET',
-              'parameters' => [
-                'name' => [
-                  'location' => 'path',
-                  'type' => 'string',
-                  'required' => true,
-                ],
-              ],
-            ],'list' => [
-              'path' => 'v1/{+parent}/upgrades',
-              'httpMethod' => 'GET',
-              'parameters' => [
-                'parent' => [
-                  'location' => 'path',
-                  'type' => 'string',
-                  'required' => true,
-                ],
-                'filter' => [
-                  'location' => 'query',
-                  'type' => 'string',
-                ],
-                'orderBy' => [
-                  'location' => 'query',
-                  'type' => 'string',
-                ],
-                'pageSize' => [
-                  'location' => 'query',
-                  'type' => 'integer',
-                ],
-                'pageToken' => [
-                  'location' => 'query',
-                  'type' => 'string',
-                ],
-              ],
-            ],'patch' => [
-              'path' => 'v1/{+name}',
-              'httpMethod' => 'PATCH',
-              'parameters' => [
-                'name' => [
-                  'location' => 'path',
-                  'type' => 'string',
-                  'required' => true,
-                ],
-                'requestId' => [
-                  'location' => 'query',
-                  'type' => 'string',
                 ],
                 'updateMask' => [
                   'location' => 'query',

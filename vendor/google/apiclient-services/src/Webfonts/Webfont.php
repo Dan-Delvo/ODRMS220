@@ -54,8 +54,6 @@ class Webfont extends \Google\Collection
    * @var string[]
    */
   public $subsets;
-  protected $tagsType = Tag::class;
-  protected $tagsDataType = 'array';
   /**
    * @var string[]
    */
@@ -190,20 +188,6 @@ class Webfont extends \Google\Collection
   public function getSubsets()
   {
     return $this->subsets;
-  }
-  /**
-   * @param Tag[]
-   */
-  public function setTags($tags)
-  {
-    $this->tags = $tags;
-  }
-  /**
-   * @return Tag[]
-   */
-  public function getTags()
-  {
-    return $this->tags;
   }
   /**
    * @param string[]

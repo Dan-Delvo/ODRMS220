@@ -32,10 +32,6 @@ class GenerateIdTokenRequest extends \Google\Collection
    * @var bool
    */
   public $includeEmail;
-  /**
-   * @var bool
-   */
-  public $organizationNumberIncluded;
 
   /**
    * @param string
@@ -78,20 +74,6 @@ class GenerateIdTokenRequest extends \Google\Collection
   public function getIncludeEmail()
   {
     return $this->includeEmail;
-  }
-  /**
-   * @param bool
-   */
-  public function setOrganizationNumberIncluded($organizationNumberIncluded)
-  {
-    $this->organizationNumberIncluded = $organizationNumberIncluded;
-  }
-  /**
-   * @return bool
-   */
-  public function getOrganizationNumberIncluded()
-  {
-    return $this->organizationNumberIncluded;
   }
 }
 

@@ -45,10 +45,6 @@ class GoogleChromeManagementV1ChromeAppInfo extends \Google\Collection
    */
   public $kioskEnabled;
   /**
-   * @var string
-   */
-  public $manifestVersion;
-  /**
    * @var int
    */
   public $minUserCount;
@@ -148,20 +144,6 @@ class GoogleChromeManagementV1ChromeAppInfo extends \Google\Collection
   public function getKioskEnabled()
   {
     return $this->kioskEnabled;
-  }
-  /**
-   * @param string
-   */
-  public function setManifestVersion($manifestVersion)
-  {
-    $this->manifestVersion = $manifestVersion;
-  }
-  /**
-   * @return string
-   */
-  public function getManifestVersion()
-  {
-    return $this->manifestVersion;
   }
   /**
    * @param int

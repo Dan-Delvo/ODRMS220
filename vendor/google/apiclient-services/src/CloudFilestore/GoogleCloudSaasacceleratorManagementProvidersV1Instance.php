@@ -27,10 +27,6 @@ class GoogleCloudSaasacceleratorManagementProvidersV1Instance extends \Google\Co
   /**
    * @var string
    */
-  public $consumerProjectNumber;
-  /**
-   * @var string
-   */
   public $createTime;
   /**
    * @var string
@@ -96,20 +92,6 @@ class GoogleCloudSaasacceleratorManagementProvidersV1Instance extends \Google\Co
   public function getConsumerDefinedName()
   {
     return $this->consumerDefinedName;
-  }
-  /**
-   * @param string
-   */
-  public function setConsumerProjectNumber($consumerProjectNumber)
-  {
-    $this->consumerProjectNumber = $consumerProjectNumber;
-  }
-  /**
-   * @return string
-   */
-  public function getConsumerProjectNumber()
-  {
-    return $this->consumerProjectNumber;
   }
   /**
    * @param string

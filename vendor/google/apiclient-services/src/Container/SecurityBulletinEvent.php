@@ -47,10 +47,6 @@ class SecurityBulletinEvent extends \Google\Collection
   /**
    * @var string[]
    */
-  public $mitigatedVersions;
-  /**
-   * @var string[]
-   */
   public $patchedVersions;
   /**
    * @var string
@@ -148,20 +144,6 @@ class SecurityBulletinEvent extends \Google\Collection
   public function getManualStepsRequired()
   {
     return $this->manualStepsRequired;
-  }
-  /**
-   * @param string[]
-   */
-  public function setMitigatedVersions($mitigatedVersions)
-  {
-    $this->mitigatedVersions = $mitigatedVersions;
-  }
-  /**
-   * @return string[]
-   */
-  public function getMitigatedVersions()
-  {
-    return $this->mitigatedVersions;
   }
   /**
    * @param string[]

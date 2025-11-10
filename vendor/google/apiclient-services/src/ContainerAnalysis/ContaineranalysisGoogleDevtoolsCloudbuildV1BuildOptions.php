@@ -37,10 +37,6 @@ class ContaineranalysisGoogleDevtoolsCloudbuildV1BuildOptions extends \Google\Co
    */
   public $dynamicSubstitutions;
   /**
-   * @var bool
-   */
-  public $enableStructuredLogging;
-  /**
    * @var string[]
    */
   public $env;
@@ -58,10 +54,6 @@ class ContaineranalysisGoogleDevtoolsCloudbuildV1BuildOptions extends \Google\Co
   public $machineType;
   protected $poolType = ContaineranalysisGoogleDevtoolsCloudbuildV1BuildOptionsPoolOption::class;
   protected $poolDataType = '';
-  /**
-   * @var string
-   */
-  public $pubsubTopic;
   /**
    * @var string
    */
@@ -142,20 +134,6 @@ class ContaineranalysisGoogleDevtoolsCloudbuildV1BuildOptions extends \Google\Co
     return $this->dynamicSubstitutions;
   }
   /**
-   * @param bool
-   */
-  public function setEnableStructuredLogging($enableStructuredLogging)
-  {
-    $this->enableStructuredLogging = $enableStructuredLogging;
-  }
-  /**
-   * @return bool
-   */
-  public function getEnableStructuredLogging()
-  {
-    return $this->enableStructuredLogging;
-  }
-  /**
    * @param string[]
    */
   public function setEnv($env)
@@ -224,20 +202,6 @@ class ContaineranalysisGoogleDevtoolsCloudbuildV1BuildOptions extends \Google\Co
   public function getPool()
   {
     return $this->pool;
-  }
-  /**
-   * @param string
-   */
-  public function setPubsubTopic($pubsubTopic)
-  {
-    $this->pubsubTopic = $pubsubTopic;
-  }
-  /**
-   * @return string
-   */
-  public function getPubsubTopic()
-  {
-    return $this->pubsubTopic;
   }
   /**
    * @param string

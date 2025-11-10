@@ -32,8 +32,6 @@ class Form extends \Google\Collection
    * @var string
    */
   public $linkedSheetId;
-  protected $publishSettingsType = PublishSettings::class;
-  protected $publishSettingsDataType = '';
   /**
    * @var string
    */
@@ -100,20 +98,6 @@ class Form extends \Google\Collection
   public function getLinkedSheetId()
   {
     return $this->linkedSheetId;
-  }
-  /**
-   * @param PublishSettings
-   */
-  public function setPublishSettings(PublishSettings $publishSettings)
-  {
-    $this->publishSettings = $publishSettings;
-  }
-  /**
-   * @return PublishSettings
-   */
-  public function getPublishSettings()
-  {
-    return $this->publishSettings;
   }
   /**
    * @param string

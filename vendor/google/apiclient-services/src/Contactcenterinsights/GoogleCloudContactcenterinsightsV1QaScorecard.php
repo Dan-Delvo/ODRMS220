@@ -32,17 +32,9 @@ class GoogleCloudContactcenterinsightsV1QaScorecard extends \Google\Model
    */
   public $displayName;
   /**
-   * @var bool
-   */
-  public $isDefault;
-  /**
    * @var string
    */
   public $name;
-  /**
-   * @var string
-   */
-  public $source;
   /**
    * @var string
    */
@@ -91,20 +83,6 @@ class GoogleCloudContactcenterinsightsV1QaScorecard extends \Google\Model
     return $this->displayName;
   }
   /**
-   * @param bool
-   */
-  public function setIsDefault($isDefault)
-  {
-    $this->isDefault = $isDefault;
-  }
-  /**
-   * @return bool
-   */
-  public function getIsDefault()
-  {
-    return $this->isDefault;
-  }
-  /**
    * @param string
    */
   public function setName($name)
@@ -117,20 +95,6 @@ class GoogleCloudContactcenterinsightsV1QaScorecard extends \Google\Model
   public function getName()
   {
     return $this->name;
-  }
-  /**
-   * @param string
-   */
-  public function setSource($source)
-  {
-    $this->source = $source;
-  }
-  /**
-   * @return string
-   */
-  public function getSource()
-  {
-    return $this->source;
   }
   /**
    * @param string

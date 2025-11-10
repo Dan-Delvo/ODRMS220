@@ -22,20 +22,12 @@ class Enterprise extends \Google\Collection
   protected $collection_key = 'administrator';
   protected $administratorType = Administrator::class;
   protected $administratorDataType = 'array';
-  /**
-   * @var string
-   */
-  public $enterpriseType;
   protected $googleAuthenticationSettingsType = GoogleAuthenticationSettings::class;
   protected $googleAuthenticationSettingsDataType = '';
   /**
    * @var string
    */
   public $id;
-  /**
-   * @var string
-   */
-  public $managedGoogleDomainType;
   /**
    * @var string
    */
@@ -58,20 +50,6 @@ class Enterprise extends \Google\Collection
   public function getAdministrator()
   {
     return $this->administrator;
-  }
-  /**
-   * @param string
-   */
-  public function setEnterpriseType($enterpriseType)
-  {
-    $this->enterpriseType = $enterpriseType;
-  }
-  /**
-   * @return string
-   */
-  public function getEnterpriseType()
-  {
-    return $this->enterpriseType;
   }
   /**
    * @param GoogleAuthenticationSettings
@@ -100,20 +78,6 @@ class Enterprise extends \Google\Collection
   public function getId()
   {
     return $this->id;
-  }
-  /**
-   * @param string
-   */
-  public function setManagedGoogleDomainType($managedGoogleDomainType)
-  {
-    $this->managedGoogleDomainType = $managedGoogleDomainType;
-  }
-  /**
-   * @return string
-   */
-  public function getManagedGoogleDomainType()
-  {
-    return $this->managedGoogleDomainType;
   }
   /**
    * @param string

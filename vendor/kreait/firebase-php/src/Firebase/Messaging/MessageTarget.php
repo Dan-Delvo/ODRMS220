@@ -51,7 +51,7 @@ final class MessageTarget
             self::CONDITION => Condition::fromValue($value)->value(),
             self::TOKEN => RegistrationToken::fromValue($value)->value(),
             self::TOPIC => Topic::fromValue($value)->value(),
-            default => self::UNKNOWN,
+            self::UNKNOWN => $value,
         };
 
         return new self($targetType, $targetValue);

@@ -20,10 +20,6 @@ namespace Google\Service\Integrations;
 class EnterpriseCrmEventbusProtoTaskExecutionDetails extends \Google\Collection
 {
   protected $collection_key = 'taskAttemptStats';
-  /**
-   * @var bool
-   */
-  public $skippedOnFailure;
   protected $taskAttemptStatsType = EnterpriseCrmEventbusProtoTaskExecutionDetailsTaskAttemptStats::class;
   protected $taskAttemptStatsDataType = 'array';
   /**
@@ -35,20 +31,6 @@ class EnterpriseCrmEventbusProtoTaskExecutionDetails extends \Google\Collection
    */
   public $taskNumber;
 
-  /**
-   * @param bool
-   */
-  public function setSkippedOnFailure($skippedOnFailure)
-  {
-    $this->skippedOnFailure = $skippedOnFailure;
-  }
-  /**
-   * @return bool
-   */
-  public function getSkippedOnFailure()
-  {
-    return $this->skippedOnFailure;
-  }
   /**
    * @param EnterpriseCrmEventbusProtoTaskExecutionDetailsTaskAttemptStats[]
    */

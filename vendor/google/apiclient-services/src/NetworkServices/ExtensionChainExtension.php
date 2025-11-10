@@ -43,14 +43,6 @@ class ExtensionChainExtension extends \Google\Collection
   /**
    * @var string
    */
-  public $requestBodySendMode;
-  /**
-   * @var string
-   */
-  public $responseBodySendMode;
-  /**
-   * @var string
-   */
   public $service;
   /**
    * @var string[]
@@ -130,34 +122,6 @@ class ExtensionChainExtension extends \Google\Collection
   public function getName()
   {
     return $this->name;
-  }
-  /**
-   * @param string
-   */
-  public function setRequestBodySendMode($requestBodySendMode)
-  {
-    $this->requestBodySendMode = $requestBodySendMode;
-  }
-  /**
-   * @return string
-   */
-  public function getRequestBodySendMode()
-  {
-    return $this->requestBodySendMode;
-  }
-  /**
-   * @param string
-   */
-  public function setResponseBodySendMode($responseBodySendMode)
-  {
-    $this->responseBodySendMode = $responseBodySendMode;
-  }
-  /**
-   * @return string
-   */
-  public function getResponseBodySendMode()
-  {
-    return $this->responseBodySendMode;
   }
   /**
    * @param string

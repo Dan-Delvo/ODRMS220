@@ -27,10 +27,6 @@ class ExperimentalFeatures extends \Google\Model
    * @var bool
    */
   public $restAsyncIoEnabled;
-  /**
-   * @var bool
-   */
-  public $unversionedPackageDisabled;
 
   /**
    * @param bool
@@ -59,20 +55,6 @@ class ExperimentalFeatures extends \Google\Model
   public function getRestAsyncIoEnabled()
   {
     return $this->restAsyncIoEnabled;
-  }
-  /**
-   * @param bool
-   */
-  public function setUnversionedPackageDisabled($unversionedPackageDisabled)
-  {
-    $this->unversionedPackageDisabled = $unversionedPackageDisabled;
-  }
-  /**
-   * @return bool
-   */
-  public function getUnversionedPackageDisabled()
-  {
-    return $this->unversionedPackageDisabled;
   }
 }
 

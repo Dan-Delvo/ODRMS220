@@ -17,15 +17,12 @@
 
 namespace Google\Service\RecaptchaEnterprise;
 
-class GoogleCloudRecaptchaenterpriseV1FraudPreventionAssessment extends \Google\Collection
+class GoogleCloudRecaptchaenterpriseV1FraudPreventionAssessment extends \Google\Model
 {
-  protected $collection_key = 'riskReasons';
   protected $behavioralTrustVerdictType = GoogleCloudRecaptchaenterpriseV1FraudPreventionAssessmentBehavioralTrustVerdict::class;
   protected $behavioralTrustVerdictDataType = '';
   protected $cardTestingVerdictType = GoogleCloudRecaptchaenterpriseV1FraudPreventionAssessmentCardTestingVerdict::class;
   protected $cardTestingVerdictDataType = '';
-  protected $riskReasonsType = GoogleCloudRecaptchaenterpriseV1FraudPreventionAssessmentRiskReason::class;
-  protected $riskReasonsDataType = 'array';
   protected $stolenInstrumentVerdictType = GoogleCloudRecaptchaenterpriseV1FraudPreventionAssessmentStolenInstrumentVerdict::class;
   protected $stolenInstrumentVerdictDataType = '';
   /**
@@ -60,20 +57,6 @@ class GoogleCloudRecaptchaenterpriseV1FraudPreventionAssessment extends \Google\
   public function getCardTestingVerdict()
   {
     return $this->cardTestingVerdict;
-  }
-  /**
-   * @param GoogleCloudRecaptchaenterpriseV1FraudPreventionAssessmentRiskReason[]
-   */
-  public function setRiskReasons($riskReasons)
-  {
-    $this->riskReasons = $riskReasons;
-  }
-  /**
-   * @return GoogleCloudRecaptchaenterpriseV1FraudPreventionAssessmentRiskReason[]
-   */
-  public function getRiskReasons()
-  {
-    return $this->riskReasons;
   }
   /**
    * @param GoogleCloudRecaptchaenterpriseV1FraudPreventionAssessmentStolenInstrumentVerdict

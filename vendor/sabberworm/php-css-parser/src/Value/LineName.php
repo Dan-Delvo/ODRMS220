@@ -23,8 +23,6 @@ class LineName extends ValueList
      *
      * @throws UnexpectedTokenException
      * @throws UnexpectedEOFException
-     *
-     * @internal since V8.8.0
      */
     public static function parse(ParserState $oParserState)
     {
@@ -51,8 +49,6 @@ class LineName extends ValueList
 
     /**
      * @return string
-     *
-     * @deprecated in V8.8.0, will be removed in V9.0.0. Use `render` instead.
      */
     public function __toString()
     {

@@ -34,10 +34,6 @@ class DriveOptions extends \Google\Model
   /**
    * @var string
    */
-  public $sharedDrivesOption;
-  /**
-   * @var string
-   */
   public $versionDate;
 
   /**
@@ -81,20 +77,6 @@ class DriveOptions extends \Google\Model
   public function getIncludeTeamDrives()
   {
     return $this->includeTeamDrives;
-  }
-  /**
-   * @param string
-   */
-  public function setSharedDrivesOption($sharedDrivesOption)
-  {
-    $this->sharedDrivesOption = $sharedDrivesOption;
-  }
-  /**
-   * @return string
-   */
-  public function getSharedDrivesOption()
-  {
-    return $this->sharedDrivesOption;
   }
   /**
    * @param string

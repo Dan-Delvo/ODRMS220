@@ -22,10 +22,6 @@ class AutokeyConfig extends \Google\Model
   /**
    * @var string
    */
-  public $etag;
-  /**
-   * @var string
-   */
   public $keyProject;
   /**
    * @var string
@@ -36,20 +32,6 @@ class AutokeyConfig extends \Google\Model
    */
   public $state;
 
-  /**
-   * @param string
-   */
-  public function setEtag($etag)
-  {
-    $this->etag = $etag;
-  }
-  /**
-   * @return string
-   */
-  public function getEtag()
-  {
-    return $this->etag;
-  }
   /**
    * @param string
    */

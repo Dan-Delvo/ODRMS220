@@ -43,10 +43,6 @@ class GceClusterConfig extends \Google\Collection
   protected $reservationAffinityType = ReservationAffinity::class;
   protected $reservationAffinityDataType = '';
   /**
-   * @var string[]
-   */
-  public $resourceManagerTags;
-  /**
    * @var string
    */
   public $serviceAccount;
@@ -166,20 +162,6 @@ class GceClusterConfig extends \Google\Collection
   public function getReservationAffinity()
   {
     return $this->reservationAffinity;
-  }
-  /**
-   * @param string[]
-   */
-  public function setResourceManagerTags($resourceManagerTags)
-  {
-    $this->resourceManagerTags = $resourceManagerTags;
-  }
-  /**
-   * @return string[]
-   */
-  public function getResourceManagerTags()
-  {
-    return $this->resourceManagerTags;
   }
   /**
    * @param string

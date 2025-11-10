@@ -20,10 +20,6 @@ namespace Google\Service\DiscoveryEngine;
 class GoogleCloudDiscoveryengineV1ChunkDocumentMetadata extends \Google\Model
 {
   /**
-   * @var string
-   */
-  public $mimeType;
-  /**
    * @var array[]
    */
   public $structData;
@@ -36,20 +32,6 @@ class GoogleCloudDiscoveryengineV1ChunkDocumentMetadata extends \Google\Model
    */
   public $uri;
 
-  /**
-   * @param string
-   */
-  public function setMimeType($mimeType)
-  {
-    $this->mimeType = $mimeType;
-  }
-  /**
-   * @return string
-   */
-  public function getMimeType()
-  {
-    return $this->mimeType;
-  }
   /**
    * @param array[]
    */

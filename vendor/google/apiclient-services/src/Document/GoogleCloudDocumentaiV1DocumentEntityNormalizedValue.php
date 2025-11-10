@@ -40,10 +40,6 @@ class GoogleCloudDocumentaiV1DocumentEntityNormalizedValue extends \Google\Model
   protected $moneyValueType = GoogleTypeMoney::class;
   protected $moneyValueDataType = '';
   /**
-   * @var bool
-   */
-  public $signatureValue;
-  /**
    * @var string
    */
   public $text;
@@ -145,20 +141,6 @@ class GoogleCloudDocumentaiV1DocumentEntityNormalizedValue extends \Google\Model
   public function getMoneyValue()
   {
     return $this->moneyValue;
-  }
-  /**
-   * @param bool
-   */
-  public function setSignatureValue($signatureValue)
-  {
-    $this->signatureValue = $signatureValue;
-  }
-  /**
-   * @return bool
-   */
-  public function getSignatureValue()
-  {
-    return $this->signatureValue;
   }
   /**
    * @param string

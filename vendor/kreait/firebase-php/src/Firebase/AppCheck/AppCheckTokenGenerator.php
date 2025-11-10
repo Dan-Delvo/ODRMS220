@@ -24,7 +24,6 @@ final class AppCheckTokenGenerator
      */
     public function __construct(
         private readonly string $clientEmail,
-        #[\SensitiveParameter]
         private readonly string $privateKey,
         ?ClockInterface $clock = null,
     ) {
@@ -50,7 +49,7 @@ final class AppCheckTokenGenerator
             'exp' => $now + 300,
         ];
 
-        if ($options?->ttl !== null) {
+        if (null !== $options && $options->ttl) {
             $payload['ttl'] = $options->ttl.'s';
         }
 

@@ -17,8 +17,6 @@
 
 namespace Google\Cloud\Core;
 
-use DateTimeInterface;
-
 /**
  * Represents a Timestamp value.
  *
@@ -87,9 +85,9 @@ class Timestamp implements \JsonSerializable
      * $dateTime = $timestamp->get();
      * ```
      *
-     * @return DateTimeInterface
+     * @return \DateTimeInterface
      */
-    public function get(): DateTimeInterface
+    public function get()
     {
         return $this->value;
     }
@@ -104,7 +102,7 @@ class Timestamp implements \JsonSerializable
      *
      * @return int
      */
-    public function nanoSeconds(): int
+    public function nanoSeconds()
     {
         return $this->nanoSeconds === null
             ? (int) $this->value->format('u') * 1000
@@ -121,7 +119,7 @@ class Timestamp implements \JsonSerializable
      *
      * @return string
      */
-    public function formatAsString(): string
+    public function formatAsString()
     {
         return $this->formatTimeAsString(
             $this->value,
@@ -145,7 +143,7 @@ class Timestamp implements \JsonSerializable
      *
      * @return array
      */
-    public function formatForApi(): array
+    public function formatForApi()
     {
         return $this->formatTimeAsArray($this->value, $this->nanoSeconds());
     }
@@ -157,7 +155,7 @@ class Timestamp implements \JsonSerializable
      * @access private
      */
     #[\ReturnTypeWillChange]
-    public function jsonSerialize(): string
+    public function jsonSerialize()
     {
         return $this->formatAsString();
     }

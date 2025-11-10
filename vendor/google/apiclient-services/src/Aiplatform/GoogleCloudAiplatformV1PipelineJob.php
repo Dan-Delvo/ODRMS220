@@ -58,8 +58,6 @@ class GoogleCloudAiplatformV1PipelineJob extends \Google\Collection
    * @var bool
    */
   public $preflightValidations;
-  protected $pscInterfaceConfigType = GoogleCloudAiplatformV1PscInterfaceConfig::class;
-  protected $pscInterfaceConfigDataType = '';
   /**
    * @var string[]
    */
@@ -246,20 +244,6 @@ class GoogleCloudAiplatformV1PipelineJob extends \Google\Collection
   public function getPreflightValidations()
   {
     return $this->preflightValidations;
-  }
-  /**
-   * @param GoogleCloudAiplatformV1PscInterfaceConfig
-   */
-  public function setPscInterfaceConfig(GoogleCloudAiplatformV1PscInterfaceConfig $pscInterfaceConfig)
-  {
-    $this->pscInterfaceConfig = $pscInterfaceConfig;
-  }
-  /**
-   * @return GoogleCloudAiplatformV1PscInterfaceConfig
-   */
-  public function getPscInterfaceConfig()
-  {
-    return $this->pscInterfaceConfig;
   }
   /**
    * @param string[]

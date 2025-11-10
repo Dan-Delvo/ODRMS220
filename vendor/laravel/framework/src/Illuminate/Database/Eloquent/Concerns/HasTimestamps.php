@@ -161,9 +161,7 @@ trait HasTimestamps
      */
     public function getQualifiedCreatedAtColumn()
     {
-        $column = $this->getCreatedAtColumn();
-
-        return $column ? $this->qualifyColumn($column) : null;
+        return $this->qualifyColumn($this->getCreatedAtColumn());
     }
 
     /**
@@ -173,9 +171,7 @@ trait HasTimestamps
      */
     public function getQualifiedUpdatedAtColumn()
     {
-        $column = $this->getUpdatedAtColumn();
-
-        return $column ? $this->qualifyColumn($column) : null;
+        return $this->qualifyColumn($this->getUpdatedAtColumn());
     }
 
     /**

@@ -102,6 +102,8 @@ class Creative extends \Google\Collection
   public $convertFlashToHtml5;
   protected $counterCustomEventsType = CreativeCustomEvent::class;
   protected $counterCustomEventsDataType = 'array';
+  protected $creativeAssetSelectionType = CreativeAssetSelection::class;
+  protected $creativeAssetSelectionDataType = '';
   protected $creativeAssetsType = CreativeAsset::class;
   protected $creativeAssetsDataType = 'array';
   protected $creativeFieldAssignmentsType = CreativeFieldAssignment::class;
@@ -110,6 +112,10 @@ class Creative extends \Google\Collection
    * @var string[]
    */
   public $customKeyValues;
+  /**
+   * @var bool
+   */
+  public $dynamicAssetSelection;
   protected $exitCustomEventsType = CreativeCustomEvent::class;
   protected $exitCustomEventsDataType = 'array';
   protected $fsCommandType = FsCommand::class;
@@ -558,6 +564,20 @@ class Creative extends \Google\Collection
     return $this->counterCustomEvents;
   }
   /**
+   * @param CreativeAssetSelection
+   */
+  public function setCreativeAssetSelection(CreativeAssetSelection $creativeAssetSelection)
+  {
+    $this->creativeAssetSelection = $creativeAssetSelection;
+  }
+  /**
+   * @return CreativeAssetSelection
+   */
+  public function getCreativeAssetSelection()
+  {
+    return $this->creativeAssetSelection;
+  }
+  /**
    * @param CreativeAsset[]
    */
   public function setCreativeAssets($creativeAssets)
@@ -598,6 +618,20 @@ class Creative extends \Google\Collection
   public function getCustomKeyValues()
   {
     return $this->customKeyValues;
+  }
+  /**
+   * @param bool
+   */
+  public function setDynamicAssetSelection($dynamicAssetSelection)
+  {
+    $this->dynamicAssetSelection = $dynamicAssetSelection;
+  }
+  /**
+   * @return bool
+   */
+  public function getDynamicAssetSelection()
+  {
+    return $this->dynamicAssetSelection;
   }
   /**
    * @param CreativeCustomEvent[]

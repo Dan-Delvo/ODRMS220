@@ -121,8 +121,6 @@ class Response
      * (last updated 2021-10-01).
      *
      * Unless otherwise noted, the status code is defined in RFC2616.
-     *
-     * @var array<int, string>
      */
     public static array $statusTexts = [
         100 => 'Continue',

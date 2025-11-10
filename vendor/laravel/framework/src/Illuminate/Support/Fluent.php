@@ -6,7 +6,6 @@ use ArrayAccess;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Contracts\Support\Jsonable;
 use Illuminate\Support\Traits\InteractsWithData;
-use Illuminate\Support\Traits\Macroable;
 use JsonSerializable;
 
 /**
@@ -18,9 +17,7 @@ use JsonSerializable;
  */
 class Fluent implements Arrayable, ArrayAccess, Jsonable, JsonSerializable
 {
-    use InteractsWithData, Macroable {
-        __call as macroCall;
-    }
+    use InteractsWithData;
 
     /**
      * All of the attributes set on the fluent instance.
@@ -37,7 +34,9 @@ class Fluent implements Arrayable, ArrayAccess, Jsonable, JsonSerializable
      */
     public function __construct($attributes = [])
     {
-        $this->fill($attributes);
+        foreach ($attributes as $key => $value) {
+            $this->attributes[$key] = $value;
+        }
     }
 
     /**
@@ -64,21 +63,6 @@ class Fluent implements Arrayable, ArrayAccess, Jsonable, JsonSerializable
     public function set($key, $value)
     {
         data_set($this->attributes, $key, $value);
-
-        return $this;
-    }
-
-    /**
-     * Fill the fluent instance with an array of attributes.
-     *
-     * @param  iterable<TKey, TValue>  $attributes
-     * @return $this
-     */
-    public function fill($attributes)
-    {
-        foreach ($attributes as $key => $value) {
-            $this->attributes[$key] = $value;
-        }
 
         return $this;
     }
@@ -243,10 +227,6 @@ class Fluent implements Arrayable, ArrayAccess, Jsonable, JsonSerializable
      */
     public function __call($method, $parameters)
     {
-        if (static::hasMacro($method)) {
-            return $this->macroCall($method, $parameters);
-        }
-
         $this->attributes[$method] = count($parameters) > 0 ? reset($parameters) : true;
 
         return $this;

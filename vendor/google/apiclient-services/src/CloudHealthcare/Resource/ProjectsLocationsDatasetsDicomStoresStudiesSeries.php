@@ -57,9 +57,10 @@ class ProjectsLocationsDatasetsDicomStoresStudiesSeries extends \Google\Service\
   }
   /**
    * RetrieveSeriesMetadata returns instance associated with the given study and
-   * series, presented as metadata. See [RetrieveTransaction] (https://dicom.nema.
-   * org/medical/dicom/current/output/html/part18.html#sect_10.4). For details on
-   * the implementation of RetrieveSeriesMetadata, see [Metadata
+   * series, presented as metadata with the bulk data removed. See
+   * [RetrieveTransaction] (http://dicom.nema.org/medical/dicom/current/output/htm
+   * l/part18.html#sect_10.4). For details on the implementation of
+   * RetrieveSeriesMetadata, see [Metadata
    * resources](https://cloud.google.com/healthcare/docs/dicom#metadata_resources)
    * in the Cloud Healthcare API conformance statement. For samples that show how
    * to call RetrieveSeriesMetadata, see [Retrieve
@@ -84,8 +85,8 @@ class ProjectsLocationsDatasetsDicomStoresStudiesSeries extends \Google\Service\
   }
   /**
    * RetrieveSeries returns all instances within the given study and series. See
-   * [RetrieveTransaction] (https://dicom.nema.org/medical/dicom/current/output/ht
-   * ml/part18.html#sect_10.4). For details on the implementation of
+   * [RetrieveTransaction] (http://dicom.nema.org/medical/dicom/current/output/htm
+   * l/part18.html#sect_10.4). For details on the implementation of
    * RetrieveSeries, see [DICOM study/series/instances](https://cloud.google.com/h
    * ealthcare/docs/dicom#dicom_studyseriesinstances) in the Cloud Healthcare API
    * conformance statement. For samples that show how to call RetrieveSeries, see
@@ -109,10 +110,10 @@ class ProjectsLocationsDatasetsDicomStoresStudiesSeries extends \Google\Service\
   }
   /**
    * SearchForInstances returns a list of matching instances. See [Search
-   * Transaction] (https://dicom.nema.org/medical/dicom/current/output/html/part18
-   * .html#sect_10.6). For details on the implementation of SearchForInstances,
-   * see [Search transaction](https://cloud.google.com/healthcare/docs/dicom#searc
-   * h_transaction) in the Cloud Healthcare API conformance statement. For samples
+   * Transaction] (http://dicom.nema.org/medical/dicom/current/output/html/part18.
+   * html#sect_10.6). For details on the implementation of SearchForInstances, see
+   * [Search transaction](https://cloud.google.com/healthcare/docs/dicom#search_tr
+   * ansaction) in the Cloud Healthcare API conformance statement. For samples
    * that show how to call SearchForInstances, see [Search for DICOM
    * data](https://cloud.google.com/healthcare/docs/how-tos/dicomweb#search-
    * dicom). (series.searchForInstances)
@@ -122,8 +123,7 @@ class ProjectsLocationsDatasetsDicomStoresStudiesSeries extends \Google\Service\
    * s/{dataset_id}/dicomStores/{dicom_store_id}`.
    * @param string $dicomWebPath Required. The path of the
    * SearchForInstancesRequest DICOMweb request. For example, `instances`,
-   * `studies/{study_uid}/series/{series_uid}/instances`, or
-   * `studies/{study_uid}/instances`.
+   * `series/{series_uid}/instances`, or `studies/{study_uid}/instances`.
    * @param array $optParams Optional parameters.
    * @return HttpBody
    * @throws \Google\Service\Exception

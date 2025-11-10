@@ -30,8 +30,6 @@ class ClusterAutoscaling extends \Google\Collection
    * @var string
    */
   public $autoscalingProfile;
-  protected $defaultComputeClassConfigType = DefaultComputeClassConfig::class;
-  protected $defaultComputeClassConfigDataType = '';
   /**
    * @var bool
    */
@@ -80,20 +78,6 @@ class ClusterAutoscaling extends \Google\Collection
   public function getAutoscalingProfile()
   {
     return $this->autoscalingProfile;
-  }
-  /**
-   * @param DefaultComputeClassConfig
-   */
-  public function setDefaultComputeClassConfig(DefaultComputeClassConfig $defaultComputeClassConfig)
-  {
-    $this->defaultComputeClassConfig = $defaultComputeClassConfig;
-  }
-  /**
-   * @return DefaultComputeClassConfig
-   */
-  public function getDefaultComputeClassConfig()
-  {
-    return $this->defaultComputeClassConfig;
   }
   /**
    * @param bool

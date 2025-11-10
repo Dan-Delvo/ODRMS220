@@ -34,7 +34,8 @@ class AccountsContainersWorkspacesTransformations extends \Google\Service\Resour
   /**
    * Creates a GTM Transformation. (transformations.create)
    *
-   * @param string $parent GTM Workspace's API relative path.
+   * @param string $parent GTM Workspace's API relative path. Example:
+   * accounts/{account_id}/containers/{container_id}/workspaces/{workspace_id}
    * @param Transformation $postBody
    * @param array $optParams Optional parameters.
    * @return Transformation
@@ -49,7 +50,9 @@ class AccountsContainersWorkspacesTransformations extends \Google\Service\Resour
   /**
    * Deletes a GTM Transformation. (transformations.delete)
    *
-   * @param string $path GTM Transformation's API relative path.
+   * @param string $path GTM Transformation's API relative path. Example: accounts
+   * /{account_id}/containers/{container_id}/workspaces/{workspace_id}/transformat
+   * ions/{transformation_id}
    * @param array $optParams Optional parameters.
    * @throws \Google\Service\Exception
    */
@@ -62,7 +65,9 @@ class AccountsContainersWorkspacesTransformations extends \Google\Service\Resour
   /**
    * Gets a GTM Transformation. (transformations.get)
    *
-   * @param string $path GTM Transformation's API relative path.
+   * @param string $path GTM Transformation's API relative path. Example: accounts
+   * /{account_id}/containers/{container_id}/workspaces/{workspace_id}/transformat
+   * ions/{transformation_id}
    * @param array $optParams Optional parameters.
    * @return Transformation
    * @throws \Google\Service\Exception
@@ -77,7 +82,8 @@ class AccountsContainersWorkspacesTransformations extends \Google\Service\Resour
    * Lists all GTM Transformations of a GTM container workspace.
    * (transformations.listAccountsContainersWorkspacesTransformations)
    *
-   * @param string $parent GTM Workspace's API relative path.
+   * @param string $parent GTM Workspace's API relative path. Example:
+   * accounts/{account_id}/containers/{container_id}/workspaces/{workspace_id}
    * @param array $optParams Optional parameters.
    *
    * @opt_param string pageToken Continuation token for fetching the next page of
@@ -95,7 +101,9 @@ class AccountsContainersWorkspacesTransformations extends \Google\Service\Resour
    * Reverts changes to a GTM Transformation in a GTM Workspace.
    * (transformations.revert)
    *
-   * @param string $path GTM Transformation's API relative path.
+   * @param string $path GTM Transformation's API relative path. Example: accounts
+   * /{account_id}/containers/{container_id}/workspaces/{workspace_id}/transformat
+   * ions/{transformation_id}
    * @param array $optParams Optional parameters.
    *
    * @opt_param string fingerprint When provided, this fingerprint must match the
@@ -112,7 +120,9 @@ class AccountsContainersWorkspacesTransformations extends \Google\Service\Resour
   /**
    * Updates a GTM Transformation. (transformations.update)
    *
-   * @param string $path GTM Transformation's API relative path.
+   * @param string $path GTM Transformation's API relative path. Example: accounts
+   * /{account_id}/containers/{container_id}/workspaces/{workspace_id}/transformat
+   * ions/{transformation_id}
    * @param Transformation $postBody
    * @param array $optParams Optional parameters.
    *

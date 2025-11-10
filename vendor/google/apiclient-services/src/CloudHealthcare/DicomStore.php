@@ -30,8 +30,6 @@ class DicomStore extends \Google\Collection
   public $name;
   protected $notificationConfigType = NotificationConfig::class;
   protected $notificationConfigDataType = '';
-  protected $notificationConfigsType = DicomNotificationConfig::class;
-  protected $notificationConfigsDataType = 'array';
   protected $streamConfigsType = GoogleCloudHealthcareV1DicomStreamConfig::class;
   protected $streamConfigsDataType = 'array';
 
@@ -76,20 +74,6 @@ class DicomStore extends \Google\Collection
   public function getNotificationConfig()
   {
     return $this->notificationConfig;
-  }
-  /**
-   * @param DicomNotificationConfig[]
-   */
-  public function setNotificationConfigs($notificationConfigs)
-  {
-    $this->notificationConfigs = $notificationConfigs;
-  }
-  /**
-   * @return DicomNotificationConfig[]
-   */
-  public function getNotificationConfigs()
-  {
-    return $this->notificationConfigs;
   }
   /**
    * @param GoogleCloudHealthcareV1DicomStreamConfig[]

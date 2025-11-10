@@ -42,10 +42,6 @@ class DataSourceParameter extends \Google\Collection
    * @var bool
    */
   public $immutable;
-  /**
-   * @var string
-   */
-  public $maxListSize;
   public $maxValue;
   public $minValue;
   /**
@@ -164,20 +160,6 @@ class DataSourceParameter extends \Google\Collection
   public function getImmutable()
   {
     return $this->immutable;
-  }
-  /**
-   * @param string
-   */
-  public function setMaxListSize($maxListSize)
-  {
-    $this->maxListSize = $maxListSize;
-  }
-  /**
-   * @return string
-   */
-  public function getMaxListSize()
-  {
-    return $this->maxListSize;
   }
   public function setMaxValue($maxValue)
   {

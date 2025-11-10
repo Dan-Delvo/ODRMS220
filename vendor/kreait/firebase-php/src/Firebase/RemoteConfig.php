@@ -104,7 +104,7 @@ final class RemoteConfig implements Contract\RemoteConfig
             }
 
             $pageToken = $result['nextPageToken'] ?? null;
-        } while ($pageToken !== null);
+        } while ($pageToken);
     }
 
     /**
@@ -133,11 +133,8 @@ final class RemoteConfig implements Contract\RemoteConfig
 
     private function buildTemplateFromResponse(ResponseInterface $response): Template
     {
-        $etag = $response->getHeaderLine('ETag');
-
-        if ($etag === '') {
-            $etag = '*';
-        }
+        $etagHeader = $response->getHeader('ETag');
+        $etag = array_shift($etagHeader) ?: '*';
 
         $data = Json::decode((string) $response->getBody(), true);
 

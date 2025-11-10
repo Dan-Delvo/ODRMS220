@@ -32,8 +32,6 @@ class GoogleCloudRetailV2SearchResponseSearchResult extends \Google\Collection
    * @var string[]
    */
   public $matchingVariantFields;
-  protected $modelScoresType = GoogleCloudRetailV2DoubleList::class;
-  protected $modelScoresDataType = 'map';
   /**
    * @var string[]
    */
@@ -86,20 +84,6 @@ class GoogleCloudRetailV2SearchResponseSearchResult extends \Google\Collection
   public function getMatchingVariantFields()
   {
     return $this->matchingVariantFields;
-  }
-  /**
-   * @param GoogleCloudRetailV2DoubleList[]
-   */
-  public function setModelScores($modelScores)
-  {
-    $this->modelScores = $modelScores;
-  }
-  /**
-   * @return GoogleCloudRetailV2DoubleList[]
-   */
-  public function getModelScores()
-  {
-    return $this->modelScores;
   }
   /**
    * @param string[]

@@ -24,10 +24,6 @@ class GoogleCloudDiscoveryengineV1FactChunk extends \Google\Model
    */
   public $chunkText;
   /**
-   * @var string
-   */
-  public $domain;
-  /**
    * @var int
    */
   public $index;
@@ -39,14 +35,6 @@ class GoogleCloudDiscoveryengineV1FactChunk extends \Google\Model
    * @var string[]
    */
   public $sourceMetadata;
-  /**
-   * @var string
-   */
-  public $title;
-  /**
-   * @var string
-   */
-  public $uri;
 
   /**
    * @param string
@@ -61,20 +49,6 @@ class GoogleCloudDiscoveryengineV1FactChunk extends \Google\Model
   public function getChunkText()
   {
     return $this->chunkText;
-  }
-  /**
-   * @param string
-   */
-  public function setDomain($domain)
-  {
-    $this->domain = $domain;
-  }
-  /**
-   * @return string
-   */
-  public function getDomain()
-  {
-    return $this->domain;
   }
   /**
    * @param int
@@ -117,34 +91,6 @@ class GoogleCloudDiscoveryengineV1FactChunk extends \Google\Model
   public function getSourceMetadata()
   {
     return $this->sourceMetadata;
-  }
-  /**
-   * @param string
-   */
-  public function setTitle($title)
-  {
-    $this->title = $title;
-  }
-  /**
-   * @return string
-   */
-  public function getTitle()
-  {
-    return $this->title;
-  }
-  /**
-   * @param string
-   */
-  public function setUri($uri)
-  {
-    $this->uri = $uri;
-  }
-  /**
-   * @return string
-   */
-  public function getUri()
-  {
-    return $this->uri;
   }
 }
 

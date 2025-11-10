@@ -26,7 +26,7 @@ final class InsecureToken implements Token, Stringable
      */
     public function __toString(): string
     {
-        return $this->encodedString;
+        return $this->toString();
     }
 
     /**

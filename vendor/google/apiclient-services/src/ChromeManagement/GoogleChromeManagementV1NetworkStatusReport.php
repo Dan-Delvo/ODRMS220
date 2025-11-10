@@ -17,9 +17,8 @@
 
 namespace Google\Service\ChromeManagement;
 
-class GoogleChromeManagementV1NetworkStatusReport extends \Google\Collection
+class GoogleChromeManagementV1NetworkStatusReport extends \Google\Model
 {
-  protected $collection_key = 'ipv6Address';
   /**
    * @var string
    */
@@ -39,27 +38,11 @@ class GoogleChromeManagementV1NetworkStatusReport extends \Google\Collection
   /**
    * @var string
    */
-  public $gatewayIpv6Address;
-  /**
-   * @var string
-   */
   public $guid;
-  /**
-   * @var string[]
-   */
-  public $ipv6Address;
   /**
    * @var string
    */
   public $lanIpAddress;
-  /**
-   * @var string
-   */
-  public $linkDownSpeedKbps;
-  /**
-   * @var bool
-   */
-  public $metered;
   /**
    * @var string
    */
@@ -152,20 +135,6 @@ class GoogleChromeManagementV1NetworkStatusReport extends \Google\Collection
   /**
    * @param string
    */
-  public function setGatewayIpv6Address($gatewayIpv6Address)
-  {
-    $this->gatewayIpv6Address = $gatewayIpv6Address;
-  }
-  /**
-   * @return string
-   */
-  public function getGatewayIpv6Address()
-  {
-    return $this->gatewayIpv6Address;
-  }
-  /**
-   * @param string
-   */
   public function setGuid($guid)
   {
     $this->guid = $guid;
@@ -176,20 +145,6 @@ class GoogleChromeManagementV1NetworkStatusReport extends \Google\Collection
   public function getGuid()
   {
     return $this->guid;
-  }
-  /**
-   * @param string[]
-   */
-  public function setIpv6Address($ipv6Address)
-  {
-    $this->ipv6Address = $ipv6Address;
-  }
-  /**
-   * @return string[]
-   */
-  public function getIpv6Address()
-  {
-    return $this->ipv6Address;
   }
   /**
    * @param string
@@ -204,34 +159,6 @@ class GoogleChromeManagementV1NetworkStatusReport extends \Google\Collection
   public function getLanIpAddress()
   {
     return $this->lanIpAddress;
-  }
-  /**
-   * @param string
-   */
-  public function setLinkDownSpeedKbps($linkDownSpeedKbps)
-  {
-    $this->linkDownSpeedKbps = $linkDownSpeedKbps;
-  }
-  /**
-   * @return string
-   */
-  public function getLinkDownSpeedKbps()
-  {
-    return $this->linkDownSpeedKbps;
-  }
-  /**
-   * @param bool
-   */
-  public function setMetered($metered)
-  {
-    $this->metered = $metered;
-  }
-  /**
-   * @return bool
-   */
-  public function getMetered()
-  {
-    return $this->metered;
   }
   /**
    * @param string

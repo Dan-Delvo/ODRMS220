@@ -25,10 +25,6 @@ class PersonalUsagePolicies extends \Google\Collection
    */
   public $accountTypesWithManagementDisabled;
   /**
-   * @var string
-   */
-  public $bluetoothSharing;
-  /**
    * @var bool
    */
   public $cameraDisabled;
@@ -64,20 +60,6 @@ class PersonalUsagePolicies extends \Google\Collection
   public function getAccountTypesWithManagementDisabled()
   {
     return $this->accountTypesWithManagementDisabled;
-  }
-  /**
-   * @param string
-   */
-  public function setBluetoothSharing($bluetoothSharing)
-  {
-    $this->bluetoothSharing = $bluetoothSharing;
-  }
-  /**
-   * @return string
-   */
-  public function getBluetoothSharing()
-  {
-    return $this->bluetoothSharing;
   }
   /**
    * @param bool

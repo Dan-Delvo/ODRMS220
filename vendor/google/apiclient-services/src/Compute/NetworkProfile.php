@@ -43,8 +43,6 @@ class NetworkProfile extends \Google\Model
    * @var string
    */
   public $name;
-  protected $profileTypeType = NetworkProfileProfileType::class;
-  protected $profileTypeDataType = '';
   /**
    * @var string
    */
@@ -53,6 +51,10 @@ class NetworkProfile extends \Google\Model
    * @var string
    */
   public $selfLinkWithId;
+  /**
+   * @var string
+   */
+  public $zone;
 
   /**
    * @param string
@@ -153,20 +155,6 @@ class NetworkProfile extends \Google\Model
     return $this->name;
   }
   /**
-   * @param NetworkProfileProfileType
-   */
-  public function setProfileType(NetworkProfileProfileType $profileType)
-  {
-    $this->profileType = $profileType;
-  }
-  /**
-   * @return NetworkProfileProfileType
-   */
-  public function getProfileType()
-  {
-    return $this->profileType;
-  }
-  /**
    * @param string
    */
   public function setSelfLink($selfLink)
@@ -193,6 +181,20 @@ class NetworkProfile extends \Google\Model
   public function getSelfLinkWithId()
   {
     return $this->selfLinkWithId;
+  }
+  /**
+   * @param string
+   */
+  public function setZone($zone)
+  {
+    $this->zone = $zone;
+  }
+  /**
+   * @return string
+   */
+  public function getZone()
+  {
+    return $this->zone;
   }
 }
 

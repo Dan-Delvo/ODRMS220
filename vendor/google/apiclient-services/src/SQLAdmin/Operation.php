@@ -51,8 +51,6 @@ class Operation extends \Google\Model
    * @var string
    */
   public $operationType;
-  protected $preCheckMajorVersionUpgradeContextType = PreCheckMajorVersionUpgradeContext::class;
-  protected $preCheckMajorVersionUpgradeContextDataType = '';
   /**
    * @var string
    */
@@ -237,20 +235,6 @@ class Operation extends \Google\Model
   public function getOperationType()
   {
     return $this->operationType;
-  }
-  /**
-   * @param PreCheckMajorVersionUpgradeContext
-   */
-  public function setPreCheckMajorVersionUpgradeContext(PreCheckMajorVersionUpgradeContext $preCheckMajorVersionUpgradeContext)
-  {
-    $this->preCheckMajorVersionUpgradeContext = $preCheckMajorVersionUpgradeContext;
-  }
-  /**
-   * @return PreCheckMajorVersionUpgradeContext
-   */
-  public function getPreCheckMajorVersionUpgradeContext()
-  {
-    return $this->preCheckMajorVersionUpgradeContext;
   }
   /**
    * @param string

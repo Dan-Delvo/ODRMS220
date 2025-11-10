@@ -17,13 +17,14 @@
 
 namespace Google\Service\AnalyticsHub;
 
-class GooglePubsubV1Subscription extends \Google\Collection
+class GooglePubsubV1Subscription extends \Google\Model
 {
-  protected $collection_key = 'messageTransforms';
   /**
    * @var int
    */
   public $ackDeadlineSeconds;
+  protected $analyticsHubSubscriptionInfoType = AnalyticsHubSubscriptionInfo::class;
+  protected $analyticsHubSubscriptionInfoDataType = '';
   protected $bigqueryConfigType = BigQueryConfig::class;
   protected $bigqueryConfigDataType = '';
   protected $cloudStorageConfigType = CloudStorageConfig::class;
@@ -56,8 +57,6 @@ class GooglePubsubV1Subscription extends \Google\Collection
    * @var string
    */
   public $messageRetentionDuration;
-  protected $messageTransformsType = MessageTransform::class;
-  protected $messageTransformsDataType = 'array';
   /**
    * @var string
    */
@@ -71,9 +70,13 @@ class GooglePubsubV1Subscription extends \Google\Collection
   protected $retryPolicyType = RetryPolicy::class;
   protected $retryPolicyDataType = '';
   /**
-   * @var string[]
+   * @var string
    */
-  public $tags;
+  public $state;
+  /**
+   * @var string
+   */
+  public $topicMessageRetentionDuration;
 
   /**
    * @param int
@@ -88,6 +91,20 @@ class GooglePubsubV1Subscription extends \Google\Collection
   public function getAckDeadlineSeconds()
   {
     return $this->ackDeadlineSeconds;
+  }
+  /**
+   * @param AnalyticsHubSubscriptionInfo
+   */
+  public function setAnalyticsHubSubscriptionInfo(AnalyticsHubSubscriptionInfo $analyticsHubSubscriptionInfo)
+  {
+    $this->analyticsHubSubscriptionInfo = $analyticsHubSubscriptionInfo;
+  }
+  /**
+   * @return AnalyticsHubSubscriptionInfo
+   */
+  public function getAnalyticsHubSubscriptionInfo()
+  {
+    return $this->analyticsHubSubscriptionInfo;
   }
   /**
    * @param BigQueryConfig
@@ -230,20 +247,6 @@ class GooglePubsubV1Subscription extends \Google\Collection
     return $this->messageRetentionDuration;
   }
   /**
-   * @param MessageTransform[]
-   */
-  public function setMessageTransforms($messageTransforms)
-  {
-    $this->messageTransforms = $messageTransforms;
-  }
-  /**
-   * @return MessageTransform[]
-   */
-  public function getMessageTransforms()
-  {
-    return $this->messageTransforms;
-  }
-  /**
    * @param string
    */
   public function setName($name)
@@ -300,18 +303,32 @@ class GooglePubsubV1Subscription extends \Google\Collection
     return $this->retryPolicy;
   }
   /**
-   * @param string[]
+   * @param string
    */
-  public function setTags($tags)
+  public function setState($state)
   {
-    $this->tags = $tags;
+    $this->state = $state;
   }
   /**
-   * @return string[]
+   * @return string
    */
-  public function getTags()
+  public function getState()
   {
-    return $this->tags;
+    return $this->state;
+  }
+  /**
+   * @param string
+   */
+  public function setTopicMessageRetentionDuration($topicMessageRetentionDuration)
+  {
+    $this->topicMessageRetentionDuration = $topicMessageRetentionDuration;
+  }
+  /**
+   * @return string
+   */
+  public function getTopicMessageRetentionDuration()
+  {
+    return $this->topicMessageRetentionDuration;
   }
 }
 

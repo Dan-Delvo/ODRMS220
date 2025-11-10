@@ -39,12 +39,6 @@ class PublicKey extends \Google\Model
    * @var string
    */
   public $protectionLevel;
-  protected $publicKeyType = ChecksummedData::class;
-  protected $publicKeyDataType = '';
-  /**
-   * @var string
-   */
-  public $publicKeyFormat;
 
   /**
    * @param string
@@ -115,34 +109,6 @@ class PublicKey extends \Google\Model
   public function getProtectionLevel()
   {
     return $this->protectionLevel;
-  }
-  /**
-   * @param ChecksummedData
-   */
-  public function setPublicKey(ChecksummedData $publicKey)
-  {
-    $this->publicKey = $publicKey;
-  }
-  /**
-   * @return ChecksummedData
-   */
-  public function getPublicKey()
-  {
-    return $this->publicKey;
-  }
-  /**
-   * @param string
-   */
-  public function setPublicKeyFormat($publicKeyFormat)
-  {
-    $this->publicKeyFormat = $publicKeyFormat;
-  }
-  /**
-   * @return string
-   */
-  public function getPublicKeyFormat()
-  {
-    return $this->publicKeyFormat;
   }
 }
 

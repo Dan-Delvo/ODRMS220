@@ -171,7 +171,7 @@ class TwistedEdwards extends Base
     /**
      * Returns the affine point
      *
-     * @return PrimeInteger[]
+     * @return PrimeField\Integer[]
      */
     public function convertToAffine(array $p)
     {

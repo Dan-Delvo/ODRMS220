@@ -34,10 +34,6 @@ class DriveCapabilities extends \Google\Model
   /**
    * @var bool
    */
-  public $canChangeDownloadRestriction;
-  /**
-   * @var bool
-   */
   public $canChangeDriveBackground;
   /**
    * @var bool
@@ -145,20 +141,6 @@ class DriveCapabilities extends \Google\Model
   public function getCanChangeDomainUsersOnlyRestriction()
   {
     return $this->canChangeDomainUsersOnlyRestriction;
-  }
-  /**
-   * @param bool
-   */
-  public function setCanChangeDownloadRestriction($canChangeDownloadRestriction)
-  {
-    $this->canChangeDownloadRestriction = $canChangeDownloadRestriction;
-  }
-  /**
-   * @return bool
-   */
-  public function getCanChangeDownloadRestriction()
-  {
-    return $this->canChangeDownloadRestriction;
   }
   /**
    * @param bool

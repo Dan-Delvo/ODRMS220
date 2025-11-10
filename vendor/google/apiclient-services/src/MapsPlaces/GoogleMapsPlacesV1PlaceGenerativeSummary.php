@@ -19,28 +19,48 @@ namespace Google\Service\MapsPlaces;
 
 class GoogleMapsPlacesV1PlaceGenerativeSummary extends \Google\Model
 {
-  protected $disclosureTextType = GoogleTypeLocalizedText::class;
-  protected $disclosureTextDataType = '';
+  protected $descriptionType = GoogleTypeLocalizedText::class;
+  protected $descriptionDataType = '';
+  /**
+   * @var string
+   */
+  public $descriptionFlagContentUri;
   protected $overviewType = GoogleTypeLocalizedText::class;
   protected $overviewDataType = '';
   /**
    * @var string
    */
   public $overviewFlagContentUri;
+  protected $referencesType = GoogleMapsPlacesV1References::class;
+  protected $referencesDataType = '';
 
   /**
    * @param GoogleTypeLocalizedText
    */
-  public function setDisclosureText(GoogleTypeLocalizedText $disclosureText)
+  public function setDescription(GoogleTypeLocalizedText $description)
   {
-    $this->disclosureText = $disclosureText;
+    $this->description = $description;
   }
   /**
    * @return GoogleTypeLocalizedText
    */
-  public function getDisclosureText()
+  public function getDescription()
   {
-    return $this->disclosureText;
+    return $this->description;
+  }
+  /**
+   * @param string
+   */
+  public function setDescriptionFlagContentUri($descriptionFlagContentUri)
+  {
+    $this->descriptionFlagContentUri = $descriptionFlagContentUri;
+  }
+  /**
+   * @return string
+   */
+  public function getDescriptionFlagContentUri()
+  {
+    return $this->descriptionFlagContentUri;
   }
   /**
    * @param GoogleTypeLocalizedText
@@ -69,6 +89,20 @@ class GoogleMapsPlacesV1PlaceGenerativeSummary extends \Google\Model
   public function getOverviewFlagContentUri()
   {
     return $this->overviewFlagContentUri;
+  }
+  /**
+   * @param GoogleMapsPlacesV1References
+   */
+  public function setReferences(GoogleMapsPlacesV1References $references)
+  {
+    $this->references = $references;
+  }
+  /**
+   * @return GoogleMapsPlacesV1References
+   */
+  public function getReferences()
+  {
+    return $this->references;
   }
 }
 

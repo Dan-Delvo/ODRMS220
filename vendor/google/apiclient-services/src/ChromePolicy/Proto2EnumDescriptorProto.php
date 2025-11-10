@@ -26,10 +26,6 @@ class Proto2EnumDescriptorProto extends \Google\Collection
   public $name;
   protected $valueType = Proto2EnumValueDescriptorProto::class;
   protected $valueDataType = 'array';
-  /**
-   * @var string
-   */
-  public $visibility;
 
   /**
    * @param string
@@ -58,20 +54,6 @@ class Proto2EnumDescriptorProto extends \Google\Collection
   public function getValue()
   {
     return $this->value;
-  }
-  /**
-   * @param string
-   */
-  public function setVisibility($visibility)
-  {
-    $this->visibility = $visibility;
-  }
-  /**
-   * @return string
-   */
-  public function getVisibility()
-  {
-    return $this->visibility;
   }
 }
 

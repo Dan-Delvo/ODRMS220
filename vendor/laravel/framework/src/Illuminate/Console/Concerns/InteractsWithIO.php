@@ -95,7 +95,7 @@ trait InteractsWithIO
     }
 
     /**
-     * Determine whether the option is defined in the command signature.
+     * Determine if the given option is present.
      *
      * @param  string  $name
      * @return bool

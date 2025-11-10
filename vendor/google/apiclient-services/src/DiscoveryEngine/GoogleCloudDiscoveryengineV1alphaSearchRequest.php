@@ -36,8 +36,6 @@ class GoogleCloudDiscoveryengineV1alphaSearchRequest extends \Google\Collection
   protected $customFineTuningSpecDataType = '';
   protected $dataStoreSpecsType = GoogleCloudDiscoveryengineV1alphaSearchRequestDataStoreSpec::class;
   protected $dataStoreSpecsDataType = 'array';
-  protected $displaySpecType = GoogleCloudDiscoveryengineV1alphaSearchRequestDisplaySpec::class;
-  protected $displaySpecDataType = '';
   protected $embeddingSpecType = GoogleCloudDiscoveryengineV1alphaSearchRequestEmbeddingSpec::class;
   protected $embeddingSpecDataType = '';
   protected $facetSpecsType = GoogleCloudDiscoveryengineV1alphaSearchRequestFacetSpec::class;
@@ -93,13 +91,7 @@ class GoogleCloudDiscoveryengineV1alphaSearchRequest extends \Google\Collection
   /**
    * @var string
    */
-  public $rankingExpressionBackend;
-  /**
-   * @var string
-   */
   public $regionCode;
-  protected $relevanceScoreSpecType = GoogleCloudDiscoveryengineV1alphaSearchRequestRelevanceScoreSpec::class;
-  protected $relevanceScoreSpecDataType = '';
   /**
    * @var string
    */
@@ -108,8 +100,6 @@ class GoogleCloudDiscoveryengineV1alphaSearchRequest extends \Google\Collection
    * @var bool
    */
   public $safeSearch;
-  protected $searchAddonSpecType = GoogleCloudDiscoveryengineV1alphaSearchRequestSearchAddonSpec::class;
-  protected $searchAddonSpecDataType = '';
   protected $searchAsYouTypeSpecType = GoogleCloudDiscoveryengineV1alphaSearchRequestSearchAsYouTypeSpec::class;
   protected $searchAsYouTypeSpecDataType = '';
   /**
@@ -124,10 +114,6 @@ class GoogleCloudDiscoveryengineV1alphaSearchRequest extends \Google\Collection
   protected $sessionSpecDataType = '';
   protected $spellCorrectionSpecType = GoogleCloudDiscoveryengineV1alphaSearchRequestSpellCorrectionSpec::class;
   protected $spellCorrectionSpecDataType = '';
-  /**
-   * @var bool
-   */
-  public $useLatestData;
   protected $userInfoType = GoogleCloudDiscoveryengineV1alphaUserInfo::class;
   protected $userInfoDataType = '';
   /**
@@ -222,20 +208,6 @@ class GoogleCloudDiscoveryengineV1alphaSearchRequest extends \Google\Collection
   public function getDataStoreSpecs()
   {
     return $this->dataStoreSpecs;
-  }
-  /**
-   * @param GoogleCloudDiscoveryengineV1alphaSearchRequestDisplaySpec
-   */
-  public function setDisplaySpec(GoogleCloudDiscoveryengineV1alphaSearchRequestDisplaySpec $displaySpec)
-  {
-    $this->displaySpec = $displaySpec;
-  }
-  /**
-   * @return GoogleCloudDiscoveryengineV1alphaSearchRequestDisplaySpec
-   */
-  public function getDisplaySpec()
-  {
-    return $this->displaySpec;
   }
   /**
    * @param GoogleCloudDiscoveryengineV1alphaSearchRequestEmbeddingSpec
@@ -464,20 +436,6 @@ class GoogleCloudDiscoveryengineV1alphaSearchRequest extends \Google\Collection
   /**
    * @param string
    */
-  public function setRankingExpressionBackend($rankingExpressionBackend)
-  {
-    $this->rankingExpressionBackend = $rankingExpressionBackend;
-  }
-  /**
-   * @return string
-   */
-  public function getRankingExpressionBackend()
-  {
-    return $this->rankingExpressionBackend;
-  }
-  /**
-   * @param string
-   */
   public function setRegionCode($regionCode)
   {
     $this->regionCode = $regionCode;
@@ -488,20 +446,6 @@ class GoogleCloudDiscoveryengineV1alphaSearchRequest extends \Google\Collection
   public function getRegionCode()
   {
     return $this->regionCode;
-  }
-  /**
-   * @param GoogleCloudDiscoveryengineV1alphaSearchRequestRelevanceScoreSpec
-   */
-  public function setRelevanceScoreSpec(GoogleCloudDiscoveryengineV1alphaSearchRequestRelevanceScoreSpec $relevanceScoreSpec)
-  {
-    $this->relevanceScoreSpec = $relevanceScoreSpec;
-  }
-  /**
-   * @return GoogleCloudDiscoveryengineV1alphaSearchRequestRelevanceScoreSpec
-   */
-  public function getRelevanceScoreSpec()
-  {
-    return $this->relevanceScoreSpec;
   }
   /**
    * @param string
@@ -530,20 +474,6 @@ class GoogleCloudDiscoveryengineV1alphaSearchRequest extends \Google\Collection
   public function getSafeSearch()
   {
     return $this->safeSearch;
-  }
-  /**
-   * @param GoogleCloudDiscoveryengineV1alphaSearchRequestSearchAddonSpec
-   */
-  public function setSearchAddonSpec(GoogleCloudDiscoveryengineV1alphaSearchRequestSearchAddonSpec $searchAddonSpec)
-  {
-    $this->searchAddonSpec = $searchAddonSpec;
-  }
-  /**
-   * @return GoogleCloudDiscoveryengineV1alphaSearchRequestSearchAddonSpec
-   */
-  public function getSearchAddonSpec()
-  {
-    return $this->searchAddonSpec;
   }
   /**
    * @param GoogleCloudDiscoveryengineV1alphaSearchRequestSearchAsYouTypeSpec
@@ -614,20 +544,6 @@ class GoogleCloudDiscoveryengineV1alphaSearchRequest extends \Google\Collection
   public function getSpellCorrectionSpec()
   {
     return $this->spellCorrectionSpec;
-  }
-  /**
-   * @param bool
-   */
-  public function setUseLatestData($useLatestData)
-  {
-    $this->useLatestData = $useLatestData;
-  }
-  /**
-   * @return bool
-   */
-  public function getUseLatestData()
-  {
-    return $this->useLatestData;
   }
   /**
    * @param GoogleCloudDiscoveryengineV1alphaUserInfo

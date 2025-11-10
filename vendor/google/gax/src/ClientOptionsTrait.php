@@ -32,7 +32,6 @@
 
 namespace Google\ApiCore;
 
-use Google\ApiCore\Options\ClientOptions;
 use Google\Auth\ApplicationDefaultCredentials;
 use Google\Auth\CredentialsLoader;
 use Google\Auth\FetchAuthTokenInterface;
@@ -85,26 +84,8 @@ trait ClientOptionsTrait
         return [];
     }
 
-    /**
-     * Resolve client options based on the client's default
-     * ({@see ClientOptionsTrait::getClientDefault}) and the default for all
-     * Google APIs.
-     *
-     * 1. Set default client option values
-     * 2. Set default logger (and log user-supplied configuration options)
-     * 3. Set default transport configuration
-     * 4. Call "modifyClientOptions" (for backwards compatibility)
-     * 5. Use "defaultScopes" when custom endpoint is supplied
-     * 6. Load mTLS from the environment if configured
-     * 7. Resolve endpoint based on universe domain template when possible
-     * 8. Load sysvshm grpc config when possible
-     */
-    private function buildClientOptions(array|ClientOptions $options)
+    private function buildClientOptions(array $options)
     {
-        if ($options instanceof ClientOptions) {
-            $options = $options->toArray();
-        }
-
         // Build $defaultOptions starting from top level
         // variables, then going into deeper nesting, so that
         // we will not encounter missing keys

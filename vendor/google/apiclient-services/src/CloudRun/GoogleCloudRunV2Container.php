@@ -25,12 +25,6 @@ class GoogleCloudRunV2Container extends \Google\Collection
    */
   public $args;
   /**
-   * @var string
-   */
-  public $baseImageUri;
-  protected $buildInfoType = GoogleCloudRunV2BuildInfo::class;
-  protected $buildInfoDataType = '';
-  /**
    * @var string[]
    */
   public $command;
@@ -54,10 +48,6 @@ class GoogleCloudRunV2Container extends \Google\Collection
   protected $portsDataType = 'array';
   protected $resourcesType = GoogleCloudRunV2ResourceRequirements::class;
   protected $resourcesDataType = '';
-  /**
-   * @var string
-   */
-  public $source;
   protected $startupProbeType = GoogleCloudRunV2Probe::class;
   protected $startupProbeDataType = '';
   protected $volumeMountsType = GoogleCloudRunV2VolumeMount::class;
@@ -80,34 +70,6 @@ class GoogleCloudRunV2Container extends \Google\Collection
   public function getArgs()
   {
     return $this->args;
-  }
-  /**
-   * @param string
-   */
-  public function setBaseImageUri($baseImageUri)
-  {
-    $this->baseImageUri = $baseImageUri;
-  }
-  /**
-   * @return string
-   */
-  public function getBaseImageUri()
-  {
-    return $this->baseImageUri;
-  }
-  /**
-   * @param GoogleCloudRunV2BuildInfo
-   */
-  public function setBuildInfo(GoogleCloudRunV2BuildInfo $buildInfo)
-  {
-    $this->buildInfo = $buildInfo;
-  }
-  /**
-   * @return GoogleCloudRunV2BuildInfo
-   */
-  public function getBuildInfo()
-  {
-    return $this->buildInfo;
   }
   /**
    * @param string[]
@@ -220,20 +182,6 @@ class GoogleCloudRunV2Container extends \Google\Collection
   public function getResources()
   {
     return $this->resources;
-  }
-  /**
-   * @param string
-   */
-  public function setSource($source)
-  {
-    $this->source = $source;
-  }
-  /**
-   * @return string
-   */
-  public function getSource()
-  {
-    return $this->source;
   }
   /**
    * @param GoogleCloudRunV2Probe

@@ -19,7 +19,7 @@ namespace Google\Service\Contactcenterinsights;
 
 class GoogleCloudContactcenterinsightsV1IngestConversationsMetadata extends \Google\Collection
 {
-  protected $collection_key = 'sampledConversations';
+  protected $collection_key = 'partialErrors';
   /**
    * @var string
    */
@@ -34,10 +34,6 @@ class GoogleCloudContactcenterinsightsV1IngestConversationsMetadata extends \Goo
   protected $partialErrorsDataType = 'array';
   protected $requestType = GoogleCloudContactcenterinsightsV1IngestConversationsRequest::class;
   protected $requestDataType = '';
-  /**
-   * @var string[]
-   */
-  public $sampledConversations;
 
   /**
    * @param string
@@ -108,20 +104,6 @@ class GoogleCloudContactcenterinsightsV1IngestConversationsMetadata extends \Goo
   public function getRequest()
   {
     return $this->request;
-  }
-  /**
-   * @param string[]
-   */
-  public function setSampledConversations($sampledConversations)
-  {
-    $this->sampledConversations = $sampledConversations;
-  }
-  /**
-   * @return string[]
-   */
-  public function getSampledConversations()
-  {
-    return $this->sampledConversations;
   }
 }
 

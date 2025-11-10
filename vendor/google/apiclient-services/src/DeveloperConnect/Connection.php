@@ -23,10 +23,6 @@ class Connection extends \Google\Model
    * @var string[]
    */
   public $annotations;
-  protected $bitbucketCloudConfigType = BitbucketCloudConfig::class;
-  protected $bitbucketCloudConfigDataType = '';
-  protected $bitbucketDataCenterConfigType = BitbucketDataCenterConfig::class;
-  protected $bitbucketDataCenterConfigDataType = '';
   /**
    * @var string
    */
@@ -45,8 +41,6 @@ class Connection extends \Google\Model
    * @var string
    */
   public $etag;
-  protected $gitProxyConfigType = GitProxyConfig::class;
-  protected $gitProxyConfigDataType = '';
   protected $githubConfigType = GitHubConfig::class;
   protected $githubConfigDataType = '';
   protected $githubEnterpriseConfigType = GitHubEnterpriseConfig::class;
@@ -91,34 +85,6 @@ class Connection extends \Google\Model
   public function getAnnotations()
   {
     return $this->annotations;
-  }
-  /**
-   * @param BitbucketCloudConfig
-   */
-  public function setBitbucketCloudConfig(BitbucketCloudConfig $bitbucketCloudConfig)
-  {
-    $this->bitbucketCloudConfig = $bitbucketCloudConfig;
-  }
-  /**
-   * @return BitbucketCloudConfig
-   */
-  public function getBitbucketCloudConfig()
-  {
-    return $this->bitbucketCloudConfig;
-  }
-  /**
-   * @param BitbucketDataCenterConfig
-   */
-  public function setBitbucketDataCenterConfig(BitbucketDataCenterConfig $bitbucketDataCenterConfig)
-  {
-    $this->bitbucketDataCenterConfig = $bitbucketDataCenterConfig;
-  }
-  /**
-   * @return BitbucketDataCenterConfig
-   */
-  public function getBitbucketDataCenterConfig()
-  {
-    return $this->bitbucketDataCenterConfig;
   }
   /**
    * @param string
@@ -189,20 +155,6 @@ class Connection extends \Google\Model
   public function getEtag()
   {
     return $this->etag;
-  }
-  /**
-   * @param GitProxyConfig
-   */
-  public function setGitProxyConfig(GitProxyConfig $gitProxyConfig)
-  {
-    $this->gitProxyConfig = $gitProxyConfig;
-  }
-  /**
-   * @return GitProxyConfig
-   */
-  public function getGitProxyConfig()
-  {
-    return $this->gitProxyConfig;
   }
   /**
    * @param GitHubConfig

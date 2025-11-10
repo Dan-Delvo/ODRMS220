@@ -21,8 +21,6 @@ class GoogleCloudAiplatformV1RagRetrievalConfig extends \Google\Model
 {
   protected $filterType = GoogleCloudAiplatformV1RagRetrievalConfigFilter::class;
   protected $filterDataType = '';
-  protected $rankingType = GoogleCloudAiplatformV1RagRetrievalConfigRanking::class;
-  protected $rankingDataType = '';
   /**
    * @var int
    */
@@ -41,20 +39,6 @@ class GoogleCloudAiplatformV1RagRetrievalConfig extends \Google\Model
   public function getFilter()
   {
     return $this->filter;
-  }
-  /**
-   * @param GoogleCloudAiplatformV1RagRetrievalConfigRanking
-   */
-  public function setRanking(GoogleCloudAiplatformV1RagRetrievalConfigRanking $ranking)
-  {
-    $this->ranking = $ranking;
-  }
-  /**
-   * @return GoogleCloudAiplatformV1RagRetrievalConfigRanking
-   */
-  public function getRanking()
-  {
-    return $this->ranking;
   }
   /**
    * @param int

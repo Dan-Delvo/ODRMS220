@@ -37,19 +37,11 @@ class GoogleCloudAiplatformV1DeployedIndex extends \Google\Collection
   /**
    * @var string
    */
-  public $deploymentTier;
-  /**
-   * @var string
-   */
   public $displayName;
   /**
    * @var bool
    */
   public $enableAccessLogging;
-  /**
-   * @var bool
-   */
-  public $enableDatapointUpsertLogging;
   /**
    * @var string
    */
@@ -144,20 +136,6 @@ class GoogleCloudAiplatformV1DeployedIndex extends \Google\Collection
   /**
    * @param string
    */
-  public function setDeploymentTier($deploymentTier)
-  {
-    $this->deploymentTier = $deploymentTier;
-  }
-  /**
-   * @return string
-   */
-  public function getDeploymentTier()
-  {
-    return $this->deploymentTier;
-  }
-  /**
-   * @param string
-   */
   public function setDisplayName($displayName)
   {
     $this->displayName = $displayName;
@@ -182,20 +160,6 @@ class GoogleCloudAiplatformV1DeployedIndex extends \Google\Collection
   public function getEnableAccessLogging()
   {
     return $this->enableAccessLogging;
-  }
-  /**
-   * @param bool
-   */
-  public function setEnableDatapointUpsertLogging($enableDatapointUpsertLogging)
-  {
-    $this->enableDatapointUpsertLogging = $enableDatapointUpsertLogging;
-  }
-  /**
-   * @return bool
-   */
-  public function getEnableDatapointUpsertLogging()
-  {
-    return $this->enableDatapointUpsertLogging;
   }
   /**
    * @param string

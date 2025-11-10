@@ -46,10 +46,6 @@ class GoogleCloudAiplatformV1ModelContainerSpec extends \Google\Collection
    * @var string
    */
   public $imageUri;
-  /**
-   * @var string
-   */
-  public $invokeRoutePrefix;
   protected $livenessProbeType = GoogleCloudAiplatformV1Probe::class;
   protected $livenessProbeDataType = '';
   protected $portsType = GoogleCloudAiplatformV1Port::class;
@@ -176,20 +172,6 @@ class GoogleCloudAiplatformV1ModelContainerSpec extends \Google\Collection
   public function getImageUri()
   {
     return $this->imageUri;
-  }
-  /**
-   * @param string
-   */
-  public function setInvokeRoutePrefix($invokeRoutePrefix)
-  {
-    $this->invokeRoutePrefix = $invokeRoutePrefix;
-  }
-  /**
-   * @return string
-   */
-  public function getInvokeRoutePrefix()
-  {
-    return $this->invokeRoutePrefix;
   }
   /**
    * @param GoogleCloudAiplatformV1Probe

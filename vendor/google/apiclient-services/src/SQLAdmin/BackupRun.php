@@ -26,10 +26,6 @@ class BackupRun extends \Google\Model
   /**
    * @var string
    */
-  public $databaseVersion;
-  /**
-   * @var string
-   */
   public $description;
   protected $diskEncryptionConfigurationType = DiskEncryptionConfiguration::class;
   protected $diskEncryptionConfigurationDataType = '';
@@ -103,20 +99,6 @@ class BackupRun extends \Google\Model
   public function getBackupKind()
   {
     return $this->backupKind;
-  }
-  /**
-   * @param string
-   */
-  public function setDatabaseVersion($databaseVersion)
-  {
-    $this->databaseVersion = $databaseVersion;
-  }
-  /**
-   * @return string
-   */
-  public function getDatabaseVersion()
-  {
-    return $this->databaseVersion;
   }
   /**
    * @param string

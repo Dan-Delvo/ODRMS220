@@ -13,7 +13,6 @@ use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Contracts\Support\Renderable;
 use Illuminate\Contracts\Translation\HasLocalePreference;
 use Illuminate\Support\Collection;
-use Illuminate\Support\EncodedHtmlString;
 use Illuminate\Support\HtmlString;
 use Illuminate\Support\Str;
 use Illuminate\Support\Traits\Conditionable;
@@ -1372,7 +1371,7 @@ class Mailable implements MailableContract, Renderable
      */
     public function assertSeeInHtml($string, $escape = true)
     {
-        $string = $escape ? EncodedHtmlString::convert($string, withQuote: isset($this->markdown)) : $string;
+        $string = $escape ? e($string) : $string;
 
         [$html, $text] = $this->renderForAssertions();
 
@@ -1394,7 +1393,7 @@ class Mailable implements MailableContract, Renderable
      */
     public function assertDontSeeInHtml($string, $escape = true)
     {
-        $string = $escape ? EncodedHtmlString::convert($string, withQuote: isset($this->markdown)) : $string;
+        $string = $escape ? e($string) : $string;
 
         [$html, $text] = $this->renderForAssertions();
 
@@ -1416,9 +1415,7 @@ class Mailable implements MailableContract, Renderable
      */
     public function assertSeeInOrderInHtml($strings, $escape = true)
     {
-        $strings = $escape ? array_map(function ($string) {
-            return EncodedHtmlString::convert($string, withQuote: isset($this->markdown));
-        }, $strings) : $strings;
+        $strings = $escape ? array_map('e', $strings) : $strings;
 
         [$html, $text] = $this->renderForAssertions();
 

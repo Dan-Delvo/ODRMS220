@@ -20,8 +20,6 @@ namespace Google\Service\DiscoveryEngine;
 class GoogleCloudDiscoveryengineV1ServingConfig extends \Google\Collection
 {
   protected $collection_key = 'synonymsControlIds';
-  protected $answerGenerationSpecType = GoogleCloudDiscoveryengineV1AnswerGenerationSpec::class;
-  protected $answerGenerationSpecDataType = '';
   /**
    * @var string[]
    */
@@ -95,20 +93,6 @@ class GoogleCloudDiscoveryengineV1ServingConfig extends \Google\Collection
    */
   public $updateTime;
 
-  /**
-   * @param GoogleCloudDiscoveryengineV1AnswerGenerationSpec
-   */
-  public function setAnswerGenerationSpec(GoogleCloudDiscoveryengineV1AnswerGenerationSpec $answerGenerationSpec)
-  {
-    $this->answerGenerationSpec = $answerGenerationSpec;
-  }
-  /**
-   * @return GoogleCloudDiscoveryengineV1AnswerGenerationSpec
-   */
-  public function getAnswerGenerationSpec()
-  {
-    return $this->answerGenerationSpec;
-  }
   /**
    * @param string[]
    */

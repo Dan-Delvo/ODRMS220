@@ -28,8 +28,6 @@ class Asset extends \Google\Collection
    * @var string[]
    */
   public $ancestors;
-  protected $assetExceptionsType = AssetException::class;
-  protected $assetExceptionsDataType = 'array';
   /**
    * @var string
    */
@@ -98,20 +96,6 @@ class Asset extends \Google\Collection
   public function getAncestors()
   {
     return $this->ancestors;
-  }
-  /**
-   * @param AssetException[]
-   */
-  public function setAssetExceptions($assetExceptions)
-  {
-    $this->assetExceptions = $assetExceptions;
-  }
-  /**
-   * @return AssetException[]
-   */
-  public function getAssetExceptions()
-  {
-    return $this->assetExceptions;
   }
   /**
    * @param string

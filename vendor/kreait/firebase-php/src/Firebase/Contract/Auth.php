@@ -25,6 +25,7 @@ use Kreait\Firebase\Exception\Auth\RevokedIdToken;
 use Kreait\Firebase\Exception\Auth\RevokedSessionCookie;
 use Kreait\Firebase\Exception\Auth\UserDisabled;
 use Kreait\Firebase\Exception\Auth\UserNotFound;
+use Kreait\Firebase\Request;
 use Kreait\Firebase\Request\CreateUser;
 use Kreait\Firebase\Request\UpdateUser;
 use Lcobucci\JWT\Token;
@@ -81,7 +82,7 @@ interface Auth
     /**
      * Creates a new user with the provided properties.
      *
-     * @param array<non-empty-string, mixed>|CreateUser $properties
+     * @param array<non-empty-string, mixed>|Request\CreateUser $properties
      *
      * @throws Exception\AuthException
      * @throws Exception\FirebaseException
@@ -91,7 +92,7 @@ interface Auth
     /**
      * Updates the given user with the given properties.
      *
-     * @param non-empty-array<non-empty-string, mixed>|UpdateUser $properties
+     * @param non-empty-array<non-empty-string, mixed>|Request\UpdateUser $properties
      *
      * @throws Exception\AuthException
      * @throws Exception\FirebaseException

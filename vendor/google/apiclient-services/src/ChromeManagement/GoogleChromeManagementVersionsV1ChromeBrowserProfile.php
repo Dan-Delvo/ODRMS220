@@ -110,10 +110,6 @@ class GoogleChromeManagementVersionsV1ChromeBrowserProfile extends \Google\Model
   protected $reportingDataType = GoogleChromeManagementVersionsV1ReportingData::class;
   protected $reportingDataDataType = '';
   /**
-   * @var bool
-   */
-  public $supportsFcmNotifications;
-  /**
    * @var string
    */
   public $userEmail;
@@ -457,20 +453,6 @@ class GoogleChromeManagementVersionsV1ChromeBrowserProfile extends \Google\Model
   public function getReportingData()
   {
     return $this->reportingData;
-  }
-  /**
-   * @param bool
-   */
-  public function setSupportsFcmNotifications($supportsFcmNotifications)
-  {
-    $this->supportsFcmNotifications = $supportsFcmNotifications;
-  }
-  /**
-   * @return bool
-   */
-  public function getSupportsFcmNotifications()
-  {
-    return $this->supportsFcmNotifications;
   }
   /**
    * @param string

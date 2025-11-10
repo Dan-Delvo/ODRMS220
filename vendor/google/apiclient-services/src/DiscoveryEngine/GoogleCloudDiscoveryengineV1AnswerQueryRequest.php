@@ -25,8 +25,6 @@ class GoogleCloudDiscoveryengineV1AnswerQueryRequest extends \Google\Model
    * @var bool
    */
   public $asynchronousMode;
-  protected $endUserSpecType = GoogleCloudDiscoveryengineV1AnswerQueryRequestEndUserSpec::class;
-  protected $endUserSpecDataType = '';
   protected $groundingSpecType = GoogleCloudDiscoveryengineV1AnswerQueryRequestGroundingSpec::class;
   protected $groundingSpecDataType = '';
   protected $queryType = GoogleCloudDiscoveryengineV1Query::class;
@@ -79,20 +77,6 @@ class GoogleCloudDiscoveryengineV1AnswerQueryRequest extends \Google\Model
   public function getAsynchronousMode()
   {
     return $this->asynchronousMode;
-  }
-  /**
-   * @param GoogleCloudDiscoveryengineV1AnswerQueryRequestEndUserSpec
-   */
-  public function setEndUserSpec(GoogleCloudDiscoveryengineV1AnswerQueryRequestEndUserSpec $endUserSpec)
-  {
-    $this->endUserSpec = $endUserSpec;
-  }
-  /**
-   * @return GoogleCloudDiscoveryengineV1AnswerQueryRequestEndUserSpec
-   */
-  public function getEndUserSpec()
-  {
-    return $this->endUserSpec;
   }
   /**
    * @param GoogleCloudDiscoveryengineV1AnswerQueryRequestGroundingSpec

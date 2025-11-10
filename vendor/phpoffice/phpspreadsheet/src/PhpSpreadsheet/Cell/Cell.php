@@ -67,7 +67,7 @@ class Cell
     /**
      * Attributes of the formula.
      *
-     * @var ?array
+     * @var mixed
      */
     private $formulaAttributes;
 
@@ -767,14 +767,26 @@ class Cell
         return $this->updateInCollection();
     }
 
-    public function setFormulaAttributes(?array $attributes): self
+    /**
+     * Set the formula attributes.
+     *
+     * @param mixed $attributes
+     *
+     * @return $this
+     */
+    public function setFormulaAttributes($attributes): self
     {
         $this->formulaAttributes = $attributes;
 
         return $this;
     }
 
-    public function getFormulaAttributes(): ?array
+    /**
+     * Get the formula attributes.
+     *
+     * @return mixed
+     */
+    public function getFormulaAttributes()
     {
         return $this->formulaAttributes;
     }

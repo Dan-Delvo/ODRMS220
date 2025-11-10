@@ -40,10 +40,6 @@ class GitRepositoryLink extends \Google\Model
    */
   public $etag;
   /**
-   * @var string
-   */
-  public $gitProxyUri;
-  /**
    * @var string[]
    */
   public $labels;
@@ -137,20 +133,6 @@ class GitRepositoryLink extends \Google\Model
   public function getEtag()
   {
     return $this->etag;
-  }
-  /**
-   * @param string
-   */
-  public function setGitProxyUri($gitProxyUri)
-  {
-    $this->gitProxyUri = $gitProxyUri;
-  }
-  /**
-   * @return string
-   */
-  public function getGitProxyUri()
-  {
-    return $this->gitProxyUri;
   }
   /**
    * @param string[]

@@ -19,17 +19,13 @@ namespace Google\Service\NetworkServices;
 
 class ListTlsRoutesResponse extends \Google\Collection
 {
-  protected $collection_key = 'unreachable';
+  protected $collection_key = 'tlsRoutes';
   /**
    * @var string
    */
   public $nextPageToken;
   protected $tlsRoutesType = TlsRoute::class;
   protected $tlsRoutesDataType = 'array';
-  /**
-   * @var string[]
-   */
-  public $unreachable;
 
   /**
    * @param string
@@ -58,20 +54,6 @@ class ListTlsRoutesResponse extends \Google\Collection
   public function getTlsRoutes()
   {
     return $this->tlsRoutes;
-  }
-  /**
-   * @param string[]
-   */
-  public function setUnreachable($unreachable)
-  {
-    $this->unreachable = $unreachable;
-  }
-  /**
-   * @return string[]
-   */
-  public function getUnreachable()
-  {
-    return $this->unreachable;
   }
 }
 

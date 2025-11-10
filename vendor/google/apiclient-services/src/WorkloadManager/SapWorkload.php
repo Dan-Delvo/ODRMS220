@@ -17,23 +17,16 @@
 
 namespace Google\Service\WorkloadManager;
 
-class SapWorkload extends \Google\Collection
+class SapWorkload extends \Google\Model
 {
-  protected $collection_key = 'products';
   protected $applicationType = SapComponent::class;
   protected $applicationDataType = '';
-  /**
-   * @var string
-   */
-  public $architecture;
   protected $databaseType = SapComponent::class;
   protected $databaseDataType = '';
   /**
    * @var string[]
    */
   public $metadata;
-  protected $productsType = Product::class;
-  protected $productsDataType = 'array';
 
   /**
    * @param SapComponent
@@ -48,20 +41,6 @@ class SapWorkload extends \Google\Collection
   public function getApplication()
   {
     return $this->application;
-  }
-  /**
-   * @param string
-   */
-  public function setArchitecture($architecture)
-  {
-    $this->architecture = $architecture;
-  }
-  /**
-   * @return string
-   */
-  public function getArchitecture()
-  {
-    return $this->architecture;
   }
   /**
    * @param SapComponent
@@ -90,20 +69,6 @@ class SapWorkload extends \Google\Collection
   public function getMetadata()
   {
     return $this->metadata;
-  }
-  /**
-   * @param Product[]
-   */
-  public function setProducts($products)
-  {
-    $this->products = $products;
-  }
-  /**
-   * @return Product[]
-   */
-  public function getProducts()
-  {
-    return $this->products;
   }
 }
 

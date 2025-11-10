@@ -19,45 +19,11 @@ namespace Google\Service\Storage;
 
 class BucketEncryption extends \Google\Model
 {
-  protected $customerManagedEncryptionEnforcementConfigType = BucketEncryptionCustomerManagedEncryptionEnforcementConfig::class;
-  protected $customerManagedEncryptionEnforcementConfigDataType = '';
-  protected $customerSuppliedEncryptionEnforcementConfigType = BucketEncryptionCustomerSuppliedEncryptionEnforcementConfig::class;
-  protected $customerSuppliedEncryptionEnforcementConfigDataType = '';
   /**
    * @var string
    */
   public $defaultKmsKeyName;
-  protected $googleManagedEncryptionEnforcementConfigType = BucketEncryptionGoogleManagedEncryptionEnforcementConfig::class;
-  protected $googleManagedEncryptionEnforcementConfigDataType = '';
 
-  /**
-   * @param BucketEncryptionCustomerManagedEncryptionEnforcementConfig
-   */
-  public function setCustomerManagedEncryptionEnforcementConfig(BucketEncryptionCustomerManagedEncryptionEnforcementConfig $customerManagedEncryptionEnforcementConfig)
-  {
-    $this->customerManagedEncryptionEnforcementConfig = $customerManagedEncryptionEnforcementConfig;
-  }
-  /**
-   * @return BucketEncryptionCustomerManagedEncryptionEnforcementConfig
-   */
-  public function getCustomerManagedEncryptionEnforcementConfig()
-  {
-    return $this->customerManagedEncryptionEnforcementConfig;
-  }
-  /**
-   * @param BucketEncryptionCustomerSuppliedEncryptionEnforcementConfig
-   */
-  public function setCustomerSuppliedEncryptionEnforcementConfig(BucketEncryptionCustomerSuppliedEncryptionEnforcementConfig $customerSuppliedEncryptionEnforcementConfig)
-  {
-    $this->customerSuppliedEncryptionEnforcementConfig = $customerSuppliedEncryptionEnforcementConfig;
-  }
-  /**
-   * @return BucketEncryptionCustomerSuppliedEncryptionEnforcementConfig
-   */
-  public function getCustomerSuppliedEncryptionEnforcementConfig()
-  {
-    return $this->customerSuppliedEncryptionEnforcementConfig;
-  }
   /**
    * @param string
    */
@@ -71,20 +37,6 @@ class BucketEncryption extends \Google\Model
   public function getDefaultKmsKeyName()
   {
     return $this->defaultKmsKeyName;
-  }
-  /**
-   * @param BucketEncryptionGoogleManagedEncryptionEnforcementConfig
-   */
-  public function setGoogleManagedEncryptionEnforcementConfig(BucketEncryptionGoogleManagedEncryptionEnforcementConfig $googleManagedEncryptionEnforcementConfig)
-  {
-    $this->googleManagedEncryptionEnforcementConfig = $googleManagedEncryptionEnforcementConfig;
-  }
-  /**
-   * @return BucketEncryptionGoogleManagedEncryptionEnforcementConfig
-   */
-  public function getGoogleManagedEncryptionEnforcementConfig()
-  {
-    return $this->googleManagedEncryptionEnforcementConfig;
   }
 }
 

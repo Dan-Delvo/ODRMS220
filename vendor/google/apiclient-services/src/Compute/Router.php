@@ -58,8 +58,6 @@ class Router extends \Google\Collection
    * @var string
    */
   public $network;
-  protected $paramsType = RouterParams::class;
-  protected $paramsDataType = '';
   /**
    * @var string
    */
@@ -236,20 +234,6 @@ class Router extends \Google\Collection
   public function getNetwork()
   {
     return $this->network;
-  }
-  /**
-   * @param RouterParams
-   */
-  public function setParams(RouterParams $params)
-  {
-    $this->params = $params;
-  }
-  /**
-   * @return RouterParams
-   */
-  public function getParams()
-  {
-    return $this->params;
   }
   /**
    * @param string

@@ -20,10 +20,6 @@ namespace Google\Service\ServiceNetworking;
 class Api extends \Google\Collection
 {
   protected $collection_key = 'options';
-  /**
-   * @var string
-   */
-  public $edition;
   protected $methodsType = Method::class;
   protected $methodsDataType = 'array';
   protected $mixinsType = Mixin::class;
@@ -45,20 +41,6 @@ class Api extends \Google\Collection
    */
   public $version;
 
-  /**
-   * @param string
-   */
-  public function setEdition($edition)
-  {
-    $this->edition = $edition;
-  }
-  /**
-   * @return string
-   */
-  public function getEdition()
-  {
-    return $this->edition;
-  }
   /**
    * @param Method[]
    */

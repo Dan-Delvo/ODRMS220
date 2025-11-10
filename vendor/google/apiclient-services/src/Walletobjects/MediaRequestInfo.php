@@ -42,10 +42,6 @@ class MediaRequestInfo extends \Google\Model
   /**
    * @var string
    */
-  public $physicalHeaders;
-  /**
-   * @var string
-   */
   public $requestId;
   /**
    * @var string
@@ -129,20 +125,6 @@ class MediaRequestInfo extends \Google\Model
   public function getNotificationType()
   {
     return $this->notificationType;
-  }
-  /**
-   * @param string
-   */
-  public function setPhysicalHeaders($physicalHeaders)
-  {
-    $this->physicalHeaders = $physicalHeaders;
-  }
-  /**
-   * @return string
-   */
-  public function getPhysicalHeaders()
-  {
-    return $this->physicalHeaders;
   }
   /**
    * @param string

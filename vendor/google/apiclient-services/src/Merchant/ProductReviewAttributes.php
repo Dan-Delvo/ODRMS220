@@ -51,15 +51,7 @@ class ProductReviewAttributes extends \Google\Collection
   /**
    * @var bool
    */
-  public $isIncentivizedReview;
-  /**
-   * @var bool
-   */
   public $isSpam;
-  /**
-   * @var bool
-   */
-  public $isVerifiedPurchase;
   /**
    * @var string
    */
@@ -241,20 +233,6 @@ class ProductReviewAttributes extends \Google\Collection
   /**
    * @param bool
    */
-  public function setIsIncentivizedReview($isIncentivizedReview)
-  {
-    $this->isIncentivizedReview = $isIncentivizedReview;
-  }
-  /**
-   * @return bool
-   */
-  public function getIsIncentivizedReview()
-  {
-    return $this->isIncentivizedReview;
-  }
-  /**
-   * @param bool
-   */
   public function setIsSpam($isSpam)
   {
     $this->isSpam = $isSpam;
@@ -265,20 +243,6 @@ class ProductReviewAttributes extends \Google\Collection
   public function getIsSpam()
   {
     return $this->isSpam;
-  }
-  /**
-   * @param bool
-   */
-  public function setIsVerifiedPurchase($isVerifiedPurchase)
-  {
-    $this->isVerifiedPurchase = $isVerifiedPurchase;
-  }
-  /**
-   * @return bool
-   */
-  public function getIsVerifiedPurchase()
-  {
-    return $this->isVerifiedPurchase;
   }
   /**
    * @param string

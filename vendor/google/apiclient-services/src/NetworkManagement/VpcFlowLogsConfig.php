@@ -31,10 +31,6 @@ class VpcFlowLogsConfig extends \Google\Collection
   /**
    * @var string
    */
-  public $crossProjectMetadata;
-  /**
-   * @var string
-   */
   public $description;
   /**
    * @var string
@@ -67,15 +63,7 @@ class VpcFlowLogsConfig extends \Google\Collection
   /**
    * @var string
    */
-  public $network;
-  /**
-   * @var string
-   */
   public $state;
-  /**
-   * @var string
-   */
-  public $subnet;
   /**
    * @var string
    */
@@ -116,20 +104,6 @@ class VpcFlowLogsConfig extends \Google\Collection
   public function getCreateTime()
   {
     return $this->createTime;
-  }
-  /**
-   * @param string
-   */
-  public function setCrossProjectMetadata($crossProjectMetadata)
-  {
-    $this->crossProjectMetadata = $crossProjectMetadata;
-  }
-  /**
-   * @return string
-   */
-  public function getCrossProjectMetadata()
-  {
-    return $this->crossProjectMetadata;
   }
   /**
    * @param string
@@ -246,20 +220,6 @@ class VpcFlowLogsConfig extends \Google\Collection
   /**
    * @param string
    */
-  public function setNetwork($network)
-  {
-    $this->network = $network;
-  }
-  /**
-   * @return string
-   */
-  public function getNetwork()
-  {
-    return $this->network;
-  }
-  /**
-   * @param string
-   */
   public function setState($state)
   {
     $this->state = $state;
@@ -270,20 +230,6 @@ class VpcFlowLogsConfig extends \Google\Collection
   public function getState()
   {
     return $this->state;
-  }
-  /**
-   * @param string
-   */
-  public function setSubnet($subnet)
-  {
-    $this->subnet = $subnet;
-  }
-  /**
-   * @return string
-   */
-  public function getSubnet()
-  {
-    return $this->subnet;
   }
   /**
    * @param string

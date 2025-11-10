@@ -56,10 +56,7 @@ abstract class PuTTY extends Progenitor
         if (!isset($components['private'])) {
             return $components;
         }
-        $type = $components['type'];
-        $comment = $components['comment'];
-        $public = $components['public'];
-        $private = $components['private'];
+        extract($components);
         unset($components['public'], $components['private']);
 
         list($p, $q, $g, $y) = Strings::unpackSSH2('iiii', $public);

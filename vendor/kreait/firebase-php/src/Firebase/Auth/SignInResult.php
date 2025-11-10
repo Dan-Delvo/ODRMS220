@@ -93,24 +93,22 @@ final class SignInResult
      */
     public function firebaseUserId(): ?string
     {
-        if ($this->firebaseUserId !== null) {
+        if ($this->firebaseUserId) {
             return $this->firebaseUserId;
         }
 
-        if ($this->idToken !== null) {
+        if ($this->idToken) {
             $idToken = $this->parser->parse($this->idToken);
             assert($idToken instanceof UnencryptedToken);
 
             foreach (['sub', 'localId', 'user_id'] as $claim) {
-                $uid = $idToken->claims()->get($claim, false);
-                if (is_string($uid) && $uid !== '') {
+                if ($uid = $idToken->claims()->get($claim, false)) {
                     return $this->firebaseUserId = $uid;
                 }
             }
         }
 
-        $localId = $this->data['localId'] ?? null;
-        if (is_string($localId) && $localId !== '') {
+        if ($localId = $this->data['localId'] ?? null) {
             return $this->firebaseUserId = $localId;
         }
 
@@ -122,11 +120,11 @@ final class SignInResult
      */
     public function firebaseTenantId(): ?string
     {
-        if ($this->tenantId !== null) {
+        if ($this->tenantId) {
             return $this->tenantId;
         }
 
-        if ($this->idToken !== null) {
+        if ($this->idToken) {
             $idToken = $this->parser->parse($this->idToken);
             assert($idToken instanceof UnencryptedToken);
 

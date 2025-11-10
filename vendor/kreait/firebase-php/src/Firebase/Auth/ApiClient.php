@@ -38,6 +38,8 @@ class ApiClient
 
     private readonly AuthResourceUrlBuilder $authResourceUrlBuilder;
 
+    private readonly AuthApiExceptionConverter $errorHandler;
+
     /**
      * @param non-empty-string $projectId
      * @param non-empty-string|null $tenantId
@@ -48,8 +50,9 @@ class ApiClient
         private readonly ClientInterface $client,
         private readonly GuzzleHandler $signInHandler,
         private readonly ClockInterface $clock,
-        private readonly AuthApiExceptionConverter $errorHandler,
     ) {
+        $this->errorHandler = new AuthApiExceptionConverter();
+
         $this->awareAuthResourceUrlBuilder = $tenantId !== null
             ? TenantAwareAuthResourceUrlBuilder::forProjectAndTenant($projectId, $tenantId)
             : ProjectAwareAuthResourceUrlBuilder::forProject($projectId);
@@ -88,7 +91,7 @@ class ApiClient
 
         return $this->requestApi($url, [
             'localId' => $uid,
-            'customAttributes' => Json::encode((object) $claims),
+            'customAttributes' => JSON::encode((object) $claims),
         ]);
     }
 
@@ -118,24 +121,14 @@ class ApiClient
     /**
      * @throws AuthException
      */
-    public function getUserByProviderUid(string $providerId, string $uid): ResponseInterface
-    {
-        $url = $this->awareAuthResourceUrlBuilder->getUrl('/accounts:lookup');
-
-        return $this->requestApi($url, ['federatedUserId' => [['providerId' => $providerId, 'rawId' => $uid]]]);
-    }
-
-    /**
-     * @throws AuthException
-     */
     public function downloadAccount(?int $batchSize = null, ?string $nextPageToken = null): ResponseInterface
     {
-        $batchSize ??= 1000;
+        $batchSize = $batchSize ?: 1000;
 
         $urlParams = array_filter([
             'maxResults' => (string) $batchSize,
             'nextPageToken' => (string) $nextPageToken,
-        ], fn(string $value): bool => $value !== '');
+        ]);
 
         $url = $this->awareAuthResourceUrlBuilder->getUrl('/accounts:batchGet', $urlParams);
 
@@ -313,7 +306,7 @@ class ApiClient
             $data['tenantId'] = $this->tenantId;
         }
 
-        if (is_array($data) && $data !== []) {
+        if (!empty($data)) {
             $method = 'POST';
             $options['json'] = $data;
         }

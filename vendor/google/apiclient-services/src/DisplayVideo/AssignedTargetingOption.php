@@ -59,8 +59,6 @@ class AssignedTargetingOption extends \Google\Model
   protected $contentOutstreamPositionDetailsDataType = '';
   protected $contentStreamTypeDetailsType = ContentStreamTypeAssignedTargetingOptionDetails::class;
   protected $contentStreamTypeDetailsDataType = '';
-  protected $contentThemeExclusionDetailsType = ContentThemeAssignedTargetingOptionDetails::class;
-  protected $contentThemeExclusionDetailsDataType = '';
   protected $dayAndTimeDetailsType = DayAndTimeAssignedTargetingOptionDetails::class;
   protected $dayAndTimeDetailsDataType = '';
   protected $deviceMakeModelDetailsType = DeviceMakeModelAssignedTargetingOptionDetails::class;
@@ -389,20 +387,6 @@ class AssignedTargetingOption extends \Google\Model
   public function getContentStreamTypeDetails()
   {
     return $this->contentStreamTypeDetails;
-  }
-  /**
-   * @param ContentThemeAssignedTargetingOptionDetails
-   */
-  public function setContentThemeExclusionDetails(ContentThemeAssignedTargetingOptionDetails $contentThemeExclusionDetails)
-  {
-    $this->contentThemeExclusionDetails = $contentThemeExclusionDetails;
-  }
-  /**
-   * @return ContentThemeAssignedTargetingOptionDetails
-   */
-  public function getContentThemeExclusionDetails()
-  {
-    return $this->contentThemeExclusionDetails;
   }
   /**
    * @param DayAndTimeAssignedTargetingOptionDetails

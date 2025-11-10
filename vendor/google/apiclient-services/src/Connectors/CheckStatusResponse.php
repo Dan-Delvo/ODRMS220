@@ -24,10 +24,6 @@ class CheckStatusResponse extends \Google\Model
    */
   public $description;
   /**
-   * @var array[]
-   */
-  public $metadata;
-  /**
    * @var string
    */
   public $state;
@@ -45,20 +41,6 @@ class CheckStatusResponse extends \Google\Model
   public function getDescription()
   {
     return $this->description;
-  }
-  /**
-   * @param array[]
-   */
-  public function setMetadata($metadata)
-  {
-    $this->metadata = $metadata;
-  }
-  /**
-   * @return array[]
-   */
-  public function getMetadata()
-  {
-    return $this->metadata;
   }
   /**
    * @param string

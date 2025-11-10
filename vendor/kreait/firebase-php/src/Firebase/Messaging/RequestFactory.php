@@ -48,7 +48,6 @@ final class RequestFactory
             ->withBody($body)
             ->withHeader('Content-Type', 'application/json; charset=UTF-8')
             ->withHeader('Content-Length', (string) $body->getSize())
-            ->withHeader('Accept', 'application/json, text/plain;q=0.9')
         ;
     }
 

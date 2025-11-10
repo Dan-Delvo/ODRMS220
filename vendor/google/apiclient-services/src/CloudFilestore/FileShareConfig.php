@@ -34,10 +34,6 @@ class FileShareConfig extends \Google\Collection
    * @var string
    */
   public $sourceBackup;
-  /**
-   * @var string
-   */
-  public $sourceBackupdrBackup;
 
   /**
    * @param string
@@ -94,20 +90,6 @@ class FileShareConfig extends \Google\Collection
   public function getSourceBackup()
   {
     return $this->sourceBackup;
-  }
-  /**
-   * @param string
-   */
-  public function setSourceBackupdrBackup($sourceBackupdrBackup)
-  {
-    $this->sourceBackupdrBackup = $sourceBackupdrBackup;
-  }
-  /**
-   * @return string
-   */
-  public function getSourceBackupdrBackup()
-  {
-    return $this->sourceBackupdrBackup;
   }
 }
 

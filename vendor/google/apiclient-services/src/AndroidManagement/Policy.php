@@ -19,7 +19,7 @@ namespace Google\Service\AndroidManagement;
 
 class Policy extends \Google\Collection
 {
-  protected $collection_key = 'wipeDataFlags';
+  protected $collection_key = 'stayOnPluggedModes';
   /**
    * @var string[]
    */
@@ -44,10 +44,6 @@ class Policy extends \Google\Collection
    * @var string
    */
   public $appAutoUpdatePolicy;
-  /**
-   * @var string
-   */
-  public $appFunctions;
   protected $applicationsType = ApplicationPolicy::class;
   protected $applicationsDataType = 'array';
   /**
@@ -116,8 +112,6 @@ class Policy extends \Google\Collection
    * @var bool
    */
   public $debuggingFeaturesAllowed;
-  protected $defaultApplicationSettingsType = DefaultApplicationSetting::class;
-  protected $defaultApplicationSettingsDataType = 'array';
   /**
    * @var string
    */
@@ -138,10 +132,6 @@ class Policy extends \Google\Collection
    * @var bool
    */
   public $ensureVerifyAppsEnabled;
-  /**
-   * @var string
-   */
-  public $enterpriseDisplayNameVisibility;
   /**
    * @var bool
    */
@@ -352,12 +342,6 @@ class Policy extends \Google\Collection
    * @var bool
    */
   public $wifiConfigsLockdownEnabled;
-  /**
-   * @var string[]
-   */
-  public $wipeDataFlags;
-  protected $workAccountSetupConfigType = WorkAccountSetupConfig::class;
-  protected $workAccountSetupConfigDataType = '';
 
   /**
    * @param string[]
@@ -456,20 +440,6 @@ class Policy extends \Google\Collection
   public function getAppAutoUpdatePolicy()
   {
     return $this->appAutoUpdatePolicy;
-  }
-  /**
-   * @param string
-   */
-  public function setAppFunctions($appFunctions)
-  {
-    $this->appFunctions = $appFunctions;
-  }
-  /**
-   * @return string
-   */
-  public function getAppFunctions()
-  {
-    return $this->appFunctions;
   }
   /**
    * @param ApplicationPolicy[]
@@ -738,20 +708,6 @@ class Policy extends \Google\Collection
     return $this->debuggingFeaturesAllowed;
   }
   /**
-   * @param DefaultApplicationSetting[]
-   */
-  public function setDefaultApplicationSettings($defaultApplicationSettings)
-  {
-    $this->defaultApplicationSettings = $defaultApplicationSettings;
-  }
-  /**
-   * @return DefaultApplicationSetting[]
-   */
-  public function getDefaultApplicationSettings()
-  {
-    return $this->defaultApplicationSettings;
-  }
-  /**
    * @param string
    */
   public function setDefaultPermissionPolicy($defaultPermissionPolicy)
@@ -848,20 +804,6 @@ class Policy extends \Google\Collection
   public function getEnsureVerifyAppsEnabled()
   {
     return $this->ensureVerifyAppsEnabled;
-  }
-  /**
-   * @param string
-   */
-  public function setEnterpriseDisplayNameVisibility($enterpriseDisplayNameVisibility)
-  {
-    $this->enterpriseDisplayNameVisibility = $enterpriseDisplayNameVisibility;
-  }
-  /**
-   * @return string
-   */
-  public function getEnterpriseDisplayNameVisibility()
-  {
-    return $this->enterpriseDisplayNameVisibility;
   }
   /**
    * @param bool
@@ -1716,34 +1658,6 @@ class Policy extends \Google\Collection
   public function getWifiConfigsLockdownEnabled()
   {
     return $this->wifiConfigsLockdownEnabled;
-  }
-  /**
-   * @param string[]
-   */
-  public function setWipeDataFlags($wipeDataFlags)
-  {
-    $this->wipeDataFlags = $wipeDataFlags;
-  }
-  /**
-   * @return string[]
-   */
-  public function getWipeDataFlags()
-  {
-    return $this->wipeDataFlags;
-  }
-  /**
-   * @param WorkAccountSetupConfig
-   */
-  public function setWorkAccountSetupConfig(WorkAccountSetupConfig $workAccountSetupConfig)
-  {
-    $this->workAccountSetupConfig = $workAccountSetupConfig;
-  }
-  /**
-   * @return WorkAccountSetupConfig
-   */
-  public function getWorkAccountSetupConfig()
-  {
-    return $this->workAccountSetupConfig;
   }
 }
 

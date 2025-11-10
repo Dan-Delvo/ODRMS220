@@ -32,10 +32,6 @@ class SslConfig extends \Google\Model
    */
   public $clientKey;
   /**
-   * @var string[]
-   */
-  public $sslFlags;
-  /**
    * @var string
    */
   public $type;
@@ -81,20 +77,6 @@ class SslConfig extends \Google\Model
   public function getClientKey()
   {
     return $this->clientKey;
-  }
-  /**
-   * @param string[]
-   */
-  public function setSslFlags($sslFlags)
-  {
-    $this->sslFlags = $sslFlags;
-  }
-  /**
-   * @return string[]
-   */
-  public function getSslFlags()
-  {
-    return $this->sslFlags;
   }
   /**
    * @param string

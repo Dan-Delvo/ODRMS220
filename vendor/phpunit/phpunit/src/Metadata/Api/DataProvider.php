@@ -35,7 +35,6 @@ use PHPUnit\Metadata\DataProvider as DataProviderMetadata;
 use PHPUnit\Metadata\MetadataCollection;
 use PHPUnit\Metadata\Parser\Registry as MetadataRegistry;
 use PHPUnit\Metadata\TestWith;
-use PHPUnit\Util\Test;
 use ReflectionClass;
 use ReflectionMethod;
 use Throwable;
@@ -57,9 +56,8 @@ final readonly class DataProvider
      */
     public function providedData(string $className, string $methodName): ?array
     {
-        $metadataCollection = MetadataRegistry::parser()->forMethod($className, $methodName);
-        $dataProvider       = $metadataCollection->isDataProvider();
-        $testWith           = $metadataCollection->isTestWith();
+        $dataProvider = MetadataRegistry::parser()->forMethod($className, $methodName)->isDataProvider();
+        $testWith     = MetadataRegistry::parser()->forMethod($className, $methodName)->isTestWith();
 
         if ($dataProvider->isEmpty() && $testWith->isEmpty()) {
             return $this->dataProvidedByTestWithAnnotation($className, $methodName);
@@ -121,18 +119,6 @@ final readonly class DataProvider
             try {
                 $class  = new ReflectionClass($_dataProvider->className());
                 $method = $class->getMethod($_dataProvider->methodName());
-
-                if (Test::isTestMethod($method)) {
-                    Event\Facade::emitter()->testRunnerTriggeredPhpunitWarning(
-                        sprintf(
-                            'Method %s::%s() used by test method %s::%s() is also a test method',
-                            $_dataProvider->className(),
-                            $_dataProvider->methodName(),
-                            $className,
-                            $methodName,
-                        ),
-                    );
-                }
 
                 if (!$method->isPublic()) {
                     throw new InvalidDataProviderException(
@@ -200,11 +186,6 @@ final readonly class DataProvider
 
                     $result[$key] = $value;
                 } else {
-                    Event\Facade::emitter()->dataProviderMethodFinished(
-                        $testMethod,
-                        ...$methodsCalled,
-                    );
-
                     throw new InvalidDataProviderException(
                         sprintf(
                             'The key must be an integer or a string, %s given',

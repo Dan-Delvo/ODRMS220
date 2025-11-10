@@ -64,8 +64,6 @@ class JobStatistics2 extends \Google\Collection
   protected $exportDataStatisticsDataType = '';
   protected $externalServiceCostsType = ExternalServiceCost::class;
   protected $externalServiceCostsDataType = 'array';
-  protected $incrementalResultStatsType = IncrementalResultStats::class;
-  protected $incrementalResultStatsDataType = '';
   protected $loadQueryStatisticsType = LoadQueryStatistics::class;
   protected $loadQueryStatisticsDataType = '';
   protected $materializedViewStatisticsType = MaterializedViewStatistics::class;
@@ -128,10 +126,6 @@ class JobStatistics2 extends \Google\Collection
    * @var string
    */
   public $totalPartitionsProcessed;
-  /**
-   * @var string
-   */
-  public $totalServicesSkuSlotMs;
   /**
    * @var string
    */
@@ -382,20 +376,6 @@ class JobStatistics2 extends \Google\Collection
   public function getExternalServiceCosts()
   {
     return $this->externalServiceCosts;
-  }
-  /**
-   * @param IncrementalResultStats
-   */
-  public function setIncrementalResultStats(IncrementalResultStats $incrementalResultStats)
-  {
-    $this->incrementalResultStats = $incrementalResultStats;
-  }
-  /**
-   * @return IncrementalResultStats
-   */
-  public function getIncrementalResultStats()
-  {
-    return $this->incrementalResultStats;
   }
   /**
    * @param LoadQueryStatistics
@@ -718,20 +698,6 @@ class JobStatistics2 extends \Google\Collection
   public function getTotalPartitionsProcessed()
   {
     return $this->totalPartitionsProcessed;
-  }
-  /**
-   * @param string
-   */
-  public function setTotalServicesSkuSlotMs($totalServicesSkuSlotMs)
-  {
-    $this->totalServicesSkuSlotMs = $totalServicesSkuSlotMs;
-  }
-  /**
-   * @return string
-   */
-  public function getTotalServicesSkuSlotMs()
-  {
-    return $this->totalServicesSkuSlotMs;
   }
   /**
    * @param string

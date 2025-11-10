@@ -22,10 +22,6 @@ class BackupConfiguration extends \Google\Model
   protected $backupRetentionSettingsType = BackupRetentionSettings::class;
   protected $backupRetentionSettingsDataType = '';
   /**
-   * @var string
-   */
-  public $backupTier;
-  /**
    * @var bool
    */
   public $binaryLogEnabled;
@@ -75,20 +71,6 @@ class BackupConfiguration extends \Google\Model
   public function getBackupRetentionSettings()
   {
     return $this->backupRetentionSettings;
-  }
-  /**
-   * @param string
-   */
-  public function setBackupTier($backupTier)
-  {
-    $this->backupTier = $backupTier;
-  }
-  /**
-   * @return string
-   */
-  public function getBackupTier()
-  {
-    return $this->backupTier;
   }
   /**
    * @param bool
