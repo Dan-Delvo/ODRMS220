@@ -49,6 +49,14 @@ class GoogleCloudDialogflowCxV3beta1WebhookGenericWebService extends \Google\Col
   /**
    * @var string
    */
+  public $secretVersionForUsernamePassword;
+  protected $secretVersionsForRequestHeadersType = GoogleCloudDialogflowCxV3beta1WebhookGenericWebServiceSecretVersionHeaderValue::class;
+  protected $secretVersionsForRequestHeadersDataType = 'map';
+  protected $serviceAccountAuthConfigType = GoogleCloudDialogflowCxV3beta1WebhookGenericWebServiceServiceAccountAuthConfig::class;
+  protected $serviceAccountAuthConfigDataType = '';
+  /**
+   * @var string
+   */
   public $serviceAgentAuth;
   /**
    * @var string
@@ -160,6 +168,48 @@ class GoogleCloudDialogflowCxV3beta1WebhookGenericWebService extends \Google\Col
   public function getRequestHeaders()
   {
     return $this->requestHeaders;
+  }
+  /**
+   * @param string
+   */
+  public function setSecretVersionForUsernamePassword($secretVersionForUsernamePassword)
+  {
+    $this->secretVersionForUsernamePassword = $secretVersionForUsernamePassword;
+  }
+  /**
+   * @return string
+   */
+  public function getSecretVersionForUsernamePassword()
+  {
+    return $this->secretVersionForUsernamePassword;
+  }
+  /**
+   * @param GoogleCloudDialogflowCxV3beta1WebhookGenericWebServiceSecretVersionHeaderValue[]
+   */
+  public function setSecretVersionsForRequestHeaders($secretVersionsForRequestHeaders)
+  {
+    $this->secretVersionsForRequestHeaders = $secretVersionsForRequestHeaders;
+  }
+  /**
+   * @return GoogleCloudDialogflowCxV3beta1WebhookGenericWebServiceSecretVersionHeaderValue[]
+   */
+  public function getSecretVersionsForRequestHeaders()
+  {
+    return $this->secretVersionsForRequestHeaders;
+  }
+  /**
+   * @param GoogleCloudDialogflowCxV3beta1WebhookGenericWebServiceServiceAccountAuthConfig
+   */
+  public function setServiceAccountAuthConfig(GoogleCloudDialogflowCxV3beta1WebhookGenericWebServiceServiceAccountAuthConfig $serviceAccountAuthConfig)
+  {
+    $this->serviceAccountAuthConfig = $serviceAccountAuthConfig;
+  }
+  /**
+   * @return GoogleCloudDialogflowCxV3beta1WebhookGenericWebServiceServiceAccountAuthConfig
+   */
+  public function getServiceAccountAuthConfig()
+  {
+    return $this->serviceAccountAuthConfig;
   }
   /**
    * @param string

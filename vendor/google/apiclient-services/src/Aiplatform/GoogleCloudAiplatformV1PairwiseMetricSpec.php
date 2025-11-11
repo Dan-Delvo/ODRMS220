@@ -22,8 +22,64 @@ class GoogleCloudAiplatformV1PairwiseMetricSpec extends \Google\Model
   /**
    * @var string
    */
+  public $baselineResponseFieldName;
+  /**
+   * @var string
+   */
+  public $candidateResponseFieldName;
+  protected $customOutputFormatConfigType = GoogleCloudAiplatformV1CustomOutputFormatConfig::class;
+  protected $customOutputFormatConfigDataType = '';
+  /**
+   * @var string
+   */
   public $metricPromptTemplate;
+  /**
+   * @var string
+   */
+  public $systemInstruction;
 
+  /**
+   * @param string
+   */
+  public function setBaselineResponseFieldName($baselineResponseFieldName)
+  {
+    $this->baselineResponseFieldName = $baselineResponseFieldName;
+  }
+  /**
+   * @return string
+   */
+  public function getBaselineResponseFieldName()
+  {
+    return $this->baselineResponseFieldName;
+  }
+  /**
+   * @param string
+   */
+  public function setCandidateResponseFieldName($candidateResponseFieldName)
+  {
+    $this->candidateResponseFieldName = $candidateResponseFieldName;
+  }
+  /**
+   * @return string
+   */
+  public function getCandidateResponseFieldName()
+  {
+    return $this->candidateResponseFieldName;
+  }
+  /**
+   * @param GoogleCloudAiplatformV1CustomOutputFormatConfig
+   */
+  public function setCustomOutputFormatConfig(GoogleCloudAiplatformV1CustomOutputFormatConfig $customOutputFormatConfig)
+  {
+    $this->customOutputFormatConfig = $customOutputFormatConfig;
+  }
+  /**
+   * @return GoogleCloudAiplatformV1CustomOutputFormatConfig
+   */
+  public function getCustomOutputFormatConfig()
+  {
+    return $this->customOutputFormatConfig;
+  }
   /**
    * @param string
    */
@@ -37,6 +93,20 @@ class GoogleCloudAiplatformV1PairwiseMetricSpec extends \Google\Model
   public function getMetricPromptTemplate()
   {
     return $this->metricPromptTemplate;
+  }
+  /**
+   * @param string
+   */
+  public function setSystemInstruction($systemInstruction)
+  {
+    $this->systemInstruction = $systemInstruction;
+  }
+  /**
+   * @return string
+   */
+  public function getSystemInstruction()
+  {
+    return $this->systemInstruction;
   }
 }
 

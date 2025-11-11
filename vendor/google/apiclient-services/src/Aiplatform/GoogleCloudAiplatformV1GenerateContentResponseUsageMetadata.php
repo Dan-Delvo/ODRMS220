@@ -17,8 +17,11 @@
 
 namespace Google\Service\Aiplatform;
 
-class GoogleCloudAiplatformV1GenerateContentResponseUsageMetadata extends \Google\Model
+class GoogleCloudAiplatformV1GenerateContentResponseUsageMetadata extends \Google\Collection
 {
+  protected $collection_key = 'toolUsePromptTokensDetails';
+  protected $cacheTokensDetailsType = GoogleCloudAiplatformV1ModalityTokenCount::class;
+  protected $cacheTokensDetailsDataType = 'array';
   /**
    * @var int
    */
@@ -27,15 +30,47 @@ class GoogleCloudAiplatformV1GenerateContentResponseUsageMetadata extends \Googl
    * @var int
    */
   public $candidatesTokenCount;
+  protected $candidatesTokensDetailsType = GoogleCloudAiplatformV1ModalityTokenCount::class;
+  protected $candidatesTokensDetailsDataType = 'array';
   /**
    * @var int
    */
   public $promptTokenCount;
+  protected $promptTokensDetailsType = GoogleCloudAiplatformV1ModalityTokenCount::class;
+  protected $promptTokensDetailsDataType = 'array';
+  /**
+   * @var int
+   */
+  public $thoughtsTokenCount;
+  /**
+   * @var int
+   */
+  public $toolUsePromptTokenCount;
+  protected $toolUsePromptTokensDetailsType = GoogleCloudAiplatformV1ModalityTokenCount::class;
+  protected $toolUsePromptTokensDetailsDataType = 'array';
   /**
    * @var int
    */
   public $totalTokenCount;
+  /**
+   * @var string
+   */
+  public $trafficType;
 
+  /**
+   * @param GoogleCloudAiplatformV1ModalityTokenCount[]
+   */
+  public function setCacheTokensDetails($cacheTokensDetails)
+  {
+    $this->cacheTokensDetails = $cacheTokensDetails;
+  }
+  /**
+   * @return GoogleCloudAiplatformV1ModalityTokenCount[]
+   */
+  public function getCacheTokensDetails()
+  {
+    return $this->cacheTokensDetails;
+  }
   /**
    * @param int
    */
@@ -65,6 +100,20 @@ class GoogleCloudAiplatformV1GenerateContentResponseUsageMetadata extends \Googl
     return $this->candidatesTokenCount;
   }
   /**
+   * @param GoogleCloudAiplatformV1ModalityTokenCount[]
+   */
+  public function setCandidatesTokensDetails($candidatesTokensDetails)
+  {
+    $this->candidatesTokensDetails = $candidatesTokensDetails;
+  }
+  /**
+   * @return GoogleCloudAiplatformV1ModalityTokenCount[]
+   */
+  public function getCandidatesTokensDetails()
+  {
+    return $this->candidatesTokensDetails;
+  }
+  /**
    * @param int
    */
   public function setPromptTokenCount($promptTokenCount)
@@ -79,6 +128,62 @@ class GoogleCloudAiplatformV1GenerateContentResponseUsageMetadata extends \Googl
     return $this->promptTokenCount;
   }
   /**
+   * @param GoogleCloudAiplatformV1ModalityTokenCount[]
+   */
+  public function setPromptTokensDetails($promptTokensDetails)
+  {
+    $this->promptTokensDetails = $promptTokensDetails;
+  }
+  /**
+   * @return GoogleCloudAiplatformV1ModalityTokenCount[]
+   */
+  public function getPromptTokensDetails()
+  {
+    return $this->promptTokensDetails;
+  }
+  /**
+   * @param int
+   */
+  public function setThoughtsTokenCount($thoughtsTokenCount)
+  {
+    $this->thoughtsTokenCount = $thoughtsTokenCount;
+  }
+  /**
+   * @return int
+   */
+  public function getThoughtsTokenCount()
+  {
+    return $this->thoughtsTokenCount;
+  }
+  /**
+   * @param int
+   */
+  public function setToolUsePromptTokenCount($toolUsePromptTokenCount)
+  {
+    $this->toolUsePromptTokenCount = $toolUsePromptTokenCount;
+  }
+  /**
+   * @return int
+   */
+  public function getToolUsePromptTokenCount()
+  {
+    return $this->toolUsePromptTokenCount;
+  }
+  /**
+   * @param GoogleCloudAiplatformV1ModalityTokenCount[]
+   */
+  public function setToolUsePromptTokensDetails($toolUsePromptTokensDetails)
+  {
+    $this->toolUsePromptTokensDetails = $toolUsePromptTokensDetails;
+  }
+  /**
+   * @return GoogleCloudAiplatformV1ModalityTokenCount[]
+   */
+  public function getToolUsePromptTokensDetails()
+  {
+    return $this->toolUsePromptTokensDetails;
+  }
+  /**
    * @param int
    */
   public function setTotalTokenCount($totalTokenCount)
@@ -91,6 +196,20 @@ class GoogleCloudAiplatformV1GenerateContentResponseUsageMetadata extends \Googl
   public function getTotalTokenCount()
   {
     return $this->totalTokenCount;
+  }
+  /**
+   * @param string
+   */
+  public function setTrafficType($trafficType)
+  {
+    $this->trafficType = $trafficType;
+  }
+  /**
+   * @return string
+   */
+  public function getTrafficType()
+  {
+    return $this->trafficType;
   }
 }
 

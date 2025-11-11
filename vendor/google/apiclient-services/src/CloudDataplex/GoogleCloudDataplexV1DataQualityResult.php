@@ -20,6 +20,10 @@ namespace Google\Service\CloudDataplex;
 class GoogleCloudDataplexV1DataQualityResult extends \Google\Collection
 {
   protected $collection_key = 'rules';
+  protected $anomalyDetectionGeneratedAssetsType = GoogleCloudDataplexV1DataQualityResultAnomalyDetectionGeneratedAssets::class;
+  protected $anomalyDetectionGeneratedAssetsDataType = '';
+  protected $catalogPublishingStatusType = GoogleCloudDataplexV1DataScanCatalogPublishingStatus::class;
+  protected $catalogPublishingStatusDataType = '';
   protected $columnsType = GoogleCloudDataplexV1DataQualityColumnResult::class;
   protected $columnsDataType = 'array';
   protected $dimensionsType = GoogleCloudDataplexV1DataQualityDimensionResult::class;
@@ -43,6 +47,34 @@ class GoogleCloudDataplexV1DataQualityResult extends \Google\Collection
    */
   public $score;
 
+  /**
+   * @param GoogleCloudDataplexV1DataQualityResultAnomalyDetectionGeneratedAssets
+   */
+  public function setAnomalyDetectionGeneratedAssets(GoogleCloudDataplexV1DataQualityResultAnomalyDetectionGeneratedAssets $anomalyDetectionGeneratedAssets)
+  {
+    $this->anomalyDetectionGeneratedAssets = $anomalyDetectionGeneratedAssets;
+  }
+  /**
+   * @return GoogleCloudDataplexV1DataQualityResultAnomalyDetectionGeneratedAssets
+   */
+  public function getAnomalyDetectionGeneratedAssets()
+  {
+    return $this->anomalyDetectionGeneratedAssets;
+  }
+  /**
+   * @param GoogleCloudDataplexV1DataScanCatalogPublishingStatus
+   */
+  public function setCatalogPublishingStatus(GoogleCloudDataplexV1DataScanCatalogPublishingStatus $catalogPublishingStatus)
+  {
+    $this->catalogPublishingStatus = $catalogPublishingStatus;
+  }
+  /**
+   * @return GoogleCloudDataplexV1DataScanCatalogPublishingStatus
+   */
+  public function getCatalogPublishingStatus()
+  {
+    return $this->catalogPublishingStatus;
+  }
   /**
    * @param GoogleCloudDataplexV1DataQualityColumnResult[]
    */

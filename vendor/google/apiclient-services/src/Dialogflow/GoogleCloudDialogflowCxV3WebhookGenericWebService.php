@@ -49,6 +49,14 @@ class GoogleCloudDialogflowCxV3WebhookGenericWebService extends \Google\Collecti
   /**
    * @var string
    */
+  public $secretVersionForUsernamePassword;
+  protected $secretVersionsForRequestHeadersType = GoogleCloudDialogflowCxV3WebhookGenericWebServiceSecretVersionHeaderValue::class;
+  protected $secretVersionsForRequestHeadersDataType = 'map';
+  protected $serviceAccountAuthConfigType = GoogleCloudDialogflowCxV3WebhookGenericWebServiceServiceAccountAuthConfig::class;
+  protected $serviceAccountAuthConfigDataType = '';
+  /**
+   * @var string
+   */
   public $serviceAgentAuth;
   /**
    * @var string
@@ -160,6 +168,48 @@ class GoogleCloudDialogflowCxV3WebhookGenericWebService extends \Google\Collecti
   public function getRequestHeaders()
   {
     return $this->requestHeaders;
+  }
+  /**
+   * @param string
+   */
+  public function setSecretVersionForUsernamePassword($secretVersionForUsernamePassword)
+  {
+    $this->secretVersionForUsernamePassword = $secretVersionForUsernamePassword;
+  }
+  /**
+   * @return string
+   */
+  public function getSecretVersionForUsernamePassword()
+  {
+    return $this->secretVersionForUsernamePassword;
+  }
+  /**
+   * @param GoogleCloudDialogflowCxV3WebhookGenericWebServiceSecretVersionHeaderValue[]
+   */
+  public function setSecretVersionsForRequestHeaders($secretVersionsForRequestHeaders)
+  {
+    $this->secretVersionsForRequestHeaders = $secretVersionsForRequestHeaders;
+  }
+  /**
+   * @return GoogleCloudDialogflowCxV3WebhookGenericWebServiceSecretVersionHeaderValue[]
+   */
+  public function getSecretVersionsForRequestHeaders()
+  {
+    return $this->secretVersionsForRequestHeaders;
+  }
+  /**
+   * @param GoogleCloudDialogflowCxV3WebhookGenericWebServiceServiceAccountAuthConfig
+   */
+  public function setServiceAccountAuthConfig(GoogleCloudDialogflowCxV3WebhookGenericWebServiceServiceAccountAuthConfig $serviceAccountAuthConfig)
+  {
+    $this->serviceAccountAuthConfig = $serviceAccountAuthConfig;
+  }
+  /**
+   * @return GoogleCloudDialogflowCxV3WebhookGenericWebServiceServiceAccountAuthConfig
+   */
+  public function getServiceAccountAuthConfig()
+  {
+    return $this->serviceAccountAuthConfig;
   }
   /**
    * @param string

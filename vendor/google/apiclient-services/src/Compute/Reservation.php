@@ -17,8 +17,11 @@
 
 namespace Google\Service\Compute;
 
-class Reservation extends \Google\Model
+class Reservation extends \Google\Collection
 {
+  protected $collection_key = 'linkedCommitments';
+  protected $advancedDeploymentControlType = ReservationAdvancedDeploymentControl::class;
+  protected $advancedDeploymentControlDataType = '';
   protected $aggregateReservationType = AllocationAggregateReservation::class;
   protected $aggregateReservationDataType = '';
   /**
@@ -29,10 +32,24 @@ class Reservation extends \Google\Model
    * @var string
    */
   public $creationTimestamp;
+  protected $deleteAfterDurationType = Duration::class;
+  protected $deleteAfterDurationDataType = '';
+  /**
+   * @var string
+   */
+  public $deleteAtTime;
+  /**
+   * @var string
+   */
+  public $deploymentType;
   /**
    * @var string
    */
   public $description;
+  /**
+   * @var bool
+   */
+  public $enableEmergentMaintenance;
   /**
    * @var string
    */
@@ -42,9 +59,19 @@ class Reservation extends \Google\Model
    */
   public $kind;
   /**
+   * @var string[]
+   */
+  public $linkedCommitments;
+  /**
    * @var string
    */
   public $name;
+  /**
+   * @var string
+   */
+  public $protectionTier;
+  protected $reservationSharingPolicyType = AllocationReservationSharingPolicy::class;
+  protected $reservationSharingPolicyDataType = '';
   /**
    * @var string[]
    */
@@ -55,6 +82,10 @@ class Reservation extends \Google\Model
    * @var bool
    */
   public $satisfiesPzs;
+  /**
+   * @var string
+   */
+  public $schedulingType;
   /**
    * @var string
    */
@@ -76,6 +107,20 @@ class Reservation extends \Google\Model
    */
   public $zone;
 
+  /**
+   * @param ReservationAdvancedDeploymentControl
+   */
+  public function setAdvancedDeploymentControl(ReservationAdvancedDeploymentControl $advancedDeploymentControl)
+  {
+    $this->advancedDeploymentControl = $advancedDeploymentControl;
+  }
+  /**
+   * @return ReservationAdvancedDeploymentControl
+   */
+  public function getAdvancedDeploymentControl()
+  {
+    return $this->advancedDeploymentControl;
+  }
   /**
    * @param AllocationAggregateReservation
    */
@@ -119,6 +164,48 @@ class Reservation extends \Google\Model
     return $this->creationTimestamp;
   }
   /**
+   * @param Duration
+   */
+  public function setDeleteAfterDuration(Duration $deleteAfterDuration)
+  {
+    $this->deleteAfterDuration = $deleteAfterDuration;
+  }
+  /**
+   * @return Duration
+   */
+  public function getDeleteAfterDuration()
+  {
+    return $this->deleteAfterDuration;
+  }
+  /**
+   * @param string
+   */
+  public function setDeleteAtTime($deleteAtTime)
+  {
+    $this->deleteAtTime = $deleteAtTime;
+  }
+  /**
+   * @return string
+   */
+  public function getDeleteAtTime()
+  {
+    return $this->deleteAtTime;
+  }
+  /**
+   * @param string
+   */
+  public function setDeploymentType($deploymentType)
+  {
+    $this->deploymentType = $deploymentType;
+  }
+  /**
+   * @return string
+   */
+  public function getDeploymentType()
+  {
+    return $this->deploymentType;
+  }
+  /**
    * @param string
    */
   public function setDescription($description)
@@ -131,6 +218,20 @@ class Reservation extends \Google\Model
   public function getDescription()
   {
     return $this->description;
+  }
+  /**
+   * @param bool
+   */
+  public function setEnableEmergentMaintenance($enableEmergentMaintenance)
+  {
+    $this->enableEmergentMaintenance = $enableEmergentMaintenance;
+  }
+  /**
+   * @return bool
+   */
+  public function getEnableEmergentMaintenance()
+  {
+    return $this->enableEmergentMaintenance;
   }
   /**
    * @param string
@@ -161,6 +262,20 @@ class Reservation extends \Google\Model
     return $this->kind;
   }
   /**
+   * @param string[]
+   */
+  public function setLinkedCommitments($linkedCommitments)
+  {
+    $this->linkedCommitments = $linkedCommitments;
+  }
+  /**
+   * @return string[]
+   */
+  public function getLinkedCommitments()
+  {
+    return $this->linkedCommitments;
+  }
+  /**
    * @param string
    */
   public function setName($name)
@@ -173,6 +288,34 @@ class Reservation extends \Google\Model
   public function getName()
   {
     return $this->name;
+  }
+  /**
+   * @param string
+   */
+  public function setProtectionTier($protectionTier)
+  {
+    $this->protectionTier = $protectionTier;
+  }
+  /**
+   * @return string
+   */
+  public function getProtectionTier()
+  {
+    return $this->protectionTier;
+  }
+  /**
+   * @param AllocationReservationSharingPolicy
+   */
+  public function setReservationSharingPolicy(AllocationReservationSharingPolicy $reservationSharingPolicy)
+  {
+    $this->reservationSharingPolicy = $reservationSharingPolicy;
+  }
+  /**
+   * @return AllocationReservationSharingPolicy
+   */
+  public function getReservationSharingPolicy()
+  {
+    return $this->reservationSharingPolicy;
   }
   /**
    * @param string[]
@@ -215,6 +358,20 @@ class Reservation extends \Google\Model
   public function getSatisfiesPzs()
   {
     return $this->satisfiesPzs;
+  }
+  /**
+   * @param string
+   */
+  public function setSchedulingType($schedulingType)
+  {
+    $this->schedulingType = $schedulingType;
+  }
+  /**
+   * @return string
+   */
+  public function getSchedulingType()
+  {
+    return $this->schedulingType;
   }
   /**
    * @param string

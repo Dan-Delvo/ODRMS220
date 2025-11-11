@@ -24,6 +24,10 @@ class GoogleCloudAiplatformV1DeployedModel extends \Google\Model
   /**
    * @var string
    */
+  public $checkpointId;
+  /**
+   * @var string
+   */
   public $createTime;
   protected $dedicatedResourcesType = GoogleCloudAiplatformV1DedicatedResources::class;
   protected $dedicatedResourcesDataType = '';
@@ -50,6 +54,10 @@ class GoogleCloudAiplatformV1DeployedModel extends \Google\Model
   /**
    * @var string
    */
+  public $gdcConnectedModel;
+  /**
+   * @var string
+   */
   public $id;
   /**
    * @var string
@@ -69,6 +77,8 @@ class GoogleCloudAiplatformV1DeployedModel extends \Google\Model
    * @var string
    */
   public $sharedResources;
+  protected $speculativeDecodingSpecType = GoogleCloudAiplatformV1SpeculativeDecodingSpec::class;
+  protected $speculativeDecodingSpecDataType = '';
   protected $statusType = GoogleCloudAiplatformV1DeployedModelStatus::class;
   protected $statusDataType = '';
   /**
@@ -89,6 +99,20 @@ class GoogleCloudAiplatformV1DeployedModel extends \Google\Model
   public function getAutomaticResources()
   {
     return $this->automaticResources;
+  }
+  /**
+   * @param string
+   */
+  public function setCheckpointId($checkpointId)
+  {
+    $this->checkpointId = $checkpointId;
+  }
+  /**
+   * @return string
+   */
+  public function getCheckpointId()
+  {
+    return $this->checkpointId;
   }
   /**
    * @param string
@@ -205,6 +229,20 @@ class GoogleCloudAiplatformV1DeployedModel extends \Google\Model
   /**
    * @param string
    */
+  public function setGdcConnectedModel($gdcConnectedModel)
+  {
+    $this->gdcConnectedModel = $gdcConnectedModel;
+  }
+  /**
+   * @return string
+   */
+  public function getGdcConnectedModel()
+  {
+    return $this->gdcConnectedModel;
+  }
+  /**
+   * @param string
+   */
   public function setId($id)
   {
     $this->id = $id;
@@ -285,6 +323,20 @@ class GoogleCloudAiplatformV1DeployedModel extends \Google\Model
   public function getSharedResources()
   {
     return $this->sharedResources;
+  }
+  /**
+   * @param GoogleCloudAiplatformV1SpeculativeDecodingSpec
+   */
+  public function setSpeculativeDecodingSpec(GoogleCloudAiplatformV1SpeculativeDecodingSpec $speculativeDecodingSpec)
+  {
+    $this->speculativeDecodingSpec = $speculativeDecodingSpec;
+  }
+  /**
+   * @return GoogleCloudAiplatformV1SpeculativeDecodingSpec
+   */
+  public function getSpeculativeDecodingSpec()
+  {
+    return $this->speculativeDecodingSpec;
   }
   /**
    * @param GoogleCloudAiplatformV1DeployedModelStatus

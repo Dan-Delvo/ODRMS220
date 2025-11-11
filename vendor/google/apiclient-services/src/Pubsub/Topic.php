@@ -17,8 +17,9 @@
 
 namespace Google\Service\Pubsub;
 
-class Topic extends \Google\Model
+class Topic extends \Google\Collection
 {
+  protected $collection_key = 'messageTransforms';
   protected $ingestionDataSourceSettingsType = IngestionDataSourceSettings::class;
   protected $ingestionDataSourceSettingsDataType = '';
   /**
@@ -35,6 +36,8 @@ class Topic extends \Google\Model
   public $messageRetentionDuration;
   protected $messageStoragePolicyType = MessageStoragePolicy::class;
   protected $messageStoragePolicyDataType = '';
+  protected $messageTransformsType = MessageTransform::class;
+  protected $messageTransformsDataType = 'array';
   /**
    * @var string
    */
@@ -49,6 +52,10 @@ class Topic extends \Google\Model
    * @var string
    */
   public $state;
+  /**
+   * @var string[]
+   */
+  public $tags;
 
   /**
    * @param IngestionDataSourceSettings
@@ -121,6 +128,20 @@ class Topic extends \Google\Model
     return $this->messageStoragePolicy;
   }
   /**
+   * @param MessageTransform[]
+   */
+  public function setMessageTransforms($messageTransforms)
+  {
+    $this->messageTransforms = $messageTransforms;
+  }
+  /**
+   * @return MessageTransform[]
+   */
+  public function getMessageTransforms()
+  {
+    return $this->messageTransforms;
+  }
+  /**
    * @param string
    */
   public function setName($name)
@@ -175,6 +196,20 @@ class Topic extends \Google\Model
   public function getState()
   {
     return $this->state;
+  }
+  /**
+   * @param string[]
+   */
+  public function setTags($tags)
+  {
+    $this->tags = $tags;
+  }
+  /**
+   * @return string[]
+   */
+  public function getTags()
+  {
+    return $this->tags;
   }
 }
 

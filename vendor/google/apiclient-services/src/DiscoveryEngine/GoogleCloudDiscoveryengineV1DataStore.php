@@ -20,12 +20,24 @@ namespace Google\Service\DiscoveryEngine;
 class GoogleCloudDiscoveryengineV1DataStore extends \Google\Collection
 {
   protected $collection_key = 'solutionTypes';
+  /**
+   * @var bool
+   */
+  public $aclEnabled;
   protected $advancedSiteSearchConfigType = GoogleCloudDiscoveryengineV1AdvancedSiteSearchConfig::class;
   protected $advancedSiteSearchConfigDataType = '';
   protected $billingEstimationType = GoogleCloudDiscoveryengineV1DataStoreBillingEstimation::class;
   protected $billingEstimationDataType = '';
   protected $cmekConfigType = GoogleCloudDiscoveryengineV1CmekConfig::class;
   protected $cmekConfigDataType = '';
+  /**
+   * @var string
+   */
+  public $configurableBillingApproach;
+  /**
+   * @var string
+   */
+  public $configurableBillingApproachUpdateTime;
   /**
    * @var string
    */
@@ -44,6 +56,12 @@ class GoogleCloudDiscoveryengineV1DataStore extends \Google\Collection
   public $displayName;
   protected $documentProcessingConfigType = GoogleCloudDiscoveryengineV1DocumentProcessingConfig::class;
   protected $documentProcessingConfigDataType = '';
+  protected $healthcareFhirConfigType = GoogleCloudDiscoveryengineV1HealthcareFhirConfig::class;
+  protected $healthcareFhirConfigDataType = '';
+  /**
+   * @var string
+   */
+  public $identityMappingStore;
   /**
    * @var string
    */
@@ -71,6 +89,20 @@ class GoogleCloudDiscoveryengineV1DataStore extends \Google\Collection
   protected $workspaceConfigType = GoogleCloudDiscoveryengineV1WorkspaceConfig::class;
   protected $workspaceConfigDataType = '';
 
+  /**
+   * @param bool
+   */
+  public function setAclEnabled($aclEnabled)
+  {
+    $this->aclEnabled = $aclEnabled;
+  }
+  /**
+   * @return bool
+   */
+  public function getAclEnabled()
+  {
+    return $this->aclEnabled;
+  }
   /**
    * @param GoogleCloudDiscoveryengineV1AdvancedSiteSearchConfig
    */
@@ -112,6 +144,34 @@ class GoogleCloudDiscoveryengineV1DataStore extends \Google\Collection
   public function getCmekConfig()
   {
     return $this->cmekConfig;
+  }
+  /**
+   * @param string
+   */
+  public function setConfigurableBillingApproach($configurableBillingApproach)
+  {
+    $this->configurableBillingApproach = $configurableBillingApproach;
+  }
+  /**
+   * @return string
+   */
+  public function getConfigurableBillingApproach()
+  {
+    return $this->configurableBillingApproach;
+  }
+  /**
+   * @param string
+   */
+  public function setConfigurableBillingApproachUpdateTime($configurableBillingApproachUpdateTime)
+  {
+    $this->configurableBillingApproachUpdateTime = $configurableBillingApproachUpdateTime;
+  }
+  /**
+   * @return string
+   */
+  public function getConfigurableBillingApproachUpdateTime()
+  {
+    return $this->configurableBillingApproachUpdateTime;
   }
   /**
    * @param string
@@ -182,6 +242,34 @@ class GoogleCloudDiscoveryengineV1DataStore extends \Google\Collection
   public function getDocumentProcessingConfig()
   {
     return $this->documentProcessingConfig;
+  }
+  /**
+   * @param GoogleCloudDiscoveryengineV1HealthcareFhirConfig
+   */
+  public function setHealthcareFhirConfig(GoogleCloudDiscoveryengineV1HealthcareFhirConfig $healthcareFhirConfig)
+  {
+    $this->healthcareFhirConfig = $healthcareFhirConfig;
+  }
+  /**
+   * @return GoogleCloudDiscoveryengineV1HealthcareFhirConfig
+   */
+  public function getHealthcareFhirConfig()
+  {
+    return $this->healthcareFhirConfig;
+  }
+  /**
+   * @param string
+   */
+  public function setIdentityMappingStore($identityMappingStore)
+  {
+    $this->identityMappingStore = $identityMappingStore;
+  }
+  /**
+   * @return string
+   */
+  public function getIdentityMappingStore()
+  {
+    return $this->identityMappingStore;
   }
   /**
    * @param string

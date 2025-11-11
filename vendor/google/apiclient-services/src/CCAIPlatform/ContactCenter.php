@@ -25,6 +25,10 @@ class ContactCenter extends \Google\Collection
   /**
    * @var bool
    */
+  public $advancedReportingEnabled;
+  /**
+   * @var bool
+   */
   public $ccaipManagedUsers;
   /**
    * @var string
@@ -42,6 +46,8 @@ class ContactCenter extends \Google\Collection
   public $displayName;
   protected $earlyType = Early::class;
   protected $earlyDataType = '';
+  protected $featureConfigType = FeatureConfig::class;
+  protected $featureConfigDataType = '';
   protected $instanceConfigType = InstanceConfig::class;
   protected $instanceConfigDataType = '';
   /**
@@ -64,6 +70,10 @@ class ContactCenter extends \Google\Collection
    * @var string[]
    */
   public $privateComponents;
+  /**
+   * @var string
+   */
+  public $releaseVersion;
   protected $samlParamsType = SAMLParams::class;
   protected $samlParamsDataType = '';
   /**
@@ -94,6 +104,20 @@ class ContactCenter extends \Google\Collection
   public function getAdminUser()
   {
     return $this->adminUser;
+  }
+  /**
+   * @param bool
+   */
+  public function setAdvancedReportingEnabled($advancedReportingEnabled)
+  {
+    $this->advancedReportingEnabled = $advancedReportingEnabled;
+  }
+  /**
+   * @return bool
+   */
+  public function getAdvancedReportingEnabled()
+  {
+    return $this->advancedReportingEnabled;
   }
   /**
    * @param bool
@@ -178,6 +202,20 @@ class ContactCenter extends \Google\Collection
   public function getEarly()
   {
     return $this->early;
+  }
+  /**
+   * @param FeatureConfig
+   */
+  public function setFeatureConfig(FeatureConfig $featureConfig)
+  {
+    $this->featureConfig = $featureConfig;
+  }
+  /**
+   * @return FeatureConfig
+   */
+  public function getFeatureConfig()
+  {
+    return $this->featureConfig;
   }
   /**
    * @param InstanceConfig
@@ -276,6 +314,20 @@ class ContactCenter extends \Google\Collection
   public function getPrivateComponents()
   {
     return $this->privateComponents;
+  }
+  /**
+   * @param string
+   */
+  public function setReleaseVersion($releaseVersion)
+  {
+    $this->releaseVersion = $releaseVersion;
+  }
+  /**
+   * @return string
+   */
+  public function getReleaseVersion()
+  {
+    return $this->releaseVersion;
   }
   /**
    * @param SAMLParams

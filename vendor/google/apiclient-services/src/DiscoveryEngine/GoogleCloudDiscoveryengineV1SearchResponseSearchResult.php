@@ -27,6 +27,10 @@ class GoogleCloudDiscoveryengineV1SearchResponseSearchResult extends \Google\Mod
    * @var string
    */
   public $id;
+  protected $modelScoresType = GoogleCloudDiscoveryengineV1DoubleList::class;
+  protected $modelScoresDataType = 'map';
+  protected $rankSignalsType = GoogleCloudDiscoveryengineV1SearchResponseSearchResultRankSignals::class;
+  protected $rankSignalsDataType = '';
 
   /**
    * @param GoogleCloudDiscoveryengineV1Chunk
@@ -69,6 +73,34 @@ class GoogleCloudDiscoveryengineV1SearchResponseSearchResult extends \Google\Mod
   public function getId()
   {
     return $this->id;
+  }
+  /**
+   * @param GoogleCloudDiscoveryengineV1DoubleList[]
+   */
+  public function setModelScores($modelScores)
+  {
+    $this->modelScores = $modelScores;
+  }
+  /**
+   * @return GoogleCloudDiscoveryengineV1DoubleList[]
+   */
+  public function getModelScores()
+  {
+    return $this->modelScores;
+  }
+  /**
+   * @param GoogleCloudDiscoveryengineV1SearchResponseSearchResultRankSignals
+   */
+  public function setRankSignals(GoogleCloudDiscoveryengineV1SearchResponseSearchResultRankSignals $rankSignals)
+  {
+    $this->rankSignals = $rankSignals;
+  }
+  /**
+   * @return GoogleCloudDiscoveryengineV1SearchResponseSearchResultRankSignals
+   */
+  public function getRankSignals()
+  {
+    return $this->rankSignals;
   }
 }
 

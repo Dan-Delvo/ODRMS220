@@ -40,9 +40,6 @@ class DataPortability extends \Google\Service
   /** Move a copy of the Google Alerts subscriptions you created. */
   const DATAPORTABILITY_ALERTS_SUBSCRIPTIONS =
       "https://www.googleapis.com/auth/dataportability.alerts.subscriptions";
-  /** Move a copy of messages between you and the businesses you have conversations with across Google services. */
-  const DATAPORTABILITY_BUSINESSMESSAGING_CONVERSATIONS =
-      "https://www.googleapis.com/auth/dataportability.businessmessaging.conversations";
   /** Move a copy of the information you entered into online forms in Chrome. */
   const DATAPORTABILITY_CHROME_AUTOFILL =
       "https://www.googleapis.com/auth/dataportability.chrome.autofill";
@@ -103,6 +100,9 @@ class DataPortability extends \Google\Service
   /** Move a copy of your Starred places list on Maps. */
   const DATAPORTABILITY_MAPS_STARRED_PLACES =
       "https://www.googleapis.com/auth/dataportability.maps.starred_places";
+  /** Move a copy of your vehicle profile on Maps. */
+  const DATAPORTABILITY_MAPS_VEHICLE_PROFILE =
+      "https://www.googleapis.com/auth/dataportability.maps.vehicle_profile";
   /** Move a copy of your Maps activity. */
   const DATAPORTABILITY_MYACTIVITY_MAPS =
       "https://www.googleapis.com/auth/dataportability.myactivity.maps";
@@ -160,6 +160,9 @@ class DataPortability extends \Google\Service
   /** Move a copy of your saved links, images, places, and collections from your use of Google services. */
   const DATAPORTABILITY_SAVED_COLLECTIONS =
       "https://www.googleapis.com/auth/dataportability.saved.collections";
+  /** Move a copy of your comments on Google Search. */
+  const DATAPORTABILITY_SEARCH_UGC_COMMENTS =
+      "https://www.googleapis.com/auth/dataportability.search_ugc.comments";
   /** Move a copy of your media reviews on Google Search. */
   const DATAPORTABILITY_SEARCH_UGC_MEDIA_REVIEWS_AND_STARS =
       "https://www.googleapis.com/auth/dataportability.search_ugc.media.reviews_and_stars";
@@ -233,6 +236,7 @@ class DataPortability extends \Google\Service
   const DATAPORTABILITY_YOUTUBE_UNLISTED_VIDEOS =
       "https://www.googleapis.com/auth/dataportability.youtube.unlisted_videos";
 
+  public $accessType;
   public $archiveJobs;
   public $authorization;
   public $portabilityArchive;
@@ -255,13 +259,37 @@ class DataPortability extends \Google\Service
     $this->version = 'v1';
     $this->serviceName = 'dataportability';
 
+    $this->accessType = new DataPortability\Resource\AccessType(
+        $this,
+        $this->serviceName,
+        'accessType',
+        [
+          'methods' => [
+            'check' => [
+              'path' => 'v1/accessType:check',
+              'httpMethod' => 'POST',
+              'parameters' => [],
+            ],
+          ]
+        ]
+    );
     $this->archiveJobs = new DataPortability\Resource\ArchiveJobs(
         $this,
         $this->serviceName,
         'archiveJobs',
         [
           'methods' => [
-            'getPortabilityArchiveState' => [
+            'cancel' => [
+              'path' => 'v1/{+name}:cancel',
+              'httpMethod' => 'POST',
+              'parameters' => [
+                'name' => [
+                  'location' => 'path',
+                  'type' => 'string',
+                  'required' => true,
+                ],
+              ],
+            ],'getPortabilityArchiveState' => [
               'path' => 'v1/{+name}',
               'httpMethod' => 'GET',
               'parameters' => [

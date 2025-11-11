@@ -21,6 +21,14 @@ class BucketIpFilter extends \Google\Collection
 {
   protected $collection_key = 'vpcNetworkSources';
   /**
+   * @var bool
+   */
+  public $allowAllServiceAgentAccess;
+  /**
+   * @var bool
+   */
+  public $allowCrossOrgVpcs;
+  /**
    * @var string
    */
   public $mode;
@@ -29,6 +37,34 @@ class BucketIpFilter extends \Google\Collection
   protected $vpcNetworkSourcesType = BucketIpFilterVpcNetworkSources::class;
   protected $vpcNetworkSourcesDataType = 'array';
 
+  /**
+   * @param bool
+   */
+  public function setAllowAllServiceAgentAccess($allowAllServiceAgentAccess)
+  {
+    $this->allowAllServiceAgentAccess = $allowAllServiceAgentAccess;
+  }
+  /**
+   * @return bool
+   */
+  public function getAllowAllServiceAgentAccess()
+  {
+    return $this->allowAllServiceAgentAccess;
+  }
+  /**
+   * @param bool
+   */
+  public function setAllowCrossOrgVpcs($allowCrossOrgVpcs)
+  {
+    $this->allowCrossOrgVpcs = $allowCrossOrgVpcs;
+  }
+  /**
+   * @return bool
+   */
+  public function getAllowCrossOrgVpcs()
+  {
+    return $this->allowCrossOrgVpcs;
+  }
   /**
    * @param string
    */

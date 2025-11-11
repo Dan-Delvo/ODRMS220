@@ -35,6 +35,14 @@ class Instance extends \Google\Collection
   /**
    * @var bool
    */
+  public $enableDeletionProtection;
+  /**
+   * @var bool
+   */
+  public $enableManagedEuc;
+  /**
+   * @var bool
+   */
   public $enableThirdPartyIdentity;
   protected $gceSetupType = GceSetup::class;
   protected $gceSetupDataType = '';
@@ -130,6 +138,34 @@ class Instance extends \Google\Collection
   public function getDisableProxyAccess()
   {
     return $this->disableProxyAccess;
+  }
+  /**
+   * @param bool
+   */
+  public function setEnableDeletionProtection($enableDeletionProtection)
+  {
+    $this->enableDeletionProtection = $enableDeletionProtection;
+  }
+  /**
+   * @return bool
+   */
+  public function getEnableDeletionProtection()
+  {
+    return $this->enableDeletionProtection;
+  }
+  /**
+   * @param bool
+   */
+  public function setEnableManagedEuc($enableManagedEuc)
+  {
+    $this->enableManagedEuc = $enableManagedEuc;
+  }
+  /**
+   * @return bool
+   */
+  public function getEnableManagedEuc()
+  {
+    return $this->enableManagedEuc;
   }
   /**
    * @param bool

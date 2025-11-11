@@ -30,6 +30,8 @@ class Node extends \Google\Collection
    * @var string
    */
   public $apiVersion;
+  protected $bootDiskConfigType = BootDiskConfig::class;
+  protected $bootDiskConfigDataType = '';
   /**
    * @var string
    */
@@ -102,6 +104,8 @@ class Node extends \Google\Collection
    * @var string[]
    */
   public $tags;
+  protected $upcomingMaintenanceType = UpcomingMaintenance::class;
+  protected $upcomingMaintenanceDataType = '';
 
   /**
    * @param AcceleratorConfig
@@ -144,6 +148,20 @@ class Node extends \Google\Collection
   public function getApiVersion()
   {
     return $this->apiVersion;
+  }
+  /**
+   * @param BootDiskConfig
+   */
+  public function setBootDiskConfig(BootDiskConfig $bootDiskConfig)
+  {
+    $this->bootDiskConfig = $bootDiskConfig;
+  }
+  /**
+   * @return BootDiskConfig
+   */
+  public function getBootDiskConfig()
+  {
+    return $this->bootDiskConfig;
   }
   /**
    * @param string
@@ -452,6 +470,20 @@ class Node extends \Google\Collection
   public function getTags()
   {
     return $this->tags;
+  }
+  /**
+   * @param UpcomingMaintenance
+   */
+  public function setUpcomingMaintenance(UpcomingMaintenance $upcomingMaintenance)
+  {
+    $this->upcomingMaintenance = $upcomingMaintenance;
+  }
+  /**
+   * @return UpcomingMaintenance
+   */
+  public function getUpcomingMaintenance()
+  {
+    return $this->upcomingMaintenance;
   }
 }
 

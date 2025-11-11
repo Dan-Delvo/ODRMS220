@@ -36,6 +36,10 @@ class GoogleFirestoreAdminV1Database extends \Google\Model
   /**
    * @var string
    */
+  public $databaseEdition;
+  /**
+   * @var string
+   */
   public $deleteProtectionState;
   /**
    * @var string
@@ -52,11 +56,23 @@ class GoogleFirestoreAdminV1Database extends \Google\Model
   /**
    * @var string
    */
+  public $firestoreDataAccessMode;
+  /**
+   * @var bool
+   */
+  public $freeTier;
+  /**
+   * @var string
+   */
   public $keyPrefix;
   /**
    * @var string
    */
   public $locationId;
+  /**
+   * @var string
+   */
+  public $mongodbCompatibleDataAccessMode;
   /**
    * @var string
    */
@@ -69,8 +85,16 @@ class GoogleFirestoreAdminV1Database extends \Google\Model
    * @var string
    */
   public $previousId;
+  /**
+   * @var string
+   */
+  public $realtimeUpdatesMode;
   protected $sourceInfoType = GoogleFirestoreAdminV1SourceInfo::class;
   protected $sourceInfoDataType = '';
+  /**
+   * @var string[]
+   */
+  public $tags;
   /**
    * @var string
    */
@@ -147,6 +171,20 @@ class GoogleFirestoreAdminV1Database extends \Google\Model
   /**
    * @param string
    */
+  public function setDatabaseEdition($databaseEdition)
+  {
+    $this->databaseEdition = $databaseEdition;
+  }
+  /**
+   * @return string
+   */
+  public function getDatabaseEdition()
+  {
+    return $this->databaseEdition;
+  }
+  /**
+   * @param string
+   */
   public function setDeleteProtectionState($deleteProtectionState)
   {
     $this->deleteProtectionState = $deleteProtectionState;
@@ -203,6 +241,34 @@ class GoogleFirestoreAdminV1Database extends \Google\Model
   /**
    * @param string
    */
+  public function setFirestoreDataAccessMode($firestoreDataAccessMode)
+  {
+    $this->firestoreDataAccessMode = $firestoreDataAccessMode;
+  }
+  /**
+   * @return string
+   */
+  public function getFirestoreDataAccessMode()
+  {
+    return $this->firestoreDataAccessMode;
+  }
+  /**
+   * @param bool
+   */
+  public function setFreeTier($freeTier)
+  {
+    $this->freeTier = $freeTier;
+  }
+  /**
+   * @return bool
+   */
+  public function getFreeTier()
+  {
+    return $this->freeTier;
+  }
+  /**
+   * @param string
+   */
   public function setKeyPrefix($keyPrefix)
   {
     $this->keyPrefix = $keyPrefix;
@@ -227,6 +293,20 @@ class GoogleFirestoreAdminV1Database extends \Google\Model
   public function getLocationId()
   {
     return $this->locationId;
+  }
+  /**
+   * @param string
+   */
+  public function setMongodbCompatibleDataAccessMode($mongodbCompatibleDataAccessMode)
+  {
+    $this->mongodbCompatibleDataAccessMode = $mongodbCompatibleDataAccessMode;
+  }
+  /**
+   * @return string
+   */
+  public function getMongodbCompatibleDataAccessMode()
+  {
+    return $this->mongodbCompatibleDataAccessMode;
   }
   /**
    * @param string
@@ -271,6 +351,20 @@ class GoogleFirestoreAdminV1Database extends \Google\Model
     return $this->previousId;
   }
   /**
+   * @param string
+   */
+  public function setRealtimeUpdatesMode($realtimeUpdatesMode)
+  {
+    $this->realtimeUpdatesMode = $realtimeUpdatesMode;
+  }
+  /**
+   * @return string
+   */
+  public function getRealtimeUpdatesMode()
+  {
+    return $this->realtimeUpdatesMode;
+  }
+  /**
    * @param GoogleFirestoreAdminV1SourceInfo
    */
   public function setSourceInfo(GoogleFirestoreAdminV1SourceInfo $sourceInfo)
@@ -283,6 +377,20 @@ class GoogleFirestoreAdminV1Database extends \Google\Model
   public function getSourceInfo()
   {
     return $this->sourceInfo;
+  }
+  /**
+   * @param string[]
+   */
+  public function setTags($tags)
+  {
+    $this->tags = $tags;
+  }
+  /**
+   * @return string[]
+   */
+  public function getTags()
+  {
+    return $this->tags;
   }
   /**
    * @param string

@@ -19,7 +19,7 @@ namespace Google\Service\SQLAdmin;
 
 class ConnectSettings extends \Google\Collection
 {
-  protected $collection_key = 'ipAddresses';
+  protected $collection_key = 'nodes';
   /**
    * @var string
    */
@@ -36,12 +36,24 @@ class ConnectSettings extends \Google\Collection
    * @var string
    */
   public $dnsName;
+  protected $dnsNamesType = DnsNameMapping::class;
+  protected $dnsNamesDataType = 'array';
   protected $ipAddressesType = IpMapping::class;
   protected $ipAddressesDataType = 'array';
   /**
    * @var string
    */
   public $kind;
+  /**
+   * @var string[]
+   */
+  public $mdxProtocolSupport;
+  /**
+   * @var int
+   */
+  public $nodeCount;
+  protected $nodesType = ConnectPoolNodeConfig::class;
+  protected $nodesDataType = 'array';
   /**
    * @var bool
    */
@@ -114,6 +126,20 @@ class ConnectSettings extends \Google\Collection
     return $this->dnsName;
   }
   /**
+   * @param DnsNameMapping[]
+   */
+  public function setDnsNames($dnsNames)
+  {
+    $this->dnsNames = $dnsNames;
+  }
+  /**
+   * @return DnsNameMapping[]
+   */
+  public function getDnsNames()
+  {
+    return $this->dnsNames;
+  }
+  /**
    * @param IpMapping[]
    */
   public function setIpAddresses($ipAddresses)
@@ -140,6 +166,48 @@ class ConnectSettings extends \Google\Collection
   public function getKind()
   {
     return $this->kind;
+  }
+  /**
+   * @param string[]
+   */
+  public function setMdxProtocolSupport($mdxProtocolSupport)
+  {
+    $this->mdxProtocolSupport = $mdxProtocolSupport;
+  }
+  /**
+   * @return string[]
+   */
+  public function getMdxProtocolSupport()
+  {
+    return $this->mdxProtocolSupport;
+  }
+  /**
+   * @param int
+   */
+  public function setNodeCount($nodeCount)
+  {
+    $this->nodeCount = $nodeCount;
+  }
+  /**
+   * @return int
+   */
+  public function getNodeCount()
+  {
+    return $this->nodeCount;
+  }
+  /**
+   * @param ConnectPoolNodeConfig[]
+   */
+  public function setNodes($nodes)
+  {
+    $this->nodes = $nodes;
+  }
+  /**
+   * @return ConnectPoolNodeConfig[]
+   */
+  public function getNodes()
+  {
+    return $this->nodes;
   }
   /**
    * @param bool

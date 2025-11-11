@@ -27,6 +27,12 @@ class Cluster extends \Google\Model
   protected $automatedBackupPolicyDataType = '';
   protected $backupSourceType = BackupSource::class;
   protected $backupSourceDataType = '';
+  protected $backupdrBackupSourceType = BackupDrBackupSource::class;
+  protected $backupdrBackupSourceDataType = '';
+  protected $backupdrInfoType = BackupDrInfo::class;
+  protected $backupdrInfoDataType = '';
+  protected $cloudsqlBackupRunSourceType = CloudSQLBackupRunSource::class;
+  protected $cloudsqlBackupRunSourceDataType = '';
   /**
    * @var string
    */
@@ -43,6 +49,8 @@ class Cluster extends \Google\Model
    * @var string
    */
   public $databaseVersion;
+  protected $dataplexConfigType = DataplexConfig::class;
+  protected $dataplexConfigDataType = '';
   /**
    * @var string
    */
@@ -163,6 +171,48 @@ class Cluster extends \Google\Model
     return $this->backupSource;
   }
   /**
+   * @param BackupDrBackupSource
+   */
+  public function setBackupdrBackupSource(BackupDrBackupSource $backupdrBackupSource)
+  {
+    $this->backupdrBackupSource = $backupdrBackupSource;
+  }
+  /**
+   * @return BackupDrBackupSource
+   */
+  public function getBackupdrBackupSource()
+  {
+    return $this->backupdrBackupSource;
+  }
+  /**
+   * @param BackupDrInfo
+   */
+  public function setBackupdrInfo(BackupDrInfo $backupdrInfo)
+  {
+    $this->backupdrInfo = $backupdrInfo;
+  }
+  /**
+   * @return BackupDrInfo
+   */
+  public function getBackupdrInfo()
+  {
+    return $this->backupdrInfo;
+  }
+  /**
+   * @param CloudSQLBackupRunSource
+   */
+  public function setCloudsqlBackupRunSource(CloudSQLBackupRunSource $cloudsqlBackupRunSource)
+  {
+    $this->cloudsqlBackupRunSource = $cloudsqlBackupRunSource;
+  }
+  /**
+   * @return CloudSQLBackupRunSource
+   */
+  public function getCloudsqlBackupRunSource()
+  {
+    return $this->cloudsqlBackupRunSource;
+  }
+  /**
    * @param string
    */
   public function setClusterType($clusterType)
@@ -231,6 +281,20 @@ class Cluster extends \Google\Model
   public function getDatabaseVersion()
   {
     return $this->databaseVersion;
+  }
+  /**
+   * @param DataplexConfig
+   */
+  public function setDataplexConfig(DataplexConfig $dataplexConfig)
+  {
+    $this->dataplexConfig = $dataplexConfig;
+  }
+  /**
+   * @return DataplexConfig
+   */
+  public function getDataplexConfig()
+  {
+    return $this->dataplexConfig;
   }
   /**
    * @param string

@@ -19,12 +19,6 @@ namespace Google\Service\WorkloadManager;
 
 class WorkloadProfile extends \Google\Model
 {
-  protected $applicationType = Layer::class;
-  protected $applicationDataType = '';
-  protected $ascsType = Layer::class;
-  protected $ascsDataType = '';
-  protected $databaseType = Layer::class;
-  protected $databaseDataType = '';
   /**
    * @var string[]
    */
@@ -39,61 +33,11 @@ class WorkloadProfile extends \Google\Model
   public $refreshedTime;
   protected $sapWorkloadType = SapWorkload::class;
   protected $sapWorkloadDataType = '';
-  protected $sqlserverWorkloadType = SqlserverWorkload::class;
-  protected $sqlserverWorkloadDataType = '';
-  /**
-   * @var string
-   */
-  public $state;
-  protected $threeTierWorkloadType = ThreeTierWorkload::class;
-  protected $threeTierWorkloadDataType = '';
   /**
    * @var string
    */
   public $workloadType;
 
-  /**
-   * @param Layer
-   */
-  public function setApplication(Layer $application)
-  {
-    $this->application = $application;
-  }
-  /**
-   * @return Layer
-   */
-  public function getApplication()
-  {
-    return $this->application;
-  }
-  /**
-   * @param Layer
-   */
-  public function setAscs(Layer $ascs)
-  {
-    $this->ascs = $ascs;
-  }
-  /**
-   * @return Layer
-   */
-  public function getAscs()
-  {
-    return $this->ascs;
-  }
-  /**
-   * @param Layer
-   */
-  public function setDatabase(Layer $database)
-  {
-    $this->database = $database;
-  }
-  /**
-   * @return Layer
-   */
-  public function getDatabase()
-  {
-    return $this->database;
-  }
   /**
    * @param string[]
    */
@@ -149,48 +93,6 @@ class WorkloadProfile extends \Google\Model
   public function getSapWorkload()
   {
     return $this->sapWorkload;
-  }
-  /**
-   * @param SqlserverWorkload
-   */
-  public function setSqlserverWorkload(SqlserverWorkload $sqlserverWorkload)
-  {
-    $this->sqlserverWorkload = $sqlserverWorkload;
-  }
-  /**
-   * @return SqlserverWorkload
-   */
-  public function getSqlserverWorkload()
-  {
-    return $this->sqlserverWorkload;
-  }
-  /**
-   * @param string
-   */
-  public function setState($state)
-  {
-    $this->state = $state;
-  }
-  /**
-   * @return string
-   */
-  public function getState()
-  {
-    return $this->state;
-  }
-  /**
-   * @param ThreeTierWorkload
-   */
-  public function setThreeTierWorkload(ThreeTierWorkload $threeTierWorkload)
-  {
-    $this->threeTierWorkload = $threeTierWorkload;
-  }
-  /**
-   * @return ThreeTierWorkload
-   */
-  public function getThreeTierWorkload()
-  {
-    return $this->threeTierWorkload;
   }
   /**
    * @param string

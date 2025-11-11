@@ -21,6 +21,22 @@ class GoogleCloudDocumentaiV1ProcessOptionsLayoutConfig extends \Google\Model
 {
   protected $chunkingConfigType = GoogleCloudDocumentaiV1ProcessOptionsLayoutConfigChunkingConfig::class;
   protected $chunkingConfigDataType = '';
+  /**
+   * @var bool
+   */
+  public $enableImageAnnotation;
+  /**
+   * @var bool
+   */
+  public $enableTableAnnotation;
+  /**
+   * @var bool
+   */
+  public $returnBoundingBoxes;
+  /**
+   * @var bool
+   */
+  public $returnImages;
 
   /**
    * @param GoogleCloudDocumentaiV1ProcessOptionsLayoutConfigChunkingConfig
@@ -35,6 +51,62 @@ class GoogleCloudDocumentaiV1ProcessOptionsLayoutConfig extends \Google\Model
   public function getChunkingConfig()
   {
     return $this->chunkingConfig;
+  }
+  /**
+   * @param bool
+   */
+  public function setEnableImageAnnotation($enableImageAnnotation)
+  {
+    $this->enableImageAnnotation = $enableImageAnnotation;
+  }
+  /**
+   * @return bool
+   */
+  public function getEnableImageAnnotation()
+  {
+    return $this->enableImageAnnotation;
+  }
+  /**
+   * @param bool
+   */
+  public function setEnableTableAnnotation($enableTableAnnotation)
+  {
+    $this->enableTableAnnotation = $enableTableAnnotation;
+  }
+  /**
+   * @return bool
+   */
+  public function getEnableTableAnnotation()
+  {
+    return $this->enableTableAnnotation;
+  }
+  /**
+   * @param bool
+   */
+  public function setReturnBoundingBoxes($returnBoundingBoxes)
+  {
+    $this->returnBoundingBoxes = $returnBoundingBoxes;
+  }
+  /**
+   * @return bool
+   */
+  public function getReturnBoundingBoxes()
+  {
+    return $this->returnBoundingBoxes;
+  }
+  /**
+   * @param bool
+   */
+  public function setReturnImages($returnImages)
+  {
+    $this->returnImages = $returnImages;
+  }
+  /**
+   * @return bool
+   */
+  public function getReturnImages()
+  {
+    return $this->returnImages;
   }
 }
 

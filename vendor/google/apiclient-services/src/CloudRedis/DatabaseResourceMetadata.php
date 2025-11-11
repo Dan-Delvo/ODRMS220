@@ -26,6 +26,8 @@ class DatabaseResourceMetadata extends \Google\Collection
   protected $backupConfigurationDataType = '';
   protected $backupRunType = BackupRun::class;
   protected $backupRunDataType = '';
+  protected $backupdrConfigurationType = BackupDRConfiguration::class;
+  protected $backupdrConfigurationDataType = '';
   /**
    * @var string
    */
@@ -46,6 +48,8 @@ class DatabaseResourceMetadata extends \Google\Collection
    * @var string
    */
   public $expectedState;
+  protected $gcbdrConfigurationType = GCBDRConfiguration::class;
+  protected $gcbdrConfigurationDataType = '';
   protected $idType = DatabaseResourceId::class;
   protected $idDataType = '';
   /**
@@ -53,11 +57,17 @@ class DatabaseResourceMetadata extends \Google\Collection
    */
   public $instanceType;
   /**
+   * @var bool
+   */
+  public $isDeletionProtectionEnabled;
+  /**
    * @var string
    */
   public $location;
   protected $machineConfigurationType = MachineConfiguration::class;
   protected $machineConfigurationDataType = '';
+  protected $maintenanceInfoType = ResourceMaintenanceInfo::class;
+  protected $maintenanceInfoDataType = '';
   protected $primaryResourceIdType = DatabaseResourceId::class;
   protected $primaryResourceIdDataType = '';
   /**
@@ -74,6 +84,10 @@ class DatabaseResourceMetadata extends \Google\Collection
    * @var string
    */
   public $resourceName;
+  /**
+   * @var string
+   */
+  public $suspensionReason;
   protected $tagsSetType = Tags::class;
   protected $tagsSetDataType = '';
   /**
@@ -82,6 +96,10 @@ class DatabaseResourceMetadata extends \Google\Collection
   public $updationTime;
   protected $userLabelSetType = UserLabels::class;
   protected $userLabelSetDataType = '';
+  /**
+   * @var string
+   */
+  public $zone;
 
   /**
    * @param AvailabilityConfiguration
@@ -124,6 +142,20 @@ class DatabaseResourceMetadata extends \Google\Collection
   public function getBackupRun()
   {
     return $this->backupRun;
+  }
+  /**
+   * @param BackupDRConfiguration
+   */
+  public function setBackupdrConfiguration(BackupDRConfiguration $backupdrConfiguration)
+  {
+    $this->backupdrConfiguration = $backupdrConfiguration;
+  }
+  /**
+   * @return BackupDRConfiguration
+   */
+  public function getBackupdrConfiguration()
+  {
+    return $this->backupdrConfiguration;
   }
   /**
    * @param string
@@ -210,6 +242,20 @@ class DatabaseResourceMetadata extends \Google\Collection
     return $this->expectedState;
   }
   /**
+   * @param GCBDRConfiguration
+   */
+  public function setGcbdrConfiguration(GCBDRConfiguration $gcbdrConfiguration)
+  {
+    $this->gcbdrConfiguration = $gcbdrConfiguration;
+  }
+  /**
+   * @return GCBDRConfiguration
+   */
+  public function getGcbdrConfiguration()
+  {
+    return $this->gcbdrConfiguration;
+  }
+  /**
    * @param DatabaseResourceId
    */
   public function setId(DatabaseResourceId $id)
@@ -238,6 +284,20 @@ class DatabaseResourceMetadata extends \Google\Collection
     return $this->instanceType;
   }
   /**
+   * @param bool
+   */
+  public function setIsDeletionProtectionEnabled($isDeletionProtectionEnabled)
+  {
+    $this->isDeletionProtectionEnabled = $isDeletionProtectionEnabled;
+  }
+  /**
+   * @return bool
+   */
+  public function getIsDeletionProtectionEnabled()
+  {
+    return $this->isDeletionProtectionEnabled;
+  }
+  /**
    * @param string
    */
   public function setLocation($location)
@@ -264,6 +324,20 @@ class DatabaseResourceMetadata extends \Google\Collection
   public function getMachineConfiguration()
   {
     return $this->machineConfiguration;
+  }
+  /**
+   * @param ResourceMaintenanceInfo
+   */
+  public function setMaintenanceInfo(ResourceMaintenanceInfo $maintenanceInfo)
+  {
+    $this->maintenanceInfo = $maintenanceInfo;
+  }
+  /**
+   * @return ResourceMaintenanceInfo
+   */
+  public function getMaintenanceInfo()
+  {
+    return $this->maintenanceInfo;
   }
   /**
    * @param DatabaseResourceId
@@ -336,6 +410,20 @@ class DatabaseResourceMetadata extends \Google\Collection
     return $this->resourceName;
   }
   /**
+   * @param string
+   */
+  public function setSuspensionReason($suspensionReason)
+  {
+    $this->suspensionReason = $suspensionReason;
+  }
+  /**
+   * @return string
+   */
+  public function getSuspensionReason()
+  {
+    return $this->suspensionReason;
+  }
+  /**
    * @param Tags
    */
   public function setTagsSet(Tags $tagsSet)
@@ -376,6 +464,20 @@ class DatabaseResourceMetadata extends \Google\Collection
   public function getUserLabelSet()
   {
     return $this->userLabelSet;
+  }
+  /**
+   * @param string
+   */
+  public function setZone($zone)
+  {
+    $this->zone = $zone;
+  }
+  /**
+   * @return string
+   */
+  public function getZone()
+  {
+    return $this->zone;
   }
 }
 

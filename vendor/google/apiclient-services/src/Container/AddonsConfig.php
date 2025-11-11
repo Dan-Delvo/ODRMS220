@@ -33,12 +33,16 @@ class AddonsConfig extends \Google\Model
   protected $gcsFuseCsiDriverConfigDataType = '';
   protected $gkeBackupAgentConfigType = GkeBackupAgentConfig::class;
   protected $gkeBackupAgentConfigDataType = '';
+  protected $highScaleCheckpointingConfigType = HighScaleCheckpointingConfig::class;
+  protected $highScaleCheckpointingConfigDataType = '';
   protected $horizontalPodAutoscalingType = HorizontalPodAutoscaling::class;
   protected $horizontalPodAutoscalingDataType = '';
   protected $httpLoadBalancingType = HttpLoadBalancing::class;
   protected $httpLoadBalancingDataType = '';
   protected $kubernetesDashboardType = KubernetesDashboard::class;
   protected $kubernetesDashboardDataType = '';
+  protected $lustreCsiDriverConfigType = LustreCsiDriverConfig::class;
+  protected $lustreCsiDriverConfigDataType = '';
   protected $networkPolicyConfigType = NetworkPolicyConfig::class;
   protected $networkPolicyConfigDataType = '';
   protected $parallelstoreCsiDriverConfigType = ParallelstoreCsiDriverConfig::class;
@@ -147,6 +151,20 @@ class AddonsConfig extends \Google\Model
     return $this->gkeBackupAgentConfig;
   }
   /**
+   * @param HighScaleCheckpointingConfig
+   */
+  public function setHighScaleCheckpointingConfig(HighScaleCheckpointingConfig $highScaleCheckpointingConfig)
+  {
+    $this->highScaleCheckpointingConfig = $highScaleCheckpointingConfig;
+  }
+  /**
+   * @return HighScaleCheckpointingConfig
+   */
+  public function getHighScaleCheckpointingConfig()
+  {
+    return $this->highScaleCheckpointingConfig;
+  }
+  /**
    * @param HorizontalPodAutoscaling
    */
   public function setHorizontalPodAutoscaling(HorizontalPodAutoscaling $horizontalPodAutoscaling)
@@ -187,6 +205,20 @@ class AddonsConfig extends \Google\Model
   public function getKubernetesDashboard()
   {
     return $this->kubernetesDashboard;
+  }
+  /**
+   * @param LustreCsiDriverConfig
+   */
+  public function setLustreCsiDriverConfig(LustreCsiDriverConfig $lustreCsiDriverConfig)
+  {
+    $this->lustreCsiDriverConfig = $lustreCsiDriverConfig;
+  }
+  /**
+   * @return LustreCsiDriverConfig
+   */
+  public function getLustreCsiDriverConfig()
+  {
+    return $this->lustreCsiDriverConfig;
   }
   /**
    * @param NetworkPolicyConfig

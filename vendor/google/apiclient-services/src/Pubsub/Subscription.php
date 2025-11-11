@@ -17,8 +17,9 @@
 
 namespace Google\Service\Pubsub;
 
-class Subscription extends \Google\Model
+class Subscription extends \Google\Collection
 {
+  protected $collection_key = 'messageTransforms';
   /**
    * @var int
    */
@@ -57,6 +58,8 @@ class Subscription extends \Google\Model
    * @var string
    */
   public $messageRetentionDuration;
+  protected $messageTransformsType = MessageTransform::class;
+  protected $messageTransformsDataType = 'array';
   /**
    * @var string
    */
@@ -73,6 +76,10 @@ class Subscription extends \Google\Model
    * @var string
    */
   public $state;
+  /**
+   * @var string[]
+   */
+  public $tags;
   /**
    * @var string
    */
@@ -251,6 +258,20 @@ class Subscription extends \Google\Model
     return $this->messageRetentionDuration;
   }
   /**
+   * @param MessageTransform[]
+   */
+  public function setMessageTransforms($messageTransforms)
+  {
+    $this->messageTransforms = $messageTransforms;
+  }
+  /**
+   * @return MessageTransform[]
+   */
+  public function getMessageTransforms()
+  {
+    return $this->messageTransforms;
+  }
+  /**
    * @param string
    */
   public function setName($name)
@@ -319,6 +340,20 @@ class Subscription extends \Google\Model
   public function getState()
   {
     return $this->state;
+  }
+  /**
+   * @param string[]
+   */
+  public function setTags($tags)
+  {
+    $this->tags = $tags;
+  }
+  /**
+   * @return string[]
+   */
+  public function getTags()
+  {
+    return $this->tags;
   }
   /**
    * @param string

@@ -20,6 +20,8 @@ namespace Google\Service\Backupdr;
 class Backup extends \Google\Collection
 {
   protected $collection_key = 'serviceLocks';
+  protected $alloyDbBackupPropertiesType = AlloyDbClusterBackupProperties::class;
+  protected $alloyDbBackupPropertiesDataType = '';
   protected $backupApplianceBackupPropertiesType = BackupApplianceBackupProperties::class;
   protected $backupApplianceBackupPropertiesDataType = '';
   protected $backupApplianceLocksType = BackupLock::class;
@@ -28,6 +30,8 @@ class Backup extends \Google\Collection
    * @var string
    */
   public $backupType;
+  protected $cloudSqlInstanceBackupPropertiesType = CloudSqlInstanceBackupProperties::class;
+  protected $cloudSqlInstanceBackupPropertiesDataType = '';
   protected $computeInstanceBackupPropertiesType = ComputeInstanceBackupProperties::class;
   protected $computeInstanceBackupPropertiesDataType = '';
   /**
@@ -42,6 +46,8 @@ class Backup extends \Google\Collection
    * @var string
    */
   public $description;
+  protected $diskBackupPropertiesType = DiskBackupProperties::class;
+  protected $diskBackupPropertiesDataType = '';
   /**
    * @var string
    */
@@ -56,6 +62,8 @@ class Backup extends \Google\Collection
   public $expireTime;
   protected $gcpBackupPlanInfoType = GCPBackupPlanInfo::class;
   protected $gcpBackupPlanInfoDataType = '';
+  protected $gcpResourceType = BackupGcpResource::class;
+  protected $gcpResourceDataType = '';
   /**
    * @var string[]
    */
@@ -87,6 +95,20 @@ class Backup extends \Google\Collection
    */
   public $updateTime;
 
+  /**
+   * @param AlloyDbClusterBackupProperties
+   */
+  public function setAlloyDbBackupProperties(AlloyDbClusterBackupProperties $alloyDbBackupProperties)
+  {
+    $this->alloyDbBackupProperties = $alloyDbBackupProperties;
+  }
+  /**
+   * @return AlloyDbClusterBackupProperties
+   */
+  public function getAlloyDbBackupProperties()
+  {
+    return $this->alloyDbBackupProperties;
+  }
   /**
    * @param BackupApplianceBackupProperties
    */
@@ -128,6 +150,20 @@ class Backup extends \Google\Collection
   public function getBackupType()
   {
     return $this->backupType;
+  }
+  /**
+   * @param CloudSqlInstanceBackupProperties
+   */
+  public function setCloudSqlInstanceBackupProperties(CloudSqlInstanceBackupProperties $cloudSqlInstanceBackupProperties)
+  {
+    $this->cloudSqlInstanceBackupProperties = $cloudSqlInstanceBackupProperties;
+  }
+  /**
+   * @return CloudSqlInstanceBackupProperties
+   */
+  public function getCloudSqlInstanceBackupProperties()
+  {
+    return $this->cloudSqlInstanceBackupProperties;
   }
   /**
    * @param ComputeInstanceBackupProperties
@@ -186,6 +222,20 @@ class Backup extends \Google\Collection
     return $this->description;
   }
   /**
+   * @param DiskBackupProperties
+   */
+  public function setDiskBackupProperties(DiskBackupProperties $diskBackupProperties)
+  {
+    $this->diskBackupProperties = $diskBackupProperties;
+  }
+  /**
+   * @return DiskBackupProperties
+   */
+  public function getDiskBackupProperties()
+  {
+    return $this->diskBackupProperties;
+  }
+  /**
    * @param string
    */
   public function setEnforcedRetentionEndTime($enforcedRetentionEndTime)
@@ -240,6 +290,20 @@ class Backup extends \Google\Collection
   public function getGcpBackupPlanInfo()
   {
     return $this->gcpBackupPlanInfo;
+  }
+  /**
+   * @param BackupGcpResource
+   */
+  public function setGcpResource(BackupGcpResource $gcpResource)
+  {
+    $this->gcpResource = $gcpResource;
+  }
+  /**
+   * @return BackupGcpResource
+   */
+  public function getGcpResource()
+  {
+    return $this->gcpResource;
   }
   /**
    * @param string[]

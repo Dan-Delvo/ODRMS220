@@ -27,6 +27,7 @@ class StoragePool extends \Google\Model
    * @var bool
    */
   public $allowAutoTiering;
+  public $availableThroughputMibps;
   /**
    * @var string
    */
@@ -34,11 +35,23 @@ class StoragePool extends \Google\Model
   /**
    * @var string
    */
+  public $coldTierSizeUsedGib;
+  /**
+   * @var string
+   */
   public $createTime;
+  /**
+   * @var bool
+   */
+  public $customPerformanceEnabled;
   /**
    * @var string
    */
   public $description;
+  /**
+   * @var bool
+   */
+  public $enableHotTierAutoResize;
   /**
    * @var string
    */
@@ -47,6 +60,14 @@ class StoragePool extends \Google\Model
    * @var bool
    */
   public $globalAccessAllowed;
+  /**
+   * @var string
+   */
+  public $hotTierSizeGib;
+  /**
+   * @var string
+   */
+  public $hotTierSizeUsedGib;
   /**
    * @var string
    */
@@ -74,6 +95,10 @@ class StoragePool extends \Google\Model
   /**
    * @var string
    */
+  public $qosType;
+  /**
+   * @var string
+   */
   public $replicaZone;
   /**
    * @var bool
@@ -95,6 +120,14 @@ class StoragePool extends \Google\Model
    * @var string
    */
   public $stateDetails;
+  /**
+   * @var string
+   */
+  public $totalIops;
+  /**
+   * @var string
+   */
+  public $totalThroughputMibps;
   /**
    * @var string
    */
@@ -136,6 +169,14 @@ class StoragePool extends \Google\Model
   {
     return $this->allowAutoTiering;
   }
+  public function setAvailableThroughputMibps($availableThroughputMibps)
+  {
+    $this->availableThroughputMibps = $availableThroughputMibps;
+  }
+  public function getAvailableThroughputMibps()
+  {
+    return $this->availableThroughputMibps;
+  }
   /**
    * @param string
    */
@@ -153,6 +194,20 @@ class StoragePool extends \Google\Model
   /**
    * @param string
    */
+  public function setColdTierSizeUsedGib($coldTierSizeUsedGib)
+  {
+    $this->coldTierSizeUsedGib = $coldTierSizeUsedGib;
+  }
+  /**
+   * @return string
+   */
+  public function getColdTierSizeUsedGib()
+  {
+    return $this->coldTierSizeUsedGib;
+  }
+  /**
+   * @param string
+   */
   public function setCreateTime($createTime)
   {
     $this->createTime = $createTime;
@@ -163,6 +218,20 @@ class StoragePool extends \Google\Model
   public function getCreateTime()
   {
     return $this->createTime;
+  }
+  /**
+   * @param bool
+   */
+  public function setCustomPerformanceEnabled($customPerformanceEnabled)
+  {
+    $this->customPerformanceEnabled = $customPerformanceEnabled;
+  }
+  /**
+   * @return bool
+   */
+  public function getCustomPerformanceEnabled()
+  {
+    return $this->customPerformanceEnabled;
   }
   /**
    * @param string
@@ -177,6 +246,20 @@ class StoragePool extends \Google\Model
   public function getDescription()
   {
     return $this->description;
+  }
+  /**
+   * @param bool
+   */
+  public function setEnableHotTierAutoResize($enableHotTierAutoResize)
+  {
+    $this->enableHotTierAutoResize = $enableHotTierAutoResize;
+  }
+  /**
+   * @return bool
+   */
+  public function getEnableHotTierAutoResize()
+  {
+    return $this->enableHotTierAutoResize;
   }
   /**
    * @param string
@@ -205,6 +288,34 @@ class StoragePool extends \Google\Model
   public function getGlobalAccessAllowed()
   {
     return $this->globalAccessAllowed;
+  }
+  /**
+   * @param string
+   */
+  public function setHotTierSizeGib($hotTierSizeGib)
+  {
+    $this->hotTierSizeGib = $hotTierSizeGib;
+  }
+  /**
+   * @return string
+   */
+  public function getHotTierSizeGib()
+  {
+    return $this->hotTierSizeGib;
+  }
+  /**
+   * @param string
+   */
+  public function setHotTierSizeUsedGib($hotTierSizeUsedGib)
+  {
+    $this->hotTierSizeUsedGib = $hotTierSizeUsedGib;
+  }
+  /**
+   * @return string
+   */
+  public function getHotTierSizeUsedGib()
+  {
+    return $this->hotTierSizeUsedGib;
   }
   /**
    * @param string
@@ -293,6 +404,20 @@ class StoragePool extends \Google\Model
   /**
    * @param string
    */
+  public function setQosType($qosType)
+  {
+    $this->qosType = $qosType;
+  }
+  /**
+   * @return string
+   */
+  public function getQosType()
+  {
+    return $this->qosType;
+  }
+  /**
+   * @param string
+   */
   public function setReplicaZone($replicaZone)
   {
     $this->replicaZone = $replicaZone;
@@ -373,6 +498,34 @@ class StoragePool extends \Google\Model
   public function getStateDetails()
   {
     return $this->stateDetails;
+  }
+  /**
+   * @param string
+   */
+  public function setTotalIops($totalIops)
+  {
+    $this->totalIops = $totalIops;
+  }
+  /**
+   * @return string
+   */
+  public function getTotalIops()
+  {
+    return $this->totalIops;
+  }
+  /**
+   * @param string
+   */
+  public function setTotalThroughputMibps($totalThroughputMibps)
+  {
+    $this->totalThroughputMibps = $totalThroughputMibps;
+  }
+  /**
+   * @return string
+   */
+  public function getTotalThroughputMibps()
+  {
+    return $this->totalThroughputMibps;
   }
   /**
    * @param string

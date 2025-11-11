@@ -19,9 +19,59 @@ namespace Google\Service\Compute;
 
 class AllocationResourceStatus extends \Google\Model
 {
+  protected $healthInfoType = AllocationResourceStatusHealthInfo::class;
+  protected $healthInfoDataType = '';
+  /**
+   * @var int
+   */
+  public $reservationBlockCount;
+  protected $reservationMaintenanceType = GroupMaintenanceInfo::class;
+  protected $reservationMaintenanceDataType = '';
   protected $specificSkuAllocationType = AllocationResourceStatusSpecificSKUAllocation::class;
   protected $specificSkuAllocationDataType = '';
 
+  /**
+   * @param AllocationResourceStatusHealthInfo
+   */
+  public function setHealthInfo(AllocationResourceStatusHealthInfo $healthInfo)
+  {
+    $this->healthInfo = $healthInfo;
+  }
+  /**
+   * @return AllocationResourceStatusHealthInfo
+   */
+  public function getHealthInfo()
+  {
+    return $this->healthInfo;
+  }
+  /**
+   * @param int
+   */
+  public function setReservationBlockCount($reservationBlockCount)
+  {
+    $this->reservationBlockCount = $reservationBlockCount;
+  }
+  /**
+   * @return int
+   */
+  public function getReservationBlockCount()
+  {
+    return $this->reservationBlockCount;
+  }
+  /**
+   * @param GroupMaintenanceInfo
+   */
+  public function setReservationMaintenance(GroupMaintenanceInfo $reservationMaintenance)
+  {
+    $this->reservationMaintenance = $reservationMaintenance;
+  }
+  /**
+   * @return GroupMaintenanceInfo
+   */
+  public function getReservationMaintenance()
+  {
+    return $this->reservationMaintenance;
+  }
   /**
    * @param AllocationResourceStatusSpecificSKUAllocation
    */

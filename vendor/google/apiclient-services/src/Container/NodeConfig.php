@@ -24,6 +24,8 @@ class NodeConfig extends \Google\Collection
   protected $acceleratorsDataType = 'array';
   protected $advancedMachineFeaturesType = AdvancedMachineFeatures::class;
   protected $advancedMachineFeaturesDataType = '';
+  protected $bootDiskType = BootDisk::class;
+  protected $bootDiskDataType = '';
   /**
    * @var string
    */
@@ -52,6 +54,10 @@ class NodeConfig extends \Google\Collection
   protected $ephemeralStorageLocalSsdConfigDataType = '';
   protected $fastSocketType = FastSocket::class;
   protected $fastSocketDataType = '';
+  /**
+   * @var bool
+   */
+  public $flexStart;
   protected $gcfsConfigType = GcfsConfig::class;
   protected $gcfsConfigDataType = '';
   protected $gvnicType = VirtualNIC::class;
@@ -178,6 +184,20 @@ class NodeConfig extends \Google\Collection
     return $this->advancedMachineFeatures;
   }
   /**
+   * @param BootDisk
+   */
+  public function setBootDisk(BootDisk $bootDisk)
+  {
+    $this->bootDisk = $bootDisk;
+  }
+  /**
+   * @return BootDisk
+   */
+  public function getBootDisk()
+  {
+    return $this->bootDisk;
+  }
+  /**
    * @param string
    */
   public function setBootDiskKmsKey($bootDiskKmsKey)
@@ -302,6 +322,20 @@ class NodeConfig extends \Google\Collection
   public function getFastSocket()
   {
     return $this->fastSocket;
+  }
+  /**
+   * @param bool
+   */
+  public function setFlexStart($flexStart)
+  {
+    $this->flexStart = $flexStart;
+  }
+  /**
+   * @return bool
+   */
+  public function getFlexStart()
+  {
+    return $this->flexStart;
   }
   /**
    * @param GcfsConfig

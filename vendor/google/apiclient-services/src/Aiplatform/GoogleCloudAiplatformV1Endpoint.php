@@ -54,6 +54,10 @@ class GoogleCloudAiplatformV1Endpoint extends \Google\Collection
    * @var string
    */
   public $etag;
+  protected $gdcConfigType = GoogleCloudAiplatformV1GdcConfig::class;
+  protected $gdcConfigDataType = '';
+  protected $genAiAdvancedFeaturesConfigType = GoogleCloudAiplatformV1GenAiAdvancedFeaturesConfig::class;
+  protected $genAiAdvancedFeaturesConfigDataType = '';
   /**
    * @var string[]
    */
@@ -230,6 +234,34 @@ class GoogleCloudAiplatformV1Endpoint extends \Google\Collection
   public function getEtag()
   {
     return $this->etag;
+  }
+  /**
+   * @param GoogleCloudAiplatformV1GdcConfig
+   */
+  public function setGdcConfig(GoogleCloudAiplatformV1GdcConfig $gdcConfig)
+  {
+    $this->gdcConfig = $gdcConfig;
+  }
+  /**
+   * @return GoogleCloudAiplatformV1GdcConfig
+   */
+  public function getGdcConfig()
+  {
+    return $this->gdcConfig;
+  }
+  /**
+   * @param GoogleCloudAiplatformV1GenAiAdvancedFeaturesConfig
+   */
+  public function setGenAiAdvancedFeaturesConfig(GoogleCloudAiplatformV1GenAiAdvancedFeaturesConfig $genAiAdvancedFeaturesConfig)
+  {
+    $this->genAiAdvancedFeaturesConfig = $genAiAdvancedFeaturesConfig;
+  }
+  /**
+   * @return GoogleCloudAiplatformV1GenAiAdvancedFeaturesConfig
+   */
+  public function getGenAiAdvancedFeaturesConfig()
+  {
+    return $this->genAiAdvancedFeaturesConfig;
   }
   /**
    * @param string[]

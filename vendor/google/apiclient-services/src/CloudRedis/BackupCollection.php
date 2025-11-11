@@ -30,11 +30,27 @@ class BackupCollection extends \Google\Model
   /**
    * @var string
    */
+  public $createTime;
+  /**
+   * @var string
+   */
   public $kmsKey;
   /**
    * @var string
    */
+  public $lastBackupTime;
+  /**
+   * @var string
+   */
   public $name;
+  /**
+   * @var string
+   */
+  public $totalBackupCount;
+  /**
+   * @var string
+   */
+  public $totalBackupSizeBytes;
   /**
    * @var string
    */
@@ -71,6 +87,20 @@ class BackupCollection extends \Google\Model
   /**
    * @param string
    */
+  public function setCreateTime($createTime)
+  {
+    $this->createTime = $createTime;
+  }
+  /**
+   * @return string
+   */
+  public function getCreateTime()
+  {
+    return $this->createTime;
+  }
+  /**
+   * @param string
+   */
   public function setKmsKey($kmsKey)
   {
     $this->kmsKey = $kmsKey;
@@ -85,6 +115,20 @@ class BackupCollection extends \Google\Model
   /**
    * @param string
    */
+  public function setLastBackupTime($lastBackupTime)
+  {
+    $this->lastBackupTime = $lastBackupTime;
+  }
+  /**
+   * @return string
+   */
+  public function getLastBackupTime()
+  {
+    return $this->lastBackupTime;
+  }
+  /**
+   * @param string
+   */
   public function setName($name)
   {
     $this->name = $name;
@@ -95,6 +139,34 @@ class BackupCollection extends \Google\Model
   public function getName()
   {
     return $this->name;
+  }
+  /**
+   * @param string
+   */
+  public function setTotalBackupCount($totalBackupCount)
+  {
+    $this->totalBackupCount = $totalBackupCount;
+  }
+  /**
+   * @return string
+   */
+  public function getTotalBackupCount()
+  {
+    return $this->totalBackupCount;
+  }
+  /**
+   * @param string
+   */
+  public function setTotalBackupSizeBytes($totalBackupSizeBytes)
+  {
+    $this->totalBackupSizeBytes = $totalBackupSizeBytes;
+  }
+  /**
+   * @return string
+   */
+  public function getTotalBackupSizeBytes()
+  {
+    return $this->totalBackupSizeBytes;
   }
   /**
    * @param string

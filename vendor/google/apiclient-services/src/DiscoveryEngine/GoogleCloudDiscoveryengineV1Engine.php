@@ -20,12 +20,20 @@ namespace Google\Service\DiscoveryEngine;
 class GoogleCloudDiscoveryengineV1Engine extends \Google\Collection
 {
   protected $collection_key = 'dataStoreIds';
+  /**
+   * @var string
+   */
+  public $appType;
   protected $chatEngineConfigType = GoogleCloudDiscoveryengineV1EngineChatEngineConfig::class;
   protected $chatEngineConfigDataType = '';
   protected $chatEngineMetadataType = GoogleCloudDiscoveryengineV1EngineChatEngineMetadata::class;
   protected $chatEngineMetadataDataType = '';
   protected $commonConfigType = GoogleCloudDiscoveryengineV1EngineCommonConfig::class;
   protected $commonConfigDataType = '';
+  /**
+   * @var string
+   */
+  public $configurableBillingApproach;
   /**
    * @var string
    */
@@ -43,9 +51,15 @@ class GoogleCloudDiscoveryengineV1Engine extends \Google\Collection
    */
   public $displayName;
   /**
+   * @var string[]
+   */
+  public $features;
+  /**
    * @var string
    */
   public $industryVertical;
+  protected $mediaRecommendationEngineConfigType = GoogleCloudDiscoveryengineV1EngineMediaRecommendationEngineConfig::class;
+  protected $mediaRecommendationEngineConfigDataType = '';
   /**
    * @var string
    */
@@ -61,6 +75,20 @@ class GoogleCloudDiscoveryengineV1Engine extends \Google\Collection
    */
   public $updateTime;
 
+  /**
+   * @param string
+   */
+  public function setAppType($appType)
+  {
+    $this->appType = $appType;
+  }
+  /**
+   * @return string
+   */
+  public function getAppType()
+  {
+    return $this->appType;
+  }
   /**
    * @param GoogleCloudDiscoveryengineV1EngineChatEngineConfig
    */
@@ -102,6 +130,20 @@ class GoogleCloudDiscoveryengineV1Engine extends \Google\Collection
   public function getCommonConfig()
   {
     return $this->commonConfig;
+  }
+  /**
+   * @param string
+   */
+  public function setConfigurableBillingApproach($configurableBillingApproach)
+  {
+    $this->configurableBillingApproach = $configurableBillingApproach;
+  }
+  /**
+   * @return string
+   */
+  public function getConfigurableBillingApproach()
+  {
+    return $this->configurableBillingApproach;
   }
   /**
    * @param string
@@ -160,6 +202,20 @@ class GoogleCloudDiscoveryengineV1Engine extends \Google\Collection
     return $this->displayName;
   }
   /**
+   * @param string[]
+   */
+  public function setFeatures($features)
+  {
+    $this->features = $features;
+  }
+  /**
+   * @return string[]
+   */
+  public function getFeatures()
+  {
+    return $this->features;
+  }
+  /**
    * @param string
    */
   public function setIndustryVertical($industryVertical)
@@ -172,6 +228,20 @@ class GoogleCloudDiscoveryengineV1Engine extends \Google\Collection
   public function getIndustryVertical()
   {
     return $this->industryVertical;
+  }
+  /**
+   * @param GoogleCloudDiscoveryengineV1EngineMediaRecommendationEngineConfig
+   */
+  public function setMediaRecommendationEngineConfig(GoogleCloudDiscoveryengineV1EngineMediaRecommendationEngineConfig $mediaRecommendationEngineConfig)
+  {
+    $this->mediaRecommendationEngineConfig = $mediaRecommendationEngineConfig;
+  }
+  /**
+   * @return GoogleCloudDiscoveryengineV1EngineMediaRecommendationEngineConfig
+   */
+  public function getMediaRecommendationEngineConfig()
+  {
+    return $this->mediaRecommendationEngineConfig;
   }
   /**
    * @param string

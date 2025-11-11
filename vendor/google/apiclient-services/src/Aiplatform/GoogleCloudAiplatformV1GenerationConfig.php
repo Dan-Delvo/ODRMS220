@@ -29,9 +29,15 @@ class GoogleCloudAiplatformV1GenerationConfig extends \Google\Collection
    */
   public $candidateCount;
   /**
+   * @var bool
+   */
+  public $enableAffectiveDialog;
+  /**
    * @var float
    */
   public $frequencyPenalty;
+  protected $imageConfigType = GoogleCloudAiplatformV1ImageConfig::class;
+  protected $imageConfigDataType = '';
   /**
    * @var int
    */
@@ -48,6 +54,10 @@ class GoogleCloudAiplatformV1GenerationConfig extends \Google\Collection
    * @var float
    */
   public $presencePenalty;
+  /**
+   * @var array
+   */
+  public $responseJsonSchema;
   /**
    * @var bool
    */
@@ -78,6 +88,8 @@ class GoogleCloudAiplatformV1GenerationConfig extends \Google\Collection
    * @var float
    */
   public $temperature;
+  protected $thinkingConfigType = GoogleCloudAiplatformV1GenerationConfigThinkingConfig::class;
+  protected $thinkingConfigDataType = '';
   /**
    * @var float
    */
@@ -116,6 +128,20 @@ class GoogleCloudAiplatformV1GenerationConfig extends \Google\Collection
     return $this->candidateCount;
   }
   /**
+   * @param bool
+   */
+  public function setEnableAffectiveDialog($enableAffectiveDialog)
+  {
+    $this->enableAffectiveDialog = $enableAffectiveDialog;
+  }
+  /**
+   * @return bool
+   */
+  public function getEnableAffectiveDialog()
+  {
+    return $this->enableAffectiveDialog;
+  }
+  /**
    * @param float
    */
   public function setFrequencyPenalty($frequencyPenalty)
@@ -128,6 +154,20 @@ class GoogleCloudAiplatformV1GenerationConfig extends \Google\Collection
   public function getFrequencyPenalty()
   {
     return $this->frequencyPenalty;
+  }
+  /**
+   * @param GoogleCloudAiplatformV1ImageConfig
+   */
+  public function setImageConfig(GoogleCloudAiplatformV1ImageConfig $imageConfig)
+  {
+    $this->imageConfig = $imageConfig;
+  }
+  /**
+   * @return GoogleCloudAiplatformV1ImageConfig
+   */
+  public function getImageConfig()
+  {
+    return $this->imageConfig;
   }
   /**
    * @param int
@@ -184,6 +224,20 @@ class GoogleCloudAiplatformV1GenerationConfig extends \Google\Collection
   public function getPresencePenalty()
   {
     return $this->presencePenalty;
+  }
+  /**
+   * @param array
+   */
+  public function setResponseJsonSchema($responseJsonSchema)
+  {
+    $this->responseJsonSchema = $responseJsonSchema;
+  }
+  /**
+   * @return array
+   */
+  public function getResponseJsonSchema()
+  {
+    return $this->responseJsonSchema;
   }
   /**
    * @param bool
@@ -310,6 +364,20 @@ class GoogleCloudAiplatformV1GenerationConfig extends \Google\Collection
   public function getTemperature()
   {
     return $this->temperature;
+  }
+  /**
+   * @param GoogleCloudAiplatformV1GenerationConfigThinkingConfig
+   */
+  public function setThinkingConfig(GoogleCloudAiplatformV1GenerationConfigThinkingConfig $thinkingConfig)
+  {
+    $this->thinkingConfig = $thinkingConfig;
+  }
+  /**
+   * @return GoogleCloudAiplatformV1GenerationConfigThinkingConfig
+   */
+  public function getThinkingConfig()
+  {
+    return $this->thinkingConfig;
   }
   /**
    * @param float

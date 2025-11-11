@@ -22,6 +22,12 @@ class GoogleCloudAiplatformV1GroundingChunkRetrievedContext extends \Google\Mode
   /**
    * @var string
    */
+  public $documentName;
+  protected $ragChunkType = GoogleCloudAiplatformV1RagChunk::class;
+  protected $ragChunkDataType = '';
+  /**
+   * @var string
+   */
   public $text;
   /**
    * @var string
@@ -32,6 +38,34 @@ class GoogleCloudAiplatformV1GroundingChunkRetrievedContext extends \Google\Mode
    */
   public $uri;
 
+  /**
+   * @param string
+   */
+  public function setDocumentName($documentName)
+  {
+    $this->documentName = $documentName;
+  }
+  /**
+   * @return string
+   */
+  public function getDocumentName()
+  {
+    return $this->documentName;
+  }
+  /**
+   * @param GoogleCloudAiplatformV1RagChunk
+   */
+  public function setRagChunk(GoogleCloudAiplatformV1RagChunk $ragChunk)
+  {
+    $this->ragChunk = $ragChunk;
+  }
+  /**
+   * @return GoogleCloudAiplatformV1RagChunk
+   */
+  public function getRagChunk()
+  {
+    return $this->ragChunk;
+  }
   /**
    * @param string
    */

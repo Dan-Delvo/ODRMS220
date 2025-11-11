@@ -61,7 +61,13 @@ class BackendBucket extends \Google\Collection
   /**
    * @var string
    */
+  public $loadBalancingScheme;
+  /**
+   * @var string
+   */
   public $name;
+  protected $paramsType = BackendBucketParams::class;
+  protected $paramsDataType = '';
   /**
    * @var string
    */
@@ -212,6 +218,20 @@ class BackendBucket extends \Google\Collection
   /**
    * @param string
    */
+  public function setLoadBalancingScheme($loadBalancingScheme)
+  {
+    $this->loadBalancingScheme = $loadBalancingScheme;
+  }
+  /**
+   * @return string
+   */
+  public function getLoadBalancingScheme()
+  {
+    return $this->loadBalancingScheme;
+  }
+  /**
+   * @param string
+   */
   public function setName($name)
   {
     $this->name = $name;
@@ -222,6 +242,20 @@ class BackendBucket extends \Google\Collection
   public function getName()
   {
     return $this->name;
+  }
+  /**
+   * @param BackendBucketParams
+   */
+  public function setParams(BackendBucketParams $params)
+  {
+    $this->params = $params;
+  }
+  /**
+   * @return BackendBucketParams
+   */
+  public function getParams()
+  {
+    return $this->params;
   }
   /**
    * @param string
