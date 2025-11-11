@@ -17,7 +17,7 @@ class StudentUserMiddleware
     public function handle(Request $request, Closure $next)
     {
         // Check if the user is authenticated and has the 'student' role
-        if (!empty(Auth::check()) && Auth::user()->roles->name === 'student') {
+        if (!empty(Auth::check()) && Auth::user()->roles->name === 'student' || Auth::user()->roles->id === 4) {
             return $next($request); // Allow access
         }
         else

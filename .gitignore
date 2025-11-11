@@ -1,6 +1,6 @@
 .env
 node_modules/
-vendor/
+/vendor/
 /public/uploads/*
 !/public/uploads/.gitkeep
 .env.local.backup
@@ -8,3 +8,6 @@ vendor/
 readme.md/
 public/hot
 public/uploads/supporting_documents
+
+# Allow custom Livewire views
+!resources/views/vendor/livewire/

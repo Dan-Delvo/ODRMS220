@@ -287,17 +287,21 @@
                         <span class="nav-icon material-symbols-rounded">person</span>
                         <span class="nav-label">Student Profile</span>
                     </a>
-                    <span class="nav-tooltip">View Request</span>
                 </li>
             </ul>
 
             <ul class="nav-list secondary-nav">
                 <li class="nav-item">
+                    @if(Auth::user()->roles->id == 4)
+                    <a href="{{ route('dashboard') }}" class="nav-link">
+                        <i class="nav-icon fa-solid fa-repeat"></i>
+                        <span class="nav-label">Switch To Admin Side</span>
+                    </a>
+                    @endif
                     <a href="{{ url('logout') }}" class="nav-link">
                         <span class="nav-icon material-symbols-rounded">logout</span>
                         <span class="nav-label">Logout</span>
                     </a>
-                    <span class="nav-tooltip">Logout</span>
                 </li>
             </ul>
 
