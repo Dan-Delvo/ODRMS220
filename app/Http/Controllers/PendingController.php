@@ -149,7 +149,9 @@ class PendingController extends Controller
             'status' => 'Declined',
             'remarks' => $reason
         ]);
-
+        if($request->indicator == 1){
+            return redirect('/declined-documents')->with('success', 'Declined Successfully');
+        }
         return redirect('/pending')->with('success', 'Declined Successfully');
     }
 

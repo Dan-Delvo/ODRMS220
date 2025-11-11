@@ -191,7 +191,7 @@
                                 <td>{{ $item->request_date }}</td>
                                 <td class="action-column">
                                     <div class="btn-group-vertical btn-group-sm d-md-inline" role="group">
-                                        <form action="{{ route('tables.destroy', $item->id) }}" method="POST"
+                                        <!-- <form action="{{ route('tables.destroy', $item->id) }}" method="POST"
                                             class="d-inline decline-form" data-swal-loading="true"
                                             data-swal-delete="true">
                                             @csrf
@@ -200,7 +200,7 @@
                                             <button type="submit" class="btn btn-sm btn-danger mb-1 decline-btn">
                                                 <i class="fas fa-trash me-1"></i>Delete
                                             </button>
-                                        </form>
+                                        </form> -->
 
                                         <form action="{{ route('document-request.complete', $item->id) }}"
                                             method="POST" class="d-inline accept-form" data-swal-loading="true"
@@ -221,6 +221,17 @@
                                             <i class="fas fa-file-alt me-1"></i>View Doc
                                         </button>
                                         @endif
+
+                                        <form action="{{ route('pending.decline', $item->id) }}" method="POST"
+                                            class="d-inline decline-form">
+                                            @csrf
+                                            @method('DELETE')
+                                            <input type="hidden" name="remarks" class="decline-reason" value="">
+                                            <input type="hidden" name="indicator" value="1">
+                                            <button type="submit" class="btn btn-sm btn-danger mb-1 decline-btn">
+                                                <i class="fas fa-times-circle me-1"></i>Decline
+                                            </button>
+                                        </form>
                                     </div>
                                 </td>
                             </tr>
@@ -409,21 +420,35 @@
     </div>
 </div>
 
-{{-- Reason Modal (For Delete/Decline) - KEPT ORIGINAL LOGIC --}}
+{{-- Reason Modal (For Decline) --}}
 <div class="modal fade" id="reasonModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header d-flex justify-content-start" style="background-color: #1f2937;">
-                <h5 class="modal-title" style="color: #1dd3b0;">Decline Reason</h5>
+                <h5 class="modal-title" style="color: #1dd3b0;">
+                    <i class="fas fa-envelope me-2"></i>Additional Decline Reason
+                </h5>
             </div>
             <div class="modal-body">
-                <textarea class="form-control" id="reasonInput" rows="3" placeholder="Enter reason for declining"></textarea>
+                <label for="reasonInput" class="form-label">
+                    <strong>Enter additional reason to send to student:</strong>
+                </label>
+                <textarea class="form-control" id="reasonInput" rows="3" 
+                    placeholder="Enter additional reason for declining this request again"></textarea>
+                <small class="text-muted mt-2 d-block">
+                    <i class="fas fa-info-circle me-1"></i>
+                    This will send another decline notification email to the student.
+                </small>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn text-white" style="background-color: #1f2937;"
-                    data-bs-dismiss="modal">Cancel</button>
+                    data-bs-dismiss="modal">
+                    <i class="fas fa-times me-1"></i>Cancel
+                </button>
                 <button type="button" class="btn text-white" id="proceedToConfirmBtn"
-                    style="background-color: #1dd3b0;">Proceed</button>
+                    style="background-color: #dc3545;">
+                    <i class="fas fa-paper-plane me-1"></i>Send Notification
+                </button>
             </div>
         </div>
     </div>
@@ -658,19 +683,20 @@
 
         // --- REATTACH ACTION BUTTONS ---
         function reattachActionButtons() {
-            // Decline button logic
+            // Decline/Resend button logic
             document.querySelectorAll('.decline-btn').forEach(function(btn) {
-                if (btn.closest('form').querySelector('input[name="_method"][value="DELETE"]')) {
+                const form = btn.closest('form');
+                if (form && form.querySelector('input[name="_method"][value="DELETE"]')) {
                     btn.addEventListener('click', function(e) {
                         e.preventDefault();
-                        targetForm = btn.closest('form');
+                        targetForm = form;
                         document.getElementById('reasonInput').value = '';
                         reasonModal.show();
                     });
                 }
             });
 
-            // Accept form logic
+            // Accept form logic (keep as is)
             const acceptForms = document.querySelectorAll('.accept-form');
             acceptForms.forEach(form => {
                 let manualSubmit = false;
@@ -680,9 +706,9 @@
                         const acceptBtn = form.querySelector('.accept-btn');
                         acceptBtn.disabled = true;
                         acceptBtn.innerHTML = `
-                        <span class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"></span>
-                        Processing...
-                    `;
+                            <span class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"></span>
+                            Processing...
+                        `;
                         const row = form.closest('tr');
                         if (row) {
                             const allButtons = row.querySelectorAll('button, a.btn');
@@ -703,7 +729,7 @@
         // Initial attachment
         reattachActionButtons();
 
-        // --- DECLINE BUTTON LOGIC ---
+        // --- DECLINE/RESEND BUTTON LOGIC ---
         document.getElementById('proceedToConfirmBtn').addEventListener('click', function() {
             const reason = document.getElementById('reasonInput').value.trim();
 
@@ -711,41 +737,56 @@
                 Swal.fire({
                     icon: 'warning',
                     title: 'Please enter a reason!',
+                    text: 'An additional decline reason is required.',
                     confirmButtonColor: '#1dd3b0'
                 });
                 return;
             }
 
-            const reasonInputHidden = targetForm.querySelector('.decline-reason');
-            if (reasonInputHidden) {
-                reasonInputHidden.value = reason;
-            } else {
-                const newInput = document.createElement('input');
-                newInput.type = 'hidden';
-                newInput.name = 'decline_reason';
-                newInput.value = reason;
-                targetForm.appendChild(newInput);
+            // Set the reason as "remarks"
+            let reasonInput = targetForm.querySelector('.decline-reason');
+            if (!reasonInput) {
+                reasonInput = document.createElement('input');
+                reasonInput.type = 'hidden';
+                reasonInput.name = 'remarks';
+                reasonInput.className = 'decline-reason';
+                targetForm.appendChild(reasonInput);
             }
+            reasonInput.value = reason;
 
             reasonModal.hide();
 
             Swal.fire({
                 icon: 'warning',
-                title: 'Are you sure?',
-                html: `You are about to delete this request with reason:<br><strong>${reason}</strong><br>You won't be able to revert this!`,
+                title: 'Send Additional Decline Notification?',
+                html: `You are about to send another decline notification with reason:<br><strong>"${reason}"</strong><br><br>The student will receive this email notification.`,
                 showCancelButton: true,
                 confirmButtonColor: '#dc3545',
                 cancelButtonColor: '#1f2937',
-                confirmButtonText: 'Confirm Delete',
+                confirmButtonText: 'Yes, send it!',
                 cancelButtonText: 'Cancel'
             }).then((result) => {
                 if (result.isConfirmed) {
+                    Swal.fire({
+                        title: 'Sending Email...',
+                        html: 'Please wait while we send the notification...',
+                        allowOutsideClick: false,
+                        allowEscapeKey: false,
+                        showConfirmButton: false,
+                        didOpen: () => {
+                            Swal.showLoading();
+                        }
+                    });
+
                     const declineBtn = targetForm.querySelector(".decline-btn");
-                    declineBtn.disabled = true;
-                    declineBtn.innerHTML = `
-                    <span class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"></span>
-                    Deleting...
-                `;
+                    if (declineBtn) {
+                        declineBtn.disabled = true;
+                        declineBtn.innerHTML = `
+                            <span class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"></span>
+                            Sending...
+                        `;
+                    }
+                    
                     const row = targetForm.closest('tr');
                     if (row) {
                         row.querySelectorAll('button').forEach(b => {
@@ -755,6 +796,7 @@
                             }
                         });
                     }
+                    
                     targetForm.submit();
                 }
             });
@@ -769,7 +811,7 @@
                 });
                 document.querySelectorAll('.decline-btn').forEach(btn => {
                     btn.disabled = false;
-                    btn.innerHTML = '<i class="fas fa-trash me-1"></i>Delete';
+                    btn.innerHTML = '<i class="fas fa-times-circle me-1"></i>Decline';
                 });
             }
         });
