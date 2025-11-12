@@ -18,7 +18,7 @@ showTable.blade.php
                 <h4 class="mb-0">
                     Requester's Information
                 </h4>
-                <a href="{{ url('ongoing') }}" class="btn text-black fw-semibold" style="background-color: #1dd3b0; box-shadow: 0 4px 10px rgba(29, 211, 176, 0.5);">
+                <a href="{{ url('ongoing') }}" class="btn text-black fw-semibold" style="background-color: #1dd3b0;">
                     Back
                 </a>
             </div>

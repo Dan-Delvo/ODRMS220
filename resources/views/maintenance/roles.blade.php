@@ -43,7 +43,7 @@
                 <h4 class="mb-0">
                     Roles
                 </h4>
-                <a href="{{ route('role.add') }}" class="btn text-black fw-semibold" style="background-color: #1dd3b0; box-shadow: 0 4px 10px rgba(29, 211, 176, 0.5);">
+                <a href="{{ route('role.add') }}" class="btn text-black fw-semibold" style="background-color: #1dd3b0;">
                     Add Role
                 </a>
             </div>
