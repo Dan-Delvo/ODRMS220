@@ -762,6 +762,70 @@
                     { name: 'available_at', type: 'int unsigned', constraint: 'NOT NULL', description: 'Unix timestamp when job becomes available' },
                     { name: 'created_at', type: 'int unsigned', constraint: 'NOT NULL', description: 'Unix timestamp when job was created' }
                 ]
+            }, 
+            {
+                name: 'bulk_requests_archive',
+                description: 'Archive of historical bulk document requests from schools or institutions for reporting and record-keeping',
+                columns: [
+                    { name: 'Request_ID', type: 'bigint', constraint: 'PRIMARY KEY', description: 'Unique bulk request identifier' },
+                    { name: 'School_Name', type: 'varchar(255)', constraint: 'NOT NULL', description: 'Name of the requesting school/institution' },
+                    { name: 'School_Email', type: 'varchar(255)', constraint: 'NOT NULL', description: 'Email address of requesting school/institution' },
+                    { name: 'DocType', type: 'varchar(255)', constraint: 'NOT NULL', description: 'Type of document being requested in bulk' },
+                    { name: 'Status', type: 'enum("pending", "processing", "for release", "claimed")', constraint: 'NOT NULL', description: 'Final status of the archived bulk request' },
+                    { name: 'request_date', type: 'timestamp', constraint: 'NOT NULL', description: 'Date and time when bulk request was submitted' },
+                    { name: 'approve_date', type: 'timestamp', constraint: 'NULL', description: 'Date when bulk request was approved' },
+                    { name: 'forRelease_date', type: 'timestamp', constraint: 'NULL', description: 'Date when documents were prepared for release' },
+                    { name: 'claimed_date', type: 'timestamp', constraint: 'NULL', description: 'Date when documents were claimed' },
+                ]
+            },
+            {
+                name: 'bulk_students_archive',
+                description: 'Archive of student records associated with historical bulk document requests',
+                columns: [
+                    { name: 'Student_ID', type: 'bigint', constraint: 'PRIMARY KEY', description: 'Unique student identifier in archived bulk request' },
+                    { name: 'Request_ID', type: 'bigint', constraint: 'FOREIGN KEY', description: 'Foreign key linking to bulk_requests_archive table' },
+                    { name: 'Student_Name', type: 'varchar(255)', constraint: 'NOT NULL', description: 'Full name of student in bulk request' }
+                ]
+            },
+            {
+                name: 'clm_claimers_archive',
+                description: 'Archive of historical claimer records for document pickup tracking and audit purposes',
+                columns: [
+                    { name: 'id', type: 'bigint unsigned', constraint: 'PRIMARY KEY', description: 'Unique archived claimer identifier' },
+                    { name: 'Fname', type: 'varchar(255)', constraint: 'NOT NULL', description: 'Claimer first name' },
+                    { name: 'Lname', type: 'varchar(255)', constraint: 'NOT NULL', description: 'Claimer last name' },
+                    { name: 'contact_no', type: 'varchar(255)', constraint: 'NULL', description: 'Contact number of claimer' },
+                    { name: 'claimed_date', type: 'date', constraint: 'NULL', description: 'Date when documents were claimed' }
+                ]
+            },
+            {
+                name: 'doc_requests_archive',
+                description: 'Archive of completed and historical document requests for long-term storage, reporting, and compliance',
+                columns: [
+                    { name: 'id', type: 'bigint', constraint: 'PRIMARY KEY', description: 'Unique archived request identifier' },
+                    { name: 'clm_claimers_id', type: 'bigint unsigned', constraint: 'FOREIGN KEY', description: 'Foreign key to archived claimer record' },
+                    { name: 'std_students_id', type: 'bigint unsigned', constraint: 'FOREIGN KEY', description: 'Foreign key to student record' },
+                    { name: 'doc_categories_id', type: 'bigint unsigned', constraint: 'FOREIGN KEY', description: 'Foreign key to document type' },
+                    { name: 'request_time', type: 'time', constraint: 'NULL', description: 'Time when request was submitted' },
+                    { name: 'request_date', type: 'date', constraint: 'NULL', description: 'Date when request was submitted' },
+                    { name: 'request_schl_entity', type: 'varchar(255)', constraint: 'NULL', description: 'School/institution requesting the document' },
+                    { name: 'request_mode', type: 'varchar(255)', constraint: 'NULL', description: 'How request was made (Online, Walk-in)' },
+                    { name: 'release_mode', type: 'varchar(255)', constraint: 'NULL', description: 'How document was released (Pick Up, Delivery)' },
+                    { name: 'remarks', type: 'text', constraint: 'NULL', description: 'Additional notes or comments about the request' },
+                    { name: 'status', type: 'varchar(45)', constraint: 'NULL', description: 'Final status (Pending, Processing, For Release, Claimed, Declined)' },
+                    { name: 'receipt_no', type: 'int', constraint: 'NULL', description: 'Payment receipt number' },
+                    { name: 'approve_date', type: 'date', constraint: 'NULL', description: 'Date request was approved' },
+                    { name: 'forRelease_date', type: 'date', constraint: 'NULL', description: 'Date document was prepared for release' },
+                    { name: 'claimed_date', type: 'date', constraint: 'NULL', description: 'Date document was claimed/picked up' },
+                    { name: 'req_no', type: 'int', constraint: 'AUTO_INCREMENT', description: 'Sequential request number (auto-increment)' },
+                    { name: 'image', type: 'varchar(500)', constraint: 'NULL', description: 'Path to related image file' },
+                    { name: 'supporting_document', type: 'varchar(500)', constraint: 'Path to supporting documents uploaded' },
+                    { name: 'claimed_time', type: 'time', constraint: 'NULL', description: 'Time when document was claimed' },
+                    { name: 'was_offline', type: 'tinyint(1)', constraint: 'default 0', description: 'Flag indicating if request was made in offline mode' },
+                    { name: 'synced_at', type: 'timestamp', constraint: 'NULL', description: 'Timestamp when offline request was synchronized to server' },
+                    { name: 'offline_id', type: 'VARCHAR(255)', constraint: 'NULL', description: 'Unique identifier for offline-created request before sync' },
+                    { name: 'sync_attempts', type: 'int', constraint: 'default 0', description: 'Number of synchronization attempts for offline request' }
+                ]
             }
         ];
 
