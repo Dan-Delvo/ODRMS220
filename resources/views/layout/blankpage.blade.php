@@ -25,7 +25,6 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     @vite(['resources/css/app.css', 'resources/sass/app.scss', 'resources/js/scripts.js', 'resources/js/datatables-simple-demo.js', 'resources/js/app.js'])
-    @livewireStyles
     @stack('head')
     <!-- Customized Pagination Links-->
     <style>
@@ -435,7 +434,44 @@
         pre::-webkit-scrollbar-thumb:hover {
             background: #a8a8a8;
         }
-    </style>
+        #loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255,255,255,0.8);
+            backdrop-filter: blur(4px);
+            z-index: 9999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            font-weight: bold;
+        }
+
+        /* Pulsating animation for loading logo */
+        @keyframes pulsate {
+            0% {
+                transform: scale(1);
+                opacity: 1;
+            }
+            50% {
+                transform: scale(1.1);
+                opacity: 0.8;
+            }
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        .pulsate-logo {
+            animation: pulsate 1.5s ease-in-out infinite;
+        }
+</style>
+
+
 </head>
 
 <body class="sb-nav-fixed">
@@ -470,18 +506,8 @@
 
     <!-- PWA -->
     <script src="{{ asset('/sw.js') }}"></script>
-    <script>
-        if (!navigator.serviceWorker.controller) {
-            navigator.serviceWorker.register("/sw.js")
-                .then(function(reg) {
-                    console.log("Service worker has been registered for scope: " + reg.scope);
-                });
-        }
 
-        document.querySelectorAll('form').forEach(form => {
-            form.setAttribute('autocomplete', 'off');
-        });
-    </script>
+
     @include('layout.partials.statusCode')
     @include('layout.partials.swal-loading')
     @stack('scripts')

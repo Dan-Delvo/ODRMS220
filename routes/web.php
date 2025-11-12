@@ -200,7 +200,7 @@ Route::middleware(['forgotpassword', 'lockout'])->group(function () {
     Route::post('/newpassword', [forgotpassword::class, 'newpassword'])->name('newpassword.submit');
 });
 
-Route::group(['middleware' => 'userstudent'], function () {
+Route::group(['middleware' => ['userstudent', 'useradmin']], function () {
 
     Route::get('stpage', [StudentPageController::class, 'mainpage'])->name('st.page');
     // Display the document request form
