@@ -8,6 +8,6 @@ node_modules/
 readme.md/
 public/hot
 public/uploads/supporting_documents
-
+/vendor
 # Allow custom Livewire views
 !resources/views/vendor/livewire/
