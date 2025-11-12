@@ -476,12 +476,6 @@
 
 <body class="sb-nav-fixed">
 
-    <div id="app-loader" style="display: flex; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255, 255, 255, 0.9); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); z-index: 9999; justify-content: center; align-items: center; flex-direction: column;">
-        <img src="/images/LOGO1.png" alt="Loading..." class="pulsate-logo" style="width: 150px; height: auto; margin-bottom: 1rem;">
-        <span class="fs-5 fw-semibold" style="color: #1dd3b0;">Loading...</span>
-    </div>
-
-
     @include('layout.partials.navbar')
 
     <div id="layoutSidenav">
@@ -512,96 +506,7 @@
 
     <!-- PWA -->
     <script src="{{ asset('/sw.js') }}"></script>
-    <script>
-    (function() {
-        const loader = document.getElementById("app-loader");
 
-        // Show loader on any navigation click (links and buttons)
-        document.addEventListener('click', function(e) {
-            const target = e.target.closest('a, button[type="submit"]');
-
-            if (target) {
-                // Check if it's a link that navigates to another page
-                if (target.tagName === 'A') {
-                    const href = target.getAttribute('href');
-
-                    // Skip if it's an anchor link, javascript void, or has special attributes
-                    if (href &&
-                        !href.startsWith('#') &&
-                        !href.startsWith('javascript:') &&
-                        !target.hasAttribute('data-bs-toggle') &&
-                        !target.hasAttribute('data-toggle') &&
-                        target.getAttribute('target') !== '_blank' &&
-                        !target.closest('[wire\\:click]') &&
-                        !target.hasAttribute('download')) {
-
-                        // Show loader for regular navigation
-                        if (loader) {
-                            loader.style.display = "flex";
-                        }
-                    }
-                }
-                // Show loader for form submit buttons (if not using swal-loading)
-                else if (target.tagName === 'BUTTON' && target.type === 'submit') {
-                    const form = target.closest('form');
-                    if (form && !form.hasAttribute('data-swal-loading') && !form.classList.contains('swal-loading')) {
-                        if (loader) {
-                            loader.style.display = "flex";
-                        }
-                    }
-                }
-            }
-        }, true);
-
-        // Show loader before page unload (when navigating away)
-        window.addEventListener('beforeunload', function() {
-            if (loader) {
-                loader.style.display = "flex";
-            }
-        });
-
-        // Hide loader when page is fully loaded
-        window.addEventListener('load', () => {
-            if (loader) {
-                loader.style.display = "none";
-            }
-        });
-
-        // Handle Livewire initialization
-        document.addEventListener('livewire:initialized', () => {
-            // Hide loader after Livewire is fully ready
-            if (loader) {
-                loader.style.display = "none";
-            }
-
-            // Show loader during any Livewire request (form submit, navigate, click)
-            Livewire.hook('request', ({ succeed, fail }) => {
-                if (loader) {
-                    loader.style.display = "flex";
-                }
-
-                succeed(() => {
-                    if (loader) {
-                        loader.style.display = "none";
-                    }
-                });
-
-                fail(() => {
-                    if (loader) {
-                        loader.style.display = "none";
-                    }
-                });
-            });
-        });
-
-        // Fallback: Force hide loader after 5 seconds if events don't fire
-        setTimeout(() => {
-            if (loader && loader.style.display !== "none") {
-                loader.style.display = "none";
-            }
-        }, 5000);
-    })();
-    </script>
 
     @include('layout.partials.statusCode')
     @include('layout.partials.swal-loading')
