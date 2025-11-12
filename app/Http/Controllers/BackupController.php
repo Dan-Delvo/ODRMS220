@@ -7,6 +7,9 @@ use Illuminate\Support\Facades\DB;
 use App\Models\AuditTable;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\BackupPasswordMail;
+use Illuminate\Support\Str;
 
 class BackupController extends Controller
 {
@@ -14,11 +17,14 @@ class BackupController extends Controller
     {
         $fileName = "backup-" . now()->format('Y-m-d_H-i-s') . ".sql";
         $zipFileName = $fileName . ".zip";
-        $zipPassword = config('app.backup_password');
+
+        // Generate a unique, secure password for this backup
+        $zipPassword = $this->generateSecurePassword();
 
         $user = Auth::user();
         // Session key: ensures only one log per user per backup
         $sessionKey = 'backup_logged_' . Auth::id() . '_' . now()->format('Y-m-d_H-i');
+        $emailSent = false; // Track if email was sent
 
         if (!session()->has($sessionKey)) {
             // Prevent double insert in audit table
@@ -38,6 +44,21 @@ class BackupController extends Controller
                         'description'   => null
                     ]);
                 });
+
+                // TODO: PALITAN NIYO NALANG TO PAR PAG TETESTING KAYO
+                try {
+                    Mail::to('nubzman123@gmail.com')->send(
+                        new BackupPasswordMail(
+                            $zipFileName,
+                            $zipPassword,
+                            $user->studentInformation->full_name
+                        )
+                    );
+                    $emailSent = true;
+                } catch (\Exception $e) {
+                    Log::error('Failed to send backup password email: ' . $e->getMessage());
+                    // Continue with download even if email fails
+                }
             }
 
             session()->put($sessionKey, true);
@@ -125,10 +146,11 @@ class BackupController extends Controller
             Log::info('Restore backup started');
 
             $request->validate([
-                'backup_file' => 'required|file|mimes:zip'
+                'backup_file' => 'required|file|mimes:zip',
+                'backup_password' => 'required|string|min:12'
             ]);
 
-            $zipPassword = config('app.backup_password');
+            $zipPassword = $request->input('backup_password');
             $zip = new \ZipArchive;
             $uploadedFile = $request->file('backup_file');
 
@@ -355,5 +377,18 @@ class BackupController extends Controller
             is_dir($path) ? $this->cleanupDirectory($path) : unlink($path);
         }
         rmdir($dir);
+    }
+
+    /**
+     * Generate a secure random password for backup encryption
+     * Format: XXXX-XXXX-XXXX-XXXX (alphanumeric, easy to copy)
+     */
+    private function generateSecurePassword()
+    {
+        $segments = [];
+        for ($i = 0; $i < 4; $i++) {
+            $segments[] = strtoupper(Str::random(4));
+        }
+        return implode('-', $segments);
     }
 }

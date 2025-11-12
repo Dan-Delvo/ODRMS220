@@ -97,7 +97,7 @@
                     text: "The user accounts connected to this role will also be deleted",
                     icon: "warning",
                     showCancelButton: true,
-                    confirmButtonColor: "#1dd3b0",
+                    confirmButtonColor: "#dc3545",
                     cancelButtonColor: "#1f2937",
                     confirmButtonText: "Yes, delete it!",
                     cancelButtonText: "Cancel"

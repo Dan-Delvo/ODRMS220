@@ -13,12 +13,12 @@
 
 <div class="row">
     <div class="col-md-12">
-        <div class="card shadow-lg border-0 rounded-lg mt-5">
+        <div class="card shadow-lg border-0 rounded-lg mt-2">
             <div class="card-header text-white d-flex align-items-center justify-content-between" style="background-color: #1f2937; height: 60px;">
                 <h4 class="mb-0">
                     Edit Student
                 </h4>
-                <a href="{{ route('student') }}" class="btn text-black fw-semibold" style="background-color: #1dd3b0; box-shadow: 0 4px 10px rgba(29, 211, 176, 0.5);">
+                <a href="{{ route('student') }}" class="btn text-black fw-semibold" style="background-color: #1dd3b0;">
                     Back
                 </a>
             </div>
@@ -31,68 +31,90 @@
                     @csrf
                     @method('PUT')
 
-                    <!-- Student ID -->
-                    <div class="mb-3">
-                        <label for="id" class="form-label">Student ID</label>
-                        <input type="text" name="id" id="id" class="form-control" value="{{ $student->id }}" readonly>
-                    </div>
+                    <div class="row">
+                        <!-- Student ID -->
+                        <div class="mb-3 col-lg-6">
+                            <label for="id" class="form-label">Student ID</label>
+                            <input type="text" name="id" id="id" class="form-control" value="{{ $student->id }}" readonly>
+                        </div>
 
-                    <!-- First Name -->
-                    <div class="mb-3">
-                        <label for="FirstName" class="form-label">First Name</label>
-                        <input type="text" name="FirstName" id="FirstName" class="form-control" value="{{ $student->FirstName }}">
-                        @error('FirstName') <small class="text-danger">{{ $message }}</small> @enderror
-                    </div>
-
-                    <!-- Last Name -->
-                    <div class="mb-3">
-                        <label for="LastName" class="form-label">Last Name</label>
-                        <input type="text" name="LastName" id="LastName" class="form-control" value="{{ $student->LastName }}">
-                        @error('LastName') <small class="text-danger">{{ $message }}</small> @enderror
-                    </div>
-
-                    <!-- LRN -->
-                    <div class="mb-3">
-                        <label for="LRN" class="form-label">LRN</label>
-                        <input type="text" name="LRN" id="LRN" class="form-control" value="{{ $student->LRN }}" maxlength="12" pattern="\d{12}">
-                        <small id="lrn-feedback" class="text-danger d-none"></small>
-                        @error('LRN')
+                        <!-- LRN -->
+                        <div class="mb-3 col-lg-6">
+                            <label for="LRN" class="form-label">LRN</label>
+                            <input type="text" name="LRN" id="LRN"
+                                maxlength="12" pattern="\d{12}"
+                                class="form-control @error('LRN') is-invalid @enderror"
+                                value="{{ $errors->has('LRN') ? '' : old('LRN', $student->LRN) }}">
+                            <small id="lrn-feedback" class="text-danger d-none"></small>
+                            @error('LRN')
                             <small class="text-danger">{{ $message }}</small>
-                        @enderror
-                    </div>
+                            @enderror
+                        </div>
 
-                    <!-- Grade Level -->
-                    <div class="mb-3">
-                        <label for="Grade_level" class="form-label">Grade Level</label>
-                        <select name="Grade_level" id="Grade_level" class="form-select">
-                            @foreach ($gradeLevels as $level)
-                            <option value="{{ $level }}" {{ $level == $student->Grade_level ? 'selected' : '' }}>{{ $level }}</option>
-                            @endforeach
-                        </select>
-                        @error('Grade_level') <small class="text-danger">{{ $message }}</small> @enderror
-                    </div>
+                        <!-- First Name -->
+                        <div class="mb-3 col-lg-6">
+                            <label for="FirstName" class="form-label">First Name</label>
+                            <input type="text" name="FirstName" id="FirstName"
+                                class="form-control @error('FirstName') is-invalid @enderror"
+                                value="{{ $errors->has('FirstName') ? '' : old('FirstName', $student->FirstName) }}">
+                            @error('FirstName')
+                            <small class="text-danger">{{ $message }}</small>
+                            @enderror
+                        </div>
 
-                    <!-- Student Status -->
-                    <div class="mb-3">
-                        <label for="Std_status" class="form-label">Student Status</label>
-                        <select name="Std_status" id="Std_status" class="form-select">
-                            <option value="Regular" {{ $student->Std_status == 'Regular' ? 'selected' : '' }}>Regular</option>
-                            <option value="Alumni" {{ $student->Std_status == 'Alumni' ? 'selected' : '' }}>Alumni</option>
-                            <option value="ALS" {{ $student->Std_status == 'ALS' ? 'selected' : '' }}>ALS</option>
-                        </select>
-                        @error('Std_status') <small class="text-danger">{{ $message }}</small> @enderror
-                    </div>
+                        <!-- Last Name -->
+                        <div class="mb-3 col-lg-6">
+                            <label for="LastName" class="form-label">Last Name</label>
+                            <input type="text" name="LastName" id="LastName"
+                                class="form-control @error('LastName') is-invalid @enderror"
+                                value="{{ $errors->has('LastName') ? '' : old('LastName', $student->LastName) }}">
+                            @error('LastName')
+                            <small class="text-danger">{{ $message }}</small>
+                            @enderror
+                        </div>
 
-                    <!-- Last School Year Attended -->
-                    <div class="mb-3">
-                        <label for="Last_sy_attended" class="form-label">Last School Year Attended</label>
-                        <input type="text" name="Last_sy_attended" id="Last_sy_attended" class="form-control" value="{{ $student->Last_sy_attended }}">
-                        @error('Last_sy_attended') <small class="text-danger">{{ $message }}</small> @enderror
-                    </div>
+                        <!-- Grade Level -->
+                        <div class="mb-3 col-lg-4">
+                            <label for="Grade_level" class="form-label">Grade Level</label>
+                            <select name="Grade_level" id="Grade_level"
+                                class="form-select @error('Grade_level') is-invalid @enderror">
+                                @foreach ($gradeLevels as $level)
+                                <option value="{{ $level }}"
+                                    {{ old('Grade_level', $student->Grade_level) == $level ? 'selected' : '' }}>
+                                    {{ $level }}
+                                </option>
+                                @endforeach
+                            </select>
+                            @error('Grade_level') <small class="text-danger">{{ $message }}</small> @enderror
+                        </div>
 
-                    <!-- Save Button -->
-                    <div class="text-end">
-                        <button type="submit" class="btn text-black fw-semibold" style="background-color: #1dd3b0; box-shadow: 0 4px 10px rgba(29, 211, 176, 0.5);">Update</button>
+                        <!-- Student Status -->
+                        <div class="mb-3 col-lg-4">
+                            <label for="Std_status" class="form-label">Student Status</label>
+                            <select name="Std_status" id="Std_status"
+                                class="form-select @error('Std_status') is-invalid @enderror">
+                                <option value="Regular" {{ old('Std_status', $student->Std_status) == 'Regular' ? 'selected' : '' }}>Regular</option>
+                                <option value="Alumni" {{ old('Std_status', $student->Std_status) == 'Alumni' ? 'selected' : '' }}>Alumni</option>
+                                <option value="ALS" {{ old('Std_status', $student->Std_status) == 'ALS' ? 'selected' : '' }}>ALS</option>
+                            </select>
+                            @error('Std_status')
+                            <small class="text-danger">{{ $message }}</small>
+                            @enderror
+                        </div>
+
+                        <!-- Last School Year Attended -->
+                        <div class="mb-3 col-lg-4">
+                            <label for="Last_sy_attended" class="form-label">Last School Year Attended</label>
+                            <input type="text" name="Last_sy_attended" id="Last_sy_attended"
+                                class="form-control @error('Last_sy_attended') is-invalid @enderror"
+                                value="{{ $errors->has('Last_sy_attended') ? '' : old('Last_sy_attended', $student->Last_sy_attended) }}">
+                            @error('Last_sy_attended') <small class="text-danger">{{ $message }}</small> @enderror
+                        </div>
+
+                        <!-- Save Button -->
+                        <div class="text-end">
+                            <button type="submit" class="btn text-black fw-semibold" style="background-color: #1dd3b0;">Update</button>
+                        </div>
                     </div>
                 </form>
             </div>
@@ -102,33 +124,30 @@
 
 
 <script>
-document.addEventListener('DOMContentLoaded', () => {
-    const lrnInput = document.getElementById('LRN');
-    const feedback = document.getElementById('lrn-feedback');
+    document.addEventListener('DOMContentLoaded', () => {
+        const lrnInput = document.getElementById('LRN');
+        const feedback = document.getElementById('lrn-feedback');
 
-    lrnInput.addEventListener('input', () => {
-        // remove non-numeric characters
-        lrnInput.value = lrnInput.value.replace(/\D/g, '');
+        lrnInput.addEventListener('input', () => {
+            // remove non-numeric characters
+            lrnInput.value = lrnInput.value.replace(/\D/g, '');
 
-        if (lrnInput.value.length === 0) {
-            feedback.textContent = '';
-            feedback.classList.add('d-none');
-        }
-        else if (lrnInput.value.length < 12) {
-            feedback.textContent = `LRN must be 12 digits (${12 - lrnInput.value.length} more needed)`;
-            feedback.classList.remove('d-none');
-        }
-        else if (lrnInput.value.length > 12) {
-            feedback.textContent = 'LRN must be exactly 12 digits';
-            feedback.classList.remove('d-none');
-        }
-        else {
-            feedback.textContent = '✅ LRN looks good';
-            feedback.classList.remove('text-danger');
-            feedback.classList.add('text-success');
-        }
+            if (lrnInput.value.length === 0) {
+                feedback.textContent = '';
+                feedback.classList.add('d-none');
+            } else if (lrnInput.value.length < 12) {
+                feedback.textContent = `LRN must be 12 digits (${12 - lrnInput.value.length} more needed)`;
+                feedback.classList.remove('d-none');
+            } else if (lrnInput.value.length > 12) {
+                feedback.textContent = 'LRN must be exactly 12 digits';
+                feedback.classList.remove('d-none');
+            } else {
+                feedback.textContent = '✅ LRN looks good';
+                feedback.classList.remove('text-danger');
+                feedback.classList.add('text-success');
+            }
+        });
     });
-});
 </script>
 
 @endsection

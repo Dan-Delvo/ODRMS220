@@ -212,6 +212,39 @@ class DocumentRequestModel extends Model
             );
     }
 
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::creating(function ($model) {
+            // Use a transaction to prevent race conditions
+            DB::beginTransaction();
+            try {
+                $year = date('Y');
+
+                // Lock the table and get the last record for this year
+                $last = self::where('req_no', 'LIKE', 'SR-' . $year . '-%')
+                            ->lockForUpdate()
+                            ->orderByRaw('CAST(SUBSTRING(req_no, LOCATE("-", req_no, 4) + 1) AS UNSIGNED) DESC')
+                            ->first();
+
+                if ($last && preg_match('/^SR-'.$year.'-(\d+)$/', $last->req_no, $match)) {
+                    $next = intval($match[1]) + 1;
+                } else {
+                    $next = 1;
+                }
+
+                // Use 4-digit padding for better scalability
+                // Format: SR-YYYY-#### (e.g., SR-2025-0001)
+                $model->req_no = 'SR-' . $year . '-' . str_pad($next, 4, '0', STR_PAD_LEFT);
+
+                DB::commit();
+            } catch (\Exception $e) {
+                DB::rollBack();
+                throw $e;
+            }
+        });
+    }
 
 
 }

@@ -48,17 +48,18 @@ class DocumentsModelController extends Controller
 
         // Validate the request data
         $request->validate([
-            'DocType' => 'required|string|max:255|unique:doc_categories,DocType',
+            'Type' => 'required|string|max:255|unique:doc_categories,DocType',
+            'Price' => 'required|numeric|min:0',
         ], [
-            'DocType.unique' => 'This document type already exists.',
+            'Type.unique' => 'This document type already exists.',
         ]);
 
         DocumentsModel::create([
-            'DocType' => $request->input('DocType'),
-            'DocPrice' => $request->input('DocPrice'),
+            'DocType' => $request->input('Type'),
+            'DocPrice' => $request->input('Price'),
         ]);
 
-        return redirect()->route('doc')->with('status', 'Document added successfully.');
+        return redirect()->route('doc')->with('success', 'Document added successfully.');
     }
 
     public function update(Request $request, $id)
@@ -67,19 +68,17 @@ class DocumentsModelController extends Controller
         $pdo = DB::connection()->getPdo();
         $pdo->exec("SET @current_user = " . $pdo->quote(Auth::check() ? Auth::user()->username : 'guest'));
 
-        $request->validate([
-            'DocType' => [
-                'required',
-                'string',
-                'max:255',
-                Rule::unique('doc_categories', 'DocType')->ignore($id), // change 'DocID' to your actual primary key column
-            ],
+        $validated = $request->validate([
+            'Type' => 'required|string|max:255|unique:doc_categories,DocType,' . $id,
+            'Price' => 'required|numeric|min:0',
+        ], [
+            'DocType.unique' => 'This document type already exists.',
         ]);
 
         $document = DocumentsModel::findOrFail($id);
         $document->update([
-            'DocType' => $request->input('DocType'),
-            'DocPrice' => $request->input('DocPrice'),
+            'DocType' => $validated['Type'],
+            'DocPrice' => $validated['Price'],
         ]);
 
         return redirect()->route('doc')->with('success', 'Document updated successfully.');
@@ -87,14 +86,103 @@ class DocumentsModelController extends Controller
 
     public function destroy($id)
     {
-        // Set current user
-        $pdo = DB::connection()->getPdo();
-        $pdo->exec("SET @current_user = " . $pdo->quote(Auth::check() ? Auth::user()->username : 'guest'));
+        try {
+            // Set current user
+            $pdo = DB::connection()->getPdo();
+            $pdo->exec("SET @current_user = " . $pdo->quote(Auth::check() ? Auth::user()->username : 'guest'));
 
-        $document = DocumentsModel::findOrFail($id);
-        $document->delete();
+            $document = DocumentsModel::findOrFail($id);
+            
+            // ✅ Store document name FIRST before any operations
+            $documentName = $document->DocType;
+            
+            // ✅ Debug: Log what we're checking
+            \Log::info('Attempting to delete document', [
+                'id' => $id,
+                'name' => $documentName
+            ]);
 
-        return redirect()->route('doc')->with('Danger', 'Document deleted successfully.');
+            // Get detailed request statistics
+            $stats = $document->getRequestStatistics();
+            
+            // ✅ Debug: Log statistics
+            \Log::info('Document statistics', $stats);
+
+            // Check if there are active requests blocking deletion
+            if ($stats['active'] > 0) {
+                $breakdown = [];
+                if ($stats['pending'] > 0) $breakdown[] = "{$stats['pending']} Pending";
+                if ($stats['processing'] > 0) $breakdown[] = "{$stats['processing']} Processing";
+                if ($stats['for_release'] > 0) $breakdown[] = "{$stats['for_release']} For Release";
+
+                \Log::info('Deletion blocked - Active requests found', [
+                    'active' => $stats['active'],
+                    'breakdown' => $breakdown
+                ]);
+
+                return redirect()->route('doc')->with([
+                    'warning' => "Cannot delete this document. There are active requests that must be completed first.",
+                    'document_name' => $documentName,
+                    'active_requests' => $stats['active'],
+                    'request_breakdown' => implode(', ', $breakdown),
+                ]);
+            }
+
+            // Check if there are any historical requests
+            if ($stats['total'] > 0) {
+                $history = [];
+                if ($stats['claimed'] > 0) $history[] = "{$stats['claimed']} completed";
+                if ($stats['declined'] > 0) $history[] = "{$stats['declined']} declined";
+
+                \Log::info('Deletion blocked - Historical requests found', [
+                    'total' => $stats['total'],
+                    'history' => $history
+                ]);
+
+                return redirect()->route('doc')->with([
+                    'warning' => "Cannot delete this document. Deleting it may affect historical records and reports.",
+                    'document_name' => $documentName,
+                    'total_requests' => $stats['total'],
+                    'history_breakdown' => implode(' and ', $history),
+                ]);
+            }
+
+            // ✅ Safe to delete - No requests found
+            \Log::info('Deleting document - No requests found', [
+                'id' => $id,
+                'name' => $documentName
+            ]);
+
+            $document->delete();
+
+            return redirect()->route('doc')->with('success', 
+                "Document {$documentName} has been successfully deleted.");
+
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            \Log::error('Document not found', ['id' => $id]);
+            return redirect()->route('doc')->with('error', 
+                'Document not found. It may have already been deleted.');
+                
+        } catch (\Illuminate\Database\QueryException $e) {
+            \Log::error('Database constraint error deleting document', [
+                'id' => $id,
+                'error' => $e->getMessage(),
+                'sql' => $e->getSql() ?? 'N/A'
+            ]);
+            
+            return redirect()->route('doc')->with('error', 
+                'Unable to delete document due to database constraints. There may be related records that prevent deletion. Please contact the administrator.');
+                
+        } catch (\Exception $e) {
+            \Log::error('Unexpected error deleting document', [
+                'id' => $id,
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+            
+            return redirect()->route('doc')->with('error', 
+                'An unexpected error occurred. Please try again or contact the administrator.');
+        }
     }
 
     public function generateCertificate($id)

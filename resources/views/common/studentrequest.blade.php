@@ -194,39 +194,16 @@
         padding: 0.5rem 1.5rem;
         border-radius: 0.4rem;
         border: none;
+        transition: all 0.3s ease;
     }
 
     .btn-submit:hover {
         background-color: #38d9a9;
     }
 
-    .btn-submit.loading {
-        position: relative;
-        color: transparent;
-    }
-
-    .btn-submit.loading::after {
-        content: '';
-        position: absolute;
-        width: 20px;
-        height: 20px;
-        top: 50%;
-        left: 50%;
-        margin-top: -10px;
-        margin-left: -10px;
-        border: 3px solid rgba(30, 41, 59, 0.3);
-        border-top-color: #1e293b;
-        border-radius: 50%;
-        animation: button-loading-spinner 1s ease infinite;
-    }
-
-    @keyframes button-loading-spinner {
-        from {
-            transform: rotate(0turn);
-        }
-        to {
-            transform: rotate(1turn);
-        }
+    .btn-submit:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
     }
 
     .text-warning-link {
@@ -251,19 +228,77 @@
             width: 100%;
         }
     }
+
+    /* SweetAlert2 Custom Styling */
+    .swal2-popup {
+        background: #1e293b !important;
+        border: 1px solid #334155 !important;
+    }
+
+    .swal2-title {
+        color: #f1f5f9 !important;
+    }
+
+    .swal2-html-container {
+        color: #cbd5e1 !important;
+    }
+
+    .swal2-loading {
+        border-color: #1dd3b0 transparent #1dd3b0 transparent !important;
+    }
 </style>
 
 <!-- Sidebar Toggle Script -->
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        // Form submission handling
+        // Form submission handling with SweetAlert
         const form = document.getElementById('requestForm');
         const submitButton = form.querySelector('.btn-submit');
+        let isSubmitting = false;
 
         form.addEventListener('submit', function(e) {
-            // Disable the submit button and show loading animation
+            // Prevent double submission
+            if (isSubmitting) {
+                e.preventDefault();
+                return false;
+            }
+
+            // Validate form before showing loading
+            if (!form.checkValidity()) {
+                return; // Let HTML5 validation handle it
+            }
+
+            // Prevent default form submission
+            e.preventDefault();
+
+            // Set submitting flag
+            isSubmitting = true;
+
+            // Disable the submit button
             submitButton.disabled = true;
-            submitButton.classList.add('loading');
+
+            // Show SweetAlert loading modal
+            Swal.fire({
+                title: 'Submitting Request...',
+                html: 'Please wait while we process your document request.',
+                allowOutsideClick: false,
+                allowEscapeKey: false,
+                allowEnterKey: false,
+                showConfirmButton: false,
+                didOpen: () => {
+                    Swal.showLoading();
+                },
+                background: '#1e293b',
+                color: '#f1f5f9',
+                customClass: {
+                    popup: 'swal2-dark-theme'
+                }
+            });
+
+            // Submit the form after showing the loading modal
+            setTimeout(() => {
+                form.submit();
+            }, 500);
         });
 
         const toggle = document.getElementById('sidebarToggle');
@@ -286,6 +321,20 @@
             fileInput.addEventListener('change', function(e) {
                 const file = e.target.files[0];
                 if (file) {
+                    // Validate file size (10MB max)
+                    if (file.size > 10 * 1024 * 1024) {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'File Too Large',
+                            text: 'Please upload a file smaller than 10MB.',
+                            background: '#1e293b',
+                            color: '#f1f5f9',
+                            confirmButtonColor: '#1dd3b0'
+                        });
+                        fileInput.value = '';
+                        return;
+                    }
+
                     // Show file preview
                     fileDisplay.classList.add('has-file');
                     uploadContent.style.display = 'none';
@@ -319,6 +368,11 @@
             const i = Math.floor(Math.log(bytes) / Math.log(k));
             return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
         }
+
+        // Prevent form resubmission on page reload
+        if (window.history.replaceState) {
+            window.history.replaceState(null, null, window.location.href);
+        }
     });
 </script>
 
@@ -343,12 +397,12 @@
                     <div class="form-section-title">Document Request Info</div>
 
                     <div class="form-floating mb-3">
-                        <input type="text" class="form-control" id="request_schl_entity" name="request_schl_entity" placeholder="Requesting Entity">
-                        <label for="request_schl_entity" class ="text-white">Requesting School/Entity</label>
+                        <input type="text" class="form-control" id="request_schl_entity" name="request_schl_entity" placeholder="Requesting Entity" required>
+                        <label for="request_schl_entity" class="text-white">Requesting School/Entity</label>
                     </div>
 
                     <div class="form-floating mb-3">
-                        <select class="form-select" id="document_id" name="document_id">
+                        <select class="form-select" id="document_id" name="document_id" required>
                             @foreach($DocType as $doc)
                             <option value="{{ $doc->id }}"
                                 @if($doc->DocType === "Form 137" && $DocRequests->contains('DocType', 'Form 137')) disabled @endif>
@@ -357,13 +411,13 @@
                             </option>
                             @endforeach
                         </select>
-                        <label for="document_id" class ="text-white">Requested Document</label>
+                        <label for="document_id" class="text-white">Requested Document</label>
                     </div>
 
 
                     <div class="form-floating mb-3">
-                        <input type="text" class="form-control" id="release_mode" name="release_mode" placeholder="Release Mode" value="Pick Up" readonly>
-                        <label for="release_mode" class ="text-white">Release Mode</label>
+                        <input type="text" class="form-control" id="release_mode" name="release_mode" placeholder="Release Mode" value="Pick Up" readonly required>
+                        <label for="release_mode" class="text-white">Release Mode</label>
                     </div>
                 </div>
 
@@ -375,7 +429,8 @@
                             class="file-upload-input"
                             id="supporting_document"
                             name="supporting_document"
-                            accept="image/*,.pdf,.doc,.docx">
+                            accept="image/*,.pdf,.doc,.docx"
+                            required>
 
                         <div class="file-upload-display">
                             <div class="upload-content" style="display: flex; flex-direction: column; justify-content: center; align-items: center;">
@@ -400,7 +455,7 @@
             </div>
 
             <div class="d-flex justify-content-between align-items-center mt-4">
-                <a href="dashboard.html" class="text-warning-link">← Back to Dashboard</a>
+                <a href="{{route('st.page')}}" class="text-warning-link">← Back to Dashboard</a>
                 <button type="submit" class="btn btn-submit">Submit Request</button>
             </div>
         </form>

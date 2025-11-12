@@ -178,6 +178,10 @@
         sessionStorage.setItem('pageRefreshed', 'true');
         location.reload();
     }
+
+        document.querySelectorAll('form').forEach(form => {
+            form.setAttribute('autocomplete', 'off');
+        });
     </script>
     @stack('scripts')
 </body>

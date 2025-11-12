@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use App\Models\Account;
 use App\Models\DocumentRequestModel;
+use Exception;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\Log;
 
@@ -16,61 +17,141 @@ class StudentInformationModelController extends Controller
 {
     public function display(Request $request)
     {
-        // Check permission
-        $PermissionStud = PermissionRoleModel::getPermission('student', Auth::user()->role_id);
-        if (empty($PermissionStud)) {
-            abort(404);
-        }
+        try {
+            // Check permission
+            $PermissionStud = PermissionRoleModel::getPermission('student', Auth::user()->role_id);
+            if (empty($PermissionStud)) {
+                abort(404);
+            }
 
-        // Get search and sort parameters
-        $search = $request->input('search');
-        $sortBy = $request->input('sort_by', 'id');
-        $sortOrder = $request->input('sort_order', 'asc');
+            // Get search and sort parameters
+            $search = $request->input('search');
+            $sortBy = $request->input('sort_by', 'id');
+            $sortOrder = $request->input('sort_order', 'asc');
 
-        // Validate sort column to prevent SQL injection
-        $allowedSortColumns = ['id', 'LastName', 'FirstName', 'LRN', 'Grade_level', 'Last_sy_attended'];
-        if (!in_array($sortBy, $allowedSortColumns)) {
-            $sortBy = 'id';
-        }
+            // Validate sort column to prevent SQL injection
+            $allowedSortColumns = ['id', 'LastName', 'FirstName', 'LRN', 'Grade_level', 'Last_sy_attended'];
+            if (!in_array($sortBy, $allowedSortColumns)) {
+                $sortBy = 'id';
+            }
 
-        // Validate sort order
-        if (!in_array($sortOrder, ['asc', 'desc'])) {
-            $sortOrder = 'asc';
-        }
+            // Validate sort order
+            if (!in_array($sortOrder, ['asc', 'desc'])) {
+                $sortOrder = 'asc';
+            }
 
-        // Build query
-        $query = StudentInformationModel::query();
+            // Build query
+            $query = StudentInformationModel::query();
 
-        // Apply search filter
-        if ($search) {
-            $query->where(function($q) use ($search) {
-                $q->where('LastName', 'like', '%' . $search . '%')
-                  ->orWhere('FirstName', 'like', '%' . $search . '%')
-                  ->orWhere('MiddleName', 'like', '%' . $search . '%')
-                  ->orWhere('LRN', 'like', '%' . $search . '%')
-                  ->orWhere('Grade_level', 'like', '%' . $search . '%')
-                  ->orWhere('Std_status', 'like', '%' . $search . '%')
-                  ->orWhere('Last_sy_attended', 'like', '%' . $search . '%');
+            // Apply search filter
+            if ($search) {
+                $searchTerm = trim($search);
+                $query->where(function ($q) use ($searchTerm) {
+                $q->whereRaw('LOWER(LastName) LIKE ?', ['%' . strtolower($searchTerm) . '%'])
+                    ->orWhereRaw('LOWER(FirstName) LIKE ?', ['%' . strtolower($searchTerm) . '%'])
+                    ->orWhereRaw('LOWER(COALESCE(MiddleName, "")) LIKE ?', ['%' . strtolower($searchTerm) . '%'])
+                    ->orWhereRaw('LOWER(COALESCE(Suffix, "")) LIKE ?', ['%' . strtolower($searchTerm) . '%'])
+                    ->orWhereRaw('LOWER(LRN) LIKE ?', ['%' . strtolower($searchTerm) . '%'])
+                    ->orWhereRaw('LOWER(Grade_level) LIKE ?', ['%' . strtolower($searchTerm) . '%'])
+                    ->orWhereRaw('LOWER(COALESCE(Std_status, "")) LIKE ?', ['%' . strtolower($searchTerm) . '%'])
+                    ->orWhereRaw('LOWER(COALESCE(Last_sy_attended, "")) LIKE ?', ['%' . strtolower($searchTerm) . '%'])
+                    ->orWhereRaw("LOWER(CONCAT(FirstName, ' ', LastName)) LIKE ?", ['%' . strtolower($searchTerm) . '%'])
+                    ->orWhereRaw("LOWER(CONCAT(FirstName, ' ', COALESCE(MiddleName, ''), ' ', LastName)) LIKE ?", ['%' . strtolower($searchTerm) . '%']);
             });
+            }
+
+            // Apply sorting
+            $query->orderBy($sortBy, $sortOrder);
+
+            // Paginate results (10 per page)
+            $user = $query->paginate(10);
+
+            // Get permissions
+            $PermissionEdit = PermissionRoleModel::getPermission('studentEdit', Auth::user()->role_id);
+            $PermissionDelete = PermissionRoleModel::getPermission('studentDelete', Auth::user()->role_id);
+            $PermissionInfo = PermissionRoleModel::getPermission('studentInfo', Auth::user()->role_id);
+
+            // Define table columns for dynamic table
+            $tableColumns = [
+                [
+                    'label' => 'Last Name',
+                    'field' => 'LastName'
+                ],
+                [
+                    'label' => 'First Name',
+                    'field' => 'FirstName'
+                ],
+                [
+                    'label' => 'Middle Name',
+                    'field' => 'MiddleName'
+                ],
+                [
+                    'label' => 'Suffix',
+                    'field' => 'Suffix'
+                ],
+                [
+                    'label' => 'LRN',
+                    'field' => 'LRN'
+                ],
+                [
+                    'label' => 'Grade Level',
+                    'field' => 'Grade_level'
+                ],
+                [
+                    'label' => 'Status',
+                    'field' => 'Std_status'
+                ],
+                [
+                    'label' => 'Last SY Attended',
+                    'field' => 'Last_sy_attended'
+                ]
+            ];
+
+            // Check if it's an AJAX request
+            if ($request->ajax()) {
+                return response()->json([
+                    'success' => true,
+                    'html' => view('maintenance.table', [
+                        'items' => $user,
+                        'columns' => $tableColumns,
+                        'routePrefix' => 'student',
+                        'primaryKey' => 'id',
+                        'permissions' => [
+                            'edit' => $PermissionEdit,
+                            'delete' => $PermissionDelete,
+                            'info' => $PermissionInfo
+                        ],
+                        'emptyMessage' => 'No students found matching your search criteria.'
+                    ])->render(),
+                    'pagination' => view('maintenance.pagination', ['items' => $user])->render(),
+                    'total' => $user->total(),
+                    'showing' => [
+                        'from' => $user->firstItem(),
+                        'to' => $user->lastItem(),
+                        'total' => $user->total()
+                    ]
+                ]);
+            }
+
+            return view('maintenance.student', compact('user'))
+                ->with([
+                    'PermissionEdit' => $PermissionEdit,
+                    'PermissionDelete' => $PermissionDelete,
+                    'PermissionInfo' => $PermissionInfo,
+                    'tableColumns' => $tableColumns
+                ]);
+        } catch (Exception $e) {
+            Log::error('Error in student display method: ' . $e->getMessage());
+
+            if ($request->ajax()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'An error occurred while loading students.'
+                ], 500);
+            }
+
+            return redirect()->back()->with('Danger', 'An error occurred while loading students.');
         }
-
-        // Apply sorting
-        $query->orderBy($sortBy, $sortOrder);
-
-        // Paginate results (10 per page to match your original)
-        $user = $query->paginate(10);
-
-        // Get permissions
-        $data = PermissionRoleModel::getPermission('studentEdit', Auth::user()->role_id);
-        $data1 = PermissionRoleModel::getPermission('studentDelete', Auth::user()->role_id);
-        $data2 = PermissionRoleModel::getPermission('studentInfo', Auth::user()->role_id);
-
-        return view('maintenance.student', compact('user'))
-            ->with([
-                'PermissionEdit' => $data,
-                'PermissionDelete' => $data1,
-                'PermissionInfo' => $data2,
-            ]);
     }
 
 
@@ -78,7 +159,7 @@ class StudentInformationModelController extends Controller
 
     public function edit($id)
     {
-                DB::connection()->getPdo()->exec("SET @current_user = " .
+        DB::connection()->getPdo()->exec("SET @current_user = " .
             DB::connection()->getPdo()->quote(Auth::check() ? Auth::user()->username : 'guest'));
         $student = StudentInformationModel::find($id);
         $gradeLevels = ['7', '8', '9', '10', '11', '12']; // Example grade levels
@@ -96,6 +177,14 @@ class StudentInformationModelController extends Controller
         DB::connection()->getPdo()->exec("SET @current_user = " .
             DB::connection()->getPdo()->quote(Auth::check() ? Auth::user()->username : 'guest'));
 
+        if ($request->id != $id) {
+            // Return with a SweetAlert flash message instead of abort(403)
+            return redirect()->back()->with([
+                'swal_error_title' => 'Unauthorized Action',
+                'swal_error_text' => 'You are not allowed to modify the Student ID or Account ID.',
+                'swal_error_icon' => 'error'
+            ]);
+        }
         // Find the student record
         $student = StudentInformationModel::find($id);
 
@@ -298,4 +387,3 @@ class StudentInformationModelController extends Controller
         }
     }
 }
-

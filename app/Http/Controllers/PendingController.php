@@ -149,8 +149,10 @@ class PendingController extends Controller
             'status' => 'Declined',
             'remarks' => $reason
         ]);
-
-        return redirect('/pending')->with('Danger', 'Declined Successfully');
+        if($request->indicator == 1){
+            return redirect('/declined-documents')->with('success', 'Declined Successfully');
+        }
+        return redirect('/pending')->with('success', 'Declined Successfully');
     }
 
     public function completeRequest(Request $request, $id)
@@ -172,7 +174,7 @@ class PendingController extends Controller
         Mail::to($email)->queue(new RequestApprovedMail($name, $subject, $view));
 
         $documentRequest->update([
-            'remarks' => 'Proessing',
+            'remarks' => 'Processing',
             'status' => 'Processing',
             'approve_date' => Carbon::now(),
         ]);

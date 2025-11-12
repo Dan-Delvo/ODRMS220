@@ -288,7 +288,7 @@ class DocumentRequestController extends Controller
         $table = DocumentRequestModel::find($id);
         if ($table) {
             $table->delete();
-            return redirect('/declined-documents')->with('Danger', 'Deleted Successfully');
+            return redirect('/declined-documents')->with('success', 'Deleted Successfully');
         }
         return redirect('/declined-documents')->with('error', 'Record not found');
     }

@@ -11,6 +11,7 @@ use App\Http\Controllers\declinedController;
 use App\Http\Controllers\RegistrationController;
 use App\Http\Controllers\StudentPageController;
 use App\Http\Controllers\AccountController;
+use App\Http\Controllers\ArchivedDocumentRequestsController;
 use App\Http\Controllers\DocumentsModelController;
 use App\Http\Controllers\GenerateRequestController;
 use App\Http\Controllers\RoleController;
@@ -75,6 +76,7 @@ Route::group(['middleware' => 'useradmin'], function () {
     Route::get('dashboard', [DashboardController::class, 'dashboard'])->name('dashboard');
 
     //Request Management        ================================================================================
+    Route::get('/dictionary', function () { return view('common.dictionary'); } );
     Route::resource('tables', DocumentRequestController::class);
     Route::resource('pending', PendingController::class);
     Route::resource('ongoing', OngoingController::class);
@@ -95,6 +97,10 @@ Route::group(['middleware' => 'useradmin'], function () {
         Route::put('/moveToClaimed/{Request_ID}', [BulkRequest::class, 'moveToClaimed'])->name('bulk_request.moveToClaimed');
         Route::get('/bulk-request-add', [BulkRequest::class, 'show'])->name('bulk_request_add.show');
         Route::post('/bulk-request-add', [BulkRequest::class, 'store'])->name('bulk_request_add.store');
+    });
+
+    Route::prefix('archived')->group(function(){
+        Route::get('/pending', [ArchivedDocumentRequestsController::class, 'pending'])->name('archived.pending');
     });
 
 
@@ -184,7 +190,7 @@ Route::group(['middleware' => 'useradmin'], function () {
 });
 
 
-Route::middleware(['guest', 'forgotpassword', 'lockout'])->group(function () {
+Route::middleware(['forgotpassword', 'lockout'])->group(function () {
     Route::get('/forgotpassword', [forgotpassword::class, 'index'])->name('forgot');
     Route::post('/forgotpassword', [forgotpassword::class, 'forgotpost'])->name('forgot.submit');
     Route::get('/verifyotp', [forgotpassword::class, 'showVerifyOTP'])->name('verifyotp');
@@ -194,7 +200,7 @@ Route::middleware(['guest', 'forgotpassword', 'lockout'])->group(function () {
     Route::post('/newpassword', [forgotpassword::class, 'newpassword'])->name('newpassword.submit');
 });
 
-Route::group(['middleware' => 'userstudent'], function () {
+Route::group(['middleware' => ['userstudent', 'useradmin']], function () {
 
     Route::get('stpage', [StudentPageController::class, 'mainpage'])->name('st.page');
     // Display the document request form
