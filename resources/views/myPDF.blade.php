@@ -129,7 +129,7 @@
             font-size: 0.95rem;
             color: #2e2e2e;
             border-collapse: collapse;
-            width: 100%;
+            max-width: 100%;
             border: 2px solid #444; /* darker border for better contrast */
         }
 
@@ -149,6 +149,7 @@
             vertical-align: middle;
             border: 1.5px solid #444; /* darker table borders */
             text-align: center;
+            word-wrap: break-word;
         }
 
         tbody tr:hover {
