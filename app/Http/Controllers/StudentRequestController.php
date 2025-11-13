@@ -134,6 +134,7 @@ class StudentRequestController extends Controller
         // Validate the incoming request
         $request->validate([
             'supporting_document' => 'required|file|mimes:jpeg,jpg,png,pdf,doc,docx|max:10240', // 10MB max
+            'reason' => 'required|string|max:1000', // ✅ ADDED reason validation
         ]);
 
         // Find the document request by ID
@@ -170,12 +171,13 @@ class StudentRequestController extends Controller
             //     unlink(public_path($docRequest->supporting_document));
             // }
 
-            // Update the document request with the new file path
+            // Update the document request with the new file path and reason
             $docRequest->supporting_document = $supportingDocumentPath;
+            $docRequest->reason = $request->input('reason'); // ✅ ADDED reason update
             $docRequest->save();
         }
 
         // Redirect back with success message
-        return redirect()->back()->with('Success', 'Supporting document replaced successfully!');
+        return redirect()->back()->with('Success', 'Document re-requested successfully! Your request is now pending review.');
     }
 }
