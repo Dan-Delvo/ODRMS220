@@ -454,6 +454,21 @@
                 </div>
             </div>
 
+            <div class="form-floating mb-3">
+                <textarea 
+                    class="form-control" 
+                    id="reason" 
+                    name="reason" 
+                    placeholder="Reason for Request" 
+                    style="height: 120px; resize: vertical;"
+                    required></textarea>
+                <label for="reason" class="text-white">Reason for Request</label>
+            </div>
+            <small class="text-white d-block mb-3" style="margin-top: -0.5rem;">
+                <i class="fas fa-info-circle me-1"></i>
+                Please provide a brief explanation for requesting this document
+            </small>
+
             <div class="d-flex justify-content-between align-items-center mt-4">
                 <a href="{{route('st.page')}}" class="text-warning-link">← Back to Dashboard</a>
                 <button type="submit" class="btn btn-submit">Submit Request</button>

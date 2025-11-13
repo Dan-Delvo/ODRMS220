@@ -55,6 +55,7 @@ class StudentRequestController extends Controller
             'document_id' => 'required|integer',
             'request_schl_entity' => 'required|string|max:255',
             'release_mode' => 'required|max:255',
+            'reason' => 'required|string|max:1000', // ✅ CHANGED from remarks to reason
             'supporting_document' => 'required|file|mimes:jpeg,jpg,png,pdf,doc,docx|max:10240', // 10MB max
         ]);
 
@@ -114,7 +115,8 @@ class StudentRequestController extends Controller
             'request_mode' => "Online",
             'release_mode' => $validatedData['release_mode'],
             'supporting_document' => $supportingDocumentPath,
-            'remarks' => "Pending",
+            'reason' => $validatedData['reason'], // ✅ CHANGED from remarks to reason
+            'remarks' => "Pending", 
             'status' => "Pending",
             // 'receipt_no' => $receipt->receipt_no
         ]);
@@ -122,6 +124,7 @@ class StudentRequestController extends Controller
         // Step 8: Redirect with success message
         return redirect()->route('st.page')->with('Success', 'Document request submitted successfully!');
     }
+    
     public function replaceFile(Request $request, $id)
     {
         // Set current user in SQL session
