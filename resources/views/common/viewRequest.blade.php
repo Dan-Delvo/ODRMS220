@@ -1,3 +1,4 @@
+
 @extends('layout.studentpage')
 
 @section('content')
@@ -187,6 +188,38 @@
     .status-declined {
         background: linear-gradient(135deg, #ef4444, #dc2626);
         color: white;
+    }
+
+    /* Processing Time Badge */
+    .processing-time-badge {
+        padding: 0.4rem 0.8rem;
+        border-radius: 1rem;
+        font-size: 0.75rem;
+        font-weight: 500;
+        background: rgba(71, 85, 105, 0.3);
+        color: var(--text-muted);
+        border: 1px solid rgba(71, 85, 105, 0.5);
+        display: inline-flex;
+        align-items: center;
+        gap: 0.3rem;
+    }
+
+    .processing-complete {
+        background: rgba(34, 197, 94, 0.2);
+        color: #22c55e;
+        border-color: rgba(34, 197, 94, 0.3);
+    }
+
+    .processing-overdue {
+        background: rgba(250, 204, 21, 0.2);
+        color: #facc15;
+        border-color: rgba(250, 204, 21, 0.3);
+    }
+
+    .processing-na {
+        background: rgba(239, 68, 68, 0.2);
+        color: #ef4444;
+        border-color: rgba(239, 68, 68, 0.3);
     }
 
     /* Release Mode Badges */
@@ -609,6 +642,7 @@
                                     <th><i class="fas fa-file-alt me-1"></i>Document</th>
                                     <th><i class="fas fa-school me-1"></i>School</th>
                                     <th><i class="fas fa-truck me-1"></i>Release Mode</th>
+                                    <th><i class="fas fa-calendar-day me-1"></i>Processing Time</th>
                                     <th><i class="fas fa-comment me-1"></i>Remarks</th>
                                     <th><i class="bi bi-journal-text me-1"></i>Reason</th>
                                     <th><i class="fas fa-flag me-1"></i>Status</th>
@@ -616,6 +650,14 @@
                             </thead>
                             <tbody>
                                 @foreach ($DocRequests as $item)
+                                @php
+                                    $requestDateTime = $item->request_date . ' ' . $item->request_time;
+                                    $createdDate = \Carbon\Carbon::parse($requestDateTime);
+                                    $now = \Carbon\Carbon::now();
+                                    $daysProcessing = (int)$createdDate->diffInDays($now);
+                                    $estimatedDays = 5;
+                                    $daysRemaining = max(0, $estimatedDays - $daysProcessing);
+                                @endphp
                                 <tr>
                                     <td>
                                         @if($item->claimer->full_name !== 'Blank Blank')
@@ -638,6 +680,32 @@
                                     </td>
                                     <td class="fixed-width-cell">
                                         <span class="release-mode-badge">{{ $item->release_mode }}</span>
+                                    </td>
+                                    <td>
+                                        @if($item->status == 'Claimed')
+                                            <span class="processing-time-badge processing-complete">
+                                                <i class="fas fa-check-circle"></i>Completed
+                                            </span>
+                                        @elseif($item->status == 'Declined')
+                                            <span class="processing-time-badge processing-na">
+                                                <i class="fas fa-ban"></i>N/A
+                                            </span>
+                                        @else
+                                            <div class="d-flex flex-column align-items-start gap-1">
+                                                <span class="processing-time-badge">
+                                                    <i class="fas fa-calendar-day"></i>{{ $daysProcessing }}{{ $daysProcessing == 1 ? ' day' : ' days' }}
+                                                </span>
+                                                @if($daysRemaining > 0)
+                                                    <small style="color:#64748b; font-size:0.65rem;">
+                                                        ~{{ $daysRemaining }} {{ $daysRemaining == 1 ? 'day' : 'days' }} left
+                                                    </small>
+                                                @else
+                                                    <small class="processing-time-badge processing-overdue" style="font-size:0.65rem; padding:0.2rem 0.4rem;">
+                                                        <i class="fas fa-exclamation-triangle"></i>Overdue
+                                                    </small>
+                                                @endif
+                                            </div>
+                                        @endif
                                     </td>
                                     <td>
                                         @if($item->remarks)
@@ -715,6 +783,7 @@
                                     <tr>
                                         <th><i class="fas fa-user-graduate me-1"></i>Student</th>
                                         <th><i class="fas fa-file-alt me-1"></i>Document</th>
+                                        <th><i class="fas fa-calendar-day me-1"></i>Days</th>
                                         <th><i class="fas fa-comment me-1"></i>Remarks</th>
                                         <th><i class="bi bi-journal-text me-1"></i>Reason</th>
                                         <th><i class="fas fa-flag me-1"></i>Status</th>
@@ -722,6 +791,14 @@
                                 </thead>
                                 <tbody>
                                     @foreach ($DocRequests as $item)
+                                    @php
+                                        $requestDateTime = $item->request_date . ' ' . $item->request_time;
+                                        $createdDate = \Carbon\Carbon::parse($requestDateTime);
+                                        $now = \Carbon\Carbon::now();
+                                        $daysProcessing = (int)$createdDate->diffInDays($now);
+                                        $estimatedDays = 5;
+                                        $daysRemaining = max(0, $estimatedDays - $daysProcessing);
+                                    @endphp
                                     <tr>
                                         <td>
                                             <div class="fw-semibold" style="color: var(--primary-teal);">
@@ -741,6 +818,15 @@
                                             <small class="text-muted d-block mt-1">
                                                 {{ Str::limit($item->request_schl_entity, 30) }}
                                             </small>
+                                        </td>
+                                        <td>
+                                            @if(!in_array($item->status, ['Claimed', 'Declined']))
+                                                <span class="processing-time-badge" style="font-size: 0.65rem;">
+                                                    {{ $daysProcessing }}d
+                                                </span>
+                                            @else
+                                                <span style="color:#64748b; font-size:0.7rem;">-</span>
+                                            @endif
                                         </td>
                                         <td>
                                             @if($item->remarks)
@@ -805,6 +891,14 @@
                     <!-- Mobile Card View -->
                     <div class="mobile-view">
                         @foreach ($DocRequests as $item)
+                        @php
+                            $requestDateTime = $item->request_date . ' ' . $item->request_time;
+                            $createdDate = \Carbon\Carbon::parse($requestDateTime);
+                            $now = \Carbon\Carbon::now();
+                            $daysProcessing = (int)$createdDate->diffInDays($now);
+                            $estimatedDays = 5;
+                            $daysRemaining = max(0, $estimatedDays - $daysProcessing);
+                        @endphp
                         <div class="mobile-request-card">
                             <div class="mobile-card-header">
                                 <div class="d-flex justify-content-between align-items-center">
@@ -862,6 +956,21 @@
                                         <span class="release-mode-badge">{{ $item->release_mode }}</span>
                                     </span>
                                 </div>
+                                @if(!in_array($item->status, ['Claimed', 'Declined']))
+                                <div class="mobile-card-row">
+                                    <span class="mobile-card-label"><i class="fas fa-calendar-day me-1"></i>Processing:</span>
+                                    <span class="mobile-card-value">
+                                        <span class="processing-time-badge" style="font-size: 0.7rem;">
+                                            <i class="fas fa-calendar-day"></i>{{ $daysProcessing }} {{ $daysProcessing == 1 ? 'day' : 'days' }}
+                                        </span>
+                                        @if($daysRemaining > 0)
+                                            <br><small style="color:#64748b; font-size:0.65rem;">~{{ $daysRemaining }} days left</small>
+                                        @else
+                                            <br><small style="color:#facc15; font-size:0.65rem;"><i class="fas fa-exclamation-triangle"></i> Overdue</small>
+                                        @endif
+                                    </span>
+                                </div>
+                                @endif
                                 @if($item->remarks)
                                 <div class="mobile-card-row">
                                     <span class="mobile-card-label"><i class="fas fa-comment me-1"></i>Remarks:</span>
