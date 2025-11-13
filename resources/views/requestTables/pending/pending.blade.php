@@ -130,6 +130,7 @@
                         <th>Doc</th>
                         <th>School</th>
                         <th>Remarks</th>
+                        <th>Reason</th>
                         <th>Status</th>
                         <th>Req Date</th>
                         <th class="action-column">Action</th>
@@ -142,7 +143,36 @@
                         <td>{{ strtoupper(optional($item->studentInformation)->full_name) }}</td>
                         <td>{{ $item->documents->DocType }}</td>
                         <td>{{ strtoupper($item->request_schl_entity) }}</td>
-                        <td>{{ $item->remarks }}</td>
+                        <td>
+                            @if($item->remarks)
+                                @if(strlen($item->remarks) > 50)
+                                    <button class="btn btn-sm btn-info view-remarks-btn" 
+                                        data-bs-toggle="modal" 
+                                        data-bs-target="#remarksModal{{ $item->id }}">
+                                        <i class="bi bi-eye"></i> View
+                                    </button>
+                                @else
+                                    {{ $item->remarks }}
+                                @endif
+                            @else
+                                <em class="text-muted">N/A</em>
+                            @endif
+                        </td>
+                        <td>
+                            @if($item->reason)
+                                @if(strlen($item->reason) > 50)
+                                    <button class="btn btn-sm btn-info view-reason-btn" 
+                                        data-bs-toggle="modal" 
+                                        data-bs-target="#reasonViewModal{{ $item->id }}">
+                                        <i class="bi bi-eye"></i> View
+                                    </button>
+                                @else
+                                    {{ $item->reason }}
+                                @endif
+                            @else
+                                <em class="text-muted">N/A</em>
+                            @endif
+                        </td>
                         <td><span class="badge bg-secondary text-white status-badge">{{ $item->status }}</span></td>
                         <td>{{ $item->request_date }}</td>
                         <td class="action-column">
@@ -221,8 +251,66 @@
     </div>
 </div>
 
-{{-- All your existing modals (Receipt & Document) go here unchanged --}}
+{{-- Remarks & Reason View Modals --}}
 @foreach ($DocRequests as $item)
+{{-- Remarks Modal (only if remarks > 50 chars) --}}
+@if($item->remarks && strlen($item->remarks) > 50)
+<div class="modal fade" id="remarksModal{{ $item->id }}" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-content" style="background:#1e293b; color:#f1f5f9; border:1px solid #334155; border-radius:1rem;">
+            <div class="modal-header" style="background:#0f172a; border-bottom:1px solid #334155;">
+                <h5 class="modal-title" style="color:#1dd3b0;">
+                    <i class="bi bi-chat-left-dots me-2"></i>Full Remarks
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body p-4">
+                <div class="alert alert-info mb-3" style="background:#334155; border:1px solid #475569; color:#e2e8f0;">
+                    <strong>Request #{{ $item->req_no }}</strong>
+                </div>
+                <div class="p-3 rounded" style="background:#0f172a; border:1px solid #334155; word-wrap: break-word; white-space: pre-line;">{{ $item->remarks }}</div>
+            </div>
+            <div class="modal-footer" style="background:#0f172a; border-top:1px solid #334155;">
+                <button type="button" class="btn btn-sm" 
+                    style="background:#1dd3b0; color:#0f172a;" 
+                    data-bs-dismiss="modal">
+                    <i class="bi bi-x-circle me-1"></i> Close
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+@endif
+
+{{-- Reason View Modal (only if reason > 50 chars) --}}
+@if($item->reason && strlen($item->reason) > 50)
+<div class="modal fade" id="reasonViewModal{{ $item->id }}" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-content" style="background:#1e293b; color:#f1f5f9; border:1px solid #334155; border-radius:1rem;">
+            <div class="modal-header" style="background:#0f172a; border-bottom:1px solid #334155;">
+                <h5 class="modal-title" style="color:#1dd3b0;">
+                    <i class="bi bi-journal-text me-2"></i>Request Reason
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body p-4">
+                <div class="alert alert-info mb-3" style="background:#334155; border:1px solid #475569; color:#e2e8f0;">
+                    <strong>Request #{{ $item->req_no }}</strong>
+                </div>
+                <div class="p-3 rounded" style="background:#0f172a; border:1px solid #334155; word-wrap: break-word; white-space: pre-line;">{{ $item->reason }}</div>
+            </div>
+            <div class="modal-footer" style="background:#0f172a; border-top:1px solid #334155;">
+                <button type="button" class="btn btn-sm" 
+                    style="background:#1dd3b0; color:#0f172a;" 
+                    data-bs-dismiss="modal">
+                    <i class="bi bi-x-circle me-1"></i> Close
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+@endif
+
 {{-- Receipt Modal --}}
 @if ($item->receipt)
 <div class="modal fade" id="receiptModal{{ $item->id }}" tabindex="-1">
@@ -614,8 +702,6 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 </script>
 
-
-
 <style>
     /* ===== CORE VARIABLES ===== */
     :root {
@@ -698,7 +784,6 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     @media (min-width: 768px) {
-
         .filter-select,
         .sort-select {
             width: 100px;
@@ -718,9 +803,9 @@ document.addEventListener('DOMContentLoaded', function() {
         box-shadow: 0 0 0 0.2rem rgba(29, 211, 176, 0.25);
     }
 
-    /* ===== TABLE STYLES ===== */
+    /* ===== TABLE STYLES - COMPRESSED ROWS ===== */
     #requestsTable {
-        font-size: 0.8rem;
+        font-size: 0.85rem;
         margin-bottom: 0;
     }
 
@@ -728,16 +813,16 @@ document.addEventListener('DOMContentLoaded', function() {
         white-space: nowrap;
         vertical-align: middle;
         font-weight: 600;
-        padding: 0.3rem 0.3rem;
-        font-size: 0.8rem;
-        line-height: 1;
+        padding: 0.4rem 0.5rem;
+        font-size: 0.85rem;
+        line-height: 1.3;
     }
 
     #requestsTable tbody td {
         vertical-align: middle;
-        padding: 0.3rem 0.3rem;
-        font-size: 0.8rem;
-        line-height: 1;
+        padding: 0.35rem 0.5rem;
+        font-size: 0.85rem;
+        line-height: 1.3;
     }
 
     .sortable-header a {
@@ -748,41 +833,102 @@ document.addEventListener('DOMContentLoaded', function() {
         opacity: 0.8;
     }
 
-    /* ===== ACTION COLUMN ===== */
+    /* ===== REQ NUMBER COLUMN ===== */
+    #requestsTable tbody td:first-child,
+    #requestsTable thead th:first-child {
+        min-width: 120px !important;
+        max-width: 120px !important;
+        width: 120px !important;
+        white-space: nowrap !important;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    /* ===== REQ DATE COLUMN - ONE LINE ===== */
+    #requestsTable tbody td:nth-child(8),
+    #requestsTable thead th:nth-child(8) {
+        min-width: 95px !important;
+        max-width: 95px !important;
+        width: 95px !important;
+        white-space: nowrap !important;
+    }
+
+    /* ===== ACTION COLUMN - COMPRESSED ===== */
     .action-column {
-        min-width: 200px !important;
-        max-width: 200px !important;
-        width: 200px !important;
-        white-space: normal !important;
+        min-width: 310px !important;
+        max-width: 310px !important;
+        width: 310px !important;
+        white-space: nowrap !important;
+        padding: 0.25rem 0.3rem !important;
     }
 
     .btn-group-vertical {
-        display: flex !important;
+        display: inline-flex !important;
         flex-direction: row !important;
-        flex-wrap: wrap !important;
-        gap: 0.15rem !important;
-        width: 100% !important;
+        flex-wrap: nowrap !important;
+        gap: 0.3rem !important;
+        align-items: center !important;
     }
 
     .action-column .btn {
-        padding: 0.25rem 0.5rem !important;
+        padding: 0.3rem 0.5rem !important;
         font-size: 0.75rem !important;
-        width: 95px !important;
-        min-width: 95px !important;
-        max-width: 95px !important;
-        display: inline-block !important;
+        width: auto !important;
+        min-width: 70px !important;
+        max-width: none !important;
+        display: inline-flex !important;
+        align-items: center !important;
+        justify-content: center !important;
         text-align: center !important;
-        margin-bottom: 0 !important;
+        margin: 0 !important;
+        white-space: nowrap !important;
+        line-height: 1.2 !important;
     }
 
     .action-column .btn i {
+        font-size: 0.7rem !important;
+        margin-right: 0.2rem !important;
+    }
+
+    /* Make form inline */
+    .action-column .accept-form {
+        display: inline !important;
+        margin: 0 !important;
+    }
+
+    /* Override Bootstrap mb-1 class */
+    .action-column .mb-1 {
+        margin-bottom: 0 !important;
+    }
+
+    /* Specific button width adjustments */
+    .action-column .decline-btn {
+        min-width: 68px !important;
+    }
+
+    .action-column .accept-btn {
+        min-width: 68px !important;
+    }
+
+    .action-column .btn-warning {
+        min-width: 58px !important;
+    }
+
+    .action-column .btn-primary {
+        min-width: 80px !important;
+    }
+
+    /* ===== VIEW BUTTONS ===== */
+    .view-remarks-btn, .view-reason-btn {
+        padding: 0.25rem 0.5rem !important;
         font-size: 0.75rem !important;
+        white-space: nowrap;
     }
 
     /* ===== STATUS BADGE ===== */
     .status-badge {
-        font-size: 0.7rem;
-        padding: 0.25rem 0.5rem;
+        font-size: 0.75rem;
+        padding: 0.3rem 0.6rem;
         white-space: nowrap;
     }
 
@@ -793,8 +939,8 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     .btn-sm {
-        font-size: 0.75rem;
-        padding: 0.25rem 0.5rem;
+        font-size: 0.8rem;
+        padding: 0.3rem 0.6rem;
     }
 
     .spinner-border-sm {
@@ -842,12 +988,35 @@ document.addEventListener('DOMContentLoaded', function() {
 
         #requestsTable th,
         #requestsTable td {
-            padding: 0.25rem 0.25rem;
+            padding: 0.3rem 0.25rem;
+        }
+
+        #requestsTable tbody td:first-child {
+            min-width: 100px !important;
+            max-width: 100px !important;
+            width: 100px !important;
         }
 
         .btn-sm {
-            font-size: 0.65rem;
-            padding: 0.2rem 0.3rem;
+            font-size: 0.7rem;
+            padding: 0.25rem 0.4rem;
+        }
+
+        /* Stack buttons on mobile */
+        .action-column {
+            min-width: 180px !important;
+            max-width: 180px !important;
+            width: 180px !important;
+        }
+
+        .btn-group-vertical {
+            flex-wrap: wrap !important;
+        }
+
+        .action-column .btn {
+            min-width: 85px !important;
+            font-size: 0.65rem !important;
+            padding: 0.25rem 0.4rem !important;
         }
     }
 

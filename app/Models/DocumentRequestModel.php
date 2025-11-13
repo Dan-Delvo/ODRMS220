@@ -29,6 +29,7 @@ class DocumentRequestModel extends Model
         'release_mode',
 
         'remarks',
+        'reason',
         'status',
         'receipt_no',
         'approve_date',

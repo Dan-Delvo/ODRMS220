@@ -406,7 +406,7 @@
                             @foreach($DocType as $doc)
                             <option value="{{ $doc->id }}"
                                 @if($doc->DocType === "Form 137" && $DocRequests->contains('DocType', 'Form 137')) disabled @endif>
-                            <!-- @if($DocRequests->contains('id', $doc->id)) disabled @endif>  -->
+                                <!-- @if($DocRequests->contains('id', $doc->id)) disabled @endif>  -->
                                 {{ $doc->DocType }}
                             </option>
                             @endforeach
@@ -414,17 +414,21 @@
                         <label for="document_id" class="text-white">Requested Document</label>
                     </div>
 
-
                     <div class="form-floating mb-3">
                         <input type="text" class="form-control" id="release_mode" name="release_mode" placeholder="Release Mode" value="Pick Up" readonly required>
                         <label for="release_mode" class="text-white">Release Mode</label>
                     </div>
+
+                    <div class="form-floating mb-3">
+                        <input type="text" class="form-control" id="reason" name="reason" placeholder="Reason" required>
+                        <label for="reason" class="text-white">Reason for requesting document</label>
+                    </div>
                 </div>
 
-                <div class="col-md-6 ps-md-4 mb-4">
+                <div class="col-md-6 ps-md-4 mb-4 d-flex flex-column">
                     <div class="form-section-title">Supporting Documents</div>
 
-                    <div class="file-upload-wrapper">
+                    <div class="file-upload-wrapper flex-grow-1 d-flex flex-column">
                         <input type="file"
                             class="file-upload-input"
                             id="supporting_document"
@@ -432,7 +436,7 @@
                             accept="image/*,.pdf,.doc,.docx"
                             required>
 
-                        <div class="file-upload-display">
+                        <div class="file-upload-display flex-grow-1">
                             <div class="upload-content" style="display: flex; flex-direction: column; justify-content: center; align-items: center;">
                                 <div class="upload-icon">📎</div>
                                 <div class="upload-text">Click to upload or drag and drop</div>
@@ -450,24 +454,9 @@
                         </div>
                     </div>
 
-                    <small class="text-white">Upload any supporting documents for your request</small>
+                    <small class="text-white mt-2">Upload any supporting documents for your request</small>
                 </div>
             </div>
-
-            <div class="form-floating mb-3">
-                <textarea 
-                    class="form-control" 
-                    id="reason" 
-                    name="reason" 
-                    placeholder="Reason for Request" 
-                    style="height: 120px; resize: vertical;"
-                    required></textarea>
-                <label for="reason" class="text-white">Reason for Request</label>
-            </div>
-            <small class="text-white d-block mb-3" style="margin-top: -0.5rem;">
-                <i class="fas fa-info-circle me-1"></i>
-                Please provide a brief explanation for requesting this document
-            </small>
 
             <div class="d-flex justify-content-between align-items-center mt-4">
                 <a href="{{route('st.page')}}" class="text-warning-link">← Back to Dashboard</a>

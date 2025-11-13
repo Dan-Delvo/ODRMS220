@@ -13,7 +13,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('doc_requests', function (Blueprint $table) {
-            $table->text('reason')->nullable()->after('release_mode');
+            $table->text('reason')->nullable()->after('remarks');
         });
     }
 

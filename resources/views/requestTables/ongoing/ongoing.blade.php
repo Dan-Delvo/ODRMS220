@@ -144,7 +144,21 @@
                         <td>{{ strtoupper(optional($item->studentInformation)->full_name) }}</td>
                         <td>{{ $item->documents->DocType }}</td>
                         <td>{{ strtoupper($item->request_schl_entity) }}</td>
-                        <td>{{ $item->remarks }}</td>
+                        <td>
+                            @if($item->remarks)
+                                @if(strlen($item->remarks) > 50)
+                                    <button class="btn btn-sm btn-info view-remarks-btn" 
+                                        data-bs-toggle="modal" 
+                                        data-bs-target="#remarksModal{{ $item->id }}">
+                                        <i class="bi bi-eye"></i> View
+                                    </button>
+                                @else
+                                    {{ $item->remarks }}
+                                @endif
+                            @else
+                                <em class="text-muted">N/A</em>
+                            @endif
+                        </td>
                         <td><span class="badge bg-warning text-dark status-badge">{{ $item->status }}</span></td>
                         <td>{{ $item->request_date }}</td>
                         <td>{{ $item->approve_date }}</td>
@@ -157,7 +171,7 @@
                                     data-swal-text="This may take a few seconds...">
                                     @csrf
                                     @method('PUT')
-                                    <button type="submit" class="btn btn-success btn-sm complete-btn mb-1">
+                                    <button type="submit" class="btn btn-success btn-sm complete-btn">
                                         <i class="fas fa-check me-1"></i>Complete
                                     </button>
                                 </form>
@@ -166,7 +180,7 @@
                                 <form action="{{ route('doc.print', $item->id) }}" method="POST"
                                     class="d-inline print-form">
                                     @csrf
-                                    <button type="submit" class="btn btn-info btn-sm print-btn mb-1">
+                                    <button type="submit" class="btn btn-info btn-sm print-btn">
                                         <i class="fas fa-print me-1"></i>Print
                                     </button>
                                 </form>
@@ -175,7 +189,7 @@
 
                                 @if (!empty($PermissionEdit))
                                 <a href="{{ route('ongoing.edit', $item->id) }}"
-                                    class="btn btn-warning btn-sm mb-1">
+                                    class="btn btn-warning btn-sm">
                                     <i class="fas fa-edit me-1"></i>Edit
                                 </a>
                                 @endif
@@ -185,7 +199,7 @@
                                     class="d-inline delete2-form">
                                     @csrf
                                     @method('DELETE')
-                                    <button type="submit" class="btn btn-danger btn-sm delete2-btn mb-1">
+                                    <button type="submit" class="btn btn-danger btn-sm delete2-btn">
                                         <i class="fas fa-trash me-1"></i>Delete
                                     </button>
                                 </form>
@@ -214,8 +228,37 @@
     </div>
 </div>
 
-{{-- Receipt Modals --}}
+{{-- Remarks Modals --}}
 @foreach ($DocRequests as $item)
+@if($item->remarks && strlen($item->remarks) > 50)
+<div class="modal fade" id="remarksModal{{ $item->id }}" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-content" style="background:#1e293b; color:#f1f5f9; border:1px solid #334155; border-radius:1rem;">
+            <div class="modal-header" style="background:#0f172a; border-bottom:1px solid #334155;">
+                <h5 class="modal-title" style="color:#1dd3b0;">
+                    <i class="bi bi-chat-left-dots me-2"></i>Full Remarks
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body p-4">
+                <div class="alert alert-info mb-3" style="background:#334155; border:1px solid #475569; color:#e2e8f0;">
+                    <strong>Request #{{ $item->req_no }}</strong>
+                </div>
+                <div class="p-3 rounded" style="background:#0f172a; border:1px solid #334155; word-wrap: break-word; white-space: pre-line;">{{ $item->remarks }}</div>
+            </div>
+            <div class="modal-footer" style="background:#0f172a; border-top:1px solid #334155;">
+                <button type="button" class="btn btn-sm" 
+                    style="background:#1dd3b0; color:#0f172a;" 
+                    data-bs-dismiss="modal">
+                    <i class="bi bi-x-circle me-1"></i> Close
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+@endif
+
+{{-- Receipt Modal --}}
 @if ($item->receipt)
 <div class="modal fade" id="receiptModal{{ $item->id }}" tabindex="-1">
     <div class="modal-dialog modal-dialog-centered modal-md">
@@ -324,12 +367,12 @@ document.addEventListener('DOMContentLoaded', function() {
                     cardBody.insertBefore(newInfoBanner, cardBody.firstChild);
                 }
 
-                // Update pagination - FIXED
+                // Update pagination
                 const paginationContainer = document.querySelector('#paginationContainer');
                 if (paginationContainer && newPaginationWrapper) {
                     paginationContainer.innerHTML = newPaginationWrapper.innerHTML;
                 } else if (paginationContainer && !newPaginationWrapper) {
-                    paginationContainer.innerHTML = ''; // Clear pagination if no results
+                    paginationContainer.innerHTML = '';
                 }
 
                 loadingSpinner.style.display = 'none';
@@ -373,7 +416,7 @@ document.addEventListener('DOMContentLoaded', function() {
         performAjaxSearch();
     });
 
-    // ✅ AJAX Pagination Handler - FIXED
+    // AJAX Pagination Handler
     document.addEventListener('click', function(e) {
         const paginationLink = e.target.closest('.pagination a');
         if (paginationLink) {
@@ -400,7 +443,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         newTableContainer.innerHTML :
                         '<div class="alert alert-warning text-center my-3">No results found.</div>';
 
-                    // Update pagination - FIXED
+                    // Update pagination
                     const paginationContainer = document.querySelector('#paginationContainer');
                     if (paginationContainer && newPaginationWrapper) {
                         paginationContainer.innerHTML = newPaginationWrapper.innerHTML;
@@ -528,9 +571,6 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 </script>
 
-
-
-
 <style>
     /* ===== CORE VARIABLES ===== */
     :root {
@@ -613,7 +653,6 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     @media (min-width: 768px) {
-
         .filter-select,
         .sort-select {
             width: 100px;
@@ -633,9 +672,9 @@ document.addEventListener('DOMContentLoaded', function() {
         box-shadow: 0 0 0 0.2rem rgba(29, 211, 176, 0.25);
     }
 
-    /* ===== TABLE STYLES ===== */
+    /* ===== TABLE STYLES - COMPRESSED ROWS ===== */
     #requestsTable {
-        font-size: 0.8rem;
+        font-size: 0.85rem;
         margin-bottom: 0;
     }
 
@@ -643,16 +682,16 @@ document.addEventListener('DOMContentLoaded', function() {
         white-space: nowrap;
         vertical-align: middle;
         font-weight: 600;
-        padding: 0.3rem 0.3rem;
-        font-size: 0.8rem;
-        line-height: 1;
+        padding: 0.4rem 0.5rem;
+        font-size: 0.85rem;
+        line-height: 1.3;
     }
 
     #requestsTable tbody td {
         vertical-align: middle;
-        padding: 0.3rem 0.3rem;
-        font-size: 0.8rem;
-        line-height: 1;
+        padding: 0.35rem 0.5rem;
+        font-size: 0.85rem;
+        line-height: 1.3;
     }
 
     .sortable-header a {
@@ -663,41 +702,104 @@ document.addEventListener('DOMContentLoaded', function() {
         opacity: 0.8;
     }
 
-    /* ===== ACTION COLUMN ===== */
+    /* ===== REQ NUMBER COLUMN ===== */
+    #requestsTable tbody td:first-child,
+    #requestsTable thead th:first-child {
+        min-width: 120px !important;
+        max-width: 120px !important;
+        width: 120px !important;
+        white-space: nowrap !important;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    /* ===== DATE COLUMNS - ONE LINE ===== */
+    /* Req Date & App Date */
+    #requestsTable tbody td:nth-child(7),
+    #requestsTable thead th:nth-child(7),
+    #requestsTable tbody td:nth-child(8),
+    #requestsTable thead th:nth-child(8) {
+        min-width: 95px !important;
+        max-width: 95px !important;
+        width: 95px !important;
+        white-space: nowrap !important;
+    }
+
+    /* ===== ACTION COLUMN - DYNAMIC WIDTH ===== */
     .action-column {
-        min-width: 200px !important;
-        max-width: 200px !important;
-        width: 200px !important;
-        white-space: normal !important;
+        min-width: 80px !important;
+        max-width: 350px !important;
+        width: auto !important;
+        white-space: nowrap !important;
+        padding: 0.25rem 0.3rem !important;
     }
 
     .btn-group-vertical {
-        display: flex !important;
+        display: inline-flex !important;
         flex-direction: row !important;
-        flex-wrap: wrap !important;
-        gap: 0.15rem !important;
-        width: 100% !important;
+        flex-wrap: nowrap !important;
+        gap: 0.3rem !important;
+        align-items: center !important;
+        justify-content: flex-start !important;
     }
 
     .action-column .btn {
-        padding: 0.25rem 0.5rem !important;
+        padding: 0.3rem 0.5rem !important;
         font-size: 0.75rem !important;
-        width: 95px !important;
-        min-width: 95px !important;
-        max-width: 95px !important;
-        display: inline-block !important;
+        width: auto !important;
+        min-width: fit-content !important;
+        max-width: none !important;
+        display: inline-flex !important;
+        align-items: center !important;
+        justify-content: center !important;
         text-align: center !important;
-        margin-bottom: 0 !important;
+        margin: 0 !important;
+        white-space: nowrap !important;
+        line-height: 1.2 !important;
+        flex-shrink: 0 !important;
     }
 
     .action-column .btn i {
+        font-size: 0.7rem !important;
+        margin-right: 0.2rem !important;
+    }
+
+    /* Make form inline */
+    .action-column .complete-form,
+    .action-column .print-form,
+    .action-column .delete2-form {
+        display: inline !important;
+        margin: 0 !important;
+    }
+
+    /* Specific button width adjustments - removed mb-1 margins */
+    .action-column .complete-btn {
+        min-width: 80px !important;
+    }
+
+    .action-column .print-btn {
+        min-width: 65px !important;
+    }
+
+    .action-column .btn-warning {
+        min-width: 58px !important;
+    }
+
+    .action-column .delete2-btn {
+        min-width: 68px !important;
+    }
+
+    /* ===== VIEW BUTTONS ===== */
+    .view-remarks-btn {
+        padding: 0.25rem 0.5rem !important;
         font-size: 0.75rem !important;
+        white-space: nowrap;
     }
 
     /* ===== STATUS BADGE ===== */
     .status-badge {
-        font-size: 0.7rem;
-        padding: 0.25rem 0.5rem;
+        font-size: 0.75rem;
+        padding: 0.3rem 0.6rem;
         white-space: nowrap;
     }
 
@@ -708,8 +810,8 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     .btn-sm {
-        font-size: 0.75rem;
-        padding: 0.25rem 0.5rem;
+        font-size: 0.8rem;
+        padding: 0.3rem 0.6rem;
     }
 
     .spinner-border-sm {
@@ -740,6 +842,11 @@ document.addEventListener('DOMContentLoaded', function() {
         border-bottom: 2px solid rgba(255, 255, 255, 0.1);
     }
 
+    .form-control:focus {
+        border-color: var(--danger-color);
+        box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25);
+    }
+
     /* ===== RESPONSIVE TABLE ===== */
     .table-responsive {
         border-radius: 0.25rem;
@@ -752,12 +859,35 @@ document.addEventListener('DOMContentLoaded', function() {
 
         #requestsTable th,
         #requestsTable td {
-            padding: 0.25rem 0.25rem;
+            padding: 0.3rem 0.25rem;
+        }
+
+        #requestsTable tbody td:first-child {
+            min-width: 100px !important;
+            max-width: 100px !important;
+            width: 100px !important;
         }
 
         .btn-sm {
-            font-size: 0.65rem;
-            padding: 0.2rem 0.3rem;
+            font-size: 0.7rem;
+            padding: 0.25rem 0.4rem;
+        }
+
+        /* Stack buttons on mobile */
+        .action-column {
+            min-width: 180px !important;
+            max-width: 180px !important;
+            width: 180px !important;
+        }
+
+        .btn-group-vertical {
+            flex-wrap: wrap !important;
+        }
+
+        .action-column .btn {
+            min-width: 85px !important;
+            font-size: 0.65rem !important;
+            padding: 0.25rem 0.4rem !important;
         }
     }
 

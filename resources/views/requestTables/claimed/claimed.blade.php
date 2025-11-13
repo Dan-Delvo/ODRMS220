@@ -1,3 +1,4 @@
+
 @extends('layout.blankpage')
 
 @push('head')
@@ -5,12 +6,13 @@
 @endpush
 
 @section('content')
+@include('layout.partials.message')
 
 {{-- Header Section --}}
 <div class="row align-items-center">
     <div class="col-12 col-md-6 mb-3 mb-md-0">
         <h1 class="mt-4">
-            <span class="badge page-title-badge" style="background-color: #1dd3b0;">Claimed Requests</span>
+            <span class="badge page-title-badge">Claimed Requests</span>
         </h1>
         <ol class="breadcrumb mb-0">
             <li class="breadcrumb-item"><a href="{{ route('dashboard') }}" class="text-dark">Dashboard</a></li>
@@ -26,8 +28,6 @@
 
 <x-tabs page='Claimed' />
 
-
-{{-- Main Card --}}
 {{-- Main Card --}}
 <div class="card shadow-lg border-0 rounded-lg mt-3">
     {{-- Card Header with Search/Filter Controls --}}
@@ -35,20 +35,21 @@
         <h5 class="mb-0">Claimed Document Requests</h5>
 
         {{-- Search/Filter Form --}}
-        <div class="d-flex gap-2 flex-wrap align-items-center">
+        <div class="d-flex gap-2 mt-2 mt-md-0 flex-wrap" id="tableControls">
             {{-- Search Input --}}
             <div class="input-group" style="width: 300px;">
                 <input type="text"
                     name="search"
                     id="searchInput"
                     class="form-control form-control-sm"
-                    placeholder="Search claimed requests..."
-                    value="{{ request('search') }}">
+                    placeholder="Search requests..."
+                    value="{{ request('search') }}"
+                    autocomplete="off">
                 <button class="btn btn-outline-light btn-sm"
                     type="button"
                     id="clearSearch"
                     title="Clear search"
-                    style="display: none;"> {{-- Add this style --}}
+                    style="display: none;">
                     <i class="fas fa-times"></i>
                 </button>
             </div>
@@ -60,7 +61,6 @@
                 <option value="document" {{ request('filter') == 'document' ? 'selected' : '' }}>Document</option>
                 <option value="school" {{ request('filter') == 'school' ? 'selected' : '' }}>School</option>
                 <option value="reqno" {{ request('filter') == 'reqno' ? 'selected' : '' }}>Req No.</option>
-                <option value="status" {{ request('filter') == 'status' ? 'selected' : '' }}>Status</option>
             </select>
 
             {{-- Sort Dropdown --}}
@@ -93,7 +93,7 @@
                 @if(request('sort') && request('sort') !== 'default')
                 - Sorted by <strong>Request No. ({{ request('sort') === 'asc' ? 'A-Z' : 'Z-A' }})</strong>
                 @endif
-                <a href="{{ route('tables.index') }}" class="btn btn-sm btn-outline-info ms-2" id="clearAllBtn">Clear All</a>
+                <a href="{{ route('claimed-documents.index') }}" class="btn btn-sm btn-outline-info ms-2" id="clearAllBtn">Clear All</a>
             </small>
         </div>
         @endif
@@ -137,6 +137,7 @@
                         <th>School</th>
                         <th>Claimer</th>
                         <th>Remarks</th>
+                        <th>Reason</th>
                         <th>Req Date</th>
                         <th>App Date</th>
                         <th>Rel Date</th>
@@ -152,7 +153,36 @@
                         <td>{{ $item->documents->DocType }}</td>
                         <td>{{ strtoupper($item->request_schl_entity) }}</td>
                         <td>{{ ($item->claimer->Fname ?? '') . ' ' . ($item->claimer->Lname ?? '') }}</td>
-                        <td>{{ $item->remarks }}</td>
+                        <td>
+                            @if($item->remarks)
+                                @if(strlen($item->remarks) > 50)
+                                    <button class="btn btn-sm btn-info view-remarks-btn" 
+                                        data-bs-toggle="modal" 
+                                        data-bs-target="#remarksModal{{ $item->id }}">
+                                        <i class="bi bi-eye"></i> View
+                                    </button>
+                                @else
+                                    {{ $item->remarks }}
+                                @endif
+                            @else
+                                <em class="text-muted">N/A</em>
+                            @endif
+                        </td>
+                        <td>
+                            @if($item->revert_reason)
+                                @if(strlen($item->revert_reason) > 50)
+                                    <button class="btn btn-sm btn-outline-primary rounded-pill px-3 view-reason-btn" 
+                                        data-bs-toggle="modal" 
+                                        data-bs-target="#reasonModal{{ $item->id }}">
+                                        <i class="fas fa-eye me-1"></i>View Reason
+                                    </button>
+                                @else
+                                    <span class="text-muted">{{ $item->revert_reason }}</span>
+                                @endif
+                            @else
+                                <em class="text-muted">N/A</em>
+                            @endif
+                        </td>
                         <td>{{ $item->request_date }}</td>
                         <td>{{ $item->approve_date }}</td>
                         <td>{{ $item->forRelease_date }}</td>
@@ -167,7 +197,7 @@
                         </td>
                         <td class="action-column">
                             <div class="btn-group-vertical btn-group-sm d-md-inline" role="group">
-                                <button type="button" class="btn btn-warning btn-sm revert-btn mb-1"
+                                <button type="button" class="btn btn-warning btn-sm revert-btn"
                                     data-request-id="{{ $item->id }}" data-request-no="{{ $item->req_no }}"
                                     data-student-name="{{ $item->studentInformation->full_name }}"
                                     data-bs-toggle="modal" data-bs-target="#revertModal">
@@ -176,7 +206,7 @@
 
                                 @if (!empty($PermissionEdit))
                                 <a href="{{ route('claimed-documents.edit', $item->id) }}"
-                                    class="btn btn-info btn-sm mb-1">
+                                    class="btn btn-info btn-sm">
                                     <i class="fas fa-edit me-1"></i>Edit
                                 </a>
                                 @endif
@@ -186,7 +216,7 @@
                                     method="POST" class="d-inline delete-form">
                                     @csrf
                                     @method('DELETE')
-                                    <button type="submit" class="btn btn-danger btn-sm delete-btn mb-1">
+                                    <button type="submit" class="btn btn-danger btn-sm delete-btn">
                                         <i class="fas fa-trash me-1"></i>Delete
                                     </button>
                                 </form>
@@ -214,22 +244,83 @@
     </div>
 </div>
 
+{{-- Remarks Modals --}}
+@foreach ($DocRequests as $item)
+@if($item->remarks && strlen($item->remarks) > 50)
+<div class="modal fade" id="remarksModal{{ $item->id }}" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-content" style="background:#1e293b; color:#f1f5f9; border:1px solid #334155; border-radius:1rem;">
+            <div class="modal-header" style="background:#0f172a; border-bottom:1px solid #334155;">
+                <h5 class="modal-title" style="color:#1dd3b0;">
+                    <i class="bi bi-chat-left-dots me-2"></i>Full Remarks
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body p-4">
+                <div class="alert alert-info mb-3" style="background:#334155; border:1px solid #475569; color:#e2e8f0;">
+                    <strong>Request #{{ $item->req_no }}</strong>
+                </div>
+                <div class="p-3 rounded" style="background:#0f172a; border:1px solid #334155; word-wrap: break-word; white-space: pre-line;">{{ $item->remarks }}</div>
+            </div>
+            <div class="modal-footer" style="background:#0f172a; border-top:1px solid #334155;">
+                <button type="button" class="btn btn-sm" 
+                    style="background:#1dd3b0; color:#0f172a;" 
+                    data-bs-dismiss="modal">
+                    <i class="bi bi-x-circle me-1"></i> Close
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+@endif
+
+{{-- Reason Modal --}}
+@if($item->revert_reason && strlen($item->revert_reason) > 50)
+<div class="modal fade" id="reasonModal{{ $item->id }}" tabindex="-1" aria-labelledby="reasonModalLabel{{ $item->id }}" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow-lg">
+            <div class="modal-header text-white border-0" style="background-color: #1f2937;">
+                <h5 class="modal-title fw-semibold d-flex align-items-center" id="reasonModalLabel{{ $item->id }}">
+                    <i class="fas fa-comment-dots me-2" style="color: #1dd3b0;"></i>
+                    Revert Reason Details
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body p-0">
+                <div class="alert alert-warning m-3">
+                    <strong>Request #{{ $item->req_no }}</strong>
+                </div>
+                <div class="p-4" style="white-space: pre-wrap; word-wrap: break-word; line-height: 1.6;">
+                    {{ $item->revert_reason }}
+                </div>
+            </div>
+            <div class="modal-footer border-0">
+                <button type="button" class="btn btn-secondary rounded-pill px-4" data-bs-dismiss="modal">
+                    <i class="fas fa-times me-1"></i>Close
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+@endif
+@endforeach
+
 {{-- Revert Modal --}}
 <div class="modal fade" id="revertModal" tabindex="-1">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
-            <div class="modal-header bg-warning text-dark">
+            <div class="modal-header text-white" style="background-color: #1f2937;">
                 <h5 class="modal-title">
                     <i class="fas fa-undo me-2"></i>Revert Document to For Release
                 </h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
             </div>
             <form id="revertForm" action="{{ route('claimed-documents.revert', '') }}" method="POST"
                 data-swal-loading="true" data-swal-title="Reverting Request to For Release"
                 data-swal-text="This may take a few seconds...">
                 @csrf
                 @method('PUT')
-                <div class=" modal-body">
+                <div class="modal-body">
                     <div class="mb-3">
                         <div class="alert alert-warning">
                             <strong>Request No:</strong> <span id="modalRevertRequestNo"></span><br>
@@ -254,7 +345,7 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    <button type="button" class="btn text-white" style="background-color: #1f2937;" data-bs-dismiss="modal">
                         <i class="fas fa-times me-1"></i>Cancel
                     </button>
                     <button type="submit" class="btn btn-warning" id="submitRevertBtn">
@@ -269,7 +360,7 @@
 {{-- JavaScript --}}
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        // Elements
+        // ====== ELEMENT REFERENCES ======
         const searchInput = document.getElementById('searchInput');
         const clearSearchBtn = document.getElementById('clearSearch');
         const filterSelect = document.getElementById('filterSelect');
@@ -292,8 +383,6 @@
             clearSearchBtn.style.display = searchInput.value.trim().length > 0 ? 'inline-block' : 'none';
         }
 
-        // ====== AJAX SEARCH FUNCTION ======
-        // ====== AJAX SEARCH FUNCTION ======
         // ====== AJAX SEARCH FUNCTION ======
         function performAjaxSearch() {
             const search = searchInput.value.trim();
@@ -330,12 +419,12 @@
                         cardBody.insertBefore(newInfoBanner, cardBody.firstChild);
                     }
 
-                    // Update pagination - FIXED THIS PART
+                    // Update pagination
                     const paginationContainer = document.querySelector('#paginationContainer');
                     if (paginationContainer && newPaginationWrapper) {
                         paginationContainer.innerHTML = newPaginationWrapper.innerHTML;
                     } else if (paginationContainer && !newPaginationWrapper) {
-                        paginationContainer.innerHTML = ''; // Clear pagination if no results
+                        paginationContainer.innerHTML = '';
                     }
 
                     loadingSpinner.style.display = 'none';
@@ -348,59 +437,6 @@
                     loadingSpinner.style.display = 'none';
                     tableContainer.style.opacity = '1';
                 });
-        }
-
-        // ====== AJAX PAGINATION HANDLER ======
-        function attachPaginationListeners() {
-            document.querySelectorAll('.pagination a').forEach(link => {
-                link.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    const url = this.href;
-
-                    loadingSpinner.style.display = 'block';
-                    tableContainer.style.opacity = '0.5';
-
-                    fetch(url, {
-                            headers: {
-                                'X-Requested-With': 'XMLHttpRequest'
-                            }
-                        })
-                        .then(response => response.text())
-                        .then(html => {
-                            const parser = new DOMParser();
-                            const doc = parser.parseFromString(html, 'text/html');
-                            const newTableContainer = doc.querySelector('#tableContainer');
-                            const newPaginationWrapper = doc.querySelector('#paginationContainer');
-
-                            // Update table
-                            tableContainer.innerHTML = newTableContainer ?
-                                newTableContainer.innerHTML :
-                                '<div class="alert alert-warning text-center my-3">No results found.</div>';
-
-                            // Update pagination - FIXED THIS PART
-                            const paginationContainer = document.querySelector('#paginationContainer');
-                            if (paginationContainer && newPaginationWrapper) {
-                                paginationContainer.innerHTML = newPaginationWrapper.innerHTML;
-                            }
-
-                            loadingSpinner.style.display = 'none';
-                            tableContainer.style.opacity = '1';
-
-                            // Scroll to top of card
-                            document.querySelector('.card').scrollIntoView({
-                                behavior: 'smooth',
-                                block: 'start'
-                            });
-
-                            attachEventListeners();
-                        })
-                        .catch(err => {
-                            console.error('AJAX Pagination Error:', err);
-                            loadingSpinner.style.display = 'none';
-                            tableContainer.style.opacity = '1';
-                        });
-                });
-            });
         }
 
         // ====== SEARCH INPUT ======
@@ -432,57 +468,56 @@
         });
 
         // ====== AJAX PAGINATION HANDLER ======
-        function attachPaginationListeners() {
-            document.querySelectorAll('.pagination a').forEach(link => {
-                link.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    const url = this.href;
+        document.addEventListener('click', function(e) {
+            const paginationLink = e.target.closest('.pagination a');
+            if (paginationLink) {
+                e.preventDefault();
+                const url = paginationLink.href;
 
-                    loadingSpinner.style.display = 'block';
-                    tableContainer.style.opacity = '0.5';
+                loadingSpinner.style.display = 'block';
+                tableContainer.style.opacity = '0.5';
 
-                    fetch(url, {
-                            headers: {
-                                'X-Requested-With': 'XMLHttpRequest'
-                            }
-                        })
-                        .then(response => response.text())
-                        .then(html => {
-                            const parser = new DOMParser();
-                            const doc = parser.parseFromString(html, 'text/html');
-                            const newTableContainer = doc.querySelector('#tableContainer');
-                            const newPaginationWrapper = doc.querySelector('.d-flex.flex-column.justify-content-center.align-items-center.mt-3');
+                fetch(url, {
+                        headers: {
+                            'X-Requested-With': 'XMLHttpRequest'
+                        }
+                    })
+                    .then(response => response.text())
+                    .then(html => {
+                        const parser = new DOMParser();
+                        const doc = parser.parseFromString(html, 'text/html');
+                        const newTableContainer = doc.querySelector('#tableContainer');
+                        const newPaginationWrapper = doc.querySelector('#paginationContainer');
 
-                            // Update table
-                            tableContainer.innerHTML = newTableContainer ?
-                                newTableContainer.innerHTML :
-                                '<div class="alert alert-warning text-center my-3">No results found.</div>';
+                        // Update table
+                        tableContainer.innerHTML = newTableContainer ?
+                            newTableContainer.innerHTML :
+                            '<div class="alert alert-warning text-center my-3">No results found.</div>';
 
-                            // Update pagination
-                            const oldPagination = document.querySelector('.d-flex.flex-column.justify-content-center.align-items-center.mt-3');
-                            if (oldPagination && newPaginationWrapper) {
-                                oldPagination.innerHTML = newPaginationWrapper.innerHTML;
-                            }
+                        // Update pagination
+                        const paginationContainer = document.querySelector('#paginationContainer');
+                        if (paginationContainer && newPaginationWrapper) {
+                            paginationContainer.innerHTML = newPaginationWrapper.innerHTML;
+                        }
 
-                            loadingSpinner.style.display = 'none';
-                            tableContainer.style.opacity = '1';
+                        loadingSpinner.style.display = 'none';
+                        tableContainer.style.opacity = '1';
 
-                            // Scroll to top of card
-                            document.querySelector('.card').scrollIntoView({
-                                behavior: 'smooth',
-                                block: 'start'
-                            });
-
-                            attachEventListeners();
-                        })
-                        .catch(err => {
-                            console.error('AJAX Pagination Error:', err);
-                            loadingSpinner.style.display = 'none';
-                            tableContainer.style.opacity = '1';
+                        // Scroll to top of card
+                        document.querySelector('.card').scrollIntoView({
+                            behavior: 'smooth',
+                            block: 'start'
                         });
-                });
-            });
-        }
+
+                        attachEventListeners();
+                    })
+                    .catch(err => {
+                        console.error('AJAX Pagination Error:', err);
+                        loadingSpinner.style.display = 'none';
+                        tableContainer.style.opacity = '1';
+                    });
+            }
+        });
 
         // ====== CLEAR ALL BUTTON ======
         function attachClearAllListener() {
@@ -501,7 +536,6 @@
 
         // ====== EVENT LISTENERS FOR NEW ELEMENTS ======
         function attachEventListeners() {
-            attachPaginationListeners();
             attachClearAllListener();
 
             // Revert buttons
@@ -695,7 +729,6 @@
     });
 </script>
 
-
 <style>
     /* ===== CORE VARIABLES ===== */
     :root {
@@ -709,6 +742,7 @@
 
     /* ===== HEADER BADGES ===== */
     .page-title-badge {
+        background-color: var(--primary-color);
         font-size: clamp(1.25rem, 4vw, 2rem);
         padding: 0.5rem 1rem;
     }
@@ -726,7 +760,7 @@
         display: flex;
         flex-direction: column;
         gap: 0.75rem;
-        padding: 1rem 1.25rem;
+        padding: 0.75rem 1rem;
     }
 
     @media (min-width: 768px) {
@@ -734,19 +768,6 @@
             flex-direction: row;
             justify-content: space-between;
             align-items: center;
-        }
-    }
-
-    .header-right-section {
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-        width: 100%;
-    }
-
-    @media (min-width: 768px) {
-        .header-right-section {
-            width: auto;
         }
     }
 
@@ -790,7 +811,6 @@
     }
 
     @media (min-width: 768px) {
-
         .filter-select,
         .sort-select {
             width: 100px;
@@ -804,40 +824,32 @@
     }
 
     /* ===== FORM CONTROLS ===== */
-    #searchInput:focus {
-        border-color: var(--success-color);
-        box-shadow: 0 0 0 0.2rem rgba(40, 167, 69, 0.25);
-    }
-
+    #searchInput:focus,
     .form-select:focus {
         border-color: var(--primary-color);
         box-shadow: 0 0 0 0.2rem rgba(29, 211, 176, 0.25);
     }
 
-    /* ===== TABLE STYLES ===== */
+    /* ===== TABLE STYLES - COMPRESSED ROWS ===== */
     #requestsTable {
-        font-size: 0.9rem;
+        font-size: 0.85rem;
         margin-bottom: 0;
-        table-layout: auto;
-        width: max-content;
-        min-width: 100%;
     }
 
     #requestsTable thead th {
         white-space: nowrap;
         vertical-align: middle;
         font-weight: 600;
-        padding: 0.75rem 0.75rem;
-        font-size: 0.9rem;
-        line-height: 1.5;
+        padding: 0.4rem 0.5rem;
+        font-size: 0.85rem;
+        line-height: 1.3;
     }
 
     #requestsTable tbody td {
         vertical-align: middle;
-        padding: 0.75rem 0.75rem;
-        font-size: 0.875rem;
-        line-height: 1.5;
-        white-space: nowrap;
+        padding: 0.35rem 0.5rem;
+        font-size: 0.85rem;
+        line-height: 1.3;
     }
 
     .sortable-header a {
@@ -848,43 +860,111 @@
         opacity: 0.8;
     }
 
-    /* ===== ACTION COLUMN ===== */
+    /* ===== REQ NUMBER COLUMN ===== */
+    #requestsTable tbody td:first-child,
+    #requestsTable thead th:first-child {
+        min-width: 120px !important;
+        max-width: 120px !important;
+        width: 120px !important;
+        white-space: nowrap !important;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    /* ===== DATE COLUMNS - ONE LINE ===== */
+    /* Req Date, App Date, Rel Date */
+    #requestsTable tbody td:nth-child(8),
+    #requestsTable thead th:nth-child(8),
+    #requestsTable tbody td:nth-child(9),
+    #requestsTable thead th:nth-child(9),
+    #requestsTable tbody td:nth-child(10),
+    #requestsTable thead th:nth-child(10) {
+        min-width: 95px !important;
+        max-width: 95px !important;
+        width: 95px !important;
+        white-space: nowrap !important;
+    }
+
+    /* Claimed Date */
+    #requestsTable tbody td:nth-child(11),
+    #requestsTable thead th:nth-child(11) {
+        min-width: 105px !important;
+        max-width: 105px !important;
+        width: 105px !important;
+        white-space: nowrap !important;
+    }
+
+    /* ===== ACTION COLUMN - DYNAMIC WIDTH ===== */
     .action-column {
-        min-width: 220px !important;
-        max-width: 220px !important;
-        width: 220px !important;
-        white-space: normal !important;
+        min-width: 80px !important;
+        max-width: 250px !important;
+        width: auto !important;
+        white-space: nowrap !important;
+        padding: 0.25rem 0.3rem !important;
     }
 
     .btn-group-vertical {
-        display: flex !important;
+        display: inline-flex !important;
         flex-direction: row !important;
-        flex-wrap: wrap !important;
+        flex-wrap: nowrap !important;
         gap: 0.3rem !important;
-        width: 100% !important;
+        align-items: center !important;
+        justify-content: flex-start !important;
     }
 
     .action-column .btn {
-        padding: 0.4rem 0.65rem !important;
-        font-size: 0.8rem !important;
-        width: 100px !important;
-        min-width: 100px !important;
-        max-width: 100px !important;
-        display: inline-block !important;
+        padding: 0.3rem 0.5rem !important;
+        font-size: 0.75rem !important;
+        width: auto !important;
+        min-width: fit-content !important;
+        max-width: none !important;
+        display: inline-flex !important;
+        align-items: center !important;
+        justify-content: center !important;
         text-align: center !important;
-        margin-bottom: 0 !important;
+        margin: 0 !important;
+        white-space: nowrap !important;
+        line-height: 1.2 !important;
+        flex-shrink: 0 !important;
     }
 
     .action-column .btn i {
-        font-size: 0.8rem !important;
+        font-size: 0.7rem !important;
+        margin-right: 0.2rem !important;
+    }
+
+    /* Make form inline */
+    .action-column .delete-form {
+        display: inline !important;
+        margin: 0 !important;
+    }
+
+    /* Specific button width adjustments */
+    .action-column .revert-btn {
+        min-width: 68px !important;
+    }
+
+    .action-column .btn-info {
+        min-width: 58px !important;
+    }
+
+    .action-column .delete-btn {
+        min-width: 68px !important;
+    }
+
+    /* ===== VIEW BUTTONS ===== */
+    .view-remarks-btn,
+    .view-reason-btn {
+        padding: 0.25rem 0.5rem !important;
+        font-size: 0.75rem !important;
+        white-space: nowrap;
     }
 
     /* ===== STATUS BADGE ===== */
     .status-badge {
         font-size: 0.75rem;
-        padding: 0.35rem 0.65rem;
+        padding: 0.3rem 0.6rem;
         white-space: nowrap;
-        font-weight: 500;
     }
 
     /* ===== BUTTON STATES ===== */
@@ -895,13 +975,13 @@
 
     .btn-sm {
         font-size: 0.8rem;
-        padding: 0.35rem 0.65rem;
+        padding: 0.3rem 0.6rem;
     }
 
     .spinner-border-sm {
-        width: 1rem;
-        height: 1rem;
-        border-width: 0.15rem;
+        width: 0.875rem;
+        height: 0.875rem;
+        border-width: 0.125rem;
     }
 
     /* ===== LOADING STATE ===== */
@@ -932,39 +1012,9 @@
         border-bottom: 2px solid rgba(255, 255, 255, 0.1);
     }
 
-    .modal-header.bg-info {
-        background-color: var(--info-color) !important;
-    }
-
-    .form-label {
-        font-weight: 600;
-        color: #495057;
-    }
-
     .form-control:focus {
-        border-color: var(--success-color);
-        box-shadow: 0 0 0 0.2rem rgba(40, 167, 69, 0.25);
-    }
-
-    input[type="date"]:focus {
-        border-color: var(--info-color);
-        box-shadow: 0 0 0 0.2rem rgba(23, 162, 184, 0.25);
-    }
-
-    .was-validated .form-control:invalid {
-        border-color: var(--danger-color);
-    }
-
-    .was-validated .form-control:valid {
-        border-color: var(--success-color);
-    }
-
-    .invalid-feedback {
-        display: block;
-        width: 100%;
-        margin-top: 0.25rem;
-        font-size: 0.875em;
-        color: var(--danger-color);
+        border-color: var(--warning-color);
+        box-shadow: 0 0 0 0.2rem rgba(255, 193, 7, 0.25);
     }
 
     #revertReason {
@@ -976,45 +1026,44 @@
     /* ===== RESPONSIVE TABLE ===== */
     .table-responsive {
         border-radius: 0.25rem;
-        overflow-x: auto;
-        -webkit-overflow-scrolling: touch;
-    }
-
-    .table-responsive::-webkit-scrollbar {
-        height: 8px;
-    }
-
-    .table-responsive::-webkit-scrollbar-track {
-        background: #f1f1f1;
-        border-radius: 4px;
-    }
-
-    .table-responsive::-webkit-scrollbar-thumb {
-        background: #888;
-        border-radius: 4px;
-    }
-
-    .table-responsive::-webkit-scrollbar-thumb:hover {
-        background: #555;
     }
 
     @media (max-width: 576px) {
         #requestsTable {
-            font-size: 0.8rem;
+            font-size: 0.75rem;
         }
 
         #requestsTable th,
         #requestsTable td {
-            padding: 0.5rem 0.5rem;
+            padding: 0.3rem 0.25rem;
+        }
+
+        #requestsTable tbody td:first-child {
+            min-width: 100px !important;
+            max-width: 100px !important;
+            width: 100px !important;
         }
 
         .btn-sm {
-            font-size: 0.75rem;
-            padding: 0.3rem 0.5rem;
+            font-size: 0.7rem;
+            padding: 0.25rem 0.4rem;
         }
 
-        .btn-outline-light {
-            width: 100%;
+        /* Stack buttons on mobile */
+        .action-column {
+            min-width: 180px !important;
+            max-width: 180px !important;
+            width: 180px !important;
+        }
+
+        .btn-group-vertical {
+            flex-wrap: wrap !important;
+        }
+
+        .action-column .btn {
+            min-width: 85px !important;
+            font-size: 0.65rem !important;
+            padding: 0.25rem 0.4rem !important;
         }
     }
 
@@ -1026,10 +1075,7 @@
     /* ===== SMOOTH TRANSITIONS ===== */
     .btn,
     .form-control,
-    .form-select,
-    .modal-body input,
-    .modal-body select,
-    .modal-body textarea {
+    .form-select {
         transition: all 0.2s ease-in-out;
     }
 

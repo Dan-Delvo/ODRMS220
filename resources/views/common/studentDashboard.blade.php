@@ -1,4 +1,3 @@
-
 @extends('layout.studentpage')
 
 @section('content')
@@ -138,6 +137,7 @@
                                         <td class="px-4 py-3">
                                             <span class="badge" style="background:#1e293b; color:#e2e8f0; border:1px solid #334155;">{{ $item->release_mode }}</span>
                                         </td>
+                                        
                                         <td class="px-4 py-3">
                                             @if($item->status == 'Claimed')
                                             <span class="badge rounded-pill" style="background:#22c55e; color:#0f172a;">
@@ -217,7 +217,7 @@
                                 <div class="mobile-card-body p-3" style="color:#f1f5f9;">
                                     <div class="row mb-2">
                                         <div class="col-4">
-                                            <small class="text-muted">Document:</small>
+                                            <small class="text-white">Document:</small>
                                         </div>
                                         <div class="col-8">
                                             <span class="fw-medium">{{ $item->documents->DocType }}</span>
@@ -226,7 +226,7 @@
 
                                     <div class="row mb-2">
                                         <div class="col-4">
-                                            <small class="text-muted">School:</small>
+                                            <small class="text-white">School:</small>
                                         </div>
                                         <div class="col-8">
                                             <small style="color:#cbd5e1;">{{ Str::limit($item->request_schl_entity, 25) }}</small>
@@ -235,7 +235,7 @@
 
                                     <div class="row mb-3">
                                         <div class="col-4">
-                                            <small class="text-muted">Release:</small>
+                                            <small class="text-white">Release:</small>
                                         </div>
                                         <div class="col-8">
                                             <span class="badge" style="background:#1e293b; color:#e2e8f0; border:1px solid #334155; font-size:0.7rem;">{{ $item->release_mode }}</span>
@@ -413,19 +413,38 @@
                             @endswitch
                         </p>
 
+                        {{-- ✅ Remarks (Admin notes) - INLINE --}}
                         @if($item->remarks)
-                        <p class="mb-0">
+                        <p class="mb-2">
                             <i class="bi bi-chat-left-dots me-2" style="color:#1dd3b0;"></i>
                             <span style="color:#1dd3b0; font-weight:600;">Remarks:</span>
                             @if(strlen($item->remarks) > 50)
                             <button class="btn btn-sm btn-outline-info ms-2" 
                                 data-bs-toggle="modal" 
                                 data-bs-target="#remarksModal{{ $item->id }}"
-                                style="border-color:#1dd3b0; color:#1dd3b0;">
+                                style="border-color:#1dd3b0; color:#1dd3b0; padding: 0.25rem 0.5rem; font-size: 0.75rem;">
                                 <i class="bi bi-eye"></i> View Full Remarks
                             </button>
                             @else
-                            <span class="d-block mt-1" style="color:#cbd5e1;">{{ $item->remarks }}</span>
+                            <span style="color:#cbd5e1;">{{ $item->remarks }}</span>
+                            @endif
+                        </p>
+                        @endif
+
+                        {{-- ✅ Reason (Student's reason for requesting) - INLINE --}}
+                        @if($item->reason)
+                        <p class="mb-0">
+                            <i class="bi bi-journal-text me-2" style="color:#1dd3b0;"></i>
+                            <span style="color:#1dd3b0; font-weight:600;">Reason:</span>
+                            @if(strlen($item->reason) > 50)
+                            <button class="btn btn-sm btn-outline-info ms-2" 
+                                data-bs-toggle="modal" 
+                                data-bs-target="#reasonModal{{ $item->id }}"
+                                style="border-color:#1dd3b0; color:#1dd3b0; padding: 0.25rem 0.5rem; font-size: 0.75rem;">
+                                <i class="bi bi-eye"></i> View Full Reason
+                            </button>
+                            @else
+                            <span style="color:#cbd5e1;">{{ $item->reason }}</span>
                             @endif
                         </p>
                         @endif
@@ -553,9 +572,41 @@
                 <div class="alert alert-info mb-3" style="background:#334155; border:1px solid #475569; color:#e2e8f0;">
                     <strong>Request #{{ str_pad($item->id, 4, '0', STR_PAD_LEFT) }}</strong>
                 </div>
-                <div class="p-3 rounded" style="background:#0f172a; border:1px solid #334155; word-wrap: break-word; white-space: pre-wrap;">
-                    {{ $item->remarks }}
+                <div class="p-3 rounded" style="background:#0f172a; border:1px solid #334155; word-wrap: break-word; white-space: pre-line;">{{ $item->remarks }}</div>
+            </div>
+            
+            <div class="modal-footer" style="background:#0f172a; border-top:1px solid #334155;">
+                <button type="button" class="btn btn-sm" 
+                    style="background:#1dd3b0; color:#0f172a;" 
+                    data-bs-dismiss="modal">
+                    <i class="bi bi-x-circle me-1"></i> Close
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+@endif
+
+<!-- Reason Modal (only if reason > 50 chars) -->
+@if($item->reason && strlen($item->reason) > 50)
+<div class="modal fade" id="reasonModal{{ $item->id }}" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-content"
+            style="background:#1e293b; color:#f1f5f9; border:1px solid #334155; border-radius:1rem;">
+            
+            <div class="modal-header" style="background:#0f172a; border-bottom:1px solid #334155;">
+                <h5 class="modal-title" style="color:#1dd3b0;">
+                    <i class="bi bi-journal-text me-2"></i>Request Reason
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                    style="filter: invert(1) grayscale(100%) brightness(200%); opacity:.8;"></button>
+            </div>
+            
+            <div class="modal-body p-4">
+                <div class="alert alert-info mb-3" style="background:#334155; border:1px solid #475569; color:#e2e8f0;">
+                    <strong>Request #{{ str_pad($item->id, 4, '0', STR_PAD_LEFT) }}</strong>
                 </div>
+                <div class="p-3 rounded" style="background:#0f172a; border:1px solid #334155; word-wrap: break-word; white-space: pre-line;">{{ $item->reason }}</div>
             </div>
             
             <div class="modal-footer" style="background:#0f172a; border-top:1px solid #334155;">
@@ -857,8 +908,8 @@
             });
         });
 
-        // Handle nested modals (remarks modal from details modal)
-        document.querySelectorAll('[data-bs-target^="#remarksModal"]').forEach(btn => {
+        // Handle nested modals (remarks/reason modal from details modal)
+        document.querySelectorAll('[data-bs-target^="#remarksModal"], [data-bs-target^="#reasonModal"]').forEach(btn => {
             btn.addEventListener('click', function(e) {
                 // Get the parent modal ID
                 const parentModal = this.closest('.modal');
@@ -872,10 +923,10 @@
             });
         });
 
-        // When remarks modal closes, show parent modal again
-        document.querySelectorAll('[id^="remarksModal"]').forEach(modal => {
+        // When remarks/reason modal closes, show parent modal again
+        document.querySelectorAll('[id^="remarksModal"], [id^="reasonModal"]').forEach(modal => {
             modal.addEventListener('hidden.bs.modal', function() {
-                const modalId = this.id.replace('remarksModal', 'requestModal');
+                const modalId = this.id.replace('remarksModal', 'requestModal').replace('reasonModal', 'requestModal');
                 const parentModal = document.getElementById(modalId);
                 if (parentModal) {
                     const bsModal = new bootstrap.Modal(parentModal);

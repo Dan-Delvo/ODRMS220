@@ -266,7 +266,7 @@
         margin-bottom: 1rem;
     }
 
-    /* Remarks Button */
+    /* Remarks & Reason Button */
     .btn-remarks {
         padding: 0.3rem 0.6rem;
         font-size: 0.75rem;
@@ -463,7 +463,7 @@
     .custom-table tbody tr:nth-child(4) { animation-delay: 0.4s; }
     .custom-table tbody tr:nth-child(5) { animation-delay: 0.5s; }
 
-    /* Remarks Modal Styling */
+    /* Modal Styling */
     .remarks-modal .modal-content {
         background: var(--card-bg);
         color: var(--text-primary);
@@ -509,7 +509,7 @@
         border-radius: 0.5rem;
         padding: 1rem;
         word-wrap: break-word;
-        white-space: pre-wrap;
+        white-space: pre-line;
         color: var(--text-secondary);
         max-height: 60vh;
         overflow-y: auto;
@@ -610,6 +610,7 @@
                                     <th><i class="fas fa-school me-1"></i>School</th>
                                     <th><i class="fas fa-truck me-1"></i>Release Mode</th>
                                     <th><i class="fas fa-comment me-1"></i>Remarks</th>
+                                    <th><i class="bi bi-journal-text me-1"></i>Reason</th>
                                     <th><i class="fas fa-flag me-1"></i>Status</th>
                                 </tr>
                             </thead>
@@ -640,11 +641,11 @@
                                     </td>
                                     <td>
                                         @if($item->remarks)
-                                            @if(strlen($item->remarks) > 30)
+                                            @if(strlen($item->remarks) > 50)
                                                 <button class="btn btn-remarks" 
                                                     data-bs-toggle="modal" 
                                                     data-bs-target="#remarksModal{{ $item->id }}">
-                                                    <i class="bi bi-eye"></i> View Remarks
+                                                    <i class="bi bi-eye"></i> View
                                                 </button>
                                             @else
                                                 <div class="school-entity" title="{{ $item->remarks }}">
@@ -652,7 +653,24 @@
                                                 </div>
                                             @endif
                                         @else
-                                            <em class="text-muted">No remarks</em>
+                                            <em class="text-muted">N/A</em>
+                                        @endif
+                                    </td>
+                                    <td>
+                                        @if($item->reason)
+                                            @if(strlen($item->reason) > 50)
+                                                <button class="btn btn-remarks" 
+                                                    data-bs-toggle="modal" 
+                                                    data-bs-target="#reasonModal{{ $item->id }}">
+                                                    <i class="bi bi-eye"></i> View
+                                                </button>
+                                            @else
+                                                <div class="school-entity" title="{{ $item->reason }}">
+                                                    {{ $item->reason }}
+                                                </div>
+                                            @endif
+                                        @else
+                                            <em class="text-muted">N/A</em>
                                         @endif
                                     </td>
                                     <td>
@@ -698,6 +716,7 @@
                                         <th><i class="fas fa-user-graduate me-1"></i>Student</th>
                                         <th><i class="fas fa-file-alt me-1"></i>Document</th>
                                         <th><i class="fas fa-comment me-1"></i>Remarks</th>
+                                        <th><i class="bi bi-journal-text me-1"></i>Reason</th>
                                         <th><i class="fas fa-flag me-1"></i>Status</th>
                                     </tr>
                                 </thead>
@@ -725,7 +744,7 @@
                                         </td>
                                         <td>
                                             @if($item->remarks)
-                                                @if(strlen($item->remarks) > 30)
+                                                @if(strlen($item->remarks) > 50)
                                                     <button class="btn btn-remarks" 
                                                         data-bs-toggle="modal" 
                                                         data-bs-target="#remarksModal{{ $item->id }}">
@@ -735,7 +754,22 @@
                                                     <small>{{ $item->remarks }}</small>
                                                 @endif
                                             @else
-                                                <em class="text-muted">No remarks</em>
+                                                <em class="text-muted">N/A</em>
+                                            @endif
+                                        </td>
+                                        <td>
+                                            @if($item->reason)
+                                                @if(strlen($item->reason) > 50)
+                                                    <button class="btn btn-remarks" 
+                                                        data-bs-toggle="modal" 
+                                                        data-bs-target="#reasonModal{{ $item->id }}">
+                                                        <i class="bi bi-eye"></i> View
+                                                    </button>
+                                                @else
+                                                    <small>{{ $item->reason }}</small>
+                                                @endif
+                                            @else
+                                                <em class="text-muted">N/A</em>
                                             @endif
                                         </td>
                                         <td>
@@ -832,7 +866,7 @@
                                 <div class="mobile-card-row">
                                     <span class="mobile-card-label"><i class="fas fa-comment me-1"></i>Remarks:</span>
                                     <span class="mobile-card-value">
-                                        @if(strlen($item->remarks) > 30)
+                                        @if(strlen($item->remarks) > 50)
                                             <button class="btn btn-remarks" 
                                                 data-bs-toggle="modal" 
                                                 data-bs-target="#remarksModal{{ $item->id }}">
@@ -840,6 +874,22 @@
                                             </button>
                                         @else
                                             {{ $item->remarks }}
+                                        @endif
+                                    </span>
+                                </div>
+                                @endif
+                                @if($item->reason)
+                                <div class="mobile-card-row">
+                                    <span class="mobile-card-label"><i class="bi bi-journal-text me-1"></i>Reason:</span>
+                                    <span class="mobile-card-value">
+                                        @if(strlen($item->reason) > 50)
+                                            <button class="btn btn-remarks" 
+                                                data-bs-toggle="modal" 
+                                                data-bs-target="#reasonModal{{ $item->id }}">
+                                                <i class="bi bi-eye"></i> View
+                                            </button>
+                                        @else
+                                            {{ $item->reason }}
                                         @endif
                                     </span>
                                 </div>
@@ -861,7 +911,7 @@
 
 <!-- Remarks Modals -->
 @foreach ($DocRequests as $item)
-    @if($item->remarks && strlen($item->remarks) > 30)
+    @if($item->remarks && strlen($item->remarks) > 50)
     <div class="modal fade remarks-modal" id="remarksModal{{ $item->id }}" tabindex="-1">
         <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
             <div class="modal-content">
@@ -875,9 +925,35 @@
                     <div class="alert alert-info">
                         <strong>Request #{{ str_pad($item->id, 4, '0', STR_PAD_LEFT) }}</strong>
                     </div>
-                    <div class="remarks-content">
-                        {{ $item->remarks }}
+                    <div class="remarks-content">{{ $item->remarks }}</div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-sm" 
+                        style="background: var(--primary-teal); color: var(--dark-bg);" 
+                        data-bs-dismiss="modal">
+                        <i class="bi bi-x-circle me-1"></i> Close
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    @endif
+
+    @if($item->reason && strlen($item->reason) > 50)
+    <div class="modal fade remarks-modal" id="reasonModal{{ $item->id }}" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">
+                        <i class="bi bi-journal-text me-2"></i>Request Reason
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="alert alert-info">
+                        <strong>Request #{{ str_pad($item->id, 4, '0', STR_PAD_LEFT) }}</strong>
                     </div>
+                    <div class="remarks-content">{{ $item->reason }}</div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-sm" 
