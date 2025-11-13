@@ -43,17 +43,20 @@
 
     /* ✅ Updated color schemes using Bootstrap colors */
     .kanban-header.pending {
-        background: #6c757d; /* Bootstrap bg-secondary */
+        background: #6c757d;
+        /* Bootstrap bg-secondary */
         background: linear-gradient(135deg, #6c757d 0%, #5a6268 100%);
     }
 
     .kanban-header.processing {
-        background: #ffc107; /* Bootstrap bg-warning */
+        background: #ffc107;
+        /* Bootstrap bg-warning */
         background: linear-gradient(135deg, #ffc107 0%, #e0a800 100%);
     }
 
     .kanban-header.for-release {
-        background: #ffff00; /* Pure yellow */
+        background: #ffff00;
+        /* Pure yellow */
         background: linear-gradient(135deg, #ffff00 0%, #e6e600 100%);
     }
 
@@ -265,8 +268,15 @@
     }
 
     @keyframes pulse {
-        0%, 100% { transform: scale(1); }
-        50% { transform: scale(1.1); }
+
+        0%,
+        100% {
+            transform: scale(1);
+        }
+
+        50% {
+            transform: scale(1.1);
+        }
     }
 
     .claimer-modal .btn-close {
@@ -500,55 +510,55 @@
                 @php $hasPending = false; @endphp
 
                 @foreach($requests as $req)
-                    @if($req->Status == 'Pending')
-                        @php $hasPending = true; @endphp
-                        <div class="request-card">
-                            <div class="request-card-title">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                    <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
-                                </svg>
-                                {{ $req->School_Name }}
-                            </div>
-                            <div class="request-card-subtitle">School Name</div>
-                            <div class="request-card-info">
-                                <i class="fas fa-file-alt"></i>
-                                <span>{{ $req->Doc_Type }}</span>
-                            </div>
-                            
-                            <button type="button" class="btn-view-students" data-bs-toggle="modal" data-bs-target="#modal-{{ $req->Request_ID }}">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
-                                    <circle cx="9" cy="7" r="4"></circle>
-                                    <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
-                                    <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
-                                </svg>
-                                {{ $req->students_count }} Students
-                            </button>
-                            
-                            <form action="{{ route('bulk_request.moveToProcessing', $req->Request_ID) }}" method="POST">
-                                @csrf
-                                @method('PUT')
-                                <button type="submit" class="btn-move">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                        <polyline points="9 18 15 12 9 6"></polyline>
-                                    </svg>
-                                    Move to Processing
-                                </button>
-                            </form>
-                        </div>
-                        <x-student-count-modal :request="$req" :students="$students"/>
-                    @endif
+                @if($req->Status == 'Pending')
+                @php $hasPending = true; @endphp
+                <div class="request-card">
+                    <div class="request-card-title">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                        </svg>
+                        {{ $req->School_Name }}
+                    </div>
+                    <div class="request-card-subtitle">School Name</div>
+                    <div class="request-card-info">
+                        <i class="fas fa-file-alt"></i>
+                        <span>{{ $req->Doc_Type }}</span>
+                    </div>
+
+                    <button type="button" class="btn-view-students" data-bs-toggle="modal" data-bs-target="#modal-{{ $req->Request_ID }}">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                            <circle cx="9" cy="7" r="4"></circle>
+                            <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                            <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                        </svg>
+                        {{ $req->students_count }} Students
+                    </button>
+
+                    <form action="{{ route('bulk_request.moveToProcessing', $req->Request_ID) }}" method="POST">
+                        @csrf
+                        @method('PUT')
+                        <button type="submit" class="btn-move">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <polyline points="9 18 15 12 9 6"></polyline>
+                            </svg>
+                            Move to Processing
+                        </button>
+                    </form>
+                </div>
+                <x-student-count-modal :request="$req" :students="$students" />
+                @endif
                 @endforeach
 
                 @if(!$hasPending)
-                    <div class="empty-state">
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <circle cx="12" cy="12" r="10"></circle>
-                            <line x1="12" y1="8" x2="12" y2="12"></line>
-                            <line x1="12" y1="16" x2="12.01" y2="16"></line>
-                        </svg>
-                        <p>No pending requests</p>
-                    </div>
+                <div class="empty-state">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <line x1="12" y1="8" x2="12" y2="12"></line>
+                        <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                    </svg>
+                    <p>No pending requests</p>
+                </div>
                 @endif
             </div>
         </div>
@@ -564,55 +574,55 @@
             <div class="kanban-body">
                 @php $hasProcessing = false; @endphp
                 @foreach($requests as $req)
-                    @if($req->Status == 'Processing')
-                        @php $hasProcessing = true; @endphp
-                        <div class="request-card">
-                            <div class="request-card-title">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                    <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
-                                </svg>
-                                {{ $req->School_Name }}
-                            </div>
-                            <div class="request-card-subtitle">School Name</div>
-                            <div class="request-card-info">
-                                <i class="fas fa-file-alt"></i>
-                                <span>{{ $req->Doc_Type }}</span>
-                            </div>
-                            
-                            <button type="button" class="btn-view-students" data-bs-toggle="modal" data-bs-target="#modal-{{ $req->Request_ID }}">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
-                                    <circle cx="9" cy="7" r="4"></circle>
-                                    <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
-                                    <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
-                                </svg>
-                                {{ $req->students_count }} Students
-                            </button>
-                            
-                            <form action="{{ route('bulk_request.moveToForRelease', $req->Request_ID) }}" method="POST">
-                                @csrf
-                                @method('PUT')
-                                <button type="submit" class="btn-move">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                        <polyline points="9 18 15 12 9 6"></polyline>
-                                    </svg>
-                                    Move to For Release
-                                </button>
-                            </form>
-                        </div>
-                        <x-student-count-modal :request="$req" :students="$students"/>
-                    @endif
+                @if($req->Status == 'Processing')
+                @php $hasProcessing = true; @endphp
+                <div class="request-card">
+                    <div class="request-card-title">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                        </svg>
+                        {{ $req->School_Name }}
+                    </div>
+                    <div class="request-card-subtitle">School Name</div>
+                    <div class="request-card-info">
+                        <i class="fas fa-file-alt"></i>
+                        <span>{{ $req->Doc_Type }}</span>
+                    </div>
+
+                    <button type="button" class="btn-view-students" data-bs-toggle="modal" data-bs-target="#modal-{{ $req->Request_ID }}">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                            <circle cx="9" cy="7" r="4"></circle>
+                            <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                            <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                        </svg>
+                        {{ $req->students_count }} Students
+                    </button>
+
+                    <form action="{{ route('bulk_request.moveToForRelease', $req->Request_ID) }}" method="POST">
+                        @csrf
+                        @method('PUT')
+                        <button type="submit" class="btn-move">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <polyline points="9 18 15 12 9 6"></polyline>
+                            </svg>
+                            Move to For Release
+                        </button>
+                    </form>
+                </div>
+                <x-student-count-modal :request="$req" :students="$students" />
+                @endif
                 @endforeach
 
                 @if(!$hasProcessing)
-                    <div class="empty-state">
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <circle cx="12" cy="12" r="10"></circle>
-                            <line x1="12" y1="8" x2="12" y2="12"></line>
-                            <line x1="12" y1="16" x2="12.01" y2="16"></line>
-                        </svg>
-                        <p>No processing requests</p>
-                    </div>
+                <div class="empty-state">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <line x1="12" y1="8" x2="12" y2="12"></line>
+                        <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                    </svg>
+                    <p>No processing requests</p>
+                </div>
                 @endif
             </div>
         </div>
@@ -629,130 +639,133 @@
                 @php $hasForRelease = false; @endphp
 
                 @foreach($requests as $req)
-                    @if($req->Status == 'For Release')
-                        @php $hasForRelease = true; @endphp
-                        <div class="request-card">
-                            <div class="request-card-title">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                    <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
-                                </svg>
-                                {{ $req->School_Name }}
-                            </div>
-                            <div class="request-card-subtitle">School Name</div>
-                            <div class="request-card-info">
-                                <i class="fas fa-file-alt"></i>
-                                <span>{{ $req->Doc_Type }}</span>
-                            </div>
-                            
-                            <button type="button" class="btn-view-students" data-bs-toggle="modal" data-bs-target="#modal-{{ $req->Request_ID }}">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
-                                    <circle cx="9" cy="7" r="4"></circle>
-                                    <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
-                                    <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
-                                </svg>
-                                {{ $req->students_count }} Students
-                            </button>
-                            
-                            <button type="button" class="btn-move" data-bs-toggle="modal" data-bs-target="#claimerModal-{{ $req->Request_ID }}">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                    <polyline points="20 6 9 17 4 12"></polyline>
-                                </svg>
-                                Move to Claimed
-                            </button>
-                        </div>
+                @if($req->Status == 'For Release')
+                @php $hasForRelease = true; @endphp
+                <div class="request-card">
+                    <div class="request-card-title">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                        </svg>
+                        {{ $req->School_Name }}
+                    </div>
+                    <div class="request-card-subtitle">School Name</div>
+                    <div class="request-card-info">
+                        <i class="fas fa-file-alt"></i>
+                        <span>{{ $req->Doc_Type }}</span>
+                    </div>
 
-                        <x-student-count-modal :request="$req" :students="$students"/>
-                        
-                        {{-- Modern Claimer Modal --}}
-                        <div class="modal fade claimer-modal" id="claimerModal-{{ $req->Request_ID }}" tabindex="-1" aria-labelledby="claimerModalLabel-{{ $req->Request_ID }}" aria-hidden="true">
-                            <div class="modal-dialog modal-dialog-centered">
-                                <div class="modal-content">
-                                    <div class="modal-header">
-                                        <h5 class="modal-title" id="claimerModalLabel-{{ $req->Request_ID }}">
-                                            <i class="fas fa-user-check"></i>
-                                            Enter Claimer Information
-                                        </h5>
-                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <button type="button" class="btn-view-students" data-bs-toggle="modal" data-bs-target="#modal-{{ $req->Request_ID }}">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                            <circle cx="9" cy="7" r="4"></circle>
+                            <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                            <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                        </svg>
+                        {{ $req->students_count }} Students
+                    </button>
+
+                    <button type="button" class="btn-move" data-bs-toggle="modal" data-bs-target="#claimerModal-{{ $req->Request_ID }}">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="20 6 9 17 4 12"></polyline>
+                        </svg>
+                        Move to Claimed
+                    </button>
+                </div>
+
+                <x-student-count-modal :request="$req" :students="$students" />
+
+                {{-- Modern Claimer Modal --}}
+                <div class="modal fade claimer-modal" id="claimerModal-{{ $req->Request_ID }}" tabindex="-1" aria-labelledby="claimerModalLabel-{{ $req->Request_ID }}" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="claimerModalLabel-{{ $req->Request_ID }}">
+                                    <i class="fas fa-user-check"></i>
+                                    Enter Claimer Information
+                                </h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <form action="{{ route('bulk_request.moveToClaimed', $req->Request_ID) }}"
+                                method="POST"
+                                class="claimer-form"
+                                data-request-id="{{ $req->Request_ID }}">
+                                @csrf
+                                @method('PUT')
+                                <div class="modal-body">
+                                    <div class="mb-4">
+                                        <label for="claimer_fname_{{ $req->Request_ID }}" class="form-label">
+                                            <i class="fas fa-user"></i>
+                                            First Name <span class="text-danger">*</span>
+                                        </label>
+                                        <div class="input-icon">
+                                            <i class="fas fa-signature"></i>
+                                            <input type="text"
+                                                class="form-control"
+                                                id="claimer_fname_{{ $req->Request_ID }}"
+                                                name="claimer_fname"
+                                                required
+                                                placeholder="Enter first name">
+                                        </div>
                                     </div>
-                                    <form action="{{ route('bulk_request.moveToClaimed', $req->Request_ID) }}" method="POST">
-                                        @csrf
-                                        @method('PUT')
-                                        <div class="modal-body">
-                                            <div class="mb-4">
-                                                <label for="claimer_fname_{{ $req->Request_ID }}" class="form-label">
-                                                    <i class="fas fa-user"></i>
-                                                    First Name <span class="text-danger">*</span>
-                                                </label>
-                                                <div class="input-icon">
-                                                    <i class="fas fa-signature"></i>
-                                                    <input type="text" 
-                                                           class="form-control" 
-                                                           id="claimer_fname_{{ $req->Request_ID }}" 
-                                                           name="claimer_fname" 
-                                                           required
-                                                           placeholder="Enter first name">
-                                                </div>
-                                            </div>
-                                            
-                                            <div class="mb-4">
-                                                <label for="claimer_lname_{{ $req->Request_ID }}" class="form-label">
-                                                    <i class="fas fa-user"></i>
-                                                    Last Name <span class="text-danger">*</span>
-                                                </label>
-                                                <div class="input-icon">
-                                                    <i class="fas fa-signature"></i>
-                                                    <input type="text" 
-                                                           class="form-control" 
-                                                           id="claimer_lname_{{ $req->Request_ID }}" 
-                                                           name="claimer_lname" 
-                                                           required
-                                                           placeholder="Enter last name">
-                                                </div>
-                                            </div>
 
-                                            <div class="mb-4">
-                                                <label for="claimed_date_{{ $req->Request_ID }}" class="form-label">
-                                                    <i class="fas fa-calendar-check"></i>
-                                                    Date Claimed <span class="text-danger">*</span>
-                                                </label>
-                                                <div class="input-icon">
-                                                    <i class="fas fa-calendar-alt"></i>
-                                                    <input type="date" 
-                                                           class="form-control" 
-                                                           id="claimed_date_{{ $req->Request_ID }}" 
-                                                           name="claimed_date" 
-                                                           required
-                                                           max="{{ date('Y-m-d') }}"
-                                                           value="{{ date('Y-m-d') }}">
-                                                </div>
-                                            </div>
+                                    <div class="mb-4">
+                                        <label for="claimer_lname_{{ $req->Request_ID }}" class="form-label">
+                                            <i class="fas fa-user"></i>
+                                            Last Name <span class="text-danger">*</span>
+                                        </label>
+                                        <div class="input-icon">
+                                            <i class="fas fa-signature"></i>
+                                            <input type="text"
+                                                class="form-control"
+                                                id="claimer_lname_{{ $req->Request_ID }}"
+                                                name="claimer_lname"
+                                                required
+                                                placeholder="Enter last name">
                                         </div>
-                                        <div class="modal-footer">
-                                            <button type="button" class="btn btn-cancel" data-bs-dismiss="modal">
-                                                Cancel
-                                            </button>
-                                            <button type="submit" class="btn btn-confirm">
-                                                <i class="fas fa-check-circle"></i>
-                                                Confirm Claim
-                                            </button>
+                                    </div>
+
+                                    <div class="mb-4">
+                                        <label for="claimed_date_{{ $req->Request_ID }}" class="form-label">
+                                            <i class="fas fa-calendar-check"></i>
+                                            Date Claimed <span class="text-danger">*</span>
+                                        </label>
+                                        <div class="input-icon">
+                                            <i class="fas fa-calendar-alt"></i>
+                                            <input type="date"
+                                                class="form-control"
+                                                id="claimed_date_{{ $req->Request_ID }}"
+                                                name="claimed_date"
+                                                required
+                                                max="{{ date('Y-m-d') }}"
+                                                value="{{ date('Y-m-d') }}">
                                         </div>
-                                    </form>
+                                    </div>
                                 </div>
-                            </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-cancel" data-bs-dismiss="modal">
+                                        Cancel
+                                    </button>
+                                    <button type="submit" class="btn btn-confirm">
+                                        <i class="fas fa-check-circle"></i>
+                                        Confirm Claim
+                                    </button>
+                                </div>
+                            </form>
                         </div>
-                    @endif
+                    </div>
+                </div>
+                @endif
                 @endforeach
 
                 @if(!$hasForRelease)
-                    <div class="empty-state">
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <circle cx="12" cy="12" r="10"></circle>
-                            <line x1="12" y1="8" x2="12" y2="12"></line>
-                            <line x1="12" y1="16" x2="12.01" y2="16"></line>
-                        </svg>
-                        <p>No requests for release</p>
-                    </div>
+                <div class="empty-state">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <line x1="12" y1="8" x2="12" y2="12"></line>
+                        <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                    </svg>
+                    <p>No requests for release</p>
+                </div>
                 @endif
             </div>
         </div>
@@ -769,62 +782,131 @@
                 @php $hasClaimed = false; @endphp
 
                 @foreach($requests as $req)
-                    @if($req->Status == 'Claimed')
-                        @php $hasClaimed = true; @endphp
-                        <div class="request-card">
-                            <div class="request-card-title">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                    <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
-                                </svg>
-                                {{ $req->School_Name }}
-                            </div>
-                            <div class="request-card-subtitle">School Name</div>
-                            <div class="request-card-info">
-                                <i class="fas fa-file-alt"></i>
-                                <span>{{ $req->Doc_Type }}</span>
-                            </div>
-                            
-                            <button type="button" class="btn-view-students" data-bs-toggle="modal" data-bs-target="#modal-{{ $req->Request_ID }}">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
-                                    <circle cx="9" cy="7" r="4"></circle>
-                                    <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
-                                    <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
-                                </svg>
-                                {{ $req->students_count }} Students
-                            </button>
-                            
-                            @if($req->claimer)
-                                <div class="claimer-info-box">
-                                    <small>
-                                        <span>
-                                            <i class="fas fa-user-check"></i>
-                                            <strong>Claimed by:</strong> {{ $req->claimer->full_name }}
-                                        </span>
-                                        <span>
-                                            <i class="fas fa-calendar"></i>
-                                            <strong>Date:</strong> {{ \Carbon\Carbon::parse($req->claimer->claimed_date)->format('M d, Y') }}
-                                        </span>
-                                    </small>
-                                </div>
-                            @endif
-                        </div>
-                        <x-student-count-modal :request="$req" :students="$students"/>
+                @if($req->Status == 'Claimed')
+                @php $hasClaimed = true; @endphp
+                <div class="request-card">
+                    <div class="request-card-title">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                        </svg>
+                        {{ $req->School_Name }}
+                    </div>
+                    <div class="request-card-subtitle">School Name</div>
+                    <div class="request-card-info">
+                        <i class="fas fa-file-alt"></i>
+                        <span>{{ $req->Doc_Type }}</span>
+                    </div>
+
+                    <button type="button" class="btn-view-students" data-bs-toggle="modal" data-bs-target="#modal-{{ $req->Request_ID }}">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                            <circle cx="9" cy="7" r="4"></circle>
+                            <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                            <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                        </svg>
+                        {{ $req->students_count }} Students
+                    </button>
+
+                    @if($req->claimer)
+                    <div class="claimer-info-box">
+                        <small>
+                            <span>
+                                <i class="fas fa-user-check"></i>
+                                <strong>Claimed by:</strong> {{ $req->claimer->full_name }}
+                            </span>
+                            <span>
+                                <i class="fas fa-calendar"></i>
+                                <strong>Date:</strong> {{ \Carbon\Carbon::parse($req->claimer->claimed_date)->format('M d, Y') }}
+                            </span>
+                        </small>
+                    </div>
                     @endif
+                </div>
+                <x-student-count-modal :request="$req" :students="$students" />
+                @endif
                 @endforeach
 
                 @if(!$hasClaimed)
-                    <div class="empty-state">
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <circle cx="12" cy="12" r="10"></circle>
-                            <line x1="12" y1="8" x2="12" y2="12"></line>
-                            <line x1="12" y1="16" x2="12.01" y2="16"></line>
-                        </svg>
-                        <p>No claimed requests</p>
-                    </div>
+                <div class="empty-state">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <line x1="12" y1="8" x2="12" y2="12"></line>
+                        <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                    </svg>
+                    <p>No claimed requests</p>
+                </div>
                 @endif
             </div>
         </div>
     </div>
 </div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Handle all claimer forms
+        const claimerForms = document.querySelectorAll('.claimer-form');
+
+        claimerForms.forEach(function(form) {
+            form.addEventListener('submit', function(e) {
+                e.preventDefault();
+
+                const formData = new FormData(form);
+                const firstName = formData.get('claimer_fname');
+                const lastName = formData.get('claimer_lname');
+                const claimedDate = formData.get('claimed_date');
+
+                // Show confirmation dialog
+                Swal.fire({
+                    title: 'Confirm Claimer Information',
+                    html: `
+                    <div style="text-align: left; padding: 1rem;">
+                        <p><strong><i class="fas fa-user"></i> Name:</strong> ${firstName} ${lastName}</p>
+                        <p><strong><i class="fas fa-calendar"></i> Date Claimed:</strong> ${new Date(claimedDate).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</p>
+                    </div>
+                `,
+                    icon: 'question',
+                    showCancelButton: true,
+                    confirmButtonColor: '#1dd3b0',
+                    cancelButtonColor: '#6c757d',
+                    confirmButtonText: '<i class="fas fa-check"></i> Yes, Mark as Claimed',
+                    cancelButtonText: '<i class="fas fa-times"></i> Cancel',
+                    customClass: {
+                        popup: 'animated fadeInDown'
+                    }
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        // Close the modal first
+                        const modal = form.closest('.modal');
+                        const bsModal = bootstrap.Modal.getInstance(modal);
+                        if (bsModal) {
+                            bsModal.hide();
+                        }
+
+                        // Show loading animation
+                        Swal.fire({
+                            title: 'Processing...',
+                            html: `
+                            <div style="padding: 2rem 0;">
+                                <i class="fas fa-spinner fa-spin" style="font-size: 3rem; color: #1dd3b0;"></i>
+                                <p style="margin-top: 1rem; color: #64748b;">Moving request to Claimed status...</p>
+                            </div>
+                        `,
+                            allowOutsideClick: false,
+                            allowEscapeKey: false,
+                            showConfirmButton: false,
+                            // didOpen: () => {
+                            //     Swal.showLoading();
+                            // }
+                        });
+
+                        // Submit the form
+                        setTimeout(() => {
+                            form.submit();
+                        }, 500);
+                    }
+                });
+            });
+        });
+    });
+</script>
 @endsection

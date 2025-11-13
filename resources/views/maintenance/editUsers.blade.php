@@ -110,7 +110,7 @@
                         <!-- Save Button -->
                         <div>
                             <button type="submit" class="btn text-black fw-semibold float-end"
-                                style="background-color: #1dd3b0; box-shadow: 0 4px 10px rgba(29, 211, 176, 0.5);">
+                                style="background-color: #1dd3b0;">
                                 Update
                             </button>
                         </div>

@@ -46,7 +46,7 @@
         <div class="card shadow-lg border-0 bg-white text-dark">
             <div class="card-header text-white d-flex align-items-center justify-content-between" style="background-color: #1f2937; height: 70px;">
                 <h4 class="mb-0">Add Role</h4>
-                <a href="{{ url('panel/role') }}" class="btn text-black fw-semibold" style="background-color: #1dd3b0; box-shadow: 0 4px 10px rgba(29, 211, 176, 0.5);">
+                <a href="{{ url('panel/role') }}" class="btn text-black fw-semibold" style="background-color: #1dd3b0;">
                     Back
                 </a>
             </div>
@@ -103,7 +103,7 @@
                     <!-- Submit Button -->
                     <div class="text-end">
                         <button type="submit" class="btn text-black fw-semibold"
-                            style="background-color: #1dd3b0; box-shadow: 0 4px 10px rgba(29, 211, 176, 0.5);">Save</button>
+                            style="background-color: #1dd3b0;">Save</button>
                     </div>
                 </form>
             </div>

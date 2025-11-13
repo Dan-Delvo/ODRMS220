@@ -77,7 +77,7 @@ class BulkRequest extends Controller
         $validated = $request->validate([
             'claimer_fname' => 'required|string|max:255',
             'claimer_lname' => 'required|string|max:255',
-            'contact_no' => 'required|digits:11',
+            // 'contact_no' => 'required|digits:11',
             'claimed_date' => 'required|date|before_or_equal:today',
         ]);
 
@@ -86,7 +86,7 @@ class BulkRequest extends Controller
             $claimer = ClaimerModel::create([
                 'Fname' => $validated['claimer_fname'],
                 'Lname' => $validated['claimer_lname'],
-                'contact_no' => $validated['contact_no'],
+                'contact_no' => null,
                 'claimed_date' => $validated['claimed_date'],
             ]);
 
