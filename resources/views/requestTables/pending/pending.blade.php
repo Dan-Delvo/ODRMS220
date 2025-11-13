@@ -8,10 +8,6 @@
         <h1 class="mt-4">
             <span class="badge page-title-badge">Pending Requests</span>
         </h1>
-        <ol class="breadcrumb mb-0">
-            <li class="breadcrumb-item"><a href="{{ route('dashboard') }}" class="text-dark">Dashboard</a></li>
-            <li class="breadcrumb-item active">Pending Requests</li>
-        </ol>
     </div>
     <div class="col-12 col-md-6 text-md-end">
         <h1 class="mt-md-4">
@@ -25,49 +21,55 @@
 {{-- Main Card --}}
 <div class="card shadow-lg border-0 rounded-lg mt-3">
     {{-- Card Header with Search/Filter Controls --}}
-    <div class="card-header card-header-custom">
-        <h5 class="mb-0">Pending Document Requests</h5>
+    <div class="card-header card-header-custom row">
 
         {{-- Search/Filter Form --}}
-        <div class="d-flex gap-2 mt-2 mt-md-0 flex-wrap" id="tableControls">
-            {{-- Search Input --}}
-            <div class="input-group" style="width: 300px;">
-                <input type="text"
-                    name="search"
-                    id="searchInput"
-                    class="form-control form-control-sm"
-                    placeholder="Search requests..."
-                    value="{{ request('search') }}"
-                    autocomplete="off">
-                <button class="btn btn-outline-light btn-sm"
-                    type="button"
-                    id="clearSearch"
-                    title="Clear search"
-                    style="display: none;">
-                    <i class="fas fa-times"></i>
+        {{-- Use explicit flex so search stays left and filters right on md+ screens --}}
+        <div class="col-lg-12 d-flex gap-2 mt-2 mt-md-0 flex-wrap" id="tableControls">
+            {{-- Search Input (left) --}}
+            <div class="d-flex align-items-center" style="min-width:0;">
+                <div class="input-group search-input-group" style="width: 350px;">
+                    <input type="text"
+                        name="search"
+                        id="searchInput"
+                        class="form-control form-control-sm"
+                        placeholder="Search requests..."
+                        value="{{ request('search') }}"
+                        autocomplete="off">
+                    <button class="btn btn-outline-light btn-sm"
+                        type="button"
+                        id="clearSearch"
+                        title="Clear search"
+                        style="display: none;">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            </div>
+
+            {{-- Filters (right) - pushed to the end with ms-auto so it stays right-aligned on wide screens --}}
+            <div class="ms-auto d-flex align-items-center gap-2">
+                {{-- Filter Dropdown --}}
+                <select name="filter" id="filterSelect" class="form-select form-select-sm filter-select">
+                    <option value="all" {{ request('filter') == 'all' ? 'selected' : '' }}>All</option>
+                    <option value="student" {{ request('filter') == 'student' ? 'selected' : '' }}>Student</option>
+                    <option value="document" {{ request('filter') == 'document' ? 'selected' : '' }}>Document</option>
+                    <option value="school" {{ request('filter') == 'school' ? 'selected' : '' }}>School</option>
+                    <option value="reqno" {{ request('filter') == 'reqno' ? 'selected' : '' }}>Req No.</option>
+                </select>
+
+                {{-- Sort Dropdown --}}
+                <select name="sort" id="sortSelect" class="form-select form-select-sm sort-select">
+                    <option value="default" {{ request('sort') == 'default' ? 'selected' : '' }}>Sort</option>
+                    <option value="asc" {{ request('sort') == 'asc' ? 'selected' : '' }}>A-Z</option>
+                    <option value="desc" {{ request('sort') == 'desc' ? 'selected' : '' }}>Z-A</option>
+                </select>
+
+                {{-- Reset Button --}}
+                <button type="button" class="btn btn-light btn-sm" id="resetBtn">
+                    <i class="fas fa-redo"></i> Reset
                 </button>
             </div>
 
-            {{-- Filter Dropdown --}}
-            <select name="filter" id="filterSelect" class="form-select form-select-sm filter-select">
-                <option value="all" {{ request('filter') == 'all' ? 'selected' : '' }}>All</option>
-                <option value="student" {{ request('filter') == 'student' ? 'selected' : '' }}>Student</option>
-                <option value="document" {{ request('filter') == 'document' ? 'selected' : '' }}>Document</option>
-                <option value="school" {{ request('filter') == 'school' ? 'selected' : '' }}>School</option>
-                <option value="reqno" {{ request('filter') == 'reqno' ? 'selected' : '' }}>Req No.</option>
-            </select>
-
-            {{-- Sort Dropdown --}}
-            <select name="sort" id="sortSelect" class="form-select form-select-sm sort-select">
-                <option value="default" {{ request('sort') == 'default' ? 'selected' : '' }}>Sort</option>
-                <option value="asc" {{ request('sort') == 'asc' ? 'selected' : '' }}>A-Z</option>
-                <option value="desc" {{ request('sort') == 'desc' ? 'selected' : '' }}>Z-A</option>
-            </select>
-
-            {{-- Reset Button --}}
-            <button type="button" class="btn btn-light btn-sm" id="resetBtn">
-                <i class="fas fa-redo"></i> Reset
-            </button>
         </div>
     </div>
 
@@ -146,8 +148,8 @@
                         <td>
                             @if($item->remarks)
                                 @if(strlen($item->remarks) > 50)
-                                    <button class="btn btn-sm btn-info view-remarks-btn" 
-                                        data-bs-toggle="modal" 
+                                    <button class="btn btn-sm btn-info view-remarks-btn"
+                                        data-bs-toggle="modal"
                                         data-bs-target="#remarksModal{{ $item->id }}">
                                         <i class="bi bi-eye"></i> View
                                     </button>
@@ -161,8 +163,8 @@
                         <td>
                             @if($item->reason)
                                 @if(strlen($item->reason) > 50)
-                                    <button class="btn btn-sm btn-info view-reason-btn" 
-                                        data-bs-toggle="modal" 
+                                    <button class="btn btn-sm btn-info view-reason-btn"
+                                        data-bs-toggle="modal"
                                         data-bs-target="#reasonViewModal{{ $item->id }}">
                                         <i class="bi bi-eye"></i> View
                                     </button>
@@ -271,8 +273,8 @@
                 <div class="p-3 rounded" style="background:#0f172a; border:1px solid #334155; word-wrap: break-word; white-space: pre-line;">{{ $item->remarks }}</div>
             </div>
             <div class="modal-footer" style="background:#0f172a; border-top:1px solid #334155;">
-                <button type="button" class="btn btn-sm" 
-                    style="background:#1dd3b0; color:#0f172a;" 
+                <button type="button" class="btn btn-sm"
+                    style="background:#1dd3b0; color:#0f172a;"
                     data-bs-dismiss="modal">
                     <i class="bi bi-x-circle me-1"></i> Close
                 </button>
@@ -300,8 +302,8 @@
                 <div class="p-3 rounded" style="background:#0f172a; border:1px solid #334155; word-wrap: break-word; white-space: pre-line;">{{ $item->reason }}</div>
             </div>
             <div class="modal-footer" style="background:#0f172a; border-top:1px solid #334155;">
-                <button type="button" class="btn btn-sm" 
-                    style="background:#1dd3b0; color:#0f172a;" 
+                <button type="button" class="btn btn-sm"
+                    style="background:#1dd3b0; color:#0f172a;"
                     data-bs-dismiss="modal">
                     <i class="bi bi-x-circle me-1"></i> Close
                 </button>
@@ -765,14 +767,14 @@ document.addEventListener('DOMContentLoaded', function() {
 
     .search-input-group {
         flex: 1 1 auto;
-        min-width: 150px;
-        max-width: 250px;
+        min-width: 200px;
+        max-width: 350px;
     }
 
     @media (min-width: 768px) {
         .search-input-group {
-            width: 180px;
-            flex: 0 0 180px;
+            width: 300px;
+            flex: 0 0 300px;
         }
     }
 
