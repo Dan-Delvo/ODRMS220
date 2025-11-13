@@ -1,3 +1,4 @@
+
 @extends('layout.blankpage')
 
 @section ('content')
@@ -17,23 +18,6 @@
         <h1 class="mt-4 text-dark"><span class="badge" style="background-color:#1f2937; font-size: 2rem;">Roles Total: {{ $roles->count() }}</span></h1>
     </div>
 </div>
-
-<!-- Status Alerts -->
-<!-- <div class="row mb-4">
-    <div class="col-md-12">
-        @if(session('Status'))
-        <div class="alert alert-success">
-            {{ session('Status') }}
-        </div>
-        @endif
-
-        @if(session('Danger'))
-        <div class="alert alert-danger">
-            {{ session('Danger') }}
-        </div>
-        @endif
-    </div>
-</div> -->
 
 <!-- Roles Table -->
 <div class="row">
@@ -64,10 +48,14 @@
                                 <td>
                                     <a href="{{ route('role.edit', ['id' => $item->id]) }}" class="btn btn-success">Edit</a>
                                     @if(!in_array($item->id, [1, 2, 4]))
-                                    <form action="{{ route('role.delete', ['id' => $item->id]) }}" method="POST" class="d-inline" data-swal-loading="true" data-swal-delete="true">
+                                    <form action="{{ route('role.delete', ['id' => $item->id]) }}" method="POST" class="d-inline" 
+                                        data-swal-loading="true" 
+                                        data-swal-delete="true"
+                                        data-swal-delete-title="Delete Role?"
+                                        data-swal-delete-text="The user accounts connected to this role will also be deleted. This action cannot be undone!">
                                         @csrf
                                         @method('DELETE')
-                                        <button type="button" class="btn btn-danger btn-delete">Delete</button>
+                                        <button type="submit" class="btn btn-danger">Delete</button>
                                     </form>
                                     @elseif(in_array($item->id, [1, 2, 4]))
                                     <button type="button" class="btn btn-danger" disabled>Delete</button>
@@ -85,43 +73,5 @@
         </div>
     </div>
 </div>
-<script>
-    document.addEventListener("DOMContentLoaded", function() {
-        document.querySelectorAll(".btn-delete").forEach(button => {
-            button.addEventListener("click", function(e) {
-                let form = this.closest("form");
 
-                // First confirmation
-                Swal.fire({
-                    title: "Are you sure?",
-                    text: "The user accounts connected to this role will also be deleted",
-                    icon: "warning",
-                    showCancelButton: true,
-                    confirmButtonColor: "#dc3545",
-                    cancelButtonColor: "#1f2937",
-                    confirmButtonText: "Yes, delete it!",
-                    cancelButtonText: "Cancel"
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        // Second confirmation
-                        Swal.fire({
-                            title: "Final Confirmation",
-                            text: "This action cannot be undone!",
-                            icon: "error",
-                            showCancelButton: true,
-                            confirmButtonColor: "#d33",
-                            cancelButtonColor: "#1f2937",
-                            confirmButtonText: "Yes, I understand",
-                            cancelButtonText: "Cancel"
-                        }).then((finalResult) => {
-                            if (finalResult.isConfirmed) {
-                                form.submit();
-                            }
-                        });
-                    }
-                });
-            });
-        });
-    });
-</script>
 @endsection
