@@ -28,19 +28,11 @@ class DocumentRequestModel extends Model
         'request_mode',
         'release_mode',
 
-        'remarks',
-        'reason',
-        'status',
-        'receipt_no',
-        'approve_date',
-        'forRelease_date',
-        'claimed_date',
-        'claimed_time',
-        'deleted_at',
-        'req_no',
-        'image',
         'supporting_document',
-        'relationship'
+        'reason',
+        'remarks',
+        'status',
+        'relationship',
     ];
 
     public function claimer()
@@ -69,6 +61,13 @@ class DocumentRequestModel extends Model
         return $this->hasOne(DocuPaymentFee::class, 'receipt_no', 'receipt_no');
     }
 
+    /**
+     * Relationship: A document request has one guest (optional)
+     */
+    public function guest()
+    {
+        return $this->hasOne(Guest::class, 'doc_request_id', 'id');
+    }
 
     public static function updateOrCreateRequest(array $data)
     {

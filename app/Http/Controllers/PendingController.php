@@ -155,7 +155,7 @@ class PendingController extends Controller
         return redirect('/pending')->with('success', 'Declined Successfully');
     }
 
-    public function completeRequest(Request $request, $id)
+    public function completeRequest( $id)
     {
         $this->setCurrentUserVariable();
 
