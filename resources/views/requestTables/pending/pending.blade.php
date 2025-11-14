@@ -128,6 +128,7 @@
                                 @endif
                             </a>
                         </th>
+                        <th>Requestor</th>
                         <th>Student</th>
                         <th>Doc</th>
                         <th>School</th>
@@ -142,6 +143,13 @@
                     @foreach ($DocRequests as $item)
                     <tr>
                         <td class="fw-semibold">{{ $item->req_no }}</td>
+                        <td>
+                            @if($item->relationship)
+                                {{ strtoupper($item->relationship) }}
+                            @else
+                                <em class="text-muted">N/A</em>
+                            @endif
+                        </td>
                         <td>{{ strtoupper(optional($item->studentInformation)->full_name) }}</td>
                         <td>{{ $item->documents->DocType }}</td>
                         <td>{{ strtoupper($item->request_schl_entity) }}</td>

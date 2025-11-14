@@ -326,13 +326,13 @@ class DocumentRequestController extends Controller
         if (Account::where('email_address', $request->email_address)->exists()) {
 
             $document = DocumentsModel::find($validated['document_id']);
-            $receipt = DocuPaymentFee::create([
-                "receipt_no" => random_int(10000, 99999),
-                'docu_categories_id' => $validated['document_id'],
-                'doc_amount' => $document->DocPrice,
-                'name_request' => Auth::user()->std_students_id,
-                'time_request' => Carbon::now()
-            ]);
+            // $receipt = DocuPaymentFee::create([
+            //     "receipt_no" => random_int(10000, 99999),
+            //     'docu_categories_id' => $validated['document_id'],
+            //     'doc_amount' => $document->DocPrice,
+            //     'name_request' => Auth::user()->std_students_id,
+            //     'time_request' => Carbon::now()
+            // ]);
 
             $idAcc = Account::where('email_address', $request->email_address)->value('user_account_id');
             DocumentRequestModel::create([
@@ -348,20 +348,20 @@ class DocumentRequestController extends Controller
                 'status' => 'Pending',
                 'request_mode' => 'Online',
                 'relationship' => $request->relationship ?? ($request->student_first_name . ' ' . $request->student_last_name),
-                'receipt_no' => $receipt->receipt_no
+                // 'receipt_no' => $receipt->receipt_no
             ]);
 
             return redirect()->route('walkin.form')->with('Success', 'Document request submitted successfully!');
         }
 
             $document = DocumentsModel::find($validated['document_id']);
-            $receipt = DocuPaymentFee::create([
-                "receipt_no" => random_int(10000, 99999),
-                'docu_categories_id' => $validated['document_id'],
-                'doc_amount' => $document->DocPrice,
-                'name_request' => Auth::user()->std_students_id,
-                'time_request' => Carbon::now()
-            ]);
+            // $receipt = DocuPaymentFee::create([
+            //     "receipt_no" => random_int(10000, 99999),
+            //     'docu_categories_id' => $validated['document_id'],
+            //     'doc_amount' => $document->DocPrice,
+            //     'name_request' => Auth::user()->std_students_id,
+            //     'time_request' => Carbon::now()
+            // ]);
 
 
         $student = StudentInformationModel::create(
@@ -407,7 +407,7 @@ class DocumentRequestController extends Controller
             'status' => 'Pending',
             'request_mode' => 'Online',
             'relationship' => $request->relationship ?? ($request->student_first_name . ' ' . $request->student_last_name),
-            'receipt_no' => $receipt->receipt_no
+            // 'receipt_no' => $receipt->receipt_no
         ]);
 
 
