@@ -125,20 +125,18 @@
                         <div class="col-md-6">
                             <div class="form-floating">
                                 <input class="form-control @error('relationship') is-invalid @enderror"
-                                    id="inputRelationship" 
-                                    type="text" 
+                                    id="inputRelationship"
+                                    type="text"
                                     name="relationship"
                                     value="{{ old('relationship') }}"
-                                    placeholder="Enter Relationship with Student" 
+                                    placeholder="Enter Relationship with Student"
                                     disabled
                                     readonly>
-                                <label for="inputRelationship" id="relationshipLabel">Relationship with Student</label>
+                                <label for="inputRelationship" id="relationshipLabel">Name of Requestor</label>
                                 @error('relationship')
                                 <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
                                 <small class="text-muted d-block mt-1">
-                                    <i class="fas fa-info-circle me-1"></i>
-                                    e.g., Parent, Guardian, Sibling, Relative
                                 </small>
                             </div>
                         </div>
@@ -363,20 +361,20 @@
         document.getElementById('submitButton').addEventListener('click', function() {
             const button = this;
             const form = document.getElementById('walkinForm');
-            
+
             // Check if relationship is required but empty
             if (requestingCheckbox.checked && !relationshipInput.value.trim()) {
                 relationshipInput.classList.add('is-invalid');
                 relationshipInput.focus();
                 return;
             }
-            
+
             // Check form validity
             if (!form.checkValidity()) {
                 form.reportValidity();
                 return;
             }
-            
+
             button.disabled = true; // Disable the button to prevent multiple clicks
 
             Swal.fire({

@@ -39,7 +39,8 @@ class DocumentRequestModel extends Model
         'deleted_at',
         'req_no',
         'image',
-        'supporting_document'
+        'supporting_document',
+        'relationship'
     ];
 
     public function claimer()

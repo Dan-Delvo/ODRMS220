@@ -301,7 +301,6 @@ class DocumentRequestController extends Controller
     {
         $pdo = DB::connection()->getPdo();
         $pdo->exec("SET @current_user = " . $pdo->quote(Auth::check() ? Auth::user()->username : 'guest'));
-
         $validated = $request->validate([
             'request_schl_entity' => 'required|string|max:255',
             'document_id' => 'required|exists:doc_categories,id',
@@ -348,6 +347,7 @@ class DocumentRequestController extends Controller
                 'remarks' => 'Pending',
                 'status' => 'Pending',
                 'request_mode' => 'Online',
+                'relationship' => $request->relationship ?? ($request->student_first_name . ' ' . $request->student_last_name),
                 'receipt_no' => $receipt->receipt_no
             ]);
 
@@ -415,6 +415,7 @@ class DocumentRequestController extends Controller
             'remarks' => 'Pending',
             'status' => 'Pending',
             'request_mode' => 'Online',
+            'relationship' => $request->relationship ?? ($request->student_first_name . ' ' . $request->student_last_name),
             'receipt_no' => $receipt->receipt_no
         ]);
 
