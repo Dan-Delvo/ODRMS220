@@ -43,6 +43,20 @@
         </div>
 
         <form action="{{ route('login.post') }}" method="post" id="loginForm" novalidate>
+          <style>
+            /* Make guest button text readable on hover/focus by switching to a light bg and dark text */
+            #guestRequestBtn {
+              transition: color .12s ease, background-color .12s ease, border-color .12s ease;
+            }
+            #guestRequestBtn:hover,
+            #guestRequestBtn:focus {
+              color: #1f2937 !important; /* dark text */
+              background-color: #e2e8f0 !important; /* light bg for contrast */
+              border-color: rgba(226,232,240,0.3) !important;
+              box-shadow: none !important;
+              text-decoration: none !important;
+            }
+          </style>
           @csrf
 
           <div class="form-floating mb-3">
@@ -76,6 +90,12 @@
               <span id="loginButtonText">Log In</span>
               <span id="loginSpinner" class="spinner-border spinner-border-sm ms-2" role="status" aria-hidden="true" style="display: none;"></span>
             </button>
+          </div>
+
+          <div>
+            <a id="guestRequestBtn" href="{{ route('guest') }}" class="btn btn-outline-light rounded-pill px-4 py-2 fw-semibold w-100 w-md-auto" style="color: #e2e8f0; border-color: rgba(226,232,240,0.12);">
+              <i class="bi bi-person-fill me-1"></i> Request as Guest
+            </a>
           </div>
 
           <input type="hidden" name="fcm_token" id="fcmToken" />

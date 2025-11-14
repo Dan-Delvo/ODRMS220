@@ -154,8 +154,8 @@
                         <td>
                             @if($item->remarks)
                                 @if(strlen($item->remarks) > 50)
-                                    <button class="btn btn-sm btn-info view-remarks-btn" 
-                                        data-bs-toggle="modal" 
+                                    <button class="btn btn-sm btn-info view-remarks-btn"
+                                        data-bs-toggle="modal"
                                         data-bs-target="#remarksModal{{ $item->id }}">
                                         <i class="bi bi-eye"></i> View
                                     </button>
@@ -169,8 +169,8 @@
                         <td>
                             @if($item->decline_reason)
                                 @if(strlen($item->decline_reason) > 50)
-                                    <button class="btn btn-sm btn-outline-danger view-reason-btn" 
-                                        data-bs-toggle="modal" 
+                                    <button class="btn btn-sm btn-outline-danger view-reason-btn"
+                                        data-bs-toggle="modal"
                                         data-bs-target="#reasonViewModal{{ $item->id }}">
                                         <i class="fas fa-eye me-1"></i>View Reason
                                     </button>
@@ -261,8 +261,8 @@
                 </div>
             </div>
             <div class="modal-footer border-0">
-                <button type="button" class="btn rounded-pill px-4" 
-                    style="background-color: #1dd3b0; color: white;" 
+                <button type="button" class="btn rounded-pill px-4"
+                    style="background-color: #1dd3b0; color: white;"
                     data-bs-dismiss="modal">
                     <i class="bi bi-x-circle me-1"></i> Close
                 </button>
@@ -293,8 +293,8 @@
                 </div>
             </div>
             <div class="modal-footer border-0">
-                <button type="button" class="btn rounded-pill px-4" 
-                    style="background-color: #1dd3b0; color: white;" 
+                <button type="button" class="btn rounded-pill px-4"
+                    style="background-color: #1dd3b0; color: white;"
                     data-bs-dismiss="modal">
                     <i class="fas fa-times me-1"></i> Close
                 </button>
@@ -395,7 +395,7 @@
                 <label for="reasonInput" class="form-label">
                     <strong>Enter additional reason to send to student:</strong>
                 </label>
-                <textarea class="form-control" id="reasonInput" rows="3" 
+                <textarea class="form-control" id="reasonInput" rows="3"
                     placeholder="Enter additional reason for declining this request again"></textarea>
                 <small class="text-muted mt-2 d-block">
                     <i class="fas fa-info-circle me-1"></i>

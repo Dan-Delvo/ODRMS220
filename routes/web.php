@@ -28,6 +28,7 @@ use Illuminate\Routing\RouteGroup;
 use SebastianBergmann\CodeCoverage\Report\Html\Dashboard;
 use App\Http\Controllers\FcmController;
 use App\Http\Controllers\forgotpassword;
+use App\Http\Controllers\GuestRequest;
 use Illuminate\Support\Facades\Http;
 
 
@@ -39,6 +40,7 @@ Route::middleware(['web'])->group(function () {
     Route::get('/', [AuthController::class, 'login'])->name('login');
     Route::post('/', [AuthController::class, 'auth_login'])->name('login.post');
     Route::get('logout', [AuthController::class, 'logout']);
+    Route::get('/guest_request', [GuestRequest::class, 'index'])->name('guest');
 });
 
 Route::get('/student/create', [RegistrationController::class, 'create'])->name('student.create');

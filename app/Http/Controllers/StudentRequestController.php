@@ -116,7 +116,7 @@ class StudentRequestController extends Controller
             'release_mode' => $validatedData['release_mode'],
             'supporting_document' => $supportingDocumentPath,
             'reason' => $validatedData['reason'], // ✅ CHANGED from remarks to reason
-            'remarks' => "Pending", 
+            'remarks' => "Pending",
             'status' => "Pending",
             // 'receipt_no' => $receipt->receipt_no
         ]);
@@ -124,7 +124,7 @@ class StudentRequestController extends Controller
         // Step 8: Redirect with success message
         return redirect()->route('st.page')->with('Success', 'Document request submitted successfully!');
     }
-    
+
     public function replaceFile(Request $request, $id)
     {
         // Set current user in SQL session
@@ -180,4 +180,5 @@ class StudentRequestController extends Controller
         // Redirect back with success message
         return redirect()->back()->with('Success', 'Document re-requested successfully! Your request is now pending review.');
     }
+
 }
