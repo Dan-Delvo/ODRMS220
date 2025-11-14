@@ -1,3 +1,4 @@
+
 @extends('layout.blankpage')
 
 @section('content')
@@ -36,6 +37,16 @@
     .required-label::after {
         content: " *";
         color: red;
+    }
+
+    .form-check-input:checked {
+        background-color: #1dd3b0;
+        border-color: #1dd3b0;
+    }
+
+    .form-check-label {
+        font-weight: 500;
+        color: #1f2937;
     }
 </style>
 
@@ -93,6 +104,42 @@
                                 <input class="form-control" id="inputReleaseMode" type="text"
                                     value="Pickup" name="release_mode" readonly>
                                 <label for="inputReleaseMode" class="required-label">Release Mode</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Requesting for Others Section -->
+                    <h5 class="mt-4 mb-3">👤 Requester Information</h5>
+                    <div class="row g-3">
+                        <div class="col-12">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="requestingForOthers" name="requesting_for_others" value="1"
+                                    {{ old('requesting_for_others') ? 'checked' : '' }}>
+                                <label class="form-check-label" for="requestingForOthers">
+                                    <i class="fas fa-user-friends me-1"></i>
+                                    Requesting for others
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="form-floating">
+                                <input class="form-control @error('relationship') is-invalid @enderror"
+                                    id="inputRelationship" 
+                                    type="text" 
+                                    name="relationship"
+                                    value="{{ old('relationship') }}"
+                                    placeholder="Enter Relationship with Student" 
+                                    disabled
+                                    readonly>
+                                <label for="inputRelationship" id="relationshipLabel">Relationship with Student</label>
+                                @error('relationship')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                                <small class="text-muted d-block mt-1">
+                                    <i class="fas fa-info-circle me-1"></i>
+                                    e.g., Parent, Guardian, Sibling, Relative
+                                </small>
                             </div>
                         </div>
                     </div>
@@ -218,79 +265,118 @@
         </div>
     </div>
 
-
-    <!--
-    <div class="col-lg-4 mt-3 d-none d-lg-block">
-        <div class="card" style="width: 18rem;">
-            <img src="{{ asset('images/qrCode.png') }}" class="card-img-top" alt="ubnhsLogo">
-            <div class="card-body">
-                <p class="card-text">Thank you for using our Online Document Request and Management System! After completing your request,
-                    Please scan the Qr Code to answer a quick survey and help us improve the system for our research.</p>
-            </div>
-        </div>
-    </div> -->
-
 </div>
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {
 
+        // LRN Validation
         const errorLrnMessage = document.getElementById('lrn-error-desktop')
         const successLrnMessage = document.getElementById('lrn-success-desktop')
         const lrnInput = document.getElementById('inputLRN')
         const submitLrn = document.getElementById('submitButton')
 
-        if (!lrnInput) return;
+        if (lrnInput) {
+            lrnInput.addEventListener('input', function(e) {
+                this.value = this.value.replace(/\D/g, '');
 
-        lrnInput.addEventListener('input', function(e) {
-            this.value = this.value.replace(/\D/g, '');
-
-            // Limit input to 12 digits
-            if (this.value.length > 12) {
-                this.value = this.value.slice(0, 12);
-            }
-            const value = this.value
-            const isValid = /^\d{12}$/.test(value);
-
-            if (value.length === 0) {
-                errorLrnMessage.style.display = 'none'
-                successLrnMessage.style.display = 'none'
-                lrnInput.classList.remove('is-invalid', 'is-valid');
-                submitLrn.disabled = false;
-            } else if (isValid) {
-                errorLrnMessage.style.display = 'none'
-                successLrnMessage.style.display = 'block'
-                lrnInput.classList.remove('is-invalid');
-                lrnInput.classList.add('is-valid');
-                submitLrn.disabled = false;
-            } else {
-                errorLrnMessage.style.display = 'block'
-                successLrnMessage.style.display = 'none'
-                lrnInput.classList.remove('is-valid');
-                lrnInput.classList.add('is-invalid');
-                submitLrn.disabled = true;
-            }
-        });
-        const form = lrnInput.closest('form');
-        if (form) {
-            form.addEventListener('submit', function(e) {
-                const value = lrnInput.value;
-                if (value.length > 0 && !/^\d{12}$/.test(value)) {
-                    e.preventDefault();
-                    errorLrnMessage.style.display = 'block'
-                    lrnInput.classList.add('is-invalid');
-                    lrnInput.focus();
+                // Limit input to 12 digits
+                if (this.value.length > 12) {
+                    this.value = this.value.slice(0, 12);
                 }
-            })
+                const value = this.value
+                const isValid = /^\d{12}$/.test(value);
+
+                if (value.length === 0) {
+                    errorLrnMessage.style.display = 'none'
+                    successLrnMessage.style.display = 'none'
+                    lrnInput.classList.remove('is-invalid', 'is-valid');
+                    submitLrn.disabled = false;
+                } else if (isValid) {
+                    errorLrnMessage.style.display = 'none'
+                    successLrnMessage.style.display = 'block'
+                    lrnInput.classList.remove('is-invalid');
+                    lrnInput.classList.add('is-valid');
+                    submitLrn.disabled = false;
+                } else {
+                    errorLrnMessage.style.display = 'block'
+                    successLrnMessage.style.display = 'none'
+                    lrnInput.classList.remove('is-valid');
+                    lrnInput.classList.add('is-invalid');
+                    submitLrn.disabled = true;
+                }
+            });
+
+            const form = lrnInput.closest('form');
+            if (form) {
+                form.addEventListener('submit', function(e) {
+                    const value = lrnInput.value;
+                    if (value.length > 0 && !/^\d{12}$/.test(value)) {
+                        e.preventDefault();
+                        errorLrnMessage.style.display = 'block'
+                        lrnInput.classList.add('is-invalid');
+                        lrnInput.focus();
+                    }
+                })
+            }
         }
 
+        // Requesting for Others Toggle
+        const requestingCheckbox = document.getElementById('requestingForOthers');
+        const relationshipInput = document.getElementById('inputRelationship');
+        const relationshipLabel = document.getElementById('relationshipLabel');
+
+        if (requestingCheckbox && relationshipInput) {
+            // Check on page load if checkbox was previously checked (old input)
+            if (requestingCheckbox.checked) {
+                relationshipInput.disabled = false;
+                relationshipInput.readOnly = false;
+                relationshipInput.required = true;
+                relationshipLabel.classList.add('required-label');
+            }
+
+            requestingCheckbox.addEventListener('change', function() {
+                if (this.checked) {
+                    relationshipInput.disabled = false;
+                    relationshipInput.readOnly = false;
+                    relationshipInput.required = true;
+                    relationshipLabel.classList.add('required-label');
+                    relationshipInput.focus();
+                } else {
+                    relationshipInput.disabled = true;
+                    relationshipInput.readOnly = true;
+                    relationshipInput.required = false;
+                    relationshipInput.value = '';
+                    relationshipLabel.classList.remove('required-label');
+                    relationshipInput.classList.remove('is-invalid', 'is-valid');
+                }
+            });
+        }
+
+        // Bootstrap Tooltips
         var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
         tooltipTriggerList.forEach(function(tooltipTriggerEl) {
             new bootstrap.Tooltip(tooltipTriggerEl);
         });
 
+        // Form Submission with additional validation
         document.getElementById('submitButton').addEventListener('click', function() {
             const button = this;
+            const form = document.getElementById('walkinForm');
+            
+            // Check if relationship is required but empty
+            if (requestingCheckbox.checked && !relationshipInput.value.trim()) {
+                relationshipInput.classList.add('is-invalid');
+                relationshipInput.focus();
+                return;
+            }
+            
+            // Check form validity
+            if (!form.checkValidity()) {
+                form.reportValidity();
+                return;
+            }
+            
             button.disabled = true; // Disable the button to prevent multiple clicks
 
             Swal.fire({
@@ -312,7 +398,7 @@
                         }
                     });
                     // Submit the form
-                    document.getElementById('walkinForm').submit();
+                    form.submit();
                 } else {
                     // If cancelled, re-enable the button
                     button.disabled = false;
