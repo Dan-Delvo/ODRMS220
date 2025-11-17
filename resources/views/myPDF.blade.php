@@ -159,6 +159,10 @@ tbody td {
     text-align: center;
     word-wrap: break-word;
     line-height: 1.2;
+    white-space: normal;
+    overflow-wrap: break-word;
+    word-break: break-word;
+    max-width: 120px;
 }
 
 tbody tr:hover {
