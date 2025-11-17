@@ -17,7 +17,7 @@ $depedLogo = embedBase64Image(public_path('images/DOLOGO.png'));
 <style>
 body {
     font-family: 'Bookman Old Style', serif;
-    font-size: 12px;
+    font-size: 11px;
     margin: 0;
     padding: 0;
     position: relative;
@@ -28,7 +28,7 @@ body {
 body::before {
     content: "";
     background-image: url("{{ $ubnhsLogo }}");
-    background-size: 450px;
+    background-size: 400px;
     background-position: center;
     background-repeat: no-repeat;
     position: fixed;
@@ -36,13 +36,13 @@ body::before {
     left: 0;
     width: 100%;
     height: 100%;
-    opacity: 0.05;
+    opacity: 0.04;
     z-index: 0;
 }
 
-/* Header */
+/* Header - Only on first page */
 .school-header {
-    margin-bottom: 3px;
+    margin-bottom: 2px;
     margin-top: 0;
 }
 
@@ -60,28 +60,43 @@ body::before {
 }
 
 .school-header img {
-    width: 70px;
-    height: 70px;
+    width: 55px;
+    height: 55px;
 }
 
 .school-header .republic-info,
 .school-header .deped-info,
 .school-header .school-name,
 .school-header .school-address {
-    margin: 1px 0;
+    margin: 0.5px 0;
+    line-height: 1.1;
 }
 
 .school-header .school-name {
-    font-size: 18px;
+    font-size: 15px;
     font-weight: bold;
     text-transform: uppercase;
+}
+
+.school-header .republic-info {
+    font-size: 10px;
+    font-weight: 600;
+}
+
+.school-header .deped-info {
+    font-size: 10px;
+    font-weight: 500;
+}
+
+.school-header .school-address {
+    font-size: 10px;
 }
 
 /* Report Title */
 .header {
     text-align: center;
-    margin-bottom: 8px;
-    padding-bottom: 8px;
+    margin-bottom: 4px;
+    padding-bottom: 4px;
     border-bottom: 1px solid #dee2e6;
     width: 100vw;
     max-width: 100vw;
@@ -89,59 +104,61 @@ body::before {
 
 .header h1 {
     margin: 0;
-    font-size: 22px;
+    font-size: 18px;
     color: #1f2937;
 }
 
 .header .info {
-    margin-top: 5px;
+    margin-top: 2px;
     color: #666;
+    font-size: 10px;
 }
 
 /* Filters */
 .filters {
-    padding: 8px 0;
+    padding: 4px 8px;
     border: 1px solid #dee2e6;
-    border-radius: 5px;
+    border-radius: 3px;
     background-color: #f8f9fa;
-    margin-bottom: 8px;
+    margin-bottom: 4px;
     width: 100vw;
     max-width: 100vw;
-
-    display: flex;          /* flex container */
-    flex-wrap: wrap;        /* wrap if not enough space */
-    align-items: center;    /* vertically center items */
-    gap: 20px;              /* space between filter items */
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 15px;
 }
 
 .filter-item {
     font-weight: bold;
-    font-size: 11px;
+    font-size: 10px;
 }
 
 /* Table with clean borders */
 table {
     width: 100%;
     border-collapse: collapse;
-    font-size: 11px;
+    font-size: 10px;
 }
 
 thead th {
     font-weight: bold;
-    font-size: 11px;
+    font-size: 10px;
     text-align: center;
     border: 1px solid #444;
-    padding: 6px;
+    padding: 4px 3px;
     background-color: #f8f8f8;
+    line-height: 1.2;
 }
 
 tbody td {
-    font-size: 11px;
-    padding: 6px;
+    font-size: 10px;
+    padding: 4px 3px;
     vertical-align: middle;
     border: 1px solid #444;
     text-align: center;
     word-wrap: break-word;
+    line-height: 1.2;
 }
 
 tbody tr:hover {
@@ -156,8 +173,8 @@ tbody tr:hover {
 /* Status badges */
 .status-badge {
     display: inline-block;
-    padding: 2px 6px;
-    border-radius: 3px;
+    padding: 1px 4px;
+    border-radius: 2px;
     font-size: 8px;
     font-weight: bold;
     color: #fff;
@@ -171,24 +188,51 @@ tbody tr:hover {
 
 /* Footer */
 .footer {
-    margin-top: 10px;
+    margin-top: 6px;
     text-align: center;
-    font-size: 10px;
+    font-size: 9px;
     color: #666;
     border-top: 1px solid #dee2e6;
-    padding-top: 5px;
+    padding-top: 3px;
     width: 100vw;
     max-width: 100vw;
 }
 
+.footer p {
+    margin: 2px 0;
+}
+
 /* Pagination */
 @page {
-    margin: 10mm 15mm 15mm 15mm;
+    margin: 8mm 12mm 12mm 12mm;
     @bottom-right {
         content: "Page " counter(page) " of " counter(pages);
-        font-size: 10px;
+        font-size: 9px;
         color: #666;
     }
+}
+
+/* Page breaks - first page has header, subsequent pages don't */
+@page :first {
+    margin-top: 8mm;
+}
+
+@page :not(:first) {
+    margin-top: 8mm;
+}
+
+/* Repeat table header on each page */
+thead {
+    display: table-header-group;
+}
+
+tbody {
+    display: table-row-group;
+}
+
+/* Avoid breaking rows across pages */
+tr {
+    page-break-inside: avoid;
 }
 </style>
 </head>
@@ -198,18 +242,18 @@ tbody tr:hover {
 <div class="school-header">
     <table style="width: 100%; border: none; border-collapse: collapse;">
         <tr>
-            <td style="width: 20%; text-align: left; border: none; padding-left: 70px;">
+            <td style="width: 20%; text-align: left; border: none; padding-left: 60px;">
                 <img src="{{ $ubnhsLogo }}" alt="UBNHS Logo">
             </td>
             <td style="width: 60%; text-align: center; border: none;">
-                <div class="republic-info" style="font-size: 11px; font-weight: 600;">Republic of the Philippines</div>
-                <div class="deped-info" style="font-size: 11px; font-weight: 500;">DepEd - National Capital Region</div>
-                <div class="deped-info" style="font-size: 11px; font-weight: 500;">Division of Taguig City and Pateros</div>
-                <div class="deped-info" style="font-size: 11px; font-weight: 500;">City of Taguig</div>
+                <div class="republic-info">Republic of the Philippines</div>
+                <div class="deped-info">DepEd - National Capital Region</div>
+                <div class="deped-info">Division of Taguig City and Pateros</div>
+                <div class="deped-info">City of Taguig</div>
                 <div class="school-name">Upper Bicutan National High School</div>
-                <div class="school-address" style="font-size: 11px;">General Santos Avenue, Central Bicutan, Taguig City</div>
+                <div class="school-address">General Santos Avenue, Central Bicutan, Taguig City</div>
             </td>
-            <td style="width: 20%; text-align: right; border: none; padding-right: 70px;">
+            <td style="width: 20%; text-align: right; border: none; padding-right: 60px;">
                 <img src="{{ $depedLogo }}" alt="DepEd Logo">
             </td>
         </tr>
