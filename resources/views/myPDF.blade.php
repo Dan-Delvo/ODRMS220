@@ -152,8 +152,8 @@ thead th {
 }
 
 tbody td {
-    font-size: 10px;
-    padding: 4px 3px;
+    font-size: 9px;
+    padding: 0 1px;
     vertical-align: middle;
     border: 1px solid #444;
     text-align: center;
@@ -284,31 +284,37 @@ tr {
 <table class="table table-bordered table-striped text-center align-middle">
     <thead>
         <tr>
-            <th style="width: 6%;">Req #</th>
-            <th style="width: 14%;">Student</th>
-            <th style="width: 8%;">Doc</th>
-            <th style="width: 17%;">School/Entity</th>
+            <th style="width: 5%;">Req #</th>
+            <th style="width: 17%;">Student</th>
+            <th style="width: 7%;">Doc</th>
+            <th style="width: 21%;">School/Entity</th>
             <th style="width: 15%;">Claimer</th>
-            <th style="width: 6%;">Req Via</th>
-            <th style="width: 7%;">Rel Mode</th>
-            <th style="width: 7%;">Status</th>
-            <th style="width: 7%;">Req Date</th>
-            <th style="width: 7%;">App Date</th>
-            <th style="width: 7%;">Rel Date</th>
-            <th style="width: 7%;">Clm Date</th>
+            <th style="width: 5%;">Req Via</th>
+            <th style="width: 5%;">Rel Mode</th>
+            <th style="width: 6%;">Status</th>
+            <th style="width: 6%;">Req Date</th>
+            <th style="width: 6%;">App Date</th>
+            <th style="width: 6%;">Rel Date</th>
+            <th style="width: 6%;">Clm Date</th>
         </tr>
     </thead>
     <tbody>
         @foreach ($DocRequests as $item)
         <tr>
             <td>{{ $item->req_no ?? 'N/A' }}</td>
-            <td class="uppercase">{{ $item->full_name ?? 'N/A' }}</td>
-            <td class="uppercase">{{ $item->DocType ?? 'N/A' }}</td>
-            <td class="uppercase">{{ $item->request_schl_entity ?? 'N/A' }}</td>
+
+            {{-- Student Column: Reduced Font Size (8px) --}}
+            <td class="uppercase" style="font-size: 8px;">{{ $item->full_name ?? 'N/A' }}</td>
+
+            <td>{{ $item->DocType ?? 'N/A' }}</td>
+
+            {{-- School/Entity Column: Reduced Font Size (8px) --}}
+            <td class="uppercase" style="font-size: 8px;">{{ $item->request_schl_entity ?? 'N/A' }}</td>
+
             <td>
                 {{ (empty($item->claimer) || $item->claimer === 'Blank Blank') ? 'N/A' : $item->claimer }}
             </td>
-            <td>{{ $item->request_mode ?? 'N/A' }}</td>
+            <td>{{ $item->request_mode === "Bulk Request" ? "Bulk" : $item->request_mode  }}</td>
             <td>{{ $item->release_mode ?? 'N/A' }}</td>
             <td>
                 @php
