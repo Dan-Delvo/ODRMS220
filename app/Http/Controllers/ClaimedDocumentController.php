@@ -84,10 +84,18 @@ class ClaimedDocumentController extends Controller
 
         // --- 4. Paginate the filtered and sorted results ---
         $DocRequests = $query->paginate(10)->appends($request->except('page'));
+        
+        // Get filtered count (with search/filter applied)
+        $filteredCount = $DocRequests->total();
+        
+        // Get search counts across all statuses
+        $searchCounts = DocumentRequestModel::getSearchCountsAcrossAllStatuses($request->input('search') ?? '');
 
         return view('requestTables.claimed.claimed', [
             'DocRequests' => $DocRequests,
             'totalCount' => $totalCount,
+            'filteredCount' => $filteredCount,
+            'searchCounts' => $searchCounts,
         ]);
     }
 

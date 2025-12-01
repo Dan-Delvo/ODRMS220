@@ -16,7 +16,7 @@
     </div>
 </div>
 
-<x-tabs page='Pending' />
+<x-tabs page='Pending' :filteredCount="$filteredCount" :searchCounts="$searchCounts" />
 
 {{-- Main Card --}}
 <div class="card shadow-lg border-0 rounded-lg mt-3">
@@ -132,7 +132,7 @@
                         <th>Student</th>
                         <th>Doc</th>
                         <th>School</th>
-                        <th>Remarks</th>
+                        <th>Days Pending</th>
                         <th>Reason</th>
                         <th>Status</th>
                         <th>Req Date</th>
@@ -154,19 +154,17 @@
                         <td>{{ $item->documents->DocType }}</td>
                         <td>{{ strtoupper($item->request_schl_entity) }}</td>
                         <td>
-                            @if($item->remarks)
-                                @if(strlen($item->remarks) > 50)
-                                    <button class="btn btn-sm btn-info view-remarks-btn"
-                                        data-bs-toggle="modal"
-                                        data-bs-target="#remarksModal{{ $item->id }}">
-                                        <i class="bi bi-eye"></i> View
-                                    </button>
-                                @else
-                                    {{ $item->remarks }}
-                                @endif
-                            @else
-                                <em class="text-muted">N/A</em>
-                            @endif
+                            @php
+                                $requestDate = \Carbon\Carbon::parse($item->request_date);
+                                $daysPending = floor($requestDate->diffInDays(\Carbon\Carbon::now()));
+                            @endphp
+                            <span class="badge 
+                                @if($daysPending >= 7) bg-danger
+                                @elseif($daysPending >= 3) bg-warning text-dark
+                                @else bg-success
+                                @endif">
+                                {{ $daysPending }} {{ $daysPending == 1 ? 'day' : 'days' }}
+                            </span>
                         </td>
                         <td>
                             @if($item->reason)
@@ -455,8 +453,23 @@ document.addEventListener('DOMContentLoaded', function() {
 
     let pendingDeclineId = null;
     let searchTimeout = null;
+    let isInitialLoad = true;
 
     toggleClearButton();
+    
+    // If there's a search parameter in URL, trigger search immediately
+    const urlParams = new URLSearchParams(window.location.search);
+    const urlSearch = urlParams.get('search');
+    if (urlSearch && urlSearch.trim()) {
+        searchInput.value = urlSearch;
+        toggleClearButton();
+        performAjaxSearch();
+    }
+    
+    // Mark initial load as complete after a short delay
+    setTimeout(() => {
+        isInitialLoad = false;
+    }, 500);
 
     // ✅ Show/Hide clear button dynamically
     function toggleClearButton() {
@@ -467,7 +480,10 @@ document.addEventListener('DOMContentLoaded', function() {
     searchInput.addEventListener('input', function() {
         toggleClearButton();
         clearTimeout(searchTimeout);
-        searchTimeout = setTimeout(() => performAjaxSearch(), 400);
+        // Don't trigger search during initial load sync
+        if (!isInitialLoad) {
+            searchTimeout = setTimeout(() => performAjaxSearch(), 400);
+        }
     });
 
     // ✅ Clear search
@@ -512,6 +528,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 const newTableContainer = doc.querySelector('#tableContainer');
                 const newInfoBanner = doc.querySelector('.table-info-banner');
                 const newPaginationWrapper = doc.querySelector('#paginationContainer');
+                const newSearchCounter = doc.querySelector('#searchResultsCounter');
 
                 // Replace table content
                 tableContainer.innerHTML = newTableContainer ? newTableContainer.innerHTML : '<div class="alert alert-warning text-center my-3">No results found.</div>';
@@ -531,6 +548,17 @@ document.addEventListener('DOMContentLoaded', function() {
                     paginationContainer.innerHTML = newPaginationWrapper.innerHTML;
                 } else if (paginationContainer && !newPaginationWrapper) {
                     paginationContainer.innerHTML = ''; // Clear pagination if no results
+                }
+                
+                // Update search counter
+                const searchResultsCounter = document.getElementById('searchResultsCounter');
+                if (search || (filter && filter !== 'all') || (sort && sort !== 'default')) {
+                    if (newSearchCounter) {
+                        searchResultsCounter.innerHTML = newSearchCounter.innerHTML;
+                        searchResultsCounter.style.display = 'block';
+                    }
+                } else {
+                    searchResultsCounter.style.display = 'none';
                 }
 
                 loadingSpinner.style.display = 'none';
@@ -855,11 +883,11 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     /* ===== REQ DATE COLUMN - ONE LINE ===== */
-    #requestsTable tbody td:nth-child(8),
-    #requestsTable thead th:nth-child(8) {
-        min-width: 95px !important;
-        max-width: 95px !important;
-        width: 95px !important;
+    #requestsTable tbody td:nth-child(9),
+    #requestsTable thead th:nth-child(9) {
+        min-width: 105px !important;
+        max-width: 105px !important;
+        width: 105px !important;
         white-space: nowrap !important;
     }
 

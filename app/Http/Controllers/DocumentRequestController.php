@@ -48,10 +48,18 @@ class DocumentRequestController extends Controller
 
         // Get total count (unfiltered)
         $totalCount = DocumentRequestModel::getStatusCount('For Release');
+        
+        // Get filtered count (with search/filter applied)
+        $filteredCount = $DocRequests->total();
+        
+        // Get search counts across all statuses
+        $searchCounts = DocumentRequestModel::getSearchCountsAcrossAllStatuses($request->get('search') ?? '');
 
         return view('requestTables.completed.completed', [
             'DocRequests' => $DocRequests,
             'totalCount' => $totalCount,
+            'filteredCount' => $filteredCount,
+            'searchCounts' => $searchCounts,
             'PermissionEdit' => $data,
             'deleteCompleted' => $data1
         ]);

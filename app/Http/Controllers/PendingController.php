@@ -52,10 +52,18 @@ class PendingController extends Controller
 
         // Get total count (unfiltered)
         $totalCount = DocumentRequestModel::getStatusCount('pending');
+        
+        // Get filtered count (with search/filter applied)
+        $filteredCount = $DocRequests->total();
+        
+        // Get search counts across all statuses
+        $searchCounts = DocumentRequestModel::getSearchCountsAcrossAllStatuses($request->get('search') ?? '');
 
         return view('requestTables.pending.pending', [
             'DocRequests' => $DocRequests,
             'totalCount' => $totalCount,
+            'filteredCount' => $filteredCount,
+            'searchCounts' => $searchCounts,
             'PermissionEdit' => $PermissionEdit,
             'approvePending' => $approvePending
         ]);
