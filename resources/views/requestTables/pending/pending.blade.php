@@ -21,14 +21,12 @@
 {{-- Main Card --}}
 <div class="card shadow-lg border-0 rounded-lg mt-3">
     {{-- Card Header with Search/Filter Controls --}}
-    <div class="card-header card-header-custom row">
-
+    <div class="card-header card-header-custom">
         {{-- Search/Filter Form --}}
-        {{-- Use explicit flex so search stays left and filters right on md+ screens --}}
-        <div class="col-lg-12 d-flex gap-2 mt-2 mt-md-0 flex-wrap" id="tableControls">
+        <div class="d-flex w-100 gap-2 mt-2 mt-md-0 flex-wrap" id="tableControls">
             {{-- Search Input (left) --}}
             <div class="d-flex align-items-center" style="min-width:0;">
-                <div class="input-group search-input-group" style="width: 350px;">
+                <div class="input-group search-input-group" style="width: 300px;">
                     <input type="text"
                         name="search"
                         id="searchInput"

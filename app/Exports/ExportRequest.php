@@ -46,7 +46,8 @@ class ExportRequest implements FromArray, WithHeadings, WithStyles, WithColumnWi
             'Req Date',
             'App Date',
             'Rel Date',
-            'Clm Date'
+            'Clm Date',
+            'Claimer'
         ];
     }
 
@@ -125,6 +126,7 @@ class ExportRequest implements FromArray, WithHeadings, WithStyles, WithColumnWi
             'J' => 15,  // App Date
             'K' => 15,  // Rel Date
             'L' => 15,  // Clm Date
+            'M' => 25,  // Claimer
         ];
     }
 

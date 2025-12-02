@@ -78,13 +78,17 @@
             </button>
           </div>
 
-          <div class="form-check mb-3">
-            <input type="checkbox" class="form-check-input" name="remember" id="exampleCheck1" />
-            <label class="form-check-label" for="exampleCheck1" style="color: #cbd5e1;">Remember me</label>
+          <div class="form-check d-flex justify-content-between mb-3">
+            <div>
+                <input type="checkbox" class="form-check-input" name="remember" id="exampleCheck1" />
+                <label class="form-check-label" for="exampleCheck1" style="color: #cbd5e1;">Remember me</label>
+            </div>
+            <div>
+                <a class="custom-teal-link text-decoration-none small" href="{{ route('forgot') }}">Forgot Password?</a>
+            </div>
           </div>
 
           <div class="d-flex flex-column flex-md-row justify-content-between align-items-center gap-3 mb-3">
-            <a class="custom-teal-link text-decoration-none small" href="{{ route('forgot') }}">Forgot Password?</a>
             <button type="submit" id="loginButton" class="btn btn-warning rounded-pill px-4 py-2 fw-semibold w-100 w-md-auto"
                     style="box-shadow: 0 4px 12px rgb(29 211 176 / 0.6); color: #1f2937;">
               <span id="loginButtonText">Log In</span>
