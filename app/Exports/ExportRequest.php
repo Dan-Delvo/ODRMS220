@@ -7,18 +7,29 @@ use Maatwebsite\Excel\Concerns\WithHeadings;
 use Maatwebsite\Excel\Concerns\WithStyles;
 use Maatwebsite\Excel\Concerns\WithColumnWidths;
 use Maatwebsite\Excel\Concerns\WithTitle;
+use Maatwebsite\Excel\Concerns\WithEvents;
+use Maatwebsite\Excel\Events\AfterSheet;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 use PhpOffice\PhpSpreadsheet\Style\Alignment;
 use PhpOffice\PhpSpreadsheet\Style\Border;
 use PhpOffice\PhpSpreadsheet\Style\Fill;
+use Carbon\Carbon;
 
-class ExportRequest implements FromArray, WithHeadings, WithStyles, WithColumnWidths, WithTitle
+class ExportRequest implements FromArray, WithHeadings, WithStyles, WithColumnWidths, WithTitle, WithEvents
 {
     protected $data;
+    protected $statusFilter;
+    protected $startDate;
+    protected $endDate;
+    protected $count;
 
-    public function __construct(array $data)
+    public function __construct(array $data, $statusFilter = 'all', $startDate = null, $endDate = null, $count = 0)
     {
         $this->data = $data;
+        $this->statusFilter = $statusFilter;
+        $this->startDate = $startDate;
+        $this->endDate = $endDate;
+        $this->count = $count;
     }
 
     /**
@@ -48,6 +59,62 @@ class ExportRequest implements FromArray, WithHeadings, WithStyles, WithColumnWi
             'Rel Date',
             'Clm Date',
             'Claimer'
+        ];
+    }
+
+    /**
+     * Register events for adding export details
+     */
+    public function registerEvents(): array
+    {
+        return [
+            AfterSheet::class => function(AfterSheet $event) {
+                $sheet = $event->sheet->getDelegate();
+
+                // Insert 5 rows at the top for export details
+                $sheet->insertNewRowBefore(1, 5);
+
+                // Add title
+                $sheet->setCellValue('A1', 'DOCUMENT REQUESTS REPORT');
+                $sheet->mergeCells('A1:M1');
+                $sheet->getStyle('A1')->applyFromArray([
+                    'font' => ['bold' => true, 'size' => 16],
+                    'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER]
+                ]);
+
+                // Filter Type
+                $filterText = $this->statusFilter === 'all' ? 'All Requests' : ucfirst($this->statusFilter) . ' Requests';
+                $sheet->setCellValue('A2', 'Filter Type:');
+                $sheet->setCellValue('B2', $filterText);
+
+                // Date Range
+                if ($this->startDate && $this->endDate) {
+                    $sheet->setCellValue('A3', 'Date Range:');
+                    $sheet->setCellValue('B3',
+                        Carbon::parse($this->startDate)->format('M d, Y') . ' - ' . Carbon::parse($this->endDate)->format('M d, Y'));
+                }
+
+                // Total Requests
+                $sheet->setCellValue('A4', 'Total Requests:');
+                $sheet->setCellValue('B4', $this->count);
+
+                // Generated Date
+                $sheet->setCellValue('A5', 'Generated On:');
+                $sheet->setCellValue('B5', Carbon::now()->format('F d, Y h:i A'));
+
+                // Style the export details section
+                $sheet->getStyle('A2:A5')->applyFromArray([
+                    'font' => ['bold' => true],
+                    'alignment' => ['horizontal' => Alignment::HORIZONTAL_LEFT]
+                ]);
+
+                $sheet->getStyle('B2:B5')->applyFromArray([
+                    'alignment' => ['horizontal' => Alignment::HORIZONTAL_LEFT]
+                ]);
+
+                // Add some spacing
+                $sheet->getRowDimension(1)->setRowHeight(25);
+            },
         ];
     }
 
@@ -114,7 +181,7 @@ class ExportRequest implements FromArray, WithHeadings, WithStyles, WithColumnWi
     public function columnWidths(): array
     {
         return [
-            'A' => 12,  // Req #
+            'A' => 16,  // Req #
             'B' => 25,  // Student
             'C' => 20,  // Doc
             'D' => 20,  // School

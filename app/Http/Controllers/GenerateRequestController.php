@@ -469,7 +469,10 @@ class GenerateRequestController extends Controller
             }
             $filename .= '.xlsx';
 
-            return Excel::download(new ExportRequest($filteredData), $filename);
+            return Excel::download(
+                new ExportRequest($filteredData, $statusFilter, $startDate, $endDate, $DocRequests->count()), 
+                $filename
+            );
         } catch (\Exception $e) {
             return redirect()->back()->with('error', 'Error generating Excel: ' . $e->getMessage());
         }
