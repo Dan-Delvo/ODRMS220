@@ -45,10 +45,18 @@ class OngoingController extends Controller
 
         // Get total count (unfiltered)
         $totalCount = DocumentRequestModel::getStatusCount('processing');
+        
+        // Get filtered count (with search/filter applied)
+        $filteredCount = $DocRequests->total();
+        
+        // Get search counts across all statuses
+        $searchCounts = DocumentRequestModel::getSearchCountsAcrossAllStatuses($request->get('search') ?? '');
 
         return view('requestTables.ongoing.ongoing', [
             'DocRequests' => $DocRequests,
             'totalCount' => $totalCount,
+            'filteredCount' => $filteredCount,
+            'searchCounts' => $searchCounts,
             'PermissionEdit' => $data,
             'approveOngoing' => $data1
         ]);

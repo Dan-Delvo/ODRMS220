@@ -406,7 +406,8 @@ class GenerateRequestController extends Controller
                     'doc_requests.request_date',
                     'doc_requests.approve_date',
                     'doc_requests.forRelease_date',
-                    'doc_requests.claimed_date'
+                    'doc_requests.claimed_date',
+                    DB::raw("CONCAT(clm_claimers.FName, ' ', clm_claimers.LName) as claimer"),
                 );
             if ($statusFilter && $statusFilter !== 'all') {
                 $individualQuery->where('doc_requests.status', $statusFilter);
@@ -428,7 +429,8 @@ class GenerateRequestController extends Controller
                     'bulk_requests.request_date as request_date',
                     'bulk_requests.approve_date as approve_date',
                     'bulk_requests.forRelease_date as forRelease_date',
-                    'bulk_requests.claimed_date as claimed_date'
+                    'bulk_requests.claimed_date as claimed_date',
+                    'bulk_requests.School_Name as claimer',
                 );
 
             if ($statusFilter && $statusFilter !== 'all') {
@@ -458,7 +460,8 @@ class GenerateRequestController extends Controller
                     $item->request_date ? Carbon::parse($item->request_date)->format('Y-m-d') : 'N/A',     // Req Date
                     $item->approve_date ? Carbon::parse($item->approve_date)->format('Y-m-d') : 'N/A',     // App Date
                     $item->forRelease_date ? Carbon::parse($item->forRelease_date)->format('Y-m-d') : 'N/A', // Rel Date
-                    $item->claimed_date ? Carbon::parse($item->claimed_date)->format('Y-m-d') : 'N/A',     // Clm Date
+                    $item->claimed_date ? Carbon::parse($item->claimed_date)->format('Y-m-d') : 'N/A',
+                    $item->claimer == 'Blank Blank' ? 'N/A' : $item->claimer    // Clm Date
                 ];
             })->toArray();
 
@@ -468,7 +471,10 @@ class GenerateRequestController extends Controller
             }
             $filename .= '.xlsx';
 
-            return Excel::download(new ExportRequest($filteredData), $filename);
+            return Excel::download(
+                new ExportRequest($filteredData, $statusFilter, $startDate, $endDate, $DocRequests->count()), 
+                $filename
+            );
         } catch (\Exception $e) {
             return redirect()->back()->with('error', 'Error generating Excel: ' . $e->getMessage());
         }

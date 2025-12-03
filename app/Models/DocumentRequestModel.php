@@ -192,6 +192,27 @@ class DocumentRequestModel extends Model
         return self::where('status', $status)->count();
     }
 
+    public static function getSearchCountsAcrossAllStatuses(string $searchTerm)
+    {
+        $statuses = ['Pending', 'Processing', 'For Release', 'Claimed', 'Declined'];
+        $counts = [];
+
+        foreach ($statuses as $status) {
+            $query = self::where('status', $status);
+
+            if (!empty($searchTerm)) {
+                // Only search by student name
+                $query->whereHas('studentInformation', function($sq) use ($searchTerm) {
+                    $sq->where(DB::raw("CONCAT(FirstName, ' ', LastName)"), 'LIKE', "%{$searchTerm}%");
+                });
+            }
+
+            $counts[$status] = $query->count();
+        }
+
+        return $counts;
+    }
+
     public static function unionDocumentReqTable() {
         return self::query()
             ->join('clm_claimers', 'doc_requests.clm_claimers_id', '=', 'clm_claimers.id')

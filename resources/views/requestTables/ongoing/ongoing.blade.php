@@ -16,7 +16,7 @@
     </div>
 </div>
 
-<x-tabs page='Processing' />
+<x-tabs page='Processing' :filteredCount="$filteredCount" :searchCounts="$searchCounts" />
 
 
 {{-- Main Card --}}
@@ -129,7 +129,7 @@
                         <th>Student</th>
                         <th>Doc</th>
                         <th>School</th>
-                        <th>Remarks</th>
+                        <th>Days Processing</th>
                         <th>Status</th>
                         <th>Req Date</th>
                         <th>App Date</th>
@@ -144,19 +144,17 @@
                         <td>{{ $item->documents->DocType }}</td>
                         <td>{{ strtoupper($item->request_schl_entity) }}</td>
                         <td>
-                            @if($item->remarks)
-                                @if(strlen($item->remarks) > 50)
-                                    <button class="btn btn-sm btn-info view-remarks-btn"
-                                        data-bs-toggle="modal"
-                                        data-bs-target="#remarksModal{{ $item->id }}">
-                                        <i class="bi bi-eye"></i> View
-                                    </button>
-                                @else
-                                    {{ $item->remarks }}
-                                @endif
-                            @else
-                                <em class="text-muted">N/A</em>
-                            @endif
+                            @php
+                                $approveDate = \Carbon\Carbon::parse($item->approve_date);
+                                $daysProcessing = floor($approveDate->diffInDays(\Carbon\Carbon::now()));
+                            @endphp
+                            <span class="badge 
+                                @if($daysProcessing >= 7) bg-danger
+                                @elseif($daysProcessing >= 3) bg-warning text-dark
+                                @else bg-success
+                                @endif">
+                                {{ $daysProcessing }} {{ $daysProcessing == 1 ? 'day' : 'days' }}
+                            </span>
                         </td>
                         <td><span class="badge bg-warning text-dark status-badge">{{ $item->status }}</span></td>
                         <td>{{ $item->request_date }}</td>
@@ -319,9 +317,24 @@ document.addEventListener('DOMContentLoaded', function() {
     const loadingSpinner = document.getElementById('loadingSpinner');
 
     let searchTimeout = null;
+    let isInitialLoad = true;
 
     // ---- INITIAL STATE ----
     toggleClearButton();
+    
+    // If there's a search parameter in URL, trigger search immediately
+    const urlParams = new URLSearchParams(window.location.search);
+    const urlSearch = urlParams.get('search');
+    if (urlSearch && urlSearch.trim()) {
+        searchInput.value = urlSearch;
+        toggleClearButton();
+        performAjaxSearch();
+    }
+    
+    // Mark initial load as complete after a short delay
+    setTimeout(() => {
+        isInitialLoad = false;
+    }, 500);
 
     // ---- FUNCTIONS ----
     function toggleClearButton() {
@@ -351,6 +364,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 const newTableContainer = doc.querySelector('#tableContainer');
                 const newInfoBanner = doc.querySelector('.table-info-banner');
                 const newPaginationWrapper = doc.querySelector('#paginationContainer');
+                const newSearchCounter = doc.querySelector('#searchResultsCounter');
 
                 // Update table
                 tableContainer.innerHTML = newTableContainer ?
@@ -373,6 +387,17 @@ document.addEventListener('DOMContentLoaded', function() {
                 } else if (paginationContainer && !newPaginationWrapper) {
                     paginationContainer.innerHTML = '';
                 }
+                
+                // Update search counter
+                const searchResultsCounter = document.getElementById('searchResultsCounter');
+                if (search || (filter && filter !== 'all') || (sort && sort !== 'default')) {
+                    if (newSearchCounter) {
+                        searchResultsCounter.innerHTML = newSearchCounter.innerHTML;
+                        searchResultsCounter.style.display = 'block';
+                    }
+                } else {
+                    searchResultsCounter.style.display = 'none';
+                }
 
                 loadingSpinner.style.display = 'none';
                 tableContainer.style.opacity = '1';
@@ -393,7 +418,10 @@ document.addEventListener('DOMContentLoaded', function() {
     searchInput.addEventListener('input', function() {
         toggleClearButton();
         clearTimeout(searchTimeout);
-        searchTimeout = setTimeout(() => performAjaxSearch(), 400);
+        // Don't trigger search during initial load sync
+        if (!isInitialLoad) {
+            searchTimeout = setTimeout(() => performAjaxSearch(), 400);
+        }
     });
 
     // Clear search input
@@ -714,13 +742,13 @@ document.addEventListener('DOMContentLoaded', function() {
 
     /* ===== DATE COLUMNS - ONE LINE ===== */
     /* Req Date & App Date */
+    #requestsTable tbody td:nth-child(6),
+    #requestsTable thead th:nth-child(6),
     #requestsTable tbody td:nth-child(7),
-    #requestsTable thead th:nth-child(7),
-    #requestsTable tbody td:nth-child(8),
-    #requestsTable thead th:nth-child(8) {
-        min-width: 95px !important;
-        max-width: 95px !important;
-        width: 95px !important;
+    #requestsTable thead th:nth-child(7) {
+        min-width: 105px !important;
+        max-width: 105px !important;
+        width: 105px !important;
         white-space: nowrap !important;
     }
 

@@ -76,6 +76,13 @@ Route::group(['middleware' => 'useradmin'], function () {
     Route::get('/analytics', [AnalyticsController::class, 'index'])->name('analytics');
 
     Route::get('dashboard', [DashboardController::class, 'dashboard'])->name('dashboard');
+    
+    // API endpoint for search counts
+    Route::get('/api/search-counts', function(Illuminate\Http\Request $request) {
+        $searchTerm = $request->get('search', '');
+        $counts = App\Models\DocumentRequestModel::getSearchCountsAcrossAllStatuses($searchTerm);
+        return response()->json($counts);
+    });
 
     //Request Management        ================================================================================
     Route::get('/dictionary', function () { return view('common.dictionary'); } );
