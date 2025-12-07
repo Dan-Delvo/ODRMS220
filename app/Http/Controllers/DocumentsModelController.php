@@ -10,6 +10,7 @@ use PhpOffice\PhpWord\TemplateProcessor;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\Rule;
 
 class DocumentsModelController extends Controller
@@ -92,21 +93,21 @@ class DocumentsModelController extends Controller
             $pdo->exec("SET @current_user = " . $pdo->quote(Auth::check() ? Auth::user()->username : 'guest'));
 
             $document = DocumentsModel::findOrFail($id);
-            
+
             // ✅ Store document name FIRST before any operations
             $documentName = $document->DocType;
-            
+
             // ✅ Debug: Log what we're checking
-            \Log::info('Attempting to delete document', [
+            Log::info('Attempting to delete document', [
                 'id' => $id,
                 'name' => $documentName
             ]);
 
             // Get detailed request statistics
             $stats = $document->getRequestStatistics();
-            
+
             // ✅ Debug: Log statistics
-            \Log::info('Document statistics', $stats);
+            Log::info('Document statistics', $stats);
 
             // Check if there are active requests blocking deletion
             if ($stats['active'] > 0) {
@@ -115,7 +116,7 @@ class DocumentsModelController extends Controller
                 if ($stats['processing'] > 0) $breakdown[] = "{$stats['processing']} Processing";
                 if ($stats['for_release'] > 0) $breakdown[] = "{$stats['for_release']} For Release";
 
-                \Log::info('Deletion blocked - Active requests found', [
+                Log::info('Deletion blocked - Active requests found', [
                     'active' => $stats['active'],
                     'breakdown' => $breakdown
                 ]);
@@ -134,7 +135,7 @@ class DocumentsModelController extends Controller
                 if ($stats['claimed'] > 0) $history[] = "{$stats['claimed']} completed";
                 if ($stats['declined'] > 0) $history[] = "{$stats['declined']} declined";
 
-                \Log::info('Deletion blocked - Historical requests found', [
+                Log::info('Deletion blocked - Historical requests found', [
                     'total' => $stats['total'],
                     'history' => $history
                 ]);
@@ -148,39 +149,39 @@ class DocumentsModelController extends Controller
             }
 
             // ✅ Safe to delete - No requests found
-            \Log::info('Deleting document - No requests found', [
+            Log::info('Deleting document - No requests found', [
                 'id' => $id,
                 'name' => $documentName
             ]);
 
             $document->delete();
 
-            return redirect()->route('doc')->with('success', 
+            return redirect()->route('doc')->with('success',
                 "Document {$documentName} has been successfully deleted.");
 
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
-            \Log::error('Document not found', ['id' => $id]);
-            return redirect()->route('doc')->with('error', 
+            Log::error('Document not found', ['id' => $id]);
+            return redirect()->route('doc')->with('error',
                 'Document not found. It may have already been deleted.');
-                
+
         } catch (\Illuminate\Database\QueryException $e) {
-            \Log::error('Database constraint error deleting document', [
+            Log::error('Database constraint error deleting document', [
                 'id' => $id,
                 'error' => $e->getMessage(),
                 'sql' => $e->getSql() ?? 'N/A'
             ]);
-            
-            return redirect()->route('doc')->with('error', 
+
+            return redirect()->route('doc')->with('error',
                 'Unable to delete document due to database constraints. There may be related records that prevent deletion. Please contact the administrator.');
-                
+
         } catch (\Exception $e) {
-            \Log::error('Unexpected error deleting document', [
+            Log::error('Unexpected error deleting document', [
                 'id' => $id,
                 'error' => $e->getMessage(),
                 'trace' => $e->getTraceAsString()
             ]);
-            
-            return redirect()->route('doc')->with('error', 
+
+            return redirect()->route('doc')->with('error',
                 'An unexpected error occurred. Please try again or contact the administrator.');
         }
     }
