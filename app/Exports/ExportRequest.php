@@ -46,19 +46,19 @@ class ExportRequest implements FromArray, WithHeadings, WithStyles, WithColumnWi
     public function headings(): array
     {
         return [
-            'Req #',
-            'Student',
-            'Doc',
-            'School',
-            'Via',
-            'Rel Mode',
-            'Remarks',
-            'Status',
-            'Req Date',
-            'App Date',
-            'Rel Date',
-            'Clm Date',
-            'Claimer'
+            'REQ #',
+            'STUDENT',
+            'DOC',
+            'SCHOOL',
+            'VIA',
+            'REL MODE',
+            'REMARKS',
+            'STATUS',
+            'REQ DATE',
+            'APP DATE',
+            'REL DATE',
+            'CLM DATE',
+            'CLAIMER'
         ];
     }
 
@@ -78,37 +78,38 @@ class ExportRequest implements FromArray, WithHeadings, WithStyles, WithColumnWi
                 $sheet->setCellValue('A1', 'DOCUMENT REQUESTS REPORT');
                 $sheet->mergeCells('A1:M1');
                 $sheet->getStyle('A1')->applyFromArray([
-                    'font' => ['bold' => true, 'size' => 16],
+                    'font' => ['bold' => true, 'size' => 16, 'name' => 'Bookman Old Style'],
                     'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER]
                 ]);
 
                 // Filter Type
-                $filterText = $this->statusFilter === 'all' ? 'All Requests' : ucfirst($this->statusFilter) . ' Requests';
-                $sheet->setCellValue('A2', 'Filter Type:');
+                $filterText = $this->statusFilter === 'all' ? 'ALL REQUESTS' : strtoupper($this->statusFilter) . ' REQUESTS';
+                $sheet->setCellValue('A2', 'FILTER TYPE:');
                 $sheet->setCellValue('B2', $filterText);
 
                 // Date Range
                 if ($this->startDate && $this->endDate) {
-                    $sheet->setCellValue('A3', 'Date Range:');
+                    $sheet->setCellValue('A3', 'DATE RANGE:');
                     $sheet->setCellValue('B3',
-                        Carbon::parse($this->startDate)->format('M d, Y') . ' - ' . Carbon::parse($this->endDate)->format('M d, Y'));
+                        strtoupper(Carbon::parse($this->startDate)->format('M d, Y') . ' - ' . Carbon::parse($this->endDate)->format('M d, Y')));
                 }
 
                 // Total Requests
-                $sheet->setCellValue('A4', 'Total Requests:');
+                $sheet->setCellValue('A4', 'TOTAL REQUESTS:');
                 $sheet->setCellValue('B4', $this->count);
 
                 // Generated Date
-                $sheet->setCellValue('A5', 'Generated On:');
-                $sheet->setCellValue('B5', Carbon::now()->format('F d, Y h:i A'));
+                $sheet->setCellValue('A5', 'GENERATED ON:');
+                $sheet->setCellValue('B5', strtoupper(Carbon::now()->format('F d, Y h:i A')));
 
                 // Style the export details section
                 $sheet->getStyle('A2:A5')->applyFromArray([
-                    'font' => ['bold' => true],
+                    'font' => ['bold' => true, 'name' => 'Bookman Old Style'],
                     'alignment' => ['horizontal' => Alignment::HORIZONTAL_LEFT]
                 ]);
 
                 $sheet->getStyle('B2:B5')->applyFromArray([
+                    'font' => ['name' => 'Bookman Old Style'],
                     'alignment' => ['horizontal' => Alignment::HORIZONTAL_LEFT]
                 ]);
 
@@ -132,6 +133,7 @@ class ExportRequest implements FromArray, WithHeadings, WithStyles, WithColumnWi
                 'font' => [
                     'bold' => true,
                     'color' => ['rgb' => 'FFFFFF'],
+                    'name' => 'Bookman Old Style',
                 ],
                 'fill' => [
                     'fillType' => Fill::FILL_SOLID,
@@ -151,6 +153,9 @@ class ExportRequest implements FromArray, WithHeadings, WithStyles, WithColumnWi
 
             // Style all data rows
             "A2:{$highestColumn}{$highestRow}" => [
+                'font' => [
+                    'name' => 'Bookman Old Style',
+                ],
                 'borders' => [
                     'allBorders' => [
                         'borderStyle' => Border::BORDER_THIN,
@@ -170,6 +175,7 @@ class ExportRequest implements FromArray, WithHeadings, WithStyles, WithColumnWi
                 ],
                 'font' => [
                     'bold' => true,
+                    'name' => 'Bookman Old Style',
                 ],
             ],
         ];
@@ -202,6 +208,6 @@ class ExportRequest implements FromArray, WithHeadings, WithStyles, WithColumnWi
      */
     public function title(): string
     {
-        return 'Document Requests Report';
+        return 'DOCUMENT REQUESTS REPORT';
     }
 }

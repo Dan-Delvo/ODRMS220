@@ -210,7 +210,7 @@
                                 </select>
                                 <label for="inputGradeLevel" class="required-label">Grade Level</label>
                                 @error('grade_level')
-                                <div class="invalid-feedback">{{ $message }}</div>
+                                    <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
                             </div>
                         </div>

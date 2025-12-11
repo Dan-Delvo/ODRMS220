@@ -16,7 +16,7 @@ $depedLogo = embedBase64Image(public_path('images/DOLOGO.png'));
 
 <style>
 body {
-    font-family: 'Bookman Old Style', serif;
+    font-family: Georgia, 'Times New Roman', serif;
     font-size: 11px;
     margin: 0;
     padding: 0;
@@ -132,6 +132,8 @@ body::before {
 .filter-item {
     font-weight: bold;
     font-size: 10px;
+    color: #000;
+    font-weight: 500;
 }
 
 /* Table with clean borders */
@@ -149,6 +151,8 @@ thead th {
     padding: 4px 3px;
     background-color: #f8f8f8;
     line-height: 1.2;
+    color: #000;
+    font-weight: 500;
 }
 
 tbody td {
@@ -163,6 +167,8 @@ tbody td {
     overflow-wrap: break-word;
     word-break: break-word;
     max-width: 120px;
+    color: #000;
+    font-weight: 500;
 }
 
 tbody tr:hover {

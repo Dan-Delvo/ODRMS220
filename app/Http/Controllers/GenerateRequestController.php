@@ -449,19 +449,19 @@ class GenerateRequestController extends Controller
             // Transform data for Excel export - Updated to match new column structure
             $filteredData = $DocRequests->map(function ($item) {
                 return [
-                    $item->req_no ?? 'N/A',                                                  // Req #
-                    $item->full_name ?? 'N/A',                                               // Student
-                    $item->DocType ?? 'N/A',                                                 // Doc
-                    $item->request_schl_entity ?? 'N/A',                                     // School
-                    $item->request_mode ?? 'N/A',                                            // Via
-                    $item->release_mode ?? 'N/A',                                            // Rel Mode
-                    $item->remarks ?? 'N/A',                                                 // Remarks
-                    $item->status ?? 'N/A',                                                  // Status
+                    strtoupper($item->req_no ?? 'N/A'),                                                  // Req #
+                    strtoupper($item->full_name ?? 'N/A'),                                               // Student
+                    strtoupper($item->DocType ?? 'N/A'),                                                 // Doc
+                    strtoupper($item->request_schl_entity ?? 'N/A'),                                     // School
+                    strtoupper($item->request_mode ?? 'N/A'),                                            // Via
+                    strtoupper($item->release_mode ?? 'N/A'),                                            // Rel Mode
+                    strtoupper($item->remarks ?? 'N/A'),                                                 // Remarks
+                    strtoupper($item->status ?? 'N/A'),                                                  // Status
                     $item->request_date ? Carbon::parse($item->request_date)->format('Y-m-d') : 'N/A',     // Req Date
                     $item->approve_date ? Carbon::parse($item->approve_date)->format('Y-m-d') : 'N/A',     // App Date
                     $item->forRelease_date ? Carbon::parse($item->forRelease_date)->format('Y-m-d') : 'N/A', // Rel Date
                     $item->claimed_date ? Carbon::parse($item->claimed_date)->format('Y-m-d') : 'N/A',
-                    $item->claimer == 'Blank Blank' ? 'N/A' : $item->claimer    // Clm Date
+                    strtoupper($item->claimer == 'Blank Blank' ? 'N/A' : $item->claimer)    // Clm Date
                 ];
             })->toArray();
 
@@ -472,7 +472,7 @@ class GenerateRequestController extends Controller
             $filename .= '.xlsx';
 
             return Excel::download(
-                new ExportRequest($filteredData, $statusFilter, $startDate, $endDate, $DocRequests->count()), 
+                new ExportRequest($filteredData, $statusFilter, $startDate, $endDate, $DocRequests->count()),
                 $filename
             );
         } catch (\Exception $e) {
