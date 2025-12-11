@@ -215,6 +215,15 @@
                                         <i class="fas fa-times-circle me-1"></i>Decline
                                     </button>
                                 </form>
+
+                                <form action="{{ route('pending.destroy', $item->id) }}" method="POST"
+                                    class="d-inline delete-form">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="btn btn-danger btn-sm delete-btn">
+                                        <i class="fas fa-trash me-1"></i>Delete
+                                    </button>
+                                </form>
                             </div>
                         </td>
                     </tr>
@@ -931,7 +940,8 @@
     }
 
     .action-column .accept-form,
-    .action-column .decline-form {
+    .action-column .decline-form,
+    .action-column .delete-form {
         display: inline !important;
         margin: 0 !important;
     }
@@ -945,6 +955,10 @@
     }
 
     .action-column .decline-btn {
+        min-width: 68px !important;
+    }
+
+    .action-column .delete-btn {
         min-width: 68px !important;
     }
 

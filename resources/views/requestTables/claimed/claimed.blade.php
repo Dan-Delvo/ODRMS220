@@ -211,16 +211,11 @@
                                 </a>
                                 @endif
 
-                                @if (!empty($deleteClaimed))
-                                <form action="{{ route('claimed-documents.destroy', $item->id) }}"
-                                    method="POST" class="d-inline delete-form">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="submit" class="btn btn-danger btn-sm delete-btn">
-                                        <i class="fas fa-trash me-1"></i>Delete
-                                    </button>
-                                </form>
-                                @endif
+                                <button type="button" class="btn btn-sm btn-danger delete-btn"
+                                    data-id="{{ $item->id }}"
+                                    data-reqno="{{ $item->req_no }}">
+                                    <i class="fas fa-trash me-1"></i>Delete
+                                </button>
                             </div>
                         </td>
                     </tr>
@@ -587,25 +582,46 @@
                 });
             });
 
-            // Delete forms
-            document.querySelectorAll('.delete-form').forEach(form => {
-                form.addEventListener('submit', function(e) {
-                    e.preventDefault();
-                    const btn = this.querySelector('.delete-btn');
-                    if (confirm('Are you sure you want to delete this request? This action cannot be undone.')) {
-                        btn.disabled = true;
-                        btn.innerHTML = '<span class="spinner-border spinner-border-sm me-1"></span>Deleting...';
-                        const row = this.closest('tr');
-                        row.querySelectorAll('button, a.btn').forEach(b => {
-                            if (b !== btn) {
-                                b.disabled = true;
-                                b.style.opacity = '0.5';
-                            }
-                        });
-                        setTimeout(() => this.submit(), 100);
-                    }
+            // Delete buttons
+            document.querySelectorAll('.delete-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const id = this.dataset.id;
+                    const reqNo = this.dataset.reqno;
+                    
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'Are you sure?',
+                        html: `You are about to <strong>permanently delete</strong> Request No. <strong>${reqNo}</strong>.<br><br>This action cannot be undone!`,
+                        showCancelButton: true,
+                        confirmButtonColor: '#dc3545',
+                        cancelButtonColor: '#1f2937',
+                        confirmButtonText: 'Yes, delete it!',
+                        cancelButtonText: 'Cancel'
+                    }).then(result => {
+                        if (result.isConfirmed) {
+                            submitDeleteForm(id);
+                        }
+                    });
                 });
             });
+        }
+
+        // ====== DELETE WORKFLOW ======
+        function submitDeleteForm(id) {
+            const form = document.createElement('form');
+            form.method = 'POST';
+            form.action = `{{ url('claimed-documents') }}/${id}`;
+            form.innerHTML = `@csrf @method('DELETE')`;
+
+            Swal.fire({
+                title: 'Deleting...',
+                text: 'Please wait',
+                allowOutsideClick: false,
+                didOpen: () => Swal.showLoading()
+            });
+
+            document.body.appendChild(form);
+            form.submit();
         }
 
         // ====== REVERT FORM SUBMISSION ======
@@ -961,12 +977,6 @@
     .action-column .btn i {
         font-size: 0.7rem !important;
         margin-right: 0.2rem !important;
-    }
-
-    /* Make form inline */
-    .action-column .delete-form {
-        display: inline !important;
-        margin: 0 !important;
     }
 
     /* Specific button width adjustments */
