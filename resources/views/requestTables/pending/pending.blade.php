@@ -199,11 +199,11 @@
                                     </button>
                                 </form>
 
-                                <button type="button" class="btn btn-sm btn-danger mb-1 delete-btn"
+                                <!-- <button type="button" class="btn btn-sm btn-danger mb-1 delete-btn"
                                     data-id="{{ $item->id }}"
                                     data-reqno="{{ $item->req_no }}">
                                     <i class="fas fa-trash me-1"></i>Delete
-                                </button>
+                                </button> -->
                                 @endif
 
                                 @if (!empty($PermissionEdit))
