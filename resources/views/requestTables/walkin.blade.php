@@ -72,7 +72,7 @@
                                     placeholder="Enter Requesting School/Entity" required
                                     data-bs-toggle="tooltip"
                                     data-bs-placement="top"
-                                    title="Enter the name of the school requesting the document.">
+                                    title="Enter the type of document to be requested.">
                                 <label for="inputRequestSchlEntity" class="required-label">Requesting School/Entity</label>
                                 @error('request_schl_entity')
                                 <div class="invalid-feedback">{{ $message }}</div>
@@ -83,7 +83,10 @@
                         <div class="col-md-6">
                             <div class="form-floating">
                                 <select class="form-select @error('document_id') is-invalid @enderror"
-                                    id="inputDocumentId" name="document_id" required>
+                                    id="inputDocumentId" name="document_id" required
+                                    data-bs-toggle="tooltip"
+                                    data-bs-placement="top"
+                                    title="Enter the name of the school requesting the document.">
                                     <option value="" disabled selected>Select Document Type</option>
                                     @foreach($DocType as $doc)
                                     <option value="{{ $doc->id }}" {{ old('document_id') == $doc->id ? 'selected' : '' }}>
@@ -130,7 +133,10 @@
                                     value="{{ old('relationship') }}"
                                     placeholder="Enter Relationship with Student"
                                     disabled
-                                    readonly>
+                                    readonly
+                                    data-bs-toggle="tooltip"
+                                    data-bs-placement="top"
+                                    title="Enter the name of the person making the request.">
                                 <label for="inputRelationship" id="relationshipLabel">Name of Requestor</label>
                                 @error('relationship')
                                 <div class="invalid-feedback">{{ $message }}</div>
@@ -192,7 +198,10 @@
                         <div class="col-md-6">
                             <div class="form-floating">
                                 <select class="form-select @error('grade_level') is-invalid @enderror"
-                                    id="inputGradeLevel" name="grade_level" required>
+                                    id="inputGradeLevel" name="grade_level" required
+                                    data-bs-toggle="tooltip"
+                                    data-bs-placement="top"
+                                    title="Enter the grade level or the last level attended.">
                                     <option value="" disabled selected>Select Grade Level</option>
                                     @foreach($grade as $g)
                                     <option value="{{ $g }}" {{ old('grade_level') == $g ? 'selected' : '' }}>{{ $g }}</option>
@@ -200,7 +209,7 @@
                                 </select>
                                 <label for="inputGradeLevel" class="required-label">Grade Level</label>
                                 @error('grade_level')
-                                <div class="invalid-feedback">{{ $message }}</div>
+                                    <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
                             </div>
                         </div>

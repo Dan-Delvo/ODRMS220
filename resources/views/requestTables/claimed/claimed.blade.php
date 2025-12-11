@@ -22,7 +22,7 @@
     </div>
 </div>
 
-<x-tabs page='Claimed' />
+<x-tabs page='Claimed' :filteredCount="$filteredCount" :searchCounts="$searchCounts" />
 
 {{-- Main Card --}}
 <div class="card shadow-lg border-0 rounded-lg mt-3">
@@ -373,10 +373,25 @@
         const submitRevertBtn = document.getElementById('submitRevertBtn');
         const revertReason = document.getElementById('revertReason');
         let searchTimeout = null;
+        let isInitialLoad = true;
 
         // ====== INITIAL STATE ======
         toggleClearButton();
         attachEventListeners();
+        
+        // If there's a search parameter in URL, trigger search immediately
+        const urlParams = new URLSearchParams(window.location.search);
+        const urlSearch = urlParams.get('search');
+        if (urlSearch && urlSearch.trim()) {
+            searchInput.value = urlSearch;
+            toggleClearButton();
+            performAjaxSearch();
+        }
+        
+        // Mark initial load as complete after a short delay
+        setTimeout(() => {
+            isInitialLoad = false;
+        }, 500);
 
         // ====== CLEAR BUTTON VISIBILITY ======
         function toggleClearButton() {
@@ -406,6 +421,7 @@
                     const newTableContainer = doc.querySelector('#tableContainer');
                     const newInfoBanner = doc.querySelector('.table-info-banner');
                     const newPaginationWrapper = doc.querySelector('#paginationContainer');
+                    const newSearchCounter = doc.querySelector('#searchResultsCounter');
 
                     // Update table
                     tableContainer.innerHTML = newTableContainer ? newTableContainer.innerHTML : '<div class="alert alert-warning text-center my-3">No results found.</div>';
@@ -426,6 +442,17 @@
                     } else if (paginationContainer && !newPaginationWrapper) {
                         paginationContainer.innerHTML = '';
                     }
+                    
+                    // Update search counter
+                    const searchResultsCounter = document.getElementById('searchResultsCounter');
+                    if (search || (filter && filter !== 'all') || (sort && sort !== 'default')) {
+                        if (newSearchCounter) {
+                            searchResultsCounter.innerHTML = newSearchCounter.innerHTML;
+                            searchResultsCounter.style.display = 'block';
+                        }
+                    } else {
+                        searchResultsCounter.style.display = 'none';
+                    }
 
                     loadingSpinner.style.display = 'none';
                     tableContainer.style.opacity = '1';
@@ -443,7 +470,10 @@
         searchInput.addEventListener('input', function() {
             toggleClearButton();
             clearTimeout(searchTimeout);
-            searchTimeout = setTimeout(() => performAjaxSearch(), 400);
+            // Don't trigger search during initial load sync
+            if (!isInitialLoad) {
+                searchTimeout = setTimeout(() => performAjaxSearch(), 400);
+            }
         });
 
         // ====== CLEAR SEARCH BUTTON ======

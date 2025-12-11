@@ -131,11 +131,6 @@
                     </ul>
                 </div>
             </div>
-            <div class="modal-footer" style="background-color: #f8f9fa;">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-                    <i class="fas fa-times me-1"></i>Close
-                </button>
-            </div>
         </div>
     </div>
 </div>
@@ -196,11 +191,6 @@
                     <p class="text-muted mb-0">No data available</p>
                     @endif
                 </div>
-            </div>
-            <div class="modal-footer" style="background-color: #f8f9fa;">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-                    <i class="fas fa-times me-1"></i>Close
-                </button>
             </div>
         </div>
     </div>
@@ -386,11 +376,6 @@
                     </div>
                     @endif
                 </div>
-            </div>
-            <div class="modal-footer" style="background-color: #1f2937;">
-                <button type="button" class="btn btn-outline-light" data-bs-dismiss="modal">
-                    <i class="fas fa-times me-1"></i>Close
-                </button>
             </div>
         </div>
     </div>
