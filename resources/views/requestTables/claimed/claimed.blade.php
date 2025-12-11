@@ -199,7 +199,7 @@
                             <div class="btn-group-vertical btn-group-sm d-md-inline" role="group">
                                 <button type="button" class="btn btn-warning btn-sm revert-btn"
                                     data-request-id="{{ $item->id }}" data-request-no="{{ $item->req_no }}"
-                                    data-student-name="{{ $item->studentInformation->full_name }}"
+                                    data-student-name="{{ $item->studentInformation->full_name ?? 'N/A' }}"
                                     data-bs-toggle="modal" data-bs-target="#revertModal">
                                     <i class="fas fa-undo me-1"></i>Revert
                                 </button>
