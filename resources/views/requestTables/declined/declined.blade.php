@@ -216,14 +216,14 @@
                                     </button>
                                 </form>
 
-                                <form action="{{ route('pending.destroy', $item->id) }}" method="POST"
+                                <!-- <form action="{{ route('pending.destroy', $item->id) }}" method="POST"
                                     class="d-inline delete-form">
                                     @csrf
                                     @method('DELETE')
                                     <button type="submit" class="btn btn-danger btn-sm delete-btn">
                                         <i class="fas fa-trash me-1"></i>Delete
                                     </button>
-                                </form>
+                                </form> -->
                             </div>
                         </td>
                     </tr>

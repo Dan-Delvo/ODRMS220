@@ -191,13 +191,13 @@
                                 </a>
                                 @endif
 
-                                @if (!empty($approveOngoing))
+                                <!-- @if (!empty($approveOngoing))
                                 <button type="button" class="btn btn-sm btn-danger delete-btn"
                                     data-id="{{ $item->id }}"
                                     data-reqno="{{ $item->req_no }}">
                                     <i class="fas fa-trash me-1"></i>Delete
                                 </button>
-                                @endif
+                                @endif -->
                             </div>
                         </td>
                     </tr>
