@@ -149,7 +149,7 @@
                     @foreach ($DocRequests as $item)
                     <tr>
                         <td class="fw-semibold">{{ $item->req_no }}</td>
-                        <td>{{ strtoupper(optional($item->studentInformation)->full_name) }}</td>
+                        <td>{{ strtoupper(optional($item->studentInformation)->full_name) ?? 'N/A' }}</td>
                         <td>{{ $item->documents->DocType }}</td>
                         <td>{{ strtoupper($item->request_schl_entity) }}</td>
                         <td>{{ ($item->claimer->Fname ?? '') . ' ' . ($item->claimer->Lname ?? '') }}</td>
@@ -378,7 +378,7 @@
         // ====== INITIAL STATE ======
         toggleClearButton();
         attachEventListeners();
-        
+
         // If there's a search parameter in URL, trigger search immediately
         const urlParams = new URLSearchParams(window.location.search);
         const urlSearch = urlParams.get('search');
@@ -387,7 +387,7 @@
             toggleClearButton();
             performAjaxSearch();
         }
-        
+
         // Mark initial load as complete after a short delay
         setTimeout(() => {
             isInitialLoad = false;
@@ -442,7 +442,7 @@
                     } else if (paginationContainer && !newPaginationWrapper) {
                         paginationContainer.innerHTML = '';
                     }
-                    
+
                     // Update search counter
                     const searchResultsCounter = document.getElementById('searchResultsCounter');
                     if (search || (filter && filter !== 'all') || (sort && sort !== 'default')) {
