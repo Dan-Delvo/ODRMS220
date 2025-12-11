@@ -1,4 +1,3 @@
-
 @extends('layout.blankpage')
 
 @section('content')
@@ -247,13 +246,20 @@
                         <div class="col-md-12">
                             <div class="form-floating">
                                 <input class="form-control @error('email_address') is-invalid @enderror"
-                                    id="email_address" type="email" name="email_address"
+                                    id="email_address" 
+                                    type="email" 
+                                    name="email_address"
                                     value="{{ old('email_address') }}"
-                                    placeholder="Enter Email Address" required>
-                                <label for="email_address" class="required-label">Email Address</label>
+                                    placeholder="Enter Email Address" 
+                                    required>
+                                <label for="email_address" class="required-label" id="emailLabel">Email Address</label>
                                 @error('email_address')
                                 <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
+                                <small class="text-muted d-block mt-1" id="emailHelp">
+                                    <i class="fas fa-info-circle me-1"></i>
+                                    <span id="emailHelpText">Required for account creation and notifications</span>
+                                </small>
                             </div>
                         </div>
                     </div>
@@ -328,34 +334,58 @@
             }
         }
 
-        // Requesting for Others Toggle
+        // Requesting for Others Toggle + Email Toggle
         const requestingCheckbox = document.getElementById('requestingForOthers');
         const relationshipInput = document.getElementById('inputRelationship');
         const relationshipLabel = document.getElementById('relationshipLabel');
+        const emailInput = document.getElementById('email_address');
+        const emailLabel = document.getElementById('emailLabel');
+        const emailHelpText = document.getElementById('emailHelpText');
 
-        if (requestingCheckbox && relationshipInput) {
+        if (requestingCheckbox && relationshipInput && emailInput) {
             // Check on page load if checkbox was previously checked (old input)
             if (requestingCheckbox.checked) {
+                // Enable relationship field
                 relationshipInput.disabled = false;
                 relationshipInput.readOnly = false;
                 relationshipInput.required = true;
                 relationshipLabel.classList.add('required-label');
+                
+                // Make email optional
+                emailInput.required = false;
+                emailLabel.classList.remove('required-label');
+                emailHelpText.textContent = 'Optional for guest requests';
             }
 
             requestingCheckbox.addEventListener('change', function() {
                 if (this.checked) {
+                    // GUEST REQUEST MODE
+                    // Enable relationship field
                     relationshipInput.disabled = false;
                     relationshipInput.readOnly = false;
                     relationshipInput.required = true;
                     relationshipLabel.classList.add('required-label');
                     relationshipInput.focus();
+                    
+                    // Make email optional
+                    emailInput.required = false;
+                    emailLabel.classList.remove('required-label');
+                    emailHelpText.textContent = 'Optional for guest requests';
+                    emailInput.classList.remove('is-invalid');
                 } else {
+                    // SELF REQUEST MODE
+                    // Disable relationship field
                     relationshipInput.disabled = true;
                     relationshipInput.readOnly = true;
                     relationshipInput.required = false;
                     relationshipInput.value = '';
                     relationshipLabel.classList.remove('required-label');
                     relationshipInput.classList.remove('is-invalid', 'is-valid');
+                    
+                    // Make email required
+                    emailInput.required = true;
+                    emailLabel.classList.add('required-label');
+                    emailHelpText.textContent = 'Required for account creation and notifications';
                 }
             });
         }
@@ -384,11 +414,17 @@
                 return;
             }
 
-            button.disabled = true; // Disable the button to prevent multiple clicks
+            button.disabled = true;
+
+            // Custom confirmation message based on request type
+            const isGuestRequest = requestingCheckbox.checked;
+            const confirmText = isGuestRequest 
+                ? "You are submitting a request on behalf of the student. No account will be created."
+                : "Are you sure you want to submit this request?";
 
             Swal.fire({
                 title: 'Confirm Submission',
-                text: "Are you sure you want to submit this request?",
+                text: confirmText,
                 icon: 'warning',
                 showCancelButton: true,
                 confirmButtonColor: '#1dd3b0',
@@ -396,7 +432,6 @@
                 confirmButtonText: 'Confirm'
             }).then((result) => {
                 if (result.isConfirmed) {
-                    // Show loading state
                     Swal.fire({
                         title: 'Submitting...',
                         allowOutsideClick: false,
@@ -404,10 +439,8 @@
                             Swal.showLoading();
                         }
                     });
-                    // Submit the form
                     form.submit();
                 } else {
-                    // If cancelled, re-enable the button
                     button.disabled = false;
                 }
             });

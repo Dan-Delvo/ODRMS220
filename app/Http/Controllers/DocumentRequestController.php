@@ -13,6 +13,7 @@ use Carbon\Carbon;
 use App\Models\ClaimerModel;
 use App\Models\DocumentsModel;
 use App\Models\DocuPaymentFee;
+use App\Models\Guest;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\DB;
@@ -309,44 +310,105 @@ class DocumentRequestController extends Controller
     {
         $pdo = DB::connection()->getPdo();
         $pdo->exec("SET @current_user = " . $pdo->quote(Auth::check() ? Auth::user()->username : 'guest'));
-        $validated = $request->validate([
+
+        // Determine if this is a guest request FIRST
+        $isGuestRequest = $request->has('requesting_for_others') && $request->requesting_for_others == '1';
+
+        // Base validation rules
+        $rules = [
             'request_schl_entity' => 'required|string|max:255',
             'document_id' => 'required|exists:doc_categories,id',
             'release_mode' => 'required|string|max:255',
-
             'student_first_name' => 'required|string|max:255',
             'student_last_name' => 'required|string|max:255',
-            'lrn' => 'max:12',
+            'lrn' => 'nullable|max:12',
             'grade_level' => 'required|string|max:50',
             'student_status' => 'required|string|max:20',
             'last_sy_attended' => 'required|string|max:50',
-            'email_address' => 'required|string|max:100',
+        ];
+
+        // Conditional validation based on request type
+        if ($isGuestRequest) {
+            // Guest request: relationship required, email optional
+            $rules['relationship'] = 'required|string|max:255';
+            $rules['email_address'] = 'nullable|email|max:100';
+        } else {
+            // Self request: email required, no relationship needed
+            $rules['email_address'] = 'required|email|max:100';
+        }
+
+        $validated = $request->validate($rules, [
+            'relationship.required' => 'Requestor name is required when requesting for others.',
+            'email_address.required' => 'Email address is required when requesting for yourself.',
         ]);
 
-        $claimer = ClaimerModel::Create(
-            ['Fname' => 'Blank', 'Lname' => 'Blank'],
-            ['contact_no' => '000000']
-        );
+        // Set relationship value
+        $relationshipValue = $isGuestRequest
+            ? $validated['relationship']
+            : ($validated['student_first_name'] . ' ' . $validated['student_last_name']);
 
-        Log::info("Created account: " . $claimer);
+        // Create claimer record based on request type
+        if ($isGuestRequest) {
+            // Guest request: Use requestor's name as claimer
+            $claimerNames = explode(' ', $validated['relationship'], 2);
+            $claimer = ClaimerModel::create([
+                'Fname' => $claimerNames[0] ?? 'Guest',
+                'Lname' => $claimerNames[1] ?? 'Requestor',
+                'contact_no' => '000000'
+            ]);
+            Log::info("Guest request - Claimer created: " . $claimer->id);
+        } else {
+            // Self request: Use blank claimer
+            $claimer = ClaimerModel::create([
+                'Fname' => 'Blank',
+                'Lname' => 'Blank',
+                'contact_no' => '000000'
+            ]);
+            Log::info("Self request - Blank claimer created: " . $claimer->id);
+        }
 
-        // Check if email address is unique
-        if (Account::where('email_address', $request->email_address)->exists()) {
+        // ============================================
+        // GUEST REQUEST FLOW (No Account Creation)
+        // ============================================
+        if ($isGuestRequest) {
+            Log::info("Processing GUEST request - No account will be created");
 
-            $document = DocumentsModel::find($validated['document_id']);
-            // $receipt = DocuPaymentFee::create([
-            //     "receipt_no" => random_int(10000, 99999),
-            //     'docu_categories_id' => $validated['document_id'],
-            //     'doc_amount' => $document->DocPrice,
-            //     'name_request' => Auth::user()->std_students_id,
-            //     'time_request' => Carbon::now()
-            // ]);
+            // Check if student record exists by matching name + LRN (or just name if no LRN)
+            $studentQuery = StudentInformationModel::where('FirstName', $validated['student_first_name'])
+                ->where('LastName', $validated['student_last_name']);
 
-            $idAcc = Account::where('email_address', $request->email_address)->value('user_account_id');
-            DocumentRequestModel::create([
-                'id' => random_int(10000, 99999),
+            if (!empty($validated['lrn'])) {
+                $studentQuery->where('LRN', $validated['lrn']);
+            }
+
+            $existingStudent = $studentQuery->first();
+
+            if ($existingStudent) {
+                Log::info("Existing student record found (ID: {$existingStudent->id}) - Using for guest request");
+                $studentId = $existingStudent->id;
+            } else {
+                Log::info("Creating new student record for guest request (NO ACCOUNT)");
+
+                $student = StudentInformationModel::create([
+                    'FirstName' => $validated['student_first_name'],
+                    'LastName' => $validated['student_last_name'],
+                    'LRN' => $validated['lrn'] ?? '000000000000',
+                    'Grade_level' => $validated['grade_level'],
+                    'Std_status' => $validated['student_status'],
+                    'Last_sy_attended' => $validated['last_sy_attended']
+                ]);
+
+                $studentId = $student->id;
+                Log::info("New student record created (ID: {$studentId}) WITHOUT account");
+            }
+
+            // ✅ FIX: Store the ID in a variable BEFORE creating
+            $docRequestId = random_int(10000, 99999);
+            
+            $docRequest = DocumentRequestModel::create([
+                'id' => $docRequestId,
                 'clm_claimers_id' => $claimer->id,
-                'std_students_id' => $idAcc,
+                'std_students_id' => $studentId,
                 'doc_categories_id' => $validated['document_id'],
                 'request_time' => now()->format('H:i:s'),
                 'request_date' => now()->toDateString(),
@@ -354,36 +416,96 @@ class DocumentRequestController extends Controller
                 'release_mode' => $validated['release_mode'],
                 'remarks' => 'Pending',
                 'status' => 'Pending',
-                'request_mode' => 'Online',
-                'relationship' => $request->relationship ?? ($request->student_first_name . ' ' . $request->student_last_name),
-                // 'receipt_no' => $receipt->receipt_no
+                'request_mode' => 'Walk-in (Guest)',
+                'relationship' => $validated['relationship'],
             ]);
 
-            return redirect()->route('walkin.form')->with('Success', 'Document request submitted successfully!');
+            // ✅ FIX: Use the variable instead of $docRequest->id
+            Log::info("Document request created (ID: {$docRequestId})");
+
+            // ✅ FIX: Use $docRequestId instead of $docRequest->id
+            $guest = Guest::create([
+                'doc_request_id' => $docRequestId, // ✅ Use the variable
+                'name' => $validated['relationship'],
+                'email_address' => $validated['email_address'] ?? null,
+                'contact_no' => null
+            ]);
+
+            Log::info("Guest record created (ID: {$guest->id}) linked to doc_request (ID: {$docRequestId})");
+
+            // Send notification email if email was provided
+            if (!empty($guest->email_address)) {
+                Log::info("Guest request - Sending notification email to: " . $guest->email_address);
+                
+                $subject = 'Document Request Submitted - Guest Request';
+                $studentName = $validated['student_first_name'] . ' ' . $validated['student_last_name'];
+                $requestorName = $guest->name;
+                $email = $guest->email_address;
+                
+                try {
+                    Mail::send('emails.guestRequestNotification', compact('subject', 'studentName', 'requestorName', 'email'), function ($message) use ($email, $subject) {
+                        $message->to($email)->subject($subject);
+                    });
+                    Log::info("Guest notification email sent successfully to: " . $email);
+                } catch (\Exception $e) {
+                    Log::error("Failed to send guest notification email: " . $e->getMessage());
+                }
+
+                return redirect()->route('walkin.form')
+                    ->with('Success', 'Document request submitted successfully on behalf of ' . $studentName . '! A notification has been sent to ' . $email);
+            }
+
+            return redirect()->route('walkin.form')
+                ->with('Success', 'Document request submitted successfully on behalf of ' . $validated['student_first_name'] . ' ' . $validated['student_last_name'] . '!');
         }
 
-            $document = DocumentsModel::find($validated['document_id']);
-            // $receipt = DocuPaymentFee::create([
-            //     "receipt_no" => random_int(10000, 99999),
-            //     'docu_categories_id' => $validated['document_id'],
-            //     'doc_amount' => $document->DocPrice,
-            //     'name_request' => Auth::user()->std_students_id,
-            //     'time_request' => Carbon::now()
-            // ]);
+        // ============================================
+        // SELF REQUEST FLOW (With Account Creation)
+        // ============================================
+        Log::info("Processing SELF request - Account creation flow");
 
+        // Check if student account already exists by email
+        $existingAccount = Account::where('email_address', $validated['email_address'])->first();
 
-        $student = StudentInformationModel::create(
-            [
-                'FirstName' => $validated['student_first_name'],
-                'LastName' => $validated['student_last_name'],
-                'LRN' => $validated['lrn'] ?? 0000,
-                'Grade_level' => $validated['grade_level'],
-                'Std_status' => $validated['student_status'],
-                'Last_sy_attended' => $validated['last_sy_attended']
-            ]
-        );
+        if ($existingAccount) {
+            // Account exists - just create request
+            Log::info("Existing student account found: " . $existingAccount->user_account_id);
+
+            DocumentRequestModel::create([
+                'id' => random_int(10000, 99999),
+                'clm_claimers_id' => $claimer->id,
+                'std_students_id' => $existingAccount->user_account_id,
+                'doc_categories_id' => $validated['document_id'],
+                'request_time' => now()->format('H:i:s'),
+                'request_date' => now()->toDateString(),
+                'request_schl_entity' => $validated['request_schl_entity'],
+                'release_mode' => $validated['release_mode'],
+                'remarks' => 'Pending',
+                'status' => 'Pending',
+                'request_mode' => 'Walk-in',
+                'relationship' => $relationshipValue,
+            ]);
+
+            return redirect()->route('walkin.form')
+                ->with('Success', 'Document request submitted successfully!');
+        }
+
+        // Create new student record + account
+        Log::info("Creating new student account with credentials");
+
+        $student = StudentInformationModel::create([
+            'FirstName' => $validated['student_first_name'],
+            'LastName' => $validated['student_last_name'],
+            'LRN' => $validated['lrn'] ?? '000000000000',
+            'Grade_level' => $validated['grade_level'],
+            'Std_status' => $validated['student_status'],
+            'Last_sy_attended' => $validated['last_sy_attended']
+        ]);
+
+        // Generate temporary password
         $tempPassword = Str::random(10);
 
+        // Create account
         Account::create([
             'user_account_id' => $student->id,
             'std_students_id' => $student->id,
@@ -393,15 +515,21 @@ class DocumentRequestController extends Controller
             'password' => bcrypt($tempPassword),
         ]);
 
-        $subject = 'Your Temporary Password';
+        // Send temporary password email
+        $subject = 'Your Temporary Password - Document Request System';
         $name = $validated['student_first_name'] . ' ' . $validated['student_last_name'];
         $email = $validated['email_address'];
 
-        // Send email
-        Mail::send('emails.tempPassword', compact('subject', 'name', 'tempPassword', 'email'), function ($message) use ($email, $subject) {
-            $message->to($email)->subject($subject);
-        });
+        try {
+            Mail::send('emails.tempPassword', compact('subject', 'name', 'tempPassword', 'email'), function ($message) use ($email, $subject) {
+                $message->to($email)->subject($subject);
+            });
+            Log::info("Temporary password email sent to: " . $email);
+        } catch (\Exception $e) {
+            Log::error("Failed to send email: " . $e->getMessage());
+        }
 
+        // Create document request
         DocumentRequestModel::create([
             'id' => random_int(10000, 99999),
             'clm_claimers_id' => $claimer->id,
@@ -413,13 +541,12 @@ class DocumentRequestController extends Controller
             'release_mode' => $validated['release_mode'],
             'remarks' => 'Pending',
             'status' => 'Pending',
-            'request_mode' => 'Online',
-            'relationship' => $request->relationship ?? ($request->student_first_name . ' ' . $request->student_last_name),
-            // 'receipt_no' => $receipt->receipt_no
+            'request_mode' => 'Walk-in',
+            'relationship' => $relationshipValue,
         ]);
 
-
-        return redirect()->route('walkin.form')->with('Success', 'Document request submitted successfully!');
+        return redirect()->route('walkin.form')
+            ->with('Success', 'Document request submitted successfully! Check your email for login credentials.');
     }
 
     // ============================
