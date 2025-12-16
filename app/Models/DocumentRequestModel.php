@@ -28,11 +28,19 @@ class DocumentRequestModel extends Model
         'request_mode',
         'release_mode',
 
-        'supporting_document',
-        'reason',
         'remarks',
+        'reason',
         'status',
-        'relationship',
+        'receipt_no',
+        'approve_date',
+        'forRelease_date',
+        'claimed_date',
+        'claimed_time',
+        'deleted_at',
+        'req_no',
+        'image',
+        'supporting_document',
+        'relationship'
     ];
 
     public function claimer()
