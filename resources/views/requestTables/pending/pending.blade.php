@@ -156,7 +156,7 @@
                             $requestDate = \Carbon\Carbon::parse($item->request_date);
                             $daysPending = floor($requestDate->diffInDays(\Carbon\Carbon::now()));
                             @endphp
-                            <span class="badge 
+                            <span class="badge
                                 @if($daysPending >= 7) bg-danger
                                 @elseif($daysPending >= 3) bg-warning text-dark
                                 @else bg-success
@@ -199,11 +199,11 @@
                                     </button>
                                 </form>
 
-                                <!-- <button type="button" class="btn btn-sm btn-danger mb-1 delete-btn"
+                                <button type="button" class="btn btn-sm btn-danger mb-1 delete-btn"
                                     data-id="{{ $item->id }}"
                                     data-reqno="{{ $item->req_no }}">
                                     <i class="fas fa-trash me-1"></i>Delete
-                                </button> -->
+                                </button>
                                 @endif
 
                                 @if (!empty($PermissionEdit))
@@ -659,7 +659,7 @@
                 btn.addEventListener('click', function() {
                     const id = this.dataset.id;
                     const reqNo = this.dataset.reqno;
-                    
+
                     Swal.fire({
                         icon: 'warning',
                         title: 'Are you sure?',
