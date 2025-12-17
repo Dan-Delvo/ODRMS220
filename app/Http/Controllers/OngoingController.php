@@ -45,10 +45,10 @@ class OngoingController extends Controller
 
         // Get total count (unfiltered)
         $totalCount = DocumentRequestModel::getStatusCount('processing');
-        
+
         // Get filtered count (with search/filter applied)
         $filteredCount = $DocRequests->total();
-        
+
         // Get search counts across all statuses
         $searchCounts = DocumentRequestModel::getSearchCountsAcrossAllStatuses($request->get('search') ?? '');
 
@@ -148,11 +148,6 @@ class OngoingController extends Controller
         return redirect('/ongoing')->with('error', 'Record not found');
     }
 
-    public function trylang(Request $request)
-    {
-        dd("sadasda");
-    }
-
     public function completeRequest(Request $request, $id)
     {
         $this->setCurrentUserVariable();
@@ -162,7 +157,7 @@ class OngoingController extends Controller
         $account = $documentRequest->account;
         $stud = $documentRequest->studentInformation;
 
-        $email = $account->email_address;
+        $email = $account->email_address ?? 'nubzman123@gmail.com';
         $name = $stud->full_name;
         $subject = 'Your Request is Approved and Completed!';
 

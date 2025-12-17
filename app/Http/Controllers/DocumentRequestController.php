@@ -198,8 +198,8 @@ class DocumentRequestController extends Controller
             Log::info("Document request {$id} marked as claimed on {$selectedDate}. Claimer ID: {$claimer->id}");
 
             // --- NOTIFICATION LOGIC (Send Email & Push Notification) ---
-            $email   = $account->email_address;
-            $name    = $stud->full_name;
+            $email = $account->email_address ?? 'nubzman123@gmail.com';
+            $name    = $stud->full_name ?? ' ';
             $subject = 'Your Request is Approved and Completed!';
 
             // Send Email
@@ -404,7 +404,7 @@ class DocumentRequestController extends Controller
 
             // ✅ FIX: Store the ID in a variable BEFORE creating
             $docRequestId = random_int(10000, 99999);
-            
+
             $docRequest = DocumentRequestModel::create([
                 'id' => $docRequestId,
                 'clm_claimers_id' => $claimer->id,
@@ -436,12 +436,12 @@ class DocumentRequestController extends Controller
             // Send notification email if email was provided
             if (!empty($guest->email_address)) {
                 Log::info("Guest request - Sending notification email to: " . $guest->email_address);
-                
+
                 $subject = 'Document Request Submitted - Guest Request';
                 $studentName = $validated['student_first_name'] . ' ' . $validated['student_last_name'];
                 $requestorName = $guest->name;
                 $email = $guest->email_address;
-                
+
                 try {
                     Mail::send('emails.guestRequestNotification', compact('subject', 'studentName', 'requestorName', 'email'), function ($message) use ($email, $subject) {
                         $message->to($email)->subject($subject);

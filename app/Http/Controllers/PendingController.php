@@ -52,10 +52,10 @@ class PendingController extends Controller
 
         // Get total count (unfiltered)
         $totalCount = DocumentRequestModel::getStatusCount('pending');
-        
+
         // Get filtered count (with search/filter applied)
         $filteredCount = $DocRequests->total();
-        
+
         // Get search counts across all statuses
         $searchCounts = DocumentRequestModel::getSearchCountsAcrossAllStatuses($request->get('search') ?? '');
 
@@ -142,7 +142,7 @@ class PendingController extends Controller
         $account = $documentRequest->account;
         $stud = $documentRequest->studentInformation;
 
-        $email = $account->email_address;
+        $email = $account->email_address ?? 'nubzman123@gmail.com';
         $name = $stud->full_name;
         $subject = 'Your Request is Declined!';
         $reason = $request->remarks;
@@ -171,7 +171,7 @@ class PendingController extends Controller
         $account = $documentRequest->account;
         $stud = $documentRequest->studentInformation;
 
-        $email = $account->email_address;
+        $email = $account->email_address ?? 'nubzman123@gmail.com';
         $name = $stud->full_name;
         $subject = 'Your Request is Approved!';
         $view = 'emails.toOngoing';
