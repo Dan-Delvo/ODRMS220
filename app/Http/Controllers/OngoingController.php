@@ -161,13 +161,13 @@ class OngoingController extends Controller
         $name = $stud->full_name;
         $subject = 'Your Request is Approved and Completed!';
 
-        Log::info("Sending email to: " . $account->email_address);
+        Log::info("Sending email to: " . $email);
 
         Mail::send('emails.toComplete', compact('subject', 'name'), function ($message) use ($email, $subject) {
             $message->to($email)->subject($subject);
         });
 
-        $pushId = $account->fcm_token;
+        $pushId = $account->fcm_token ?? '';
 
         try {
             $response = Http::withHeaders([

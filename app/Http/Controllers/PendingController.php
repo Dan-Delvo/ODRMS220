@@ -147,7 +147,7 @@ class PendingController extends Controller
         $subject = 'Your Request is Declined!';
         $reason = $request->remarks;
 
-        Log::info("Sending email to: " . $account->email_address);
+        Log::info("Sending email to: " . $email);
 
         Mail::send('emails.Decline', compact('subject', 'name', 'reason'), function ($message) use ($email, $subject) {
             $message->to($email)->subject($subject);
@@ -176,7 +176,7 @@ class PendingController extends Controller
         $subject = 'Your Request is Approved!';
         $view = 'emails.toOngoing';
 
-        Log::info("Sending email to: " . $account->email_address);
+        Log::info("Sending email to: " . $email);
 
         // Queue email (non-blocking)
         Mail::to($email)->queue(new RequestApprovedMail($name, $subject, $view));
