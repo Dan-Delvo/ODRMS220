@@ -198,22 +198,37 @@ class DocumentRequestController extends Controller
             Log::info("Document request {$id} marked as claimed on {$selectedDate}. Claimer ID: {$claimer->id}");
 
             // --- NOTIFICATION LOGIC (Send Email & Push Notification) ---
-            $email = $account->email_address ?? 'nubzman123@gmail.com';
-            $name    = $stud->full_name ?? ' ';
+            // Check if this is a guest request or account-based request
+            $guest = Guest::where('doc_request_id', $id)->first();
+            $isGuestRequest = !is_null($guest);
+
+            if ($isGuestRequest) {
+                // Guest request - use guest email
+                $email = $guest->email_address ?? 'nubzman123@gmail.com';
+                $name = $stud->full_name ?? $guest->name ?? 'Guest';
+                Log::info("Processing guest request notification for ID: {$id}, Email: {$email}");
+            } else {
+                // Regular account request - use account email
+                $email = $account->email_address ?? 'nubzman123@gmail.com';
+                $name = $stud->full_name ?? ' ';
+                Log::info("Processing account request notification for ID: {$id}, Email: {$email}");
+            }
+
             $subject = 'Your Request is Approved and Completed!';
 
-            // Send Email
+            // Send Email (for both guest and account requests)
             try {
                 Mail::send('emails.toClaimed', compact('subject', 'name'), function ($message) use ($email, $subject) {
                     $message->to($email)->subject($subject);
                 });
                 Log::info("Email sent successfully to {$email} for request ID: {$id}");
             } catch (\Exception $e) {
-                Log::error("Email failed for account {$account->id} ({$email}): " . $e->getMessage());
+                $requestType = $isGuestRequest ? "guest request" : "account {$account->id}";
+                Log::error("Email failed for {$requestType} ({$email}): " . $e->getMessage());
             }
 
-            // Send Push Notification
-            if ($account->fcm_token) {
+            // Send Push Notification (ONLY for account requests, NOT for guest requests)
+            if (!$isGuestRequest && $account && $account->fcm_token) {
                 try {
                     $response = Http::withHeaders([
                         // Replace with your actual authorization header
@@ -225,10 +240,13 @@ class DocumentRequestController extends Controller
                         'include_player_ids' => [$account->fcm_token],
                         'contents'           => ['en' => "{$name}, Your document request has been approved and processed."],
                     ]);
-                    Log::info("Push notification sent for request ID: {$id}. Response: " . $response->body());
+                    Log::info("Push notification sent for account request ID: {$id}. Response: " . $response->body());
                 } catch (\Exception $e) {
                     Log::error("Push notification failed for account {$account->id}: " . $e->getMessage());
                 }
+            } else {
+                $reason = $isGuestRequest ? "guest request (no push notification for guests)" : "no account or FCM token available";
+                Log::info("Push notification skipped for request ID: {$id} - {$reason}");
             }
             // --- END NOTIFICATION LOGIC ---
 

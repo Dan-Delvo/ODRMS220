@@ -21,6 +21,7 @@
             $PermissionAudit = App\Models\PermissionRoleModel::getPermission('auditTrail', $roleId);
             $PermissionBulkRequest = App\Models\PermissionRoleModel::getPermission('bulkRequest', $roleId);
             $PermissionAddBulkRequest = App\Models\PermissionRoleModel::getPermission('addBulkRequest', $roleId);
+            $PermissionArchiveRequest = App\Models\PermissionRoleModel::getPermission('archiveRequest', $roleId);
             @endphp
 
             {{-- Admin Group --}}
@@ -102,10 +103,12 @@
             </a>
             @endif
 
+            @if(!empty($PermissionArchiveRequest))
             <a class="nav-link text-light sidebar-item" href="{{ route('archived.pending') }}">
                 <div class="sb-nav-link-icon"><i class="bi bi-archive"></i></div>
                 Archived requests
             </a>
+            @endif
 
             @if(!empty($PermissionWalk))
             <a class="nav-link text-light sidebar-item" href="{{ route('walkin.form') }}">

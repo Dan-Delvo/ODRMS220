@@ -603,13 +603,11 @@
             const formDataObject = {
                 claimer_first_name: claimerFirstName.value,
                 claimer_last_name: claimerLastName.value,
-                claimer_date: claimerDate.value,
-                _method: 'PUT',
-                _token: csrfToken
+                claimer_date: claimerDate.value
             };
 
             fetch(claimerForm.action, {
-                    method: 'POST',
+                    method: 'PUT',
                     headers: {
                         'X-CSRF-TOKEN': csrfToken,
                         'Accept': 'application/json',
@@ -619,14 +617,56 @@
                     body: JSON.stringify(formDataObject),
                 })
                 .then(async response => {
-                    if (!response.ok) throw new Error('Error updating claim.');
-                    const result = await response.json();
-                    showRevertSuccess(result.message);
-                    setTimeout(() => window.location.reload(), 1500);
+                    // Log the response for debugging
+                    console.log('Response status:', response.status);
+                    console.log('Response ok:', response.ok);
+                    
+                    // Try to parse as JSON
+                    let result;
+                    try {
+                        result = await response.json();
+                        console.log('Response data:', result);
+                    } catch (e) {
+                        console.error('Failed to parse JSON:', e);
+                        showRevertError('Invalid response from server. Please try again.');
+                        setLoadingState(false);
+                        return;
+                    }
+                    
+                    if (!response.ok) {
+                        // Handle validation errors (422) or other errors
+                        let errorMessage = result.message || 'An error occurred while processing the request.';
+                        
+                        if (result.errors) {
+                            // Display validation errors
+                            errorMessage = Object.values(result.errors).flat().join(' ');
+                        }
+                        
+                        console.error('Error response:', errorMessage);
+                        showRevertError(errorMessage);
+                        setLoadingState(false);
+                        return;
+                    }
+                    
+                    // Success - Close modal and reload page
+                    console.log('Success! Message:', result.message);
+                    
+                    // Close the modal using Bootstrap 5 method
+                    const modalElement = document.getElementById('claimerModal');
+                    const modalInstance = bootstrap.Modal.getInstance(modalElement);
+                    if (modalInstance) {
+                        modalInstance.hide();
+                    }
+                    
+                    // Show success message and reload after modal closes
+                    setTimeout(() => {
+                        alert('✓ ' + (result.message || 'Document marked as claimed successfully!'));
+                        window.location.reload();
+                    }, 300);
                 })
                 .catch(error => {
-                    console.error(error);
-                    showRevertError(error.message);
+                    console.error('Fetch error:', error);
+                    showRevertError('A network error occurred. Please check your connection and try again.');
                     setLoadingState(false);
                 });
         });
