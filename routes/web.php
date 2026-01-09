@@ -92,7 +92,9 @@ Route::group(['middleware' => 'useradmin'], function () {
     Route::delete('pending/decline/{id}', [PendingController::class, 'decline'])->name('pending.decline');
     Route::put('/pending/completeRequest/{id}', [PendingController::class, 'completeRequest'])->name('document-request.complete');
     Route::put('/ongoing/completeRequest/{id}', [OngoingController::class, 'completeRequest'])->name('document-request2.complete');
+    Route::put('/ongoing/revert/{id}', [OngoingController::class, 'revertToPending'])->name('ongoing.revert');
     Route::put('/tables/completeRequest/{id}', [DocumentRequestController::class, 'completeRequest'])->name('document-request3.complete');
+    Route::put('/tables/revert/{id}', [DocumentRequestController::class, 'revertToProcessing'])->name('tables.revert');
     Route::get('/walkin/form', [DocumentRequestController::class, 'showRequestForm'])->name('walkin.form');
     Route::post('/walkin/store', [DocumentRequestController::class, 'storeWalkIn'])->name('walkin.store');
     Route::get('/pending/ajax', [PendingController::class, 'ajaxPending'])->name('pending.ajax');
