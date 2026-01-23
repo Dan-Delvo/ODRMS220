@@ -12,6 +12,7 @@
         "kreait/firebase-php": "^7.16",
         "ladumor/laravel-pwa": "^0.0.4",
         "laravel/framework": "^11.31",
+        "laravel/sanctum": "^4.0",
         "laravel/tinker": "^2.9",
         "laravel/ui": "^4.6",
         "livewire/livewire": "^3.6",
