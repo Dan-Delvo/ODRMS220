@@ -60,7 +60,7 @@
             <p>Your requested document is now ready for release. You may now proceed to the releasing area or follow the next instructions provided by the office.</p>
             <p>Be sure to bring any required identification or proof of request when claiming your document.</p>
             <p style="text-align: center; margin-top: 20px;">
-                <a href="{{ url('http://127.0.0.1:8000/') }}" style="
+                <a href="https://popberry.site/" style="
                     display: inline-block;
                     padding: 10px 20px;
                     background-color: #007bff;
