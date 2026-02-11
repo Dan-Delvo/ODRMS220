@@ -175,6 +175,15 @@
                                     <i class="fas fa-edit me-1"></i>Edit
                                 </a>
                                 @endif
+
+                                <button type="button" class="btn btn-primary btn-sm revert-btn"
+                                    data-request-id="{{ $item->id }}"
+                                    data-request-no="{{ $item->req_no }}"
+                                    data-student-name="{{ $item->studentInformation->full_name }}"
+                                    data-bs-toggle="modal"
+                                    data-bs-target="#revertModal">
+                                    <i class="fas fa-undo me-1"></i>Revert
+                                </button>
                             </div>
                         </td>
                     </tr>
@@ -229,6 +238,58 @@
 </div>
 @endif
 @endforeach
+
+{{-- Revert Modal --}}
+<div class="modal fade" id="revertModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header text-white" style="background-color: #1f2937;">
+                <h5 class="modal-title">
+                    <i class="fas fa-undo me-2"></i>Revert Document to Processing
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <form id="revertForm" action="{{ route('tables.revert', '') }}" method="POST"
+                data-swal-loading="true" data-swal-title="Reverting Request to Processing"
+                data-swal-text="This may take a few seconds...">
+                @csrf
+                @method('PUT')
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <div class="alert alert-warning">
+                            <strong>Request No:</strong> <span id="modalRevertRequestNo"></span><br>
+                            <strong>Student:</strong> <span id="modalRevertStudentName"></span>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="revertReason" class="form-label">
+                            <i class="fas fa-comment me-1"></i>Reason for Revert <span class="text-danger">*</span>
+                        </label>
+                        <textarea class="form-control" id="revertReason" name="revert_reason" rows="3" required
+                            placeholder="Please provide a reason for reverting this document to Processing status..."></textarea>
+                        <div class="invalid-feedback">
+                            Please provide a reason for reverting this document.
+                        </div>
+                    </div>
+
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle me-2"></i>
+                        <strong>Note:</strong> This action will change the document status back to "Processing" and clear the for release date.
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn text-white" style="background-color: #1f2937;" data-bs-dismiss="modal">
+                        <i class="fas fa-times me-1"></i>Cancel
+                    </button>
+                    <button type="submit" class="btn btn-warning" id="submitRevertBtn">
+                        <i class="fas fa-undo me-1"></i>Revert to Processing
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
 
 {{-- Claimer Information Modal --}}
 <div class="modal fade" id="claimerModal" tabindex="-1" aria-labelledby="claimerModalLabel" aria-hidden="true">
@@ -318,6 +379,26 @@
 {{-- JavaScript --}}
 <script>
     document.addEventListener("DOMContentLoaded", function() {
+        // ======= CHECK FOR SESSION MESSAGES (after page reload) =======
+        @if(session('success'))
+            Swal.fire({
+                icon: 'success',
+                title: 'Success',
+                text: '{{ session('success') }}',
+                timer: 2500,
+                showConfirmButton: false
+            });
+        @endif
+
+        @if(session('error'))
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: '{{ session('error') }}',
+                showConfirmButton: true
+            });
+        @endif
+
         // ======= ELEMENT REFERENCES =======
         const searchInput = document.getElementById('searchInput');
         const clearSearchBtn = document.getElementById('clearSearch');
@@ -332,6 +413,7 @@
         // ======= INITIAL STATE =======
         toggleClearButton();
         attachCompleteButtonListeners();
+        attachRevertButtonListeners();
         attachClearAllListener();
         
         // If there's a search parameter in URL, trigger search immediately
@@ -497,6 +579,7 @@
                         });
 
                         attachCompleteButtonListeners();
+                        attachRevertButtonListeners();
                         attachClearAllListener();
                     })
                     .catch(err => {
@@ -520,6 +603,21 @@
                     performAjaxSearch();
                 });
             }
+        }
+
+        // ======= REVERT BUTTON HANDLER =======
+        function attachRevertButtonListeners() {
+            document.querySelectorAll('.revert-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const requestId = this.dataset.requestId;
+                    const requestNo = this.dataset.requestNo;
+                    const studentName = this.dataset.studentName;
+                    
+                    document.getElementById('modalRevertRequestNo').textContent = requestNo;
+                    document.getElementById('modalRevertStudentName').textContent = studentName;
+                    document.getElementById('revertForm').action = `{{ url('tables/revert') }}/${requestId}`;
+                });
+            });
         }
 
         // ======= COMPLETE BUTTON HANDLER =======
@@ -726,6 +824,88 @@
             document.getElementById('revertErrorMessage').textContent = message;
             errorAlert.style.display = 'block';
         }
+
+        // ======= REVERT FORM SUBMISSION =======
+        const revertForm = document.getElementById('revertForm');
+        const revertModal = document.getElementById('revertModal');
+        const submitRevertBtn = document.getElementById('submitRevertBtn');
+        const revertReason = document.getElementById('revertReason');
+
+        revertForm?.addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            if (!revertReason.value.trim()) {
+                revertReason.classList.add('is-invalid');
+                return;
+            }
+
+            revertReason.classList.remove('is-invalid');
+            setRevertLoadingState(true);
+
+            const formData = new FormData(revertForm);
+            
+            // Explicitly append revert_reason if not captured by FormData
+            if (!formData.has('revert_reason')) {
+                formData.append('revert_reason', revertReason.value.trim());
+            }
+            
+            const actionUrl = revertForm.action;
+
+            fetch(actionUrl, {
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                    'Accept': 'application/json',
+                },
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Reload immediately - success message will show after page loads
+                    window.location.reload();
+                } else {
+                    throw new Error(data.message || 'Failed to revert document');
+                }
+            })
+            .catch(error => {
+                setRevertLoadingState(false);
+                showRevertErrorModal(error.message || 'An error occurred while reverting the document.');
+            });
+        });
+
+        function setRevertLoadingState(isLoading) {
+            submitRevertBtn.disabled = isLoading;
+            submitRevertBtn.innerHTML = isLoading
+                ? '<span class="spinner-border spinner-border-sm me-1"></span>Reverting...'
+                : '<i class="fas fa-undo me-1"></i>Revert to Processing';
+            revertReason.disabled = isLoading;
+        }
+
+        function showRevertErrorModal(message) {
+            const existingAlert = revertForm.querySelector('.alert-danger');
+            if (existingAlert) existingAlert.remove();
+
+            const alertDiv = document.createElement('div');
+            alertDiv.className = 'alert alert-danger alert-dismissible fade show';
+            alertDiv.innerHTML = `
+                <i class="fas fa-exclamation-triangle me-2"></i>${message}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            `;
+            revertForm.querySelector('.modal-body').insertBefore(alertDiv, revertForm.querySelector('.modal-body').firstChild);
+        }
+
+        revertModal?.addEventListener('hidden.bs.modal', function() {
+            revertReason.value = '';
+            revertReason.classList.remove('is-invalid');
+            revertForm.querySelectorAll('.alert-danger, .alert-success').forEach(a => a.remove());
+        });
+
+        // Auto-resize revert textarea
+        revertReason?.addEventListener('input', function() {
+            this.style.height = 'auto';
+            this.style.height = (this.scrollHeight) + 'px';
+        });
 
         // ======= KEYBOARD SHORTCUTS =======
         document.addEventListener('keydown', function(e) {
@@ -935,6 +1115,10 @@
 
     .action-column .btn-warning {
         min-width: 58px !important;
+    }
+
+    .action-column .revert-btn {
+        min-width: 68px !important;
     }
 
     /* ===== VIEW BUTTONS ===== */

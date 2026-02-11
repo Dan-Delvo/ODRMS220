@@ -194,4 +194,81 @@ class OngoingController extends Controller
 
         return redirect('/ongoing')->with('status', 'Completed Successfully');
     }
+
+    public function revertToPending(Request $request, $id)
+    {
+        $this->setCurrentUserVariable();
+
+        try {
+            $request->validate([
+                'revert_reason' => 'required|string|max:500',
+            ]);
+
+            $documentRequest = DocumentRequestModel::findOrFail($id);
+
+            if ($documentRequest->status !== 'Processing') {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'This request is not in processing status.',
+                ], 400);
+            }
+
+            $documentRequest->update([
+                'status' => 'Pending',
+                'approve_date' => null,
+                'remarks' => $request->revert_reason,
+            ]);
+
+            if ($request->expectsJson()) {
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Document has been successfully reverted to Pending status.',
+                    'redirect' => route('ongoing.index')
+                ]);
+            }
+
+            return redirect('/ongoing')->with('Status', 'Document reverted to Pending successfully');
+
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            Log::error('Validation error in revertToPending: ' . json_encode($e->errors()));
+
+            if ($request->expectsJson()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Validation failed.',
+                    'errors' => $e->errors(),
+                ], 422);
+            }
+
+            return redirect()->back()
+                ->withErrors($e->validator)
+                ->withInput()
+                ->with('Danger', 'Please check the form for errors.');
+
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            Log::error('Model not found in revertToPending: ' . $e->getMessage());
+
+            if ($request->expectsJson()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Document request not found.',
+                ], 404);
+            }
+
+            return redirect()->back()->with('Danger', 'Document request not found.');
+
+        } catch (\Exception $e) {
+            Log::error('Error in revertToPending: ' . $e->getMessage());
+            Log::error('Stack trace: ' . $e->getTraceAsString());
+
+            if ($request->expectsJson()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'An error occurred while reverting the document: ' . $e->getMessage(),
+                ], 500);
+            }
+
+            return redirect()->back()->with('Danger', 'An error occurred while reverting the document.');
+        }
+    }
 }

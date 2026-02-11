@@ -70,7 +70,7 @@
                 If this was not you, please ignore.
             </p>
             <p style="text-align: center; margin-top: 20px;">
-                <a href="{{ url('http://192.168.86.106:8000') }}" style="
+                <a href="https://popberry.site/" style="
                     display: inline-block;
                     padding: 10px 20px;
                     background-color: #6777ef;

@@ -90,7 +90,7 @@
             We’re here to help you with any questions regarding your request.</p>
 
             <p style="text-align: center; margin-top: 20px;">
-                <a href="{{ url('http://127.0.0.1:8000/') }}" class="view-status-btn">View Status</a>
+                <a href="https://popberry.site/" class="view-status-btn">View Status</a>
             </p>
 
             <p>If you have any questions or need assistance, please contact us anytime.</p>
