@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Maintenance;
 
+use App\Http\Controllers\Controller;
 use App\Mail\PasswordOTPMail;
 use App\Mail\ResetPasswordMail;
 use App\Mail\VerifyAccountUpdateMail;
@@ -525,13 +526,6 @@ class AccountController extends Controller
             ->firstOrFail();
 
         $request->validate([
-            // 'email' => [
-            //     'sometimes',
-            //     'filled',
-            //     'email',
-            //     Rule::unique('acc_users', 'email_address')
-            //         ->ignore($student->account->getKey(), $student->account->getKeyName())
-            // ],
             'username' => [
                 'sometimes',
                 'filled',
@@ -688,7 +682,7 @@ class AccountController extends Controller
     /**
      * Check if user has existing requests that block deletion
      * Users can only be deleted if all their requests have 'Claimed' status or they have no requests
-     * 
+     *
      * @param int $userId
      * @return array ['hasRequests' => bool, 'requestTypes' => array]
      */

@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Maintenance;
 
+use App\Http\Controllers\Controller;
 use App\Models\RolesModel;
 use App\Models\PermissionModel;
 use App\Models\PermissionRoleModel;

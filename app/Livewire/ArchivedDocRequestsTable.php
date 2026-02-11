@@ -2,8 +2,7 @@
 
 namespace App\Livewire;
 
-use App\Http\Controllers\DocumentRequestController;
-use App\Models\ArchivedDocumentRequests;
+use App\Http\Controllers\Documents\DocumentRequestController;use App\Models\ArchivedDocumentRequests;
 use App\Models\DocumentRequestModel;
 use Livewire\Component;
 use Livewire\WithPagination;

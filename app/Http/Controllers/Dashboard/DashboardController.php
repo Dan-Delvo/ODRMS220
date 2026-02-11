@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Dashboard;
 
+use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\DocumentRequestModel;
 use Illuminate\Support\Facades\Auth;
@@ -17,26 +18,26 @@ class DashboardController extends Controller
         {
             abort(404);
         }
-        
+
         // Get date range from request
         $startDate = $request->get('start_date');
         $endDate = $request->get('end_date');
-        
+
         // Build base query
         $query = DocumentRequestModel::query();
-        
+
         // Apply date filter if provided
         if ($startDate && $endDate) {
             $query->whereBetween('request_date', [$startDate, $endDate]);
         }
-        
+
         $totalPending = (clone $query)->where('status', 'pending')->count();
         $totalOngoing = (clone $query)->where('status', 'Processing')->count();
         $totalRelease = (clone $query)->where('status', 'For Release')->count();
         $totalClaimed = (clone $query)->where('status', 'claimed')->count();
         $totalDeclined = (clone $query)->where('status', 'Declined')->count();
         $username = Auth::user()->username;
-        
+
         return view('common.admin', [
             'totalPending' => $totalPending,
             'totalOngoing' => $totalOngoing,

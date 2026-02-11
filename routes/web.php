@@ -1,34 +1,44 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\AuthController;
-use App\Http\Controllers\AnalyticsController;
-use App\Http\Controllers\DashboardController;
-use App\Http\Controllers\DocumentRequestController;
-use App\Http\Controllers\OngoingController;
-use App\Http\Controllers\PendingController;
-use App\Http\Controllers\declinedController;
-use App\Http\Controllers\RegistrationController;
-use App\Http\Controllers\StudentPageController;
-use App\Http\Controllers\AccountController;
-use App\Http\Controllers\ArchivedDocumentRequestsController;
-use App\Http\Controllers\DocumentsModelController;
-use App\Http\Controllers\GenerateRequestController;
-use App\Http\Controllers\RoleController;
-use App\Http\Controllers\StudentInformationModelController;
-use App\Http\Controllers\StudentRequestController;
-use App\Http\Controllers\ClaimedDocumentController;
-use App\Http\Controllers\AuditTableController;
-use App\Http\Controllers\BackupController;
-use App\Http\Controllers\BulkRequest;
-use App\Models\Account;
-use Illuminate\Support\Facades\Mail;
-use App\Models\DocumentRequestModel;
-use Illuminate\Routing\RouteGroup;
-use SebastianBergmann\CodeCoverage\Report\Html\Dashboard;
-use App\Http\Controllers\FcmController;
-use App\Http\Controllers\forgotpassword;
-use App\Http\Controllers\GuestRequest;
+
+use App\Http\Controllers\Documents\{
+    DocumentRequestController,
+    OngoingController,
+    PendingController,
+    declinedController,
+    ClaimedDocumentController,
+    BulkRequest
+};
+
+use App\Http\Controllers\Auth\{
+    AuthController,
+    forgotpassword,
+    FcmController,
+    RegistrationController
+};
+
+use App\Http\Controllers\Student\{
+    StudentPageController,
+    StudentRequestController
+};
+
+use App\Http\Controllers\Maintenance\{
+    RoleController,
+    StudentInformationModelController,
+    AccountController,
+    DocumentsModelController,
+    ArchivedDocumentRequestsController,
+    AuditTableController,
+    BackupController
+};
+
+use App\Http\Controllers\Dashboard\{
+    AnalyticsController,
+    DashboardController,
+    GenerateRequestController
+};
+
 use Illuminate\Support\Facades\Http;
 
 
@@ -40,25 +50,19 @@ Route::middleware(['web'])->group(function () {
     Route::get('/', [AuthController::class, 'login'])->name('login');
     Route::post('/', [AuthController::class, 'auth_login'])->name('login.post');
     Route::get('logout', [AuthController::class, 'logout']);
-    Route::get('/guest_request', [GuestRequest::class, 'index'])->name('guest');
 });
 
 Route::get('/student/create', [RegistrationController::class, 'create'])->name('student.create');
 Route::post('/student/store', [RegistrationController::class, 'store'])->name('student.store');
 
-Route::get('/account/otp', [AccountController::class, 'showOtp'])->name('account.create');
-Route::post('/account/otp', [AccountController::class, 'viewOtp'])->name('account.otp');
-Route::post('/account/verify', [AccountController::class, 'verifyOtp'])->name('account.verify');
-Route::match(['get', 'post'], '/account/resend', [AccountController::class, 'SendAgainOTP'])->name('account.resend');
-
-// New route for checking lockout status
-Route::post('/account/lockout-status', [AccountController::class, 'checkLockoutStatus'])->name('account.lockout.status');
-
-
-Route::post('/account/store', [AccountController::class, 'store'])->name('account.store');
-
-
-
+Route::prefix('account')->group(function(){
+    Route::get('/otp', [AccountController::class, 'showOtp'])->name('account.create');
+    Route::post('/otp', [AccountController::class, 'viewOtp'])->name('account.otp');
+    Route::post('/verify', [AccountController::class, 'verifyOtp'])->name('account.verify');
+    Route::match(['get', 'post'], '/resend', [AccountController::class, 'SendAgainOTP'])->name('account.resend');
+    Route::post('/lockout-status', [AccountController::class, 'checkLockoutStatus'])->name('account.lockout.status');
+    Route::post('/store', [AccountController::class, 'store'])->name('account.store');
+});
 
 
 Route::put('update-device-token', [FcmController::class, 'updateDeviceToken']);
@@ -72,72 +76,95 @@ Route::post('send-fcm-notification', [FcmController::class, 'sendFcmNotification
 
 Route::group(['middleware' => 'useradmin'], function () {
 
-    // in routes/web.php
     Route::get('/analytics', [AnalyticsController::class, 'index'])->name('analytics');
+    Route::get('/dashboard', [DashboardController::class, 'dashboard'])->name('dashboard');
 
-    Route::get('dashboard', [DashboardController::class, 'dashboard'])->name('dashboard');
-    
-    // API endpoint for search counts
-    Route::get('/api/search-counts', function(Illuminate\Http\Request $request) {
-        $searchTerm = $request->get('search', '');
-        $counts = App\Models\DocumentRequestModel::getSearchCountsAcrossAllStatuses($searchTerm);
-        return response()->json($counts);
-    });
+    //Request Management       ================================================================================
 
-    //Request Management        ================================================================================
-    Route::get('/dictionary', function () { return view('common.dictionary'); } );
-    Route::resource('tables', DocumentRequestController::class);
-    Route::resource('pending', PendingController::class);
-    Route::resource('ongoing', OngoingController::class);
-    Route::delete('pending/decline/{id}', [PendingController::class, 'decline'])->name('pending.decline');
-    Route::put('/pending/completeRequest/{id}', [PendingController::class, 'completeRequest'])->name('document-request.complete');
-    Route::put('/ongoing/completeRequest/{id}', [OngoingController::class, 'completeRequest'])->name('document-request2.complete');
-    Route::put('/tables/completeRequest/{id}', [DocumentRequestController::class, 'completeRequest'])->name('document-request3.complete');
-    Route::get('/walkin/form', [DocumentRequestController::class, 'showRequestForm'])->name('walkin.form');
-    Route::post('/walkin/store', [DocumentRequestController::class, 'storeWalkIn'])->name('walkin.store');
-    Route::get('/pending/ajax', [PendingController::class, 'ajaxPending'])->name('pending.ajax');
-    Route::resource('claimed-documents', ClaimedDocumentController::class);
-    Route::get('/declined-documents', [declinedController::class, 'index'])->name('declined-documents.index');
+        //Pending Management
+        Route::prefix('pending')->group(function() {
+            Route::resource('/', PendingController::class);
+            Route::delete('/decline/{id}', [PendingController::class, 'decline'])
+                ->name('pending.decline');
+            Route::put('/completeRequest/{id}', [PendingController::class, 'completeRequest'])
+                ->name('document-request.complete');
+            Route::get('/pending/ajax', [PendingController::class, 'ajaxPending'])
+                ->name('pending.ajax');
+        });
 
-    Route::prefix('bulk-request')->group(function() {
-        Route::get('/', [BulkRequest::class, 'index'])->name('bulk_request.index');
-        Route::put('/moveToProcessing/{Request_ID}', [BulkRequest::class, 'moveToProcessing'])->name('bulk_request.moveToProcessing');
-        Route::put('/moveToForRelease/{Request_ID}', [BulkRequest::class, 'moveToForRelease'])->name('bulk_request.moveToForRelease');
-        Route::put('/moveToClaimed/{Request_ID}', [BulkRequest::class, 'moveToClaimed'])->name('bulk_request.moveToClaimed');
-        Route::get('/bulk-request-add', [BulkRequest::class, 'show'])->name('bulk_request_add.show');
-        Route::post('/bulk-request-add', [BulkRequest::class, 'store'])->name('bulk_request_add.store');
-    });
+        //Ongoing Management
+        Route::prefix('ongoing')->group(function() {
+            Route::resource('/', OngoingController::class);
+            Route::put('/completeRequest/{id}', [OngoingController::class, 'completeRequest'])
+                ->name('document-request2.complete');
+        });
 
-    Route::prefix('archived')->group(function(){
-        Route::get('/pending', [ArchivedDocumentRequestsController::class, 'pending'])->name('archived.pending');
-    });
+        //For release Management
+        Route::prefix('tables')->group(function() {
+            Route::resource('/', DocumentRequestController::class);
+            Route::put('/completeRequest/{id}', [DocumentRequestController::class, 'completeRequest'])
+                ->name('document-request3.complete');
+        });
 
+        //Claimed Management
+        Route::prefix('claimed-documents')->group(function () {
+            Route::put('{id}/revert', [ClaimedDocumentController::class, 'revertToForRelease'])
+                ->name('claimed-documents.revert');
+            Route::post('report', [ClaimedDocumentController::class, 'generateReport'])
+                ->name('claimed-documents.report');
+            Route::post('export-csv', [ClaimedDocumentController::class, 'exportToCsv'])
+                ->name('claimed-documents.export-csv');
+        });
 
-    // Additional custom routes for specific functionality
-    Route::prefix('claimed-documents')->group(function () {
-        // Revert a claimed document back to "For Release" status
-        Route::put('{id}/revert', [ClaimedDocumentController::class, 'revertToForRelease'])
-            ->name('claimed-documents.revert');
+        //Bulk request Management
+        Route::prefix('bulk-request')->group(function() {
+            Route::get('/', [BulkRequest::class, 'index'])
+                ->name('bulk_request.index');
+            Route::put('/moveToProcessing/{Request_ID}', [BulkRequest::class, 'moveToProcessing'])
+                ->name('bulk_request.moveToProcessing');
+            Route::put('/moveToForRelease/{Request_ID}', [BulkRequest::class, 'moveToForRelease'])
+                ->name('bulk_request.moveToForRelease');
+            Route::put('/moveToClaimed/{Request_ID}', [BulkRequest::class, 'moveToClaimed'])
+                ->name('bulk_request.moveToClaimed');
+            Route::get('/bulk-request-add', [BulkRequest::class, 'show'])
+                ->name('bulk_request_add.show');
+            Route::post('/bulk-request-add', [BulkRequest::class, 'store'])
+                ->name('bulk_request_add.store');
+        });
 
-        // Generate report for claimed documents
-        Route::post('report', [ClaimedDocumentController::class, 'generateReport'])
-            ->name('claimed-documents.report');
+        //Walk-in Request
+        Route::prefix('walkin')->group(function() {
+            Route::get('/form', [DocumentRequestController::class, 'showRequestForm'])
+                ->name('walkin.form');
+            Route::post('/store', [DocumentRequestController::class, 'storeWalkIn'])
+                ->name('walkin.store');
+        });
 
-        // Export claimed documents to CSV
-        Route::post('export-csv', [ClaimedDocumentController::class, 'exportToCsv'])
-            ->name('claimed-documents.export-csv');
-    });
+        //Misc
+        Route::prefix('archived')->group(function(){
+            Route::get('/pending', [ArchivedDocumentRequestsController::class, 'pending'])
+                ->name('archived.pending');
+        });
+
+        Route::resource('claimed-documents', ClaimedDocumentController::class);
+        Route::get('/declined-documents', [declinedController::class, 'index'])->name('declined-documents.index');
 
     //Request Management       ================================================================================
 
 
     //Role Maintenance         ================================================================================
-    Route::get('panel/role', [RoleController::class, 'list'])->name('role');
-    Route::get('panel/role/add', [RoleController::class, 'add'])->name('role.add');
-    Route::post('panel/role/add', [RoleController::class, 'insert'])->name('role.insert');
-    Route::get('panel/role/edit/{id}', [RoleController::class, 'edit'])->name('role.edit');
-    Route::post('panel/role/edit/{id}', [RoleController::class, 'update'])->name('role.update');
-    Route::delete('panel/role/delete/{id}', [RoleController::class, 'delete'])->name('role.delete');
+    Route::prefix('panel')->group(function() {
+
+
+        Route::get('role', [RoleController::class, 'list'])->name('role');
+        Route::get('role/add', [RoleController::class, 'add'])->name('role.add');
+        Route::post('role/add', [RoleController::class, 'insert'])->name('role.insert');
+        Route::get('role/edit/{id}', [RoleController::class, 'edit'])->name('role.edit');
+        Route::post('role/edit/{id}', [RoleController::class, 'update'])->name('role.update');
+        Route::delete('role/delete/{id}', [RoleController::class, 'delete'])->name('role.delete');
+
+
+    });
     //Role Maintenance          ================================================================================
     Route::get('/backup/download', [BackupController::class, 'downloadBackup'])->name('backup.download');
     Route::post('/backup/restore', [BackupController::class, 'restoreBackup'])->name('backup.restore');
@@ -196,6 +223,14 @@ Route::group(['middleware' => 'useradmin'], function () {
 
     Route::get('/auditTrail', [AuditTableController::class, 'index'])->name('audit.index');
     Route::get('/activityLog', [AuditTableController::class, 'activityLog']);
+
+
+    // API endpoint for search counts
+    Route::get('/api/search-counts', function(Illuminate\Http\Request $request) {
+        $searchTerm = $request->get('search', '');
+        $counts = App\Models\DocumentRequestModel::getSearchCountsAcrossAllStatuses($searchTerm);
+        return response()->json($counts);
+    });
 });
 
 

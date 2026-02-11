@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Student;
 
+use App\Http\Controllers\Controller;
 use App\Models\ClaimerModel;
 use App\Models\DocumentRequestModel;
 use App\Models\DocuPaymentFee;
@@ -59,51 +60,33 @@ class StudentRequestController extends Controller
             'supporting_document' => 'required|file|mimes:jpeg,jpg,png,pdf,doc,docx|max:10240', // 10MB max
         ]);
 
-        // Step 2: Initialize file path variable
         $supportingDocumentPath = null;
 
-        // Step 3: Handle file upload if present
         if ($request->hasFile('supporting_document')) {
             $file = $request->file('supporting_document');
 
-            // Generate a unique filename
             $filename = time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
 
-            // Define upload path
             $uploadPath = public_path('uploads/supporting_documents');
 
-            // Create directory if it doesn't exist
             if (!file_exists($uploadPath)) {
                 mkdir($uploadPath, 0755, true);
             }
 
-            // Move file to the upload directory
             $file->move($uploadPath, $filename);
 
-            // Store relative path for database
             $supportingDocumentPath = 'uploads/supporting_documents/' . $filename;
         }
 
-        // Step 4: Insert a new Claimer
         $claimer = ClaimerModel::create([
             'Fname' => 'Blank',
             'Lname' => 'Blank',
             'contact_no' => '000000',
         ]);
 
-        // Step 5: Get document details
         $document = DocumentsModel::find($validatedData['document_id']);
 
-        // Step 6: Create payment receipt
-        // $receipt = DocuPaymentFee::create([
-        //     "receipt_no" => random_int(10000, 99999),
-        //     'docu_categories_id' => $validatedData['document_id'],
-        //     'doc_amount' => $document->DocPrice,
-        //     'name_request' => Auth::user()->std_students_id,
-        //     'time_request' => Carbon::now()
-        // ]);
 
-        // Step 7: Create document request
         DocumentRequestModel::create([
             'id' => random_int(10000, 99999),
             'clm_claimers_id' => $claimer->id,

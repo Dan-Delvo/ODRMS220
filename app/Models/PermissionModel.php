@@ -24,7 +24,7 @@ class PermissionModel extends Model
     // Disable timestamps if the table doesn't use them
     public $timestamps = false;
 
-
+ 
     static public function getRecord()
     {
         $getPermission = PermissionModel::groupBy('groupBy')->get();

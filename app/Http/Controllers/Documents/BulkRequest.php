@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Documents;
 
+use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreBulkRequestFormRequest;
 use App\Mail\RequestApprovedMail;
 use App\Models\BulkRequest as ModelsBulkRequest;
@@ -56,14 +57,14 @@ class BulkRequest extends Controller
         }
     }
 
-    public function moveToProcessing($Request_ID) 
+    public function moveToProcessing($Request_ID)
     {
         ModelsBulkRequest::moveRequest('Processing', $Request_ID);
         $this->emailNotif($Request_ID, 'emails.bulk_requests.to_approved');
         return redirect('/bulk-request')->with('success', 'Moved to Processing successfully!');
     }
 
-    public function moveToForRelease($Request_ID) 
+    public function moveToForRelease($Request_ID)
     {
         ModelsBulkRequest::moveRequest('For Release', $Request_ID);
         $this->emailNotif($Request_ID, 'emails.bulk_requests.to_for_release');
@@ -71,7 +72,7 @@ class BulkRequest extends Controller
     }
 
     // ✅ Updated moveToClaimed method with claimer validation
-    public function moveToClaimed(Request $request, $Request_ID) 
+    public function moveToClaimed(Request $request, $Request_ID)
     {
         // Validate claimer input
         $validated = $request->validate([
@@ -103,7 +104,7 @@ class BulkRequest extends Controller
         }
     }
 
-    public function emailNotif($Request_ID, string $view) 
+    public function emailNotif($Request_ID, string $view)
     {
         try {
             $bulkRequest = ModelsBulkRequest::findOrFail($Request_ID);

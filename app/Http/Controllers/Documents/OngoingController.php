@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Documents;
 
+use App\Http\Controllers\Controller;
 use App\Models\DocumentRequestModel;
 use App\Models\StudentInformationModel;
 use Illuminate\Support\Facades\Log;
@@ -40,7 +41,6 @@ class OngoingController extends Controller
             'per_page' => 10
         ];
 
-                // Get document requests with search/filter/sort
         $DocRequests = DocumentRequestModel::getDocumentRequests('processing', $searchOptions);
 
         // Get total count (unfiltered)

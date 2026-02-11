@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Documents;
 
+use App\Http\Controllers\Controller;
 use App\Models\DocumentRequestModel;
 use App\Models\StudentInformationModel;
 use Illuminate\Support\Facades\Log;

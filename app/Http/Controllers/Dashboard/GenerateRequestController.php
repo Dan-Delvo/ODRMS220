@@ -1,9 +1,10 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Dashboard;
 
 use App\Models\DocumentRequestModel;
 use App\Exports\ExportRequest;
+use App\Http\Controllers\Controller;
 use App\Models\BulkRequest;
 use App\Models\BulkStudent;
 use App\Models\PermissionRoleModel;

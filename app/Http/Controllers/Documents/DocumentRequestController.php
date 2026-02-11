@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Documents;
 
+use App\Http\Controllers\Controller;
 use App\Models\DocumentRequestModel;
 use App\Models\Account;
 use App\Models\StudentInformationModel;
@@ -14,6 +15,7 @@ use App\Models\ClaimerModel;
 use App\Models\DocumentsModel;
 use App\Models\DocuPaymentFee;
 use App\Models\Guest;
+use App\Service\AuditTrailLogger;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\DB;
@@ -102,10 +104,9 @@ class DocumentRequestController extends Controller
         return view('requestTables.completed.createTable');
     }
 
-    public function store(Request $request)
+    public function store(Request $request, AuditTrailLogger $logger)
     {
-        $pdo = DB::connection()->getPdo();
-        $pdo->exec("SET @current_user = " . $pdo->quote(Auth::check() ? Auth::user()->username : 'guest'));
+        $logger->logger();
 
         $validated = $this->validateDocumentRequest($request);
         DocumentRequestModel::createDocumentRequest($validated);
@@ -113,8 +114,10 @@ class DocumentRequestController extends Controller
         return redirect('/tables')->with('Status', 'Created Successfully');
     }
 
-    public function edit(DocumentRequestModel $table)
+    public function edit(DocumentRequestModel $table, AuditTrailLogger $logger)
     {
+        $logger->logger();
+
         if (!$table) {
             abort(404, 'Document Request not found.');
         }
@@ -149,8 +152,8 @@ class DocumentRequestController extends Controller
         try {
             // Validate incoming request: MADE CLAIMER NAME FIELDS REQUIRED
             $request->validate([
-                'claimer_first_name' => 'required|string|max:255', // CRITICAL FIX: required
-                'claimer_last_name'  => 'required|string|max:255',  // CRITICAL FIX: required
+                'claimer_first_name' => 'required|string|max:255',
+                'claimer_last_name'  => 'required|string|max:255',
                 'claimer_date'       => 'required|date|before_or_equal:today',
             ], [
                 'claimer_first_name.required'  => 'The claimer\'s first name is required.',
@@ -161,7 +164,7 @@ class DocumentRequestController extends Controller
             // Find the document request
             $documentRequest = DocumentRequestModel::findOrFail($id);
 
-            // Get account and student info (assuming these relationships exist)
+            // Get account and student info
             $account = $documentRequest->account;
             $stud    = $documentRequest->studentInformation;
 
@@ -186,7 +189,7 @@ class DocumentRequestController extends Controller
             $today        = now()->toDateString();
             $claimedTime  = ($selectedDate === $today) ? now()->format('H:i:s') : null;
 
-            // Update document request: CRITICAL FIX: Assign the Claimer ID
+
             $documentRequest->update([
                 'remarks'         => 'Claimed',
                 'status'          => 'Claimed',
@@ -197,8 +200,6 @@ class DocumentRequestController extends Controller
 
             Log::info("Document request {$id} marked as claimed on {$selectedDate}. Claimer ID: {$claimer->id}");
 
-            // --- NOTIFICATION LOGIC (Send Email & Push Notification) ---
-            // Check if this is a guest request or account-based request
             $guest = Guest::where('doc_request_id', $id)->first();
             $isGuestRequest = !is_null($guest);
 

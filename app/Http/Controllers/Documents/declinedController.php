@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Documents;
 
+use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\DocumentRequestModel;
 use App\Models\StudentInformationModel;
@@ -37,10 +38,10 @@ class declinedController extends Controller
 
         // Get total count (unfiltered)
         $totalCount = DocumentRequestModel::getStatusCount('Declined');
-        
+
         // Get filtered count (with search/filter applied)
         $filteredCount = $DocRequests->total();
-        
+
         // Get search counts across all statuses
         $searchCounts = DocumentRequestModel::getSearchCountsAcrossAllStatuses($request->get('search') ?? '');
 

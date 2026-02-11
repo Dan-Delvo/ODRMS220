@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Auth;
 
+use App\Http\Controllers\Controller;
 use App\Mail\ResetPasswordMail;
 use App\Models\Account;
 use App\Models\User;
@@ -51,7 +52,7 @@ class forgotpassword extends Controller
                 Mail::to($request->variable)->send(new ResetPasswordMail($otpCode));
 
                 // Log for debugging
-                \Log::info("Initial OTP Sent", [
+                Log::info("Initial OTP Sent", [
                     'email' => $request->variable,
                     'otp' => $otpCode,
                     'expiry' => $expiresAt->toDateTimeString()
@@ -60,7 +61,7 @@ class forgotpassword extends Controller
                 session()->flash('success', 'OTP sent successfully!');
                 return redirect()->route('verifyotp');
             } catch (\Exception $e) {
-                \Log::error("Failed to send initial OTP", [
+                Log::error("Failed to send initial OTP", [
                     'email' => $request->variable,
                     'error' => $e->getMessage(),
                     'trace' => $e->getTraceAsString()
@@ -127,7 +128,7 @@ class forgotpassword extends Controller
         $expiry = session('expiry');
 
         // Debug logging (remove after testing)
-        \Log::info("OTP Verification Attempt", [
+        Log::info("OTP Verification Attempt", [
             'input_otp' => $inputOtp,
             'stored_otp' => $storedOtp,
             'expiry' => $expiry ? $expiry->toDateTimeString() : 'null',
@@ -152,7 +153,7 @@ class forgotpassword extends Controller
             session()->forget(['otp', 'expiry']);
             session(['otp_verified' => true, 'password_reset_step' => 'newpassword']);
 
-            \Log::info("OTP Verified Successfully", ['ip' => $ip]);
+            Log::info("OTP Verified Successfully", ['ip' => $ip]);
 
             return redirect()->route('newpassword')->with('status', 'OTP verified successfully!');
         }
@@ -161,7 +162,7 @@ class forgotpassword extends Controller
         $attempts = Cache::get($attemptKey, 0) + 1;
         Cache::put($attemptKey, $attempts, now()->addMinutes(15));
 
-        \Log::warning("Invalid OTP Attempt", [
+        Log::warning("Invalid OTP Attempt", [
             'ip' => $ip,
             'attempt' => $attempts,
             'input' => $inputOtp,
@@ -177,7 +178,7 @@ class forgotpassword extends Controller
             Cache::forget($attemptKey);
             session()->flush();
 
-            \Log::warning("Account locked due to failed OTP attempts", [
+            Log::warning("Account locked due to failed OTP attempts", [
                 'ip' => $ip,
                 'locked_until' => date('Y-m-d H:i:s', $lockedUntil)
             ]);
@@ -228,7 +229,7 @@ class forgotpassword extends Controller
             Mail::to($email)->send(new ResetPasswordMail($otpCode));
 
             // Log for debugging
-            \Log::info("OTP Resent", [
+            Log::info("OTP Resent", [
                 'email' => $email,
                 'otp' => $otpCode,
                 'otp_type' => gettype($otpCode),
@@ -243,7 +244,7 @@ class forgotpassword extends Controller
                 'expiry' => $expiresAt->toIso8601String(),
             ]);
         } catch (\Exception $e) {
-            \Log::error("Resend OTP failed", [
+            Log::error("Resend OTP failed", [
                 'email' => $email,
                 'error' => $e->getMessage(),
                 'trace' => $e->getTraceAsString()
