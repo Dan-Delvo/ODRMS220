@@ -192,46 +192,82 @@
     }
 
     .ai-card {
-        background: linear-gradient(135deg, #1f2937 0%, #374151 100%);
+        background: white;
         border-radius: 16px;
-        padding: 2rem;
-        margin-bottom: 2rem;
+        border: none;
         box-shadow: var(--card-shadow);
-        color: white;
+        transition: all 0.3s ease;
+        overflow: hidden;
+    }
+
+    .ai-card:hover {
+        box-shadow: var(--card-hover-shadow);
+        transform: translateY(-2px);
     }
 
     .ai-card-header {
+        background: #1f2937;
         display: flex;
         justify-content: space-between;
         align-items: center;
-        margin-bottom: 1.5rem;
+        padding: 1.25rem 1.5rem;
         flex-wrap: wrap;
         gap: 0.75rem;
     }
 
     .ai-card-header h5 {
-        font-size: 1.125rem;
+        font-size: 1.1rem;
         font-weight: 700;
         margin: 0;
+        color: white;
         display: flex;
         align-items: center;
         gap: 0.5rem;
     }
 
+    .ai-card-header .ai-icon {
+        width: 32px;
+        height: 32px;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: var(--primary-gradient);
+        color: white;
+        font-size: 0.875rem;
+        flex-shrink: 0;
+    }
+
     .ai-card-date {
-        font-size: 0.8rem;
-        color: #9ca3af;
+        font-size: 0.775rem;
+        color: #d1d5db;
         background: rgba(255, 255, 255, 0.1);
-        padding: 0.35rem 0.75rem;
+        padding: 0.3rem 0.75rem;
         border-radius: 20px;
+        white-space: nowrap;
+    }
+
+    .ai-card-body {
+        padding: 1.5rem;
+    }
+
+    .ai-sections-grid {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 1rem;
     }
 
     .ai-section {
-        background: rgba(255, 255, 255, 0.05);
+        background: #f8f9fa;
         border-radius: 12px;
         padding: 1.25rem;
-        margin-bottom: 1rem;
-        border: 1px solid rgba(255, 255, 255, 0.08);
+        border: 1px solid #e2e8f0;
+        transition: all 0.2s ease;
+    }
+
+    .ai-section:hover {
+        border-color: #1dd3b0;
+        background: #f0fdf9;
     }
 
     .ai-section:last-child {
@@ -241,36 +277,56 @@
     .ai-section h6 {
         font-size: 0.875rem;
         font-weight: 600;
-        color: #1dd3b0;
+        color: #1f2937;
         margin-bottom: 0.75rem;
         display: flex;
         align-items: center;
         gap: 0.5rem;
+        padding-bottom: 0.5rem;
+        border-bottom: 2px solid #1dd3b0;
+    }
+
+    .ai-section h6 .ai-section-icon {
+        width: 26px;
+        height: 26px;
+        border-radius: 6px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        background: var(--primary-gradient);
+        color: white;
+        font-size: 0.75rem;
+        flex-shrink: 0;
     }
 
     .ai-section p {
         font-size: 0.85rem;
-        color: #d1d5db;
-        line-height: 1.7;
+        color: #4a5568;
+        line-height: 1.8;
         margin: 0;
         white-space: pre-line;
     }
 
     .ai-loading {
         text-align: center;
-        padding: 3rem;
-        color: #9ca3af;
+        padding: 3rem 1rem;
+        color: #6b7280;
     }
 
     .ai-loading .spinner {
         display: inline-block;
-        width: 32px;
-        height: 32px;
-        border: 3px solid rgba(29, 211, 176, 0.3);
+        width: 36px;
+        height: 36px;
+        border: 3px solid rgba(29, 211, 176, 0.25);
         border-top-color: #1dd3b0;
         border-radius: 50%;
         animation: spin 0.8s linear infinite;
         margin-bottom: 1rem;
+    }
+
+    .ai-loading p {
+        font-size: 0.875rem;
+        margin: 0;
     }
 
     @keyframes spin {
@@ -279,8 +335,48 @@
 
     .ai-error {
         text-align: center;
-        padding: 2rem;
-        color: #f87171;
+        padding: 2rem 1rem;
+        color: #ef4444;
+        background: #fef2f2;
+        border-radius: 12px;
+        border: 1px solid #fecaca;
+    }
+
+    .ai-error p {
+        margin: 0;
+        font-size: 0.875rem;
+    }
+
+    /* Top row: overview full width. Next 2x2 grid for the rest */
+    @media (min-width: 768px) {
+        .ai-sections-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+
+        .ai-section-overview {
+            grid-column: 1 / -1;
+        }
+    }
+
+    @media (max-width: 767px) {
+        .ai-card-header {
+            padding: 1rem;
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .ai-card-body {
+            padding: 1rem;
+        }
+
+        .ai-section {
+            padding: 1rem;
+        }
+
+        .ai-section p {
+            font-size: 0.8rem;
+            line-height: 1.7;
+        }
     }
 
     @media (max-width: 768px) {
@@ -310,10 +406,13 @@
         <div class="col-12">
             <div class="ai-card" id="aiAnalyticsCard">
                 <div class="ai-card-header">
-                    <h5>🤖 AI Analytics Insights</h5>
+                    <h5>
+                        <span class="ai-icon">🤖</span>
+                        AI Analytics Insights
+                    </h5>
                     <span class="ai-card-date" id="aiGeneratedDate">Loading...</span>
                 </div>
-                <div id="aiContent">
+                <div class="ai-card-body" id="aiContent">
                     <div class="ai-loading">
                         <div class="spinner"></div>
                         <p>Generating AI insights...</p>
@@ -1173,24 +1272,25 @@
     // ✅ AI Analytics - auto-load on page open
     function renderAIContent(data) {
         const sections = [
-            { key: 'overview', icon: '📋', title: 'Overview' },
-            { key: 'busiestMonths', icon: '📅', title: 'Busiest Months' },
-            { key: 'trends', icon: '📈', title: 'Trends' },
-            { key: 'forecast', icon: '🔮', title: 'Forecast' },
-            { key: 'processAndOperations', icon: '⚙️', title: 'Process & Operations' },
+            { key: 'overview', icon: '📋', title: 'Overview', cssClass: 'ai-section-overview' },
+            { key: 'busiestMonths', icon: '📅', title: 'Busiest Months', cssClass: '' },
+            { key: 'trends', icon: '📈', title: 'Trends', cssClass: '' },
+            { key: 'forecast', icon: '🔮', title: 'Forecast', cssClass: '' },
+            { key: 'processAndOperations', icon: '⚙️', title: 'Process & Operations', cssClass: '' },
         ];
 
-        let html = '';
+        let html = '<div class="ai-sections-grid">';
         sections.forEach(section => {
             if (data[section.key]) {
                 html += `
-                    <div class="ai-section">
-                        <h6>${section.icon} ${section.title}</h6>
+                    <div class="ai-section ${section.cssClass}">
+                        <h6><span class="ai-section-icon">${section.icon}</span> ${section.title}</h6>
                         <p>${data[section.key]}</p>
                     </div>
                 `;
             }
         });
+        html += '</div>';
 
         document.getElementById('aiContent').innerHTML = html;
 
