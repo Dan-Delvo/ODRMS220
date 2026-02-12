@@ -191,6 +191,98 @@
         position: relative;
     }
 
+    .ai-card {
+        background: linear-gradient(135deg, #1f2937 0%, #374151 100%);
+        border-radius: 16px;
+        padding: 2rem;
+        margin-bottom: 2rem;
+        box-shadow: var(--card-shadow);
+        color: white;
+    }
+
+    .ai-card-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1.5rem;
+        flex-wrap: wrap;
+        gap: 0.75rem;
+    }
+
+    .ai-card-header h5 {
+        font-size: 1.125rem;
+        font-weight: 700;
+        margin: 0;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .ai-card-date {
+        font-size: 0.8rem;
+        color: #9ca3af;
+        background: rgba(255, 255, 255, 0.1);
+        padding: 0.35rem 0.75rem;
+        border-radius: 20px;
+    }
+
+    .ai-section {
+        background: rgba(255, 255, 255, 0.05);
+        border-radius: 12px;
+        padding: 1.25rem;
+        margin-bottom: 1rem;
+        border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .ai-section:last-child {
+        margin-bottom: 0;
+    }
+
+    .ai-section h6 {
+        font-size: 0.875rem;
+        font-weight: 600;
+        color: #1dd3b0;
+        margin-bottom: 0.75rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .ai-section p {
+        font-size: 0.85rem;
+        color: #d1d5db;
+        line-height: 1.7;
+        margin: 0;
+        white-space: pre-line;
+    }
+
+    .ai-loading {
+        text-align: center;
+        padding: 3rem;
+        color: #9ca3af;
+    }
+
+    .ai-loading .spinner {
+        display: inline-block;
+        width: 32px;
+        height: 32px;
+        border: 3px solid rgba(29, 211, 176, 0.3);
+        border-top-color: #1dd3b0;
+        border-radius: 50%;
+        animation: spin 0.8s linear infinite;
+        margin-bottom: 1rem;
+    }
+
+    @keyframes spin {
+        to { transform: rotate(360deg); }
+    }
+
+    .ai-error {
+        text-align: center;
+        padding: 2rem;
+        color: #f87171;
+    }
+
     @media (max-width: 768px) {
         .filter-section {
             flex-direction: column;
@@ -211,6 +303,24 @@
             <li class="breadcrumb-item"><a href="{{ url('/dashboard')}}">Dashboard</a></li>
             <li class="breadcrumb-item active text-white">Analytics</li>
         </ol>
+    </div>
+
+    <!-- AI Analytics Card -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="ai-card" id="aiAnalyticsCard">
+                <div class="ai-card-header">
+                    <h5>🤖 AI Analytics Insights</h5>
+                    <span class="ai-card-date" id="aiGeneratedDate">Loading...</span>
+                </div>
+                <div id="aiContent">
+                    <div class="ai-loading">
+                        <div class="spinner"></div>
+                        <p>Generating AI insights...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 
     <!-- Main Chart - Full Width -->
@@ -411,29 +521,20 @@
             chartTitle = 'Requests Per Year';
             chartColor = '#1dd3b0';
         } else {
-            // Monthly view
-            let filteredData = monthlyRequests;
+            // Monthly view - data is already filtered by the backend
+            // Keys are month names (e.g. 'January', 'February', ...) or 'Jan 2025' for multi-year
+            const keys = Object.keys(monthlyRequests);
+            const isMultiYear = keys.length > 0 && keys[0].split(' ').length > 1;
 
-            if (startDate && endDate) {
-                const start = new Date(startDate);
-                const end = new Date(endDate);
-                const startMonth = start.getMonth();
-                const endMonth = end.getMonth();
-
-                const monthNames = ['January', 'February', 'March', 'April', 'May', 'June',
-                    'July', 'August', 'September', 'October', 'November', 'December'
-                ];
-
-                filteredData = {};
-                monthNames.forEach((month, index) => {
-                    if (index >= startMonth && index <= endMonth && monthlyRequests[month]) {
-                        filteredData[month] = monthlyRequests[month];
-                    }
-                });
+            if (isMultiYear) {
+                // Multi-year range: use actual keys as categories
+                categories = keys;
+                chartData = Object.values(monthlyRequests);
+            } else {
+                // Single year: map to all 12 months
+                categories = allMonths;
+                chartData = mapDataToAllMonths(monthlyRequests);
             }
-
-            categories = allMonths;
-            chartData = mapDataToAllMonths(filteredData);
             chartTitle = 'Requests Per Month';
             chartColor = '#36A2EB';
         }
@@ -577,75 +678,42 @@
         renderMainChart(null, null, currentViewMode);
     });
 
-    // Filter button
+    // Filter button - reload page with query parameters so backend re-queries
     document.getElementById('mainFilterBtn').addEventListener('click', function() {
         let startValue, endValue;
 
         if (currentViewMode === 'yearly') {
             startValue = document.getElementById('mainStartYear').value;
             endValue = document.getElementById('mainEndYear').value;
+            if (startValue && endValue) {
+                startValue = startValue + '-01-01';
+                endValue = endValue + '-12-31';
+            }
         } else {
             startValue = document.getElementById('mainStartDate').value;
             endValue = document.getElementById('mainEndDate').value;
         }
 
         if (startValue && endValue) {
-            renderMainChart(startValue, endValue, currentViewMode);
+            const url = new URL(window.location.href);
+            url.searchParams.set('start_date', startValue);
+            url.searchParams.set('end_date', endValue);
+            window.location.href = url.toString();
         } else {
             showNotification('Please select both start and end ' + (currentViewMode === 'yearly' ? 'years' : 'dates'), 'warning');
         }
     });
 
-    // Reset button
+    // Reset button - reload page without filters (defaults to current year)
     document.getElementById('mainResetBtn').addEventListener('click', function() {
-        document.getElementById('mainStartDate').value = '';
-        document.getElementById('mainEndDate').value = '';
-        document.getElementById('mainStartYear').value = '';
-        document.getElementById('mainEndYear').value = '';
-        document.getElementById('toggleYearly').checked = false;
-        currentViewMode = 'monthly';
-
-        // Reset input visibility
-        document.querySelectorAll('#mainStartDate, #mainEndDate').forEach(input => input.style.display = 'block');
-        document.querySelectorAll('#mainStartYear, #mainEndYear').forEach(input => input.style.display = 'none');
-        document.getElementById('mainChartTitle').textContent = 'Monthly Document Requests';
-
-        renderMainChart();
+        const url = new URL(window.location.href);
+        url.searchParams.delete('start_date');
+        url.searchParams.delete('end_date');
+        window.location.href = url.toString();
     });
 
-    // Date input changes
-    document.getElementById('mainStartDate').addEventListener('change', function() {
-        const startDate = this.value;
-        const endDate = document.getElementById('mainEndDate').value;
-        if (startDate && endDate) {
-            renderMainChart(startDate, endDate, currentViewMode);
-        }
-    });
-
-    document.getElementById('mainEndDate').addEventListener('change', function() {
-        const startDate = document.getElementById('mainStartDate').value;
-        const endDate = this.value;
-        if (startDate && endDate) {
-            renderMainChart(startDate, endDate, currentViewMode);
-        }
-    });
-
-    // Year input changes
-    document.getElementById('mainStartYear').addEventListener('change', function() {
-        const startYear = this.value;
-        const endYear = document.getElementById('mainEndYear').value;
-        if (startYear && endYear) {
-            renderMainChart(startYear, endYear, currentViewMode);
-        }
-    });
-
-    document.getElementById('mainEndYear').addEventListener('change', function() {
-        const startYear = document.getElementById('mainStartYear').value;
-        const endYear = this.value;
-        if (startYear && endYear) {
-            renderMainChart(startYear, endYear, currentViewMode);
-        }
-    });
+    // Date/year input changes are handled by the filter button above
+    // No auto-reload on change to avoid accidental reloads
 
     // ✅ Document Type (Donut)
     const docTypeData = @json($docTypeData);
@@ -1084,20 +1152,102 @@
     document.getElementById('unclaimedFilterBtn').addEventListener('click', function() {
         const startDate = document.getElementById('unclaimedStartDate').value;
         const endDate = document.getElementById('unclaimedEndDate').value;
-        const viewMode = document.getElementById('toggleUnclaimedYearly').checked ? 'yearly' : 'monthly';
 
         if (startDate && endDate) {
-            renderUnclaimedChart(startDate, endDate, viewMode);
+            const url = new URL(window.location.href);
+            url.searchParams.set('start_date', startDate);
+            url.searchParams.set('end_date', endDate);
+            window.location.href = url.toString();
         } else {
-            alert('Please select both start and end dates');
+            showNotification('Please select both start and end dates', 'warning');
         }
     });
 
     document.getElementById('unclaimedResetBtn').addEventListener('click', function() {
-        document.getElementById('unclaimedStartDate').value = '';
-        document.getElementById('unclaimedEndDate').value = '';
-        document.getElementById('toggleUnclaimedYearly').checked = false;
-        renderUnclaimedChart();
+        const url = new URL(window.location.href);
+        url.searchParams.delete('start_date');
+        url.searchParams.delete('end_date');
+        window.location.href = url.toString();
     });
+
+    // ✅ AI Analytics - auto-load on page open
+    function renderAIContent(data) {
+        const sections = [
+            { key: 'overview', icon: '📋', title: 'Overview' },
+            { key: 'busiestMonths', icon: '📅', title: 'Busiest Months' },
+            { key: 'trends', icon: '📈', title: 'Trends' },
+            { key: 'forecast', icon: '🔮', title: 'Forecast' },
+            { key: 'processAndOperations', icon: '⚙️', title: 'Process & Operations' },
+        ];
+
+        let html = '';
+        sections.forEach(section => {
+            if (data[section.key]) {
+                html += `
+                    <div class="ai-section">
+                        <h6>${section.icon} ${section.title}</h6>
+                        <p>${data[section.key]}</p>
+                    </div>
+                `;
+            }
+        });
+
+        document.getElementById('aiContent').innerHTML = html;
+
+        // Update date
+        const generatedAt = data.generated_at || data.data_period?.start || '';
+        if (generatedAt) {
+            const date = new Date(generatedAt);
+            document.getElementById('aiGeneratedDate').textContent = 'Generated: ' + date.toLocaleDateString('en-US', {
+                year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit'
+            });
+        }
+    }
+
+    function loadAIAnalytics() {
+        fetch('{{ route("analytics.generateAI") }}')
+            .then(response => response.json())
+            .then(result => {
+                if (result.error) {
+                    document.getElementById('aiContent').innerHTML = `
+                        <div class="ai-error">
+                            <p>⚠️ ${result.error}</p>
+                        </div>
+                    `;
+                    return;
+                }
+
+                if (result.data) {
+                    // Already generated today — display cached data
+                    renderAIContent(result.data);
+                } else if (result.success === 'success') {
+                    // Freshly generated — fetch the latest
+                    fetch('{{ route("analytics.latestAI") }}')
+                        .then(r => r.json())
+                        .then(latest => {
+                            if (latest.data) {
+                                renderAIContent(latest.data);
+                                const genDate = latest.generated_at;
+                                if (genDate) {
+                                    const date = new Date(genDate);
+                                    document.getElementById('aiGeneratedDate').textContent = 'Generated: ' + date.toLocaleDateString('en-US', {
+                                        year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit'
+                                    });
+                                }
+                            }
+                        });
+                }
+            })
+            .catch(err => {
+                document.getElementById('aiContent').innerHTML = `
+                    <div class="ai-error">
+                        <p>⚠️ Failed to load AI insights. Please try again later.</p>
+                    </div>
+                `;
+            });
+    }
+
+    // Auto-load AI analytics on page open
+    loadAIAnalytics();
 </script>
 @endsection

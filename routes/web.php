@@ -77,13 +77,17 @@ Route::post('send-fcm-notification', [FcmController::class, 'sendFcmNotification
 Route::group(['middleware' => 'useradmin'], function () {
 
     Route::get('/analytics', [AnalyticsController::class, 'index'])->name('analytics');
+    Route::get('/analytics/generate-ai', [AnalyticsController::class, 'generateAI'])->name('analytics.generateAI');
+    Route::get('/analytics/latest-ai', [AnalyticsController::class, 'getLatestAI'])->name('analytics.latestAI');
     Route::get('/dashboard', [DashboardController::class, 'dashboard'])->name('dashboard');
 
     //Request Management       ================================================================================
+        Route::resource('/pending', PendingController::class);
+        Route::resource('/ongoing', OngoingController::class);
+        Route::resource('/tables', DocumentRequestController::class);
 
         //Pending Management
         Route::prefix('pending')->group(function() {
-            Route::resource('/', PendingController::class);
             Route::delete('/decline/{id}', [PendingController::class, 'decline'])
                 ->name('pending.decline');
             Route::put('/completeRequest/{id}', [PendingController::class, 'completeRequest'])
@@ -94,14 +98,12 @@ Route::group(['middleware' => 'useradmin'], function () {
 
         //Ongoing Management
         Route::prefix('ongoing')->group(function() {
-            Route::resource('/', OngoingController::class);
             Route::put('/completeRequest/{id}', [OngoingController::class, 'completeRequest'])
                 ->name('document-request2.complete');
         });
 
         //For release Management
         Route::prefix('tables')->group(function() {
-            Route::resource('/', DocumentRequestController::class);
             Route::put('/completeRequest/{id}', [DocumentRequestController::class, 'completeRequest'])
                 ->name('document-request3.complete');
         });
