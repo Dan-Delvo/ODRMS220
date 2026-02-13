@@ -28,28 +28,21 @@ jobs:
           node-version: "20"
 
       - name: Copy .env
-        run: |
-          cd ODRMS220
-          php -r "file_exists('.env') || copy('.env.example', '.env');"
+        run: php -r "file_exists('.env') || copy('.env.example', '.env');"
 
       - name: Install Composer dependencies
-        working-directory: ./ODRMS220
         run: composer install --prefer-dist --no-progress --no-interaction
 
       - name: Generate application key
-        working-directory: ./ODRMS220
         run: php artisan key:generate
 
       - name: Directory Permissions
-        working-directory: ./ODRMS220
         run: chmod -R 777 storage bootstrap/cache
 
       - name: Install npm dependencies
-        working-directory: ./ODRMS220
         run: npm install
 
       - name: Build frontend assets
-        working-directory: ./ODRMS220
         run: npm run build
 
   code-quality:
@@ -68,11 +61,9 @@ jobs:
           coverage: none
 
       - name: Install Composer dependencies
-        working-directory: ./ODRMS220
         run: composer install --prefer-dist --no-progress --no-interaction
 
       - name: Run Laravel Pint (Code Style)
-        working-directory: ./ODRMS220
         run: ./vendor/bin/pint --test
 
   test:
@@ -92,37 +83,29 @@ jobs:
           coverage: none
 
       - name: Copy .env
-        run: |
-          cd ODRMS220
-          php -r "file_exists('.env') || copy('.env.example', '.env');"
+        run: php -r "file_exists('.env') || copy('.env.example', '.env');"
 
       - name: Install Composer dependencies
-        working-directory: ./ODRMS220
         run: composer install --prefer-dist --no-progress --no-interaction
 
       - name: Generate application key
-        working-directory: ./ODRMS220
         run: php artisan key:generate
 
       - name: Directory Permissions
-        working-directory: ./ODRMS220
         run: chmod -R 777 storage bootstrap/cache
 
       - name: Create Database
-        working-directory: ./ODRMS220
         run: |
           mkdir -p database
           touch database/database.sqlite
 
       - name: Run migrations
-        working-directory: ./ODRMS220
         env:
           DB_CONNECTION: sqlite
           DB_DATABASE: database/database.sqlite
         run: php artisan migrate --force
 
       - name: Execute tests (Unit and Feature)
-        working-directory: ./ODRMS220
         env:
           DB_CONNECTION: sqlite
           DB_DATABASE: database/database.sqlite
