@@ -236,12 +236,12 @@
 
                     <!-- ================= ACTION BUTTONS ================= -->
                     <div class="d-flex justify-content-between flex-wrap gap-2 mt-2">
-                        <button class="btn btn-submit-add" type="submit">
-                            <i class="fas fa-paper-plane me-1"></i> Submit
-                        </button>
                         <a href="{{ url('panel/user') }}" class="btn btn-back-add">
                             <i class="fas fa-arrow-left me-1"></i> Back
                         </a>
+                        <button class="btn btn-submit-add" type="submit">
+                            <i class="fas fa-paper-plane me-1"></i> Submit
+                        </button>
                     </div>
                 </form>
 
