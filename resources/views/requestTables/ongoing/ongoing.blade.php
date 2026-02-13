@@ -62,7 +62,7 @@
                     <option value="desc" {{ request('sort') == 'desc' ? 'selected' : '' }}>Z-A</option>
                 </select>
                 <button type="button" class="btn-reset" id="resetBtn">
-                    <i class="fas fa-redo me-1"></i> Reset
+                    <i class="fas fa-redo me-1"></i>
                 </button>
             </div>
         </div>
@@ -916,11 +916,12 @@ document.addEventListener('DOMContentLoaded', function() {
         display: flex;
         align-items: center;
         gap: 0.5rem;
-        flex-wrap: wrap;
+        flex-wrap: nowrap;
     }
 
     .header-controls .search-input-group {
-        width: 250px;
+        width: 200px;
+        min-width: 120px;
     }
 
     .header-controls .search-input-group .form-control {

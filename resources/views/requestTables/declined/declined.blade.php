@@ -62,7 +62,7 @@
                 <option value="desc" {{ request('sort') == 'desc' ? 'selected' : '' }}>Z-A</option>
             </select>
             <button type="button" class="btn-reset" id="resetBtn">
-                <i class="fas fa-redo me-1"></i> Reset
+                <i class="fas fa-redo me-1"></i>
             </button>
         </div>
     </div>
@@ -845,7 +845,7 @@
     }
     .header-controls {
         display: flex;
-        flex-wrap: wrap;
+        flex-wrap: nowrap;
         align-items: center;
         gap: 0.5rem;
     }
