@@ -4,356 +4,453 @@
 <meta name="csrf-token" content="{{ csrf_token() }}">
 <style>
     :root {
-        --primary-color: #1dd3b0;
-        --primary-hover: #17b89a;
-        --danger-color: #ef4444;
-        --danger-hover: #dc2626;
-        --bg-light: #f8fafc;
-        --border-color: #e2e8f0;
-        --text-dark: #1e293b;
-        --text-muted: #64748b;
-        --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
-        --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1);
-        --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1);
+        --primary-green: #1dd3b0;
+        --primary-dark: #1f2937;
+        --shadow-soft: 0 2px 15px rgba(0,0,0,0.08);
+        --shadow-hover: 0 4px 20px rgba(0,0,0,0.12);
     }
 
-    .form-card {
-        background: white;
-        border-radius: 16px;
-        box-shadow: var(--shadow-md);
-        padding: 2rem;
+    /* ===== Page Header ===== */
+    .page-header-bulk {
+        background: var(--primary-dark);
+        border-radius: 14px;
+        padding: 1.5rem 2rem;
         margin-bottom: 1.5rem;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 1rem;
+    }
+    .page-header-bulk h1 {
+        color: #fff;
+        font-size: 1.4rem;
+        font-weight: 700;
+        margin: 0;
+    }
+    .page-header-bulk h1 i {
+        color: var(--primary-green);
+    }
+    .page-header-bulk .breadcrumb {
+        background: transparent;
+        margin: 0;
+        padding: 0;
+    }
+    .page-header-bulk .breadcrumb-item a {
+        color: var(--primary-green);
+        text-decoration: none;
+    }
+    .page-header-bulk .breadcrumb-item.active {
+        color: rgba(255,255,255,0.6);
+    }
+    .page-header-bulk .breadcrumb-item + .breadcrumb-item::before {
+        color: rgba(255,255,255,0.4);
     }
 
+    /* ===== Main Card ===== */
+    .bulk-card {
+        background: #fff;
+        border-radius: 16px;
+        box-shadow: var(--shadow-soft);
+        overflow: hidden;
+        max-width: 900px;
+        margin: 0 auto;
+        transition: box-shadow 0.3s ease;
+    }
+    .bulk-card:hover {
+        box-shadow: var(--shadow-hover);
+    }
+    .bulk-card-header {
+        background: var(--primary-dark);
+        padding: 1.1rem 1.5rem;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+    .bulk-card-header .header-left {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+    }
+    .bulk-card-header .header-icon {
+        width: 36px;
+        height: 36px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 10px;
+        background: linear-gradient(135deg, var(--primary-green), #17b89a);
+        color: #fff;
+        font-size: 1rem;
+    }
+    .bulk-card-header h5 {
+        color: #fff;
+        margin: 0;
+        font-size: 1.05rem;
+        font-weight: 600;
+    }
+    .bulk-card-body {
+        padding: 1.5rem 2rem 2rem;
+    }
+
+    /* ===== Form Sections ===== */
+    .form-section {
+        padding-bottom: 1.5rem;
+        margin-bottom: 1.5rem;
+        border-bottom: 1px solid #e5e7eb;
+    }
+    .form-section:last-of-type {
+        border-bottom: none;
+        margin-bottom: 0;
+    }
+    .form-section .section-title {
+        display: flex;
+        align-items: center;
+        gap: 0.6rem;
+        margin-bottom: 1rem;
+        font-size: 1rem;
+        font-weight: 600;
+    }
+    .form-section .section-title h6 {
+        margin: 0;
+        font-weight: 700;
+        font-size: 1rem;
+        color: #1f2937;
+    }
+    .section-icon {
+        width: 30px;
+        height: 30px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 8px;
+        background: rgba(29, 211, 176, 0.15);
+        color: var(--primary-green);
+        font-size: 0.85rem;
+    }
+
+    /* ===== Form Controls ===== */
     .form-label {
         font-weight: 600;
-        color: var(--text-dark);
-        margin-bottom: 0.5rem;
-        font-size: 0.875rem;
-        text-transform: uppercase;
-        letter-spacing: 0.025em;
+        color: #374151;
+        margin-bottom: 0.4rem;
+        font-size: 0.85rem;
     }
-
     .form-control {
-        border: 2px solid var(--border-color);
+        border: 1px solid #d1d5db;
         border-radius: 10px;
-        padding: 0.75rem 1rem;
-        transition: all 0.2s ease;
-        font-size: 0.95rem;
+        padding: 0.6rem 0.9rem;
+        transition: border-color 0.2s ease, box-shadow 0.2s ease;
+        font-size: 0.9rem;
     }
-
     .form-control:focus {
-        border-color: var(--primary-color);
-        box-shadow: 0 0 0 3px rgba(29, 211, 176, 0.1);
+        border-color: var(--primary-green);
+        box-shadow: 0 0 0 3px rgba(29, 211, 176, 0.15);
         outline: none;
     }
-
     .form-control.is-invalid {
-        border-color: var(--danger-color);
+        border-color: #ef4444;
     }
-
     .form-control.is-invalid:focus {
-        border-color: var(--danger-color);
+        border-color: #ef4444;
         box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1);
     }
-
     .invalid-feedback {
         display: block;
-        color: var(--danger-color);
-        font-size: 0.875rem;
-        margin-top: 0.5rem;
+        color: #ef4444;
+        font-size: 0.82rem;
+        margin-top: 0.35rem;
         font-weight: 500;
     }
 
-    .btn-primary-custom {
-        background: var(--primary-color);
-        border: none;
-        border-radius: 10px;
-        padding: 0.75rem 1.5rem;
-        font-weight: 600;
-        color: white;
-        transition: all 0.2s ease;
-        box-shadow: var(--shadow-sm);
-    }
-
-    .btn-primary-custom:hover {
-        background: var(--primary-hover);
-        transform: translateY(-1px);
-        box-shadow: var(--shadow-md);
-    }
-
-    .btn-success-custom {
-        background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-        border: none;
-        border-radius: 12px;
-        padding: 1rem 2.5rem;
-        font-weight: 600;
-        color: white;
-        transition: all 0.3s ease;
-        box-shadow: var(--shadow-md);
-        font-size: 1rem;
-    }
-
-    .btn-success-custom:hover {
-        transform: translateY(-2px);
-        box-shadow: var(--shadow-lg);
-    }
-
-    .divider {
-        height: 2px;
-        background: linear-gradient(90deg, transparent, var(--border-color), transparent);
-        margin: 2rem 0;
-    }
-
+    /* ===== Student Add Row ===== */
     .input-group-modern {
         display: flex;
         gap: 0.75rem;
         align-items: stretch;
     }
-
     .input-group-modern input {
         flex: 1;
     }
+    .btn-add-student {
+        background: linear-gradient(135deg, var(--primary-green), #17b89a);
+        border: none;
+        border-radius: 10px;
+        padding: 0.6rem 1.3rem;
+        font-weight: 600;
+        color: #fff;
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+        white-space: nowrap;
+    }
+    .btn-add-student:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(29, 211, 176, 0.3);
+        color: #fff;
+    }
 
+    /* ===== Student Table ===== */
     .student-table-container {
-        background: white;
-        border: 2px solid var(--border-color);
+        background: #fff;
+        border: 1px solid #e5e7eb;
         border-radius: 12px;
-        padding: 1.5rem;
-        margin-top: 1.5rem;
-        margin-bottom: 2rem;
-        height: 400px;
+        padding: 1.25rem;
+        margin-top: 1.25rem;
+        height: 380px;
         overflow-y: auto;
     }
-
     .student-table-container::-webkit-scrollbar {
-        width: 8px;
+        width: 6px;
     }
-
     .student-table-container::-webkit-scrollbar-track {
-        background: var(--bg-light);
-        border-radius: 10px;
+        background: transparent;
     }
-
     .student-table-container::-webkit-scrollbar-thumb {
-        background: var(--border-color);
+        background: #d1d5db;
         border-radius: 10px;
     }
-
     .student-table-container::-webkit-scrollbar-thumb:hover {
-        background: var(--text-muted);
+        background: #9ca3af;
     }
-
     .table-header {
         display: flex;
-        padding: 0.75rem 1rem;
-        background: var(--bg-light);
+        padding: 0.65rem 1rem;
+        background: #f3f4f6;
         border-radius: 8px;
-        margin-bottom: 1rem;
+        margin-bottom: 0.75rem;
         font-weight: 600;
-        font-size: 0.875rem;
-        color: var(--text-muted);
+        font-size: 0.8rem;
+        color: #6b7280;
         text-transform: uppercase;
         letter-spacing: 0.05em;
     }
-
     .table-header-col {
         flex: 1;
     }
-
     .table-header-actions {
         width: 100px;
         text-align: right;
     }
-
     .student-row {
         display: flex;
         align-items: center;
-        padding: 1rem;
-        background: white;
-        border-bottom: 1px solid var(--border-color);
-        transition: all 0.2s ease;
+        padding: 0.85rem 1rem;
+        background: #fff;
+        border-bottom: 1px solid #f3f4f6;
+        transition: background 0.2s ease;
     }
-
     .student-row:last-child {
         border-bottom: none;
     }
-
     .student-row:hover {
-        background: var(--bg-light);
+        background: #f9fafb;
     }
-
     .student-name {
         flex: 1;
         font-weight: 500;
-        color: var(--text-dark);
+        color: #1f2937;
     }
-
     .student-actions {
         width: 100px;
         text-align: right;
     }
-
     .btn-delete {
-        background: white;
-        border: 1px solid var(--danger-color);
-        color: var(--danger-color);
+        background: #fff;
+        border: 1px solid #ef4444;
+        color: #ef4444;
         border-radius: 8px;
-        padding: 0.4rem 1rem;
-        font-size: 0.875rem;
+        padding: 0.35rem 0.9rem;
+        font-size: 0.82rem;
         font-weight: 500;
         transition: all 0.2s ease;
     }
-
     .btn-delete:hover {
-        background: var(--danger-color);
-        color: white;
+        background: #ef4444;
+        color: #fff;
         transform: translateY(-1px);
-        box-shadow: var(--shadow-sm);
     }
 
+    /* ===== Empty State ===== */
     .empty-state {
         text-align: center;
         padding: 3rem 1rem;
-        color: var(--text-muted);
+        color: #9ca3af;
+    }
+    .empty-state i {
+        font-size: 2.5rem;
+        margin-bottom: 0.75rem;
+        display: block;
+        opacity: 0.4;
+    }
+    .empty-state p {
+        margin: 0;
+        font-size: 0.9rem;
     }
 
-    .empty-state svg {
-        width: 64px;
-        height: 64px;
-        margin-bottom: 1rem;
-        opacity: 0.5;
-    }
-
-    .section-title {
-        font-size: 1.125rem;
-        font-weight: 700;
-        color: var(--text-dark);
-        margin-bottom: 1rem;
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-    }
-
+    /* ===== Badge Count ===== */
     .badge-count {
-        background: var(--primary-color);
-        color: white;
-        padding: 0.25rem 0.75rem;
+        background: rgba(29, 211, 176, 0.15);
+        color: var(--primary-green);
+        padding: 0.2rem 0.7rem;
         border-radius: 20px;
-        font-size: 0.875rem;
+        font-size: 0.82rem;
+        font-weight: 700;
+    }
+
+    /* ===== Submit Button ===== */
+    .btn-submit-bulk {
+        background: linear-gradient(135deg, var(--primary-green), #17b89a);
+        border: none;
+        border-radius: 12px;
+        padding: 0.85rem 2.5rem;
         font-weight: 600;
+        color: #fff;
+        font-size: 1rem;
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+        box-shadow: 0 4px 12px rgba(29, 211, 176, 0.25);
+    }
+    .btn-submit-bulk:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(29, 211, 176, 0.35);
+        color: #fff;
+    }
+
+    /* ===== Responsive ===== */
+    @media (max-width: 767px) {
+        .page-header-bulk {
+            flex-direction: column;
+            align-items: flex-start;
+            padding: 1.2rem 1.25rem;
+        }
+        .page-header-bulk h1 {
+            font-size: 1.15rem;
+        }
+        .bulk-card-body {
+            padding: 1.25rem;
+        }
+        .input-group-modern {
+            flex-direction: column;
+        }
+        .btn-add-student {
+            width: 100%;
+            text-align: center;
+        }
+    }
+    @media (max-width: 575px) {
+        .bulk-card-header {
+            padding: 0.9rem 1rem;
+        }
+        .bulk-card-body {
+            padding: 1rem;
+        }
+        .btn-submit-bulk {
+            width: 100%;
+        }
     }
 </style>
 @endpush
 
 @section('content')
+
 @include('layout.partials.message')
 
-{{-- Header Section --}}
-<div class="row g-2">
-    <div class="col-md-6">
-        <h1 class="mt-4">
-            <span class="badge" style="background-color: #1dd3b0; font-size: 2rem;">Bulk Requests</span>
-        </h1>
-        <ol class="breadcrumb mb-4">
-            <li class="breadcrumb-item"><a href="{{ route('bulk_request.index') }}" class="text-dark">Bulk Dashboard</a></li>
-            <li class="breadcrumb-item active">Bulk Requests</li>
+<div class="container-fluid px-4 py-4">
+
+{{-- Page Header --}}
+<div class="page-header-bulk">
+    <div>
+        <h1><i class="fas fa-layer-group me-2"></i>Bulk Document Request</h1>
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{{ route('bulk_request.index') }}">Bulk Dashboard</a></li>
+            <li class="breadcrumb-item active">Add Bulk Request</li>
         </ol>
     </div>
 </div>
 
-<div class="container mt-4">
-    <form id="schoolForm" method="POST" action="{{ route('bulk_request_add.store') }}"
-        data-swal-loading="true"
-        data-swal-title="Accepting Bulk Document Request"
-        data-swal-text="This may take a few seconds...">
-        @csrf
-
-        <div class="form-card">
-            <div class="section-title">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
-                    <polyline points="9 22 9 12 15 12 15 22"></polyline>
-                </svg>
-                School Information
-            </div>
-
-            <div class="row g-3">
-                <div class="col-md-6">
-                    <label class="form-label">School Name</label>
-                    <input type="text" name="school_name" class="form-control @error('school_name') is-invalid @enderror"
-                        placeholder="Enter school name" value="{{ old('school_name') }}" required>
-                    @error('school_name')
-                    <div class="invalid-feedback">{{ $message }}</div>
-                    @enderror
-                </div>
-
-                <div class="col-md-6">
-                    <label class="form-label">Email Address</label>
-                    <input type="email" name="email" class="form-control @error('email') is-invalid @enderror"
-                        placeholder="school@example.com" value="{{ old('email') }}" required>
-                    @error('email')
-                    <div class="invalid-feedback">{{ $message }}</div>
-                    @enderror
-                </div>
-            </div>
+{{-- Main Form Card --}}
+<div class="bulk-card">
+    <div class="bulk-card-header">
+        <div class="header-left">
+            <span class="header-icon"><i class="fas fa-file-alt"></i></span>
+            <h5>Bulk Request Form</h5>
         </div>
+    </div>
+    <div class="bulk-card-body">
+        <form id="schoolForm" method="POST" action="{{ route('bulk_request_add.store') }}"
+            data-swal-loading="true"
+            data-swal-title="Accepting Bulk Document Request"
+            data-swal-text="This may take a few seconds...">
+            @csrf
 
-        <div class="form-card">
-            <div class="section-title">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path>
-                    <circle cx="9" cy="7" r="4"></circle>
-                    <path d="M22 21v-2a4 4 0 0 0-3-3.87"></path>
-                    <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
-                </svg>
-                Students
-                <span class="badge-count" id="studentCount">0</span>
-            </div>
-
-            <div class="input-group-modern">
-                <input type="text" id="studentName" class="form-control" placeholder="Enter student name">
-                <button type="button" class="btn btn-primary-custom" id="addStudentBtn">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: middle; margin-right: 0.25rem;">
-                        <line x1="12" y1="5" x2="12" y2="19"></line>
-                        <line x1="5" y1="12" x2="19" y2="12"></line>
-                    </svg>
-                    Add Student
-                </button>
-            </div>
-
-            <div class="student-table-container">
-                <div class="table-header">
-                    <div class="table-header-col">Student Name</div>
-                    <div class="table-header-actions">Actions</div>
+            {{-- School Information Section --}}
+            <div class="form-section">
+                <div class="section-title">
+                    <span class="section-icon"><i class="fas fa-school"></i></span>
+                    <h6>School Information</h6>
                 </div>
-                <div id="studentsList">
-                    <div class="empty-state">
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
-                            <circle cx="9" cy="7" r="4"></circle>
-                            <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
-                            <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
-                        </svg>
-                        <p>No students added yet. Add students using the form above.</p>
+
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label class="form-label">School Name</label>
+                        <input type="text" name="school_name" class="form-control @error('school_name') is-invalid @enderror"
+                            placeholder="Enter school name" value="{{ old('school_name') }}" required>
+                        @error('school_name')
+                        <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label">Email Address</label>
+                        <input type="email" name="email" class="form-control @error('email') is-invalid @enderror"
+                            placeholder="school@example.com" value="{{ old('email') }}" required>
+                        @error('email')
+                        <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
                     </div>
                 </div>
             </div>
-        </div>
 
-        <!-- Hidden input array to store student names -->
-        <div id="studentsInputs"></div>
+            {{-- Students Section --}}
+            <div class="form-section">
+                <div class="section-title">
+                    <span class="section-icon"><i class="fas fa-users"></i></span>
+                    <h6>Students</h6>
+                    <span class="badge-count" id="studentCount">0</span>
+                </div>
 
-        <div class="text-center">
-            <button type="submit" class="btn btn-success-custom">
-                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: middle; margin-right: 0.5rem;">
-                    <polyline points="20 6 9 17 4 12"></polyline>
-                </svg>
-                Submit Request
-            </button>
-        </div>
-    </form>
+                <div class="input-group-modern">
+                    <input type="text" id="studentName" class="form-control" placeholder="Enter student name">
+                    <button type="button" class="btn btn-add-student" id="addStudentBtn">
+                        <i class="fas fa-plus me-1"></i> Add Student
+                    </button>
+                </div>
+
+                <div class="student-table-container">
+                    <div class="table-header">
+                        <div class="table-header-col">Student Name</div>
+                        <div class="table-header-actions">Actions</div>
+                    </div>
+                    <div id="studentsList">
+                        <div class="empty-state">
+                            <i class="fas fa-user-friends"></i>
+                            <p>No students added yet. Add students using the form above.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Hidden input array to store student names -->
+            <div id="studentsInputs"></div>
+
+            <div class="text-center mt-4">
+                <button type="submit" class="btn btn-submit-bulk">
+                    <i class="fas fa-check me-2"></i> Submit Request
+                </button>
+            </div>
+        </form>
+    </div>
 </div>
+
+</div> {{-- close container-fluid --}}
 
 @endsection
 
@@ -395,12 +492,7 @@
         if (students.length === 0) {
             listContainer.innerHTML = `
                 <div class="empty-state">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
-                        <circle cx="9" cy="7" r="4"></circle>
-                        <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
-                        <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
-                    </svg>
+                    <i class="fas fa-user-friends"></i>
                     <p>No students added yet. Add students using the form above.</p>
                 </div>
             `;

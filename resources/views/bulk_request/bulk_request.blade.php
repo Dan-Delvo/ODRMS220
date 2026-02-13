@@ -4,470 +4,436 @@
 <meta name="csrf-token" content="{{ csrf_token() }}">
 <style>
     :root {
-        --primary-color: #1dd3b0;
-        --primary-hover: #17b89a;
-        --secondary-color: #222b37;
-        --danger-color: #ef4444;
-        --success-color: #10b981;
-        --bg-light: #f8fafc;
-        --border-color: #e2e8f0;
-        --text-dark: #1e293b;
-        --text-muted: #64748b;
-        --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
-        --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1);
-        --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1);
+        --primary-green: #1dd3b0;
+        --primary-dark: #1f2937;
+        --shadow-soft: 0 2px 15px rgba(0,0,0,0.08);
+        --shadow-hover: 0 4px 20px rgba(0,0,0,0.12);
     }
 
-    /* Kanban Board Styling */
+    /* ===== Page Header ===== */
+    .page-header-bulk {
+        background: var(--primary-dark);
+        border-radius: 14px;
+        padding: 1.5rem 2rem;
+        margin-bottom: 1.5rem;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 1rem;
+    }
+    .page-header-bulk h1 {
+        color: #fff;
+        font-size: 1.4rem;
+        font-weight: 700;
+        margin: 0;
+    }
+    .page-header-bulk h1 i {
+        color: var(--primary-green);
+    }
+    .page-header-bulk .breadcrumb {
+        background: transparent;
+        margin: 0;
+        padding: 0;
+    }
+    .page-header-bulk .breadcrumb-item a {
+        color: var(--primary-green);
+        text-decoration: none;
+    }
+    .page-header-bulk .breadcrumb-item.active {
+        color: rgba(255,255,255,0.6);
+    }
+    .page-header-bulk .breadcrumb-item + .breadcrumb-item::before {
+        color: rgba(255,255,255,0.4);
+    }
+
+    /* ===== Kanban Board ===== */
     .kanban-column {
-        background: white;
-        border-radius: 16px;
-        box-shadow: var(--shadow-md);
+        background: #fff;
+        border-radius: 14px;
+        box-shadow: var(--shadow-soft);
         overflow: hidden;
-        height: calc(100vh - 200px);
+        height: calc(100vh - 220px);
         display: flex;
         flex-direction: column;
+        transition: box-shadow 0.3s ease;
+    }
+    .kanban-column:hover {
+        box-shadow: var(--shadow-hover);
     }
 
     .kanban-header {
-        padding: 1.25rem 1.5rem;
-        color: white;
+        padding: 1.1rem 1.25rem;
+        color: #fff;
         font-weight: 700;
-        font-size: 1rem;
+        font-size: 0.9rem;
         text-transform: uppercase;
         letter-spacing: 0.05em;
         display: flex;
         align-items: center;
         justify-content: space-between;
     }
-
-    /* ✅ Updated color schemes using Bootstrap colors */
     .kanban-header.pending {
-        background: #6c757d;
-        /* Bootstrap bg-secondary */
-        background: linear-gradient(135deg, #6c757d 0%, #5a6268 100%);
+        background: var(--primary-dark);
     }
-
     .kanban-header.processing {
-        background: #ffc107;
-        /* Bootstrap bg-warning */
-        background: linear-gradient(135deg, #ffc107 0%, #e0a800 100%);
+        background: linear-gradient(135deg, #f59e0b, #d97706);
     }
-
     .kanban-header.for-release {
-        background: #ffff00;
-        /* Pure yellow */
-        background: linear-gradient(135deg, #ffff00 0%, #e6e600 100%);
+        background: linear-gradient(135deg, #3b82f6, #2563eb);
     }
-
     .kanban-header.claimed {
-        background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+        background: linear-gradient(135deg, var(--primary-green), #17b89a);
     }
 
     .kanban-count {
-        background: rgba(255, 255, 255, 0.2);
-        padding: 0.25rem 0.75rem;
+        background: rgba(255,255,255,0.2);
+        padding: 0.2rem 0.7rem;
         border-radius: 20px;
-        font-size: 0.875rem;
-        font-weight: 600;
-    }
-
-    /* ✅ Dark count badge for yellow backgrounds */
-    .kanban-header.processing .kanban-count,
-    .kanban-header.for-release .kanban-count {
-        background: rgba(0, 0, 0, 0.15);
+        font-size: 0.8rem;
+        font-weight: 700;
     }
 
     .kanban-body {
         padding: 1rem;
         overflow-y: auto;
         flex: 1;
-        background: var(--bg-light);
+        background: #f9fafb;
     }
-
     .kanban-body::-webkit-scrollbar {
-        width: 6px;
+        width: 5px;
     }
-
     .kanban-body::-webkit-scrollbar-track {
         background: transparent;
     }
-
     .kanban-body::-webkit-scrollbar-thumb {
-        background: var(--border-color);
+        background: #d1d5db;
         border-radius: 10px;
     }
-
     .kanban-body::-webkit-scrollbar-thumb:hover {
-        background: var(--text-muted);
+        background: #9ca3af;
     }
 
-    /* Request Card Styling */
+    /* ===== Request Card ===== */
     .request-card {
-        background: white;
+        background: #fff;
         border-radius: 12px;
-        padding: 1.25rem;
-        margin-bottom: 1rem;
-        box-shadow: var(--shadow-sm);
-        border: 2px solid var(--border-color);
-        transition: all 0.3s ease;
+        padding: 1.15rem;
+        margin-bottom: 0.85rem;
+        box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+        border: 1px solid #e5e7eb;
+        transition: all 0.25s ease;
     }
-
     .request-card:hover {
-        box-shadow: var(--shadow-md);
-        border-color: var(--primary-color);
+        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        border-color: var(--primary-green);
         transform: translateY(-2px);
     }
 
     .request-card-title {
         font-weight: 700;
-        font-size: 1.1rem;
-        color: var(--text-dark);
-        margin-bottom: 0.5rem;
+        font-size: 1rem;
+        color: #1f2937;
+        margin-bottom: 0.35rem;
         display: flex;
         align-items: center;
         gap: 0.5rem;
     }
+    .request-card-title i {
+        color: var(--primary-green);
+        font-size: 0.9rem;
+    }
 
     .request-card-subtitle {
-        font-size: 0.75rem;
-        color: var(--text-muted);
+        font-size: 0.7rem;
+        color: #9ca3af;
         text-transform: uppercase;
         letter-spacing: 0.05em;
-        margin-bottom: 0.75rem;
+        margin-bottom: 0.65rem;
     }
 
     .request-card-info {
         display: flex;
         align-items: center;
         gap: 0.5rem;
-        color: var(--text-dark);
-        font-size: 0.9rem;
-        margin-bottom: 1rem;
-        padding: 0.5rem;
-        background: var(--bg-light);
+        color: #374151;
+        font-size: 0.85rem;
+        margin-bottom: 0.85rem;
+        padding: 0.45rem 0.65rem;
+        background: #f3f4f6;
         border-radius: 8px;
     }
-
     .request-card-info i {
-        color: var(--primary-color);
+        color: var(--primary-green);
+        font-size: 0.8rem;
     }
 
+    /* ===== Kanban Buttons ===== */
     .btn-view-students {
         width: 100%;
-        background: var(--bg-light);
-        border: 2px solid var(--border-color);
-        color: var(--text-dark);
-        padding: 0.65rem;
+        background: #f9fafb;
+        border: 1px solid #e5e7eb;
+        color: #374151;
+        padding: 0.55rem;
         border-radius: 8px;
         font-weight: 600;
-        font-size: 0.875rem;
-        transition: all 0.3s ease;
-        margin-bottom: 0.75rem;
+        font-size: 0.82rem;
+        transition: all 0.2s ease;
+        margin-bottom: 0.6rem;
         display: flex;
         align-items: center;
         justify-content: center;
-        gap: 0.5rem;
+        gap: 0.45rem;
     }
-
     .btn-view-students:hover {
-        background: white;
-        border-color: var(--primary-color);
-        color: var(--primary-color);
+        background: #fff;
+        border-color: var(--primary-green);
+        color: var(--primary-green);
         transform: translateY(-1px);
     }
 
     .btn-move {
         width: 100%;
-        background: linear-gradient(135deg, var(--success-color) 0%, #059669 100%);
+        background: linear-gradient(135deg, var(--primary-green), #17b89a);
         border: none;
-        color: white;
-        padding: 0.75rem;
+        color: #fff;
+        padding: 0.6rem;
         border-radius: 8px;
         font-weight: 600;
-        font-size: 0.875rem;
-        transition: all 0.3s ease;
+        font-size: 0.82rem;
+        transition: all 0.2s ease;
         display: flex;
         align-items: center;
         justify-content: center;
-        gap: 0.5rem;
+        gap: 0.45rem;
     }
-
     .btn-move:hover {
         transform: translateY(-2px);
-        box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+        box-shadow: 0 4px 12px rgba(29, 211, 176, 0.3);
+        color: #fff;
     }
 
+    /* ===== Empty State ===== */
     .empty-state {
         text-align: center;
-        padding: 3rem 1rem;
-        color: var(--text-muted);
+        padding: 2.5rem 1rem;
+        color: #9ca3af;
     }
-
-    .empty-state svg {
-        width: 64px;
-        height: 64px;
-        margin-bottom: 1rem;
-        opacity: 0.3;
-        stroke: var(--text-muted);
+    .empty-state i {
+        font-size: 2.2rem;
+        display: block;
+        margin-bottom: 0.6rem;
+        opacity: 0.35;
     }
-
     .empty-state p {
-        font-size: 0.9rem;
+        font-size: 0.85rem;
+        margin: 0;
     }
 
-    /* Claimer Info Box */
+    /* ===== Claimer Info Box ===== */
     .claimer-info-box {
-        margin-top: 1rem;
-        padding: 1rem;
-        background: linear-gradient(135deg, rgba(29, 211, 176, 0.05) 0%, rgba(29, 211, 176, 0.1) 100%);
-        border-left: 4px solid var(--primary-color);
+        margin-top: 0.85rem;
+        padding: 0.85rem;
+        background: rgba(29, 211, 176, 0.08);
+        border-left: 3px solid var(--primary-green);
         border-radius: 8px;
     }
-
     .claimer-info-box small {
-        color: var(--text-dark);
+        color: #374151;
         display: flex;
         flex-direction: column;
-        gap: 0.5rem;
+        gap: 0.4rem;
+        font-size: 0.8rem;
     }
-
     .claimer-info-box i {
-        color: var(--primary-color);
-        margin-right: 0.5rem;
-        width: 16px;
+        color: var(--primary-green);
+        margin-right: 0.4rem;
+        width: 14px;
     }
 
-    /* Modern Modal Styling */
+    /* ===== Modal ===== */
     .claimer-modal .modal-content {
-        background: #ffffff;
+        background: #fff;
         border: none;
-        border-radius: 16px;
-        box-shadow: 0 20px 60px rgba(34, 43, 55, 0.2);
+        border-radius: 14px;
+        box-shadow: 0 20px 60px rgba(31, 41, 55, 0.2);
         overflow: hidden;
     }
-
     .claimer-modal .modal-header {
-        background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-hover) 100%);
+        background: var(--primary-dark);
         border: none;
-        padding: 1.5rem 2rem;
+        padding: 1.2rem 1.5rem;
     }
-
     .claimer-modal .modal-title {
         color: #fff;
         font-weight: 700;
-        font-size: 1.25rem;
+        font-size: 1.1rem;
         display: flex;
         align-items: center;
         gap: 10px;
     }
-
     .claimer-modal .modal-title i {
-        font-size: 1.4rem;
-        animation: pulse 2s infinite;
+        font-size: 1.2rem;
+        color: var(--primary-green);
     }
-
-    @keyframes pulse {
-
-        0%,
-        100% {
-            transform: scale(1);
-        }
-
-        50% {
-            transform: scale(1.1);
-        }
-    }
-
     .claimer-modal .btn-close {
         filter: brightness(0) invert(1);
-        opacity: 0.9;
+        opacity: 0.8;
         transition: all 0.3s ease;
     }
-
     .claimer-modal .btn-close:hover {
         opacity: 1;
         transform: rotate(90deg);
     }
 
     .claimer-modal .modal-body {
-        padding: 2rem;
-        background: #ffffff;
+        padding: 1.5rem 2rem;
+        background: #fff;
     }
-
     .claimer-modal .form-label {
-        color: var(--text-dark);
+        color: #374151;
         font-weight: 600;
-        font-size: 0.875rem;
-        margin-bottom: 0.5rem;
-        text-transform: uppercase;
-        letter-spacing: 0.025em;
+        font-size: 0.82rem;
+        margin-bottom: 0.4rem;
         display: flex;
         align-items: center;
-        gap: 8px;
+        gap: 6px;
     }
-
     .claimer-modal .form-label i {
-        color: var(--primary-color);
-        font-size: 1rem;
+        color: var(--primary-green);
+        font-size: 0.9rem;
     }
-
     .claimer-modal .form-control {
-        background: var(--bg-light);
-        border: 2px solid var(--border-color);
+        background: #f9fafb;
+        border: 1px solid #d1d5db;
         border-radius: 10px;
-        color: var(--text-dark);
-        padding: 0.75rem 1rem;
-        font-size: 0.95rem;
-        transition: all 0.3s ease;
+        color: #1f2937;
+        padding: 0.6rem 0.9rem;
+        font-size: 0.9rem;
+        transition: all 0.2s ease;
     }
-
     .claimer-modal .form-control:focus {
-        background: #ffffff;
-        border-color: var(--primary-color);
-        box-shadow: 0 0 0 3px rgba(29, 211, 176, 0.1);
-        color: var(--text-dark);
+        background: #fff;
+        border-color: var(--primary-green);
+        box-shadow: 0 0 0 3px rgba(29, 211, 176, 0.15);
+        color: #1f2937;
         outline: none;
     }
-
     .claimer-modal .form-control::placeholder {
-        color: var(--text-muted);
+        color: #9ca3af;
     }
-
     .claimer-modal .input-icon {
         position: relative;
     }
-
-    .claimer-modal .input-icon i {
+    .claimer-modal .input-icon > i {
         position: absolute;
-        left: 1rem;
+        left: 0.9rem;
         top: 50%;
         transform: translateY(-50%);
-        color: var(--primary-color);
-        font-size: 1rem;
+        color: var(--primary-green);
+        font-size: 0.9rem;
         pointer-events: none;
         z-index: 10;
     }
-
     .claimer-modal .input-icon .form-control {
-        padding-left: 3rem;
+        padding-left: 2.8rem;
     }
 
     .claimer-modal .modal-footer {
-        background: var(--bg-light);
-        border-top: 2px solid var(--border-color);
-        padding: 1.25rem 2rem;
-        gap: 1rem;
+        background: #f9fafb;
+        border-top: 1px solid #e5e7eb;
+        padding: 1rem 1.5rem;
+        gap: 0.75rem;
         display: flex;
         justify-content: flex-end;
     }
-
     .claimer-modal .btn-cancel {
-        background: #ffffff;
-        border: 2px solid var(--border-color);
-        color: var(--text-muted);
-        padding: 0.75rem 1.75rem;
+        background: transparent;
+        border: 1px solid #d1d5db;
+        color: #6b7280;
+        padding: 0.6rem 1.4rem;
         border-radius: 10px;
         font-weight: 600;
-        transition: all 0.3s ease;
+        transition: all 0.2s ease;
     }
-
     .claimer-modal .btn-cancel:hover {
-        background: var(--bg-light);
-        border-color: var(--text-muted);
-        color: var(--text-dark);
-        transform: translateY(-1px);
+        background: #f3f4f6;
+        border-color: #9ca3af;
+        color: #374151;
     }
-
     .claimer-modal .btn-confirm {
-        background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-hover) 100%);
+        background: linear-gradient(135deg, var(--primary-green), #17b89a);
         border: none;
         color: #fff;
-        padding: 0.75rem 1.75rem;
+        padding: 0.6rem 1.4rem;
         border-radius: 10px;
         font-weight: 600;
         box-shadow: 0 4px 12px rgba(29, 211, 176, 0.25);
-        transition: all 0.3s ease;
+        transition: all 0.2s ease;
         display: flex;
         align-items: center;
-        gap: 8px;
+        gap: 6px;
     }
-
     .claimer-modal .btn-confirm:hover {
-        transform: translateY(-2px);
+        transform: translateY(-1px);
         box-shadow: 0 6px 16px rgba(29, 211, 176, 0.35);
     }
-
     .claimer-modal .btn-confirm i {
-        font-size: 1rem;
+        font-size: 0.9rem;
     }
 
     .text-danger {
-        color: var(--danger-color) !important;
+        color: #ef4444 !important;
     }
 
     /* Accent divider for form groups */
     .claimer-modal .mb-4 {
         position: relative;
-        padding-bottom: 1.5rem;
+        padding-bottom: 1.25rem;
     }
-
     .claimer-modal .mb-4::after {
         content: '';
         position: absolute;
         left: 0;
         bottom: 0;
-        width: 40px;
+        width: 36px;
         height: 2px;
-        background: linear-gradient(90deg, var(--primary-color), transparent);
+        background: linear-gradient(90deg, var(--primary-green), transparent);
         border-radius: 2px;
     }
-
     .claimer-modal .mb-4:last-child::after {
         display: none;
     }
-
     .claimer-modal .mb-4:last-child {
         padding-bottom: 0;
     }
 
-    /* Page Header */
-    .page-header {
-        margin-bottom: 2rem;
+    /* ===== Responsive ===== */
+    @media (max-width: 991px) {
+        .kanban-column {
+            height: auto;
+            min-height: 300px;
+            max-height: 500px;
+        }
     }
-
-    .page-badge {
-        background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-hover) 100%);
-        color: white;
-        padding: 0.75rem 2rem;
-        border-radius: 12px;
-        font-size: 1.75rem;
-        font-weight: 700;
-        box-shadow: 0 4px 12px rgba(29, 211, 176, 0.25);
-        display: inline-flex;
-        align-items: center;
-        gap: 0.75rem;
+    @media (max-width: 767px) {
+        .page-header-bulk {
+            flex-direction: column;
+            align-items: flex-start;
+            padding: 1.2rem 1.25rem;
+        }
+        .page-header-bulk h1 {
+            font-size: 1.15rem;
+        }
+        .col-md-3 {
+            margin-bottom: 1rem;
+        }
     }
-
-    .breadcrumb {
-        background: transparent;
-        margin-bottom: 0;
-        padding: 0.5rem 0;
-    }
-
-    .breadcrumb-item a {
-        color: var(--text-dark);
-        text-decoration: none;
-        font-weight: 500;
-        transition: color 0.2s ease;
-    }
-
-    .breadcrumb-item a:hover {
-        color: var(--primary-color);
-    }
-
-    .breadcrumb-item.active {
-        color: var(--text-muted);
+    @media (max-width: 575px) {
+        .page-header-bulk {
+            padding: 1rem;
+            border-radius: 10px;
+        }
     }
 </style>
 @endpush
@@ -475,26 +441,16 @@
 @section('content')
 @include('layout.partials.message')
 
-{{-- Header Section --}}
-<div class="page-header">
-    <div class="row g-2">
-        <div class="col-md-12">
-            <h1 class="mt-4 mb-3">
-                <span class="page-badge">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path>
-                        <circle cx="9" cy="7" r="4"></circle>
-                        <path d="M22 21v-2a4 4 0 0 0-3-3.87"></path>
-                        <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
-                    </svg>
-                    Bulk Requests
-                </span>
-            </h1>
-            <ol class="breadcrumb">
-                <li class="breadcrumb-item"><a href="{{ route('bulk_request.index') }}">Dashboard</a></li>
-                <li class="breadcrumb-item active">Bulk Requests</li>
-            </ol>
-        </div>
+<div class="container-fluid px-4 py-4">
+
+{{-- Page Header --}}
+<div class="page-header-bulk">
+    <div>
+        <h1><i class="fas fa-layer-group me-2"></i>Bulk Requests</h1>
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{{ route('bulk_request.index') }}">Dashboard</a></li>
+            <li class="breadcrumb-item active">Bulk Requests</li>
+        </ol>
     </div>
 </div>
 
@@ -514,9 +470,7 @@
                 @php $hasPending = true; @endphp
                 <div class="request-card">
                     <div class="request-card-title">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
-                        </svg>
+                        <i class="fas fa-school"></i>
                         {{ $req->School_Name }}
                     </div>
                     <div class="request-card-subtitle">School Name</div>
@@ -526,12 +480,7 @@
                     </div>
 
                     <button type="button" class="btn-view-students" data-bs-toggle="modal" data-bs-target="#modal-{{ $req->Request_ID }}">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
-                            <circle cx="9" cy="7" r="4"></circle>
-                            <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
-                            <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
-                        </svg>
+                        <i class="fas fa-users"></i>
                         {{ $req->students_count }} Students
                     </button>
 
@@ -539,9 +488,7 @@
                         @csrf
                         @method('PUT')
                         <button type="submit" class="btn-move">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <polyline points="9 18 15 12 9 6"></polyline>
-                            </svg>
+                            <i class="fas fa-chevron-right"></i>
                             Move to Processing
                         </button>
                     </form>
@@ -552,11 +499,7 @@
 
                 @if(!$hasPending)
                 <div class="empty-state">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <circle cx="12" cy="12" r="10"></circle>
-                        <line x1="12" y1="8" x2="12" y2="12"></line>
-                        <line x1="12" y1="16" x2="12.01" y2="16"></line>
-                    </svg>
+                    <i class="fas fa-inbox"></i>
                     <p>No pending requests</p>
                 </div>
                 @endif
@@ -578,9 +521,7 @@
                 @php $hasProcessing = true; @endphp
                 <div class="request-card">
                     <div class="request-card-title">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
-                        </svg>
+                        <i class="fas fa-school"></i>
                         {{ $req->School_Name }}
                     </div>
                     <div class="request-card-subtitle">School Name</div>
@@ -590,12 +531,7 @@
                     </div>
 
                     <button type="button" class="btn-view-students" data-bs-toggle="modal" data-bs-target="#modal-{{ $req->Request_ID }}">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
-                            <circle cx="9" cy="7" r="4"></circle>
-                            <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
-                            <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
-                        </svg>
+                        <i class="fas fa-users"></i>
                         {{ $req->students_count }} Students
                     </button>
 
@@ -603,9 +539,7 @@
                         @csrf
                         @method('PUT')
                         <button type="submit" class="btn-move">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <polyline points="9 18 15 12 9 6"></polyline>
-                            </svg>
+                            <i class="fas fa-chevron-right"></i>
                             Move to For Release
                         </button>
                     </form>
@@ -616,11 +550,7 @@
 
                 @if(!$hasProcessing)
                 <div class="empty-state">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <circle cx="12" cy="12" r="10"></circle>
-                        <line x1="12" y1="8" x2="12" y2="12"></line>
-                        <line x1="12" y1="16" x2="12.01" y2="16"></line>
-                    </svg>
+                    <i class="fas fa-cogs"></i>
                     <p>No processing requests</p>
                 </div>
                 @endif
@@ -643,9 +573,7 @@
                 @php $hasForRelease = true; @endphp
                 <div class="request-card">
                     <div class="request-card-title">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
-                        </svg>
+                        <i class="fas fa-school"></i>
                         {{ $req->School_Name }}
                     </div>
                     <div class="request-card-subtitle">School Name</div>
@@ -655,19 +583,12 @@
                     </div>
 
                     <button type="button" class="btn-view-students" data-bs-toggle="modal" data-bs-target="#modal-{{ $req->Request_ID }}">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
-                            <circle cx="9" cy="7" r="4"></circle>
-                            <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
-                            <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
-                        </svg>
+                        <i class="fas fa-users"></i>
                         {{ $req->students_count }} Students
                     </button>
 
                     <button type="button" class="btn-move" data-bs-toggle="modal" data-bs-target="#claimerModal-{{ $req->Request_ID }}">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <polyline points="20 6 9 17 4 12"></polyline>
-                        </svg>
+                        <i class="fas fa-check"></i>
                         Move to Claimed
                     </button>
                 </div>
@@ -759,11 +680,7 @@
 
                 @if(!$hasForRelease)
                 <div class="empty-state">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <circle cx="12" cy="12" r="10"></circle>
-                        <line x1="12" y1="8" x2="12" y2="12"></line>
-                        <line x1="12" y1="16" x2="12.01" y2="16"></line>
-                    </svg>
+                    <i class="fas fa-box-open"></i>
                     <p>No requests for release</p>
                 </div>
                 @endif
@@ -828,11 +745,7 @@
 
                 @if(!$hasClaimed)
                 <div class="empty-state">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <circle cx="12" cy="12" r="10"></circle>
-                        <line x1="12" y1="8" x2="12" y2="12"></line>
-                        <line x1="12" y1="16" x2="12.01" y2="16"></line>
-                    </svg>
+                    <i class="fas fa-check-circle"></i>
                     <p>No claimed requests</p>
                 </div>
                 @endif
@@ -840,6 +753,7 @@
         </div>
     </div>
 </div>
+</div> {{-- close container-fluid --}}
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {

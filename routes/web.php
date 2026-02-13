@@ -100,12 +100,16 @@ Route::group(['middleware' => 'useradmin'], function () {
         Route::prefix('ongoing')->group(function() {
             Route::put('/completeRequest/{id}', [OngoingController::class, 'completeRequest'])
                 ->name('document-request2.complete');
+            Route::put('/revert/{id}', [OngoingController::class, 'revertToPending'])
+                ->name('ongoing.revert');
         });
 
         //For release Management
         Route::prefix('tables')->group(function() {
             Route::put('/completeRequest/{id}', [DocumentRequestController::class, 'completeRequest'])
                 ->name('document-request3.complete');
+            Route::put('/tables/revert/{id}', [DocumentRequestController::class, 'revertToProcessing'])
+                ->name('tables.revert');
         });
 
         //Claimed Management
