@@ -9,8 +9,7 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-
-    name: Build and Test
+    name: Build Application
 
     steps:
       - name: Checkout code
@@ -27,8 +26,6 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: "20"
-          cache: "npm"
-          cache-dependency-path: ODRMS220/package-lock.json
 
       - name: Copy .env
         run: |
@@ -49,15 +46,67 @@ jobs:
 
       - name: Install npm dependencies
         working-directory: ./ODRMS220
-        run: npm ci
+        run: npm install
 
       - name: Build frontend assets
         working-directory: ./ODRMS220
         run: npm run build
 
+  code-quality:
+    runs-on: ubuntu-latest
+    name: Code Quality Checks
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: "8.2"
+          extensions: mbstring, xml, ctype, iconv, intl, pdo_mysql, dom, filter, gd, json, zip
+          coverage: none
+
+      - name: Install Composer dependencies
+        working-directory: ./ODRMS220
+        run: composer install --prefer-dist --no-progress --no-interaction
+
       - name: Run Laravel Pint (Code Style)
         working-directory: ./ODRMS220
         run: ./vendor/bin/pint --test
+
+  test:
+    runs-on: ubuntu-latest
+    name: Run Tests
+    needs: build
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: "8.2"
+          extensions: mbstring, xml, ctype, iconv, intl, pdo_mysql, dom, filter, gd, json, zip
+          coverage: none
+
+      - name: Copy .env
+        run: |
+          cd ODRMS220
+          php -r "file_exists('.env') || copy('.env.example', '.env');"
+
+      - name: Install Composer dependencies
+        working-directory: ./ODRMS220
+        run: composer install --prefer-dist --no-progress --no-interaction
+
+      - name: Generate application key
+        working-directory: ./ODRMS220
+        run: php artisan key:generate
+
+      - name: Directory Permissions
+        working-directory: ./ODRMS220
+        run: chmod -R 777 storage bootstrap/cache
 
       - name: Create Database
         working-directory: ./ODRMS220
