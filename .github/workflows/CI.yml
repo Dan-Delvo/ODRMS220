@@ -1,0 +1,80 @@
+name: Continuous Integration Capstone
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    name: Build and Test
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: "8.2"
+          extensions: mbstring, xml, ctype, iconv, intl, pdo_mysql, dom, filter, gd, json, zip
+          coverage: none
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+          cache-dependency-path: ODRMS220/package-lock.json
+
+      - name: Copy .env
+        run: |
+          cd ODRMS220
+          php -r "file_exists('.env') || copy('.env.example', '.env');"
+
+      - name: Install Composer dependencies
+        working-directory: ./ODRMS220
+        run: composer install --prefer-dist --no-progress --no-interaction
+
+      - name: Generate application key
+        working-directory: ./ODRMS220
+        run: php artisan key:generate
+
+      - name: Directory Permissions
+        working-directory: ./ODRMS220
+        run: chmod -R 777 storage bootstrap/cache
+
+      - name: Install npm dependencies
+        working-directory: ./ODRMS220
+        run: npm ci
+
+      - name: Build frontend assets
+        working-directory: ./ODRMS220
+        run: npm run build
+
+      - name: Run Laravel Pint (Code Style)
+        working-directory: ./ODRMS220
+        run: ./vendor/bin/pint --test
+
+      - name: Create Database
+        working-directory: ./ODRMS220
+        run: |
+          mkdir -p database
+          touch database/database.sqlite
+
+      - name: Run migrations
+        working-directory: ./ODRMS220
+        env:
+          DB_CONNECTION: sqlite
+          DB_DATABASE: database/database.sqlite
+        run: php artisan migrate --force
+
+      - name: Execute tests (Unit and Feature)
+        working-directory: ./ODRMS220
+        env:
+          DB_CONNECTION: sqlite
+          DB_DATABASE: database/database.sqlite
+        run: php artisan test
