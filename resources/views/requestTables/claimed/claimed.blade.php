@@ -1058,13 +1058,13 @@
     }
 
     .btn-action-revert {
-        background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
-        color: #1f2937;
+        background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+        color: white;
     }
 
     .btn-action-revert:hover {
-        box-shadow: 0 4px 12px rgba(251, 191, 36, 0.4);
-        color: #1f2937;
+        box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
+        color: white;
     }
 
     .btn-action-edit {

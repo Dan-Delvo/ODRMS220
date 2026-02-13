@@ -849,42 +849,55 @@
         align-items: center;
         gap: 0.5rem;
     }
-    .header-controls .form-control,
-    .header-controls .form-select {
+
+    .header-controls .search-input-group {
+        width: 200px;
+        min-width: 120px;
+    }
+
+    .header-controls .search-input-group .form-control {
         background: rgba(255, 255, 255, 0.1);
-        border: 1px solid rgba(255, 255, 255, 0.15);
+        border: 1px solid rgba(255, 255, 255, 0.2);
         color: white;
         font-size: 0.85rem;
-        border-radius: 8px;
     }
-    .header-controls .form-control::placeholder {
+
+    .header-controls .search-input-group .form-control::placeholder {
         color: rgba(255, 255, 255, 0.5);
     }
-    .header-controls .form-control:focus,
-    .header-controls .form-select:focus {
+
+    .header-controls .search-input-group .form-control:focus {
         background: rgba(255, 255, 255, 0.15);
         border-color: var(--primary-green);
         box-shadow: 0 0 0 0.2rem rgba(29, 211, 176, 0.25);
         color: white;
     }
-    .header-controls .form-select option {
+
+    .header-controls .filter-select,
+    .header-controls .sort-select {
+        background: rgba(255, 255, 255, 0.1);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        color: white;
+        font-size: 0.85rem;
+        min-width: 90px;
+        max-width: 120px;
+    }
+
+    .header-controls .filter-select option,
+    .header-controls .sort-select option {
         background: var(--primary-dark);
         color: white;
+    }
+
+    .header-controls .filter-select:focus,
+    .header-controls .sort-select:focus {
+        border-color: var(--primary-green);
+        box-shadow: 0 0 0 0.2rem rgba(29, 211, 176, 0.25);
     }
 
     /* ===== CARD BODY ===== */
     .declined-card-body {
         padding: 1.5rem;
-    }
-
-    /* ===== SEARCH CONTROLS ===== */
-    .search-input-group {
-        min-width: 200px;
-        max-width: 300px;
-    }
-    .filter-select, .sort-select {
-        min-width: 80px;
-        max-width: 120px;
     }
 
     /* ===== RESET BUTTON ===== */
@@ -1148,31 +1161,75 @@
 
     /* ===== RESPONSIVE ===== */
     @media (max-width: 991px) {
-        .declined-card-header {
-            flex-direction: column;
-            align-items: stretch;
-        }
         .header-controls {
-            flex-direction: column;
+            width: 100%;
+            justify-content: flex-start;
         }
-        .search-input-group {
-            max-width: 100%;
-        }
-        .header-controls .form-select {
-            max-width: 100%;
+
+        .header-controls .search-input-group {
+            width: 200px;
+            flex: 1 1 auto;
         }
     }
     @media (max-width: 767px) {
         .page-header-declined {
+            flex-direction: column;
+            align-items: flex-start;
             padding: 1.25rem;
             border-radius: 12px;
+        }
+
+        .page-header-declined h1 {
+            font-size: 1.35rem;
+        }
+
+        .total-counter {
+            font-size: 0.85rem;
+            padding: 0.4rem 1rem;
+        }
+
+        .total-counter span {
+            font-size: 1.1rem;
+        }
+
+        .declined-card {
+            border-radius: 12px;
+        }
+
+        .declined-card-header {
+            padding: 0.875rem 1rem;
             flex-direction: column;
             align-items: flex-start;
         }
-        .page-header-declined h1 { font-size: 1.35rem; }
-        .declined-card { border-radius: 12px; }
-        .declined-card-header { padding: 0.875rem 1rem; }
-        .declined-card-body { padding: 1rem; }
+
+        .header-controls {
+            width: 100%;
+            flex-wrap: wrap;
+        }
+
+        .header-controls .search-input-group {
+            width: 100%;
+            flex: 1 1 100%;
+        }
+
+        .header-controls .filter-select,
+        .header-controls .sort-select {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .declined-card-body {
+            padding: 1rem;
+        }
+
+        .table-declined {
+            font-size: 0.8rem;
+        }
+
+        .table-declined thead th {
+            font-size: 0.725rem;
+            padding: 0.6rem 0.5rem;
+        }
     }
     @media (max-width: 575px) {
         .page-header-declined h1 { font-size: 1.15rem; }

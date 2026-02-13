@@ -30,7 +30,7 @@
         <div class="ongoing-card-header">
             <div class="header-left">
                 <span class="header-icon"><i class="fas fa-tasks"></i></span>
-                <h5>Processing Queue</h5>
+                <h5>Request Queue</h5>
             </div>
             <div class="header-controls" id="tableControls">
                 <div class="input-group search-input-group">
