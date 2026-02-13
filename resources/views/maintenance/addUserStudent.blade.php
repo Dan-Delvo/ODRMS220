@@ -3,14 +3,27 @@
 @section('content')
 
 @include('layout.partials.message')
-<!-- Main Content Wrapper -->
-<div class="row justify-content-center">
-    <div class="col-lg-10">
-        <div class="card shadow-lg border-0 rounded-lg mt-5" style="min-height: 400px;">
-            <div class="card-header text-white" style="background-color: #1f2937;">
-                <h3 class="text-center font-weight-light my-4">Create Account</h3>
+
+<div class="container-fluid px-4 py-4">
+    <!-- Page Header -->
+    <div class="page-header-add">
+        <h1>Create Account</h1>
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">Dashboard</a></li>
+            <li class="breadcrumb-item"><a href="{{ url('users') }}">Users List</a></li>
+            <li class="breadcrumb-item active">Create Account</li>
+        </ol>
+    </div>
+
+    <!-- Add User Card -->
+    <div class="add-card">
+        <div class="add-card-header">
+            <div class="header-left">
+                <span class="header-icon"><i class="fas fa-user-plus"></i></span>
+                <h5>Create Account</h5>
             </div>
-            <div class="card-body bg-light">
+        </div>
+        <div class="add-card-body">
 
                 <form action="{{ route('account.otp') }}" method="POST"
                     data-swal-loading="true"
@@ -222,23 +235,176 @@
                     </div>
 
                     <!-- ================= ACTION BUTTONS ================= -->
-                    <div class="d-flex justify-content-between">
-                        <button class="btn text-white fw-semibold px-4" style="background-color: #1dd3b0;" type="submit">
-                            Submit
+                    <div class="d-flex justify-content-between flex-wrap gap-2 mt-2">
+                        <button class="btn btn-submit-add" type="submit">
+                            <i class="fas fa-paper-plane me-1"></i> Submit
                         </button>
-                        <a href="{{ url('panel/user') }}" class="btn text-white fw-semibold px-4" style="background-color: #1f2937;">
-                            Back
+                        <a href="{{ url('panel/user') }}" class="btn btn-back-add">
+                            <i class="fas fa-arrow-left me-1"></i> Back
                         </a>
                     </div>
                 </form>
 
-            </div>
         </div>
     </div>
 </div>
 
-<!-- Optional styles to show disabled fields clearly -->
 <style>
+    :root {
+        --primary-green: #1dd3b0;
+        --primary-dark: #1f2937;
+        --card-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        --card-hover-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+    }
+
+    .page-header-add {
+        background: var(--primary-dark);
+        border-radius: 16px;
+        padding: 1.75rem 2rem;
+        margin-bottom: 1.5rem;
+        box-shadow: var(--card-shadow);
+    }
+
+    .page-header-add h1 {
+        font-size: 1.75rem;
+        font-weight: 700;
+        color: white;
+        margin: 0;
+    }
+
+    .page-header-add .breadcrumb {
+        margin: 0.25rem 0 0 0;
+        background: transparent;
+        padding: 0;
+    }
+
+    .page-header-add .breadcrumb-item a {
+        color: #1dd3b0;
+        text-decoration: none;
+    }
+
+    .page-header-add .breadcrumb-item.active {
+        color: #d1d5db;
+    }
+
+    .add-card {
+        background: white;
+        border-radius: 16px;
+        border: none;
+        box-shadow: var(--card-shadow);
+        transition: all 0.3s ease;
+        overflow: hidden;
+    }
+
+    .add-card:hover {
+        box-shadow: var(--card-hover-shadow);
+    }
+
+    .add-card-header {
+        background: var(--primary-dark);
+        padding: 1rem 1.5rem;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 0.75rem;
+    }
+
+    .add-card-header .header-left {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+    }
+
+    .add-card-header .header-icon {
+        width: 32px;
+        height: 32px;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: linear-gradient(135deg, #1dd3b0 0%, #17a98b 100%);
+        color: white;
+        font-size: 0.875rem;
+        flex-shrink: 0;
+    }
+
+    .add-card-header h5 {
+        font-size: 1rem;
+        font-weight: 600;
+        color: white;
+        margin: 0;
+    }
+
+    .add-card-body {
+        padding: 1.5rem;
+    }
+
+    .add-card-body h4 {
+        font-size: 1rem;
+        font-weight: 700;
+        color: var(--primary-dark);
+        text-transform: uppercase;
+        letter-spacing: 0.03em;
+        padding-bottom: 0.5rem;
+        border-bottom: 2px solid rgba(29, 211, 176, 0.3);
+    }
+
+    .add-card-body .form-floating > .form-control,
+    .add-card-body .form-floating > .form-select {
+        border-radius: 10px;
+        border: 1px solid #e2e8f0;
+        font-size: 0.875rem;
+        transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    .add-card-body .form-floating > .form-control:focus,
+    .add-card-body .form-floating > .form-select:focus {
+        border-color: var(--primary-green);
+        box-shadow: 0 0 0 3px rgba(29, 211, 176, 0.15);
+    }
+
+    .btn-submit-add {
+        background: linear-gradient(135deg, #1dd3b0 0%, #17a98b 100%);
+        border: none;
+        border-radius: 10px;
+        padding: 0.6rem 2rem;
+        font-size: 0.9rem;
+        font-weight: 600;
+        color: white;
+        transition: all 0.2s;
+    }
+
+    .btn-submit-add:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(29, 211, 176, 0.4);
+        color: white;
+    }
+
+    .btn-back-add {
+        background: var(--primary-dark);
+        border: none;
+        border-radius: 10px;
+        padding: 0.6rem 2rem;
+        font-size: 0.9rem;
+        font-weight: 600;
+        color: white;
+        transition: all 0.2s;
+    }
+
+    .btn-back-add:hover {
+        background: #374151;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(31, 41, 55, 0.3);
+        color: white;
+    }
+
+    .alert {
+        border-radius: 12px;
+        border: none;
+        font-size: 0.875rem;
+    }
+
     input:disabled,
     select:disabled {
         background-color: #e9ecef !important;
@@ -252,6 +418,118 @@
 
     .field-hidden {
         display: none !important;
+    }
+
+    /* ===== Tablet ===== */
+    @media (max-width: 991px) {
+        .container-fluid.px-4 {
+            padding-left: 1rem !important;
+            padding-right: 1rem !important;
+        }
+    }
+
+    /* ===== Mobile ===== */
+    @media (max-width: 767px) {
+        .container-fluid.px-4 {
+            padding-left: 0.75rem !important;
+            padding-right: 0.75rem !important;
+            padding-top: 1rem !important;
+        }
+
+        .page-header-add {
+            padding: 1.25rem;
+            border-radius: 12px;
+        }
+
+        .page-header-add h1 {
+            font-size: 1.35rem;
+        }
+
+        .add-card {
+            border-radius: 12px;
+        }
+
+        .add-card-header {
+            padding: 0.875rem 1.25rem;
+        }
+
+        .add-card-body {
+            padding: 1rem;
+        }
+
+        .add-card-body h4 {
+            font-size: 0.9rem;
+        }
+
+        .add-card-body .form-floating > .form-control,
+        .add-card-body .form-floating > .form-select {
+            font-size: 0.8rem;
+        }
+
+        .btn-submit-add,
+        .btn-back-add {
+            font-size: 0.85rem;
+            padding: 0.5rem 1.5rem;
+        }
+    }
+
+    /* ===== Small Mobile ===== */
+    @media (max-width: 575px) {
+        .container-fluid.px-4 {
+            padding-left: 0.5rem !important;
+            padding-right: 0.5rem !important;
+        }
+
+        .page-header-add {
+            padding: 1rem;
+            border-radius: 10px;
+            margin-bottom: 1rem;
+        }
+
+        .page-header-add h1 {
+            font-size: 1.15rem;
+        }
+
+        .page-header-add .breadcrumb {
+            font-size: 0.75rem;
+        }
+
+        .add-card-header {
+            padding: 0.75rem 1rem;
+            flex-direction: column;
+            align-items: stretch;
+            gap: 0.5rem;
+        }
+
+        .add-card-header .header-left {
+            justify-content: center;
+        }
+
+        .add-card-header h5 {
+            font-size: 0.875rem;
+        }
+
+        .add-card-body {
+            padding: 0.875rem;
+        }
+
+        .add-card-body h4 {
+            font-size: 0.85rem;
+        }
+
+        /* Stack form columns */
+        .add-card-body .row > [class*="col-md"] {
+            flex: 0 0 100%;
+            max-width: 100%;
+        }
+
+        .btn-submit-add,
+        .btn-back-add {
+            flex: 1;
+            text-align: center;
+            font-size: 0.8rem;
+            padding: 0.5rem 1rem;
+        }
     }
 </style>
 
