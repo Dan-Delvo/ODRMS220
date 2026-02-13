@@ -191,66 +191,6 @@
         position: relative;
     }
 
-    .ai-card {
-        background: white;
-        border-radius: 16px;
-        border: none;
-        box-shadow: var(--card-shadow);
-        transition: all 0.3s ease;
-        overflow: hidden;
-    }
-
-    .ai-card:hover {
-        box-shadow: var(--card-hover-shadow);
-        transform: translateY(-2px);
-    }
-
-    .ai-card-header {
-        background: #1f2937;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 1.25rem 1.5rem;
-        flex-wrap: wrap;
-        gap: 0.75rem;
-    }
-
-    .ai-card-header h5 {
-        font-size: 1.1rem;
-        font-weight: 700;
-        margin: 0;
-        color: white;
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-    }
-
-    .ai-card-header .ai-icon {
-        width: 32px;
-        height: 32px;
-        border-radius: 8px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        background: var(--primary-gradient);
-        color: white;
-        font-size: 0.875rem;
-        flex-shrink: 0;
-    }
-
-    .ai-card-date {
-        font-size: 0.775rem;
-        color: #d1d5db;
-        background: rgba(255, 255, 255, 0.1);
-        padding: 0.3rem 0.75rem;
-        border-radius: 20px;
-        white-space: nowrap;
-    }
-
-    .ai-card-body {
-        padding: 1.5rem;
-    }
-
     .ai-sections-grid {
         display: grid;
         grid-template-columns: 1fr;
@@ -311,6 +251,11 @@
         text-align: center;
         padding: 3rem 1rem;
         color: #6b7280;
+        min-height: 300px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
     }
 
     .ai-loading .spinner {
@@ -347,6 +292,349 @@
         font-size: 0.875rem;
     }
 
+    /* Floating AI Button */
+    .ai-floating-btn {
+        position: fixed;
+        bottom: 30px;
+        right: 30px;
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        background: var(--primary-gradient);
+        border: none;
+        box-shadow: 0 4px 20px rgba(29, 211, 176, 0.4);
+        cursor: pointer;
+        z-index: 1000;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.3s ease;
+        animation: pulse-glow 2s infinite;
+    }
+
+    .ai-floating-btn:hover {
+        transform: scale(1.1);
+        box-shadow: 0 6px 30px rgba(29, 211, 176, 0.6);
+    }
+
+    .ai-floating-btn .btn-icon {
+        font-size: 1.5rem;
+    }
+
+    .ai-floating-btn .btn-tooltip {
+        position: absolute;
+        right: 70px;
+        background: #1f2937;
+        color: white;
+        padding: 8px 12px;
+        border-radius: 8px;
+        font-size: 0.8rem;
+        font-weight: 500;
+        white-space: nowrap;
+        opacity: 0;
+        visibility: hidden;
+        transition: all 0.3s ease;
+    }
+
+    .ai-floating-btn:hover .btn-tooltip {
+        opacity: 1;
+        visibility: visible;
+    }
+
+    @keyframes pulse-glow {
+        0%, 100% { box-shadow: 0 4px 20px rgba(29, 211, 176, 0.4); }
+        50% { box-shadow: 0 4px 30px rgba(29, 211, 176, 0.7); }
+    }
+
+    /* AI Modal */
+    .ai-modal-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.6);
+        backdrop-filter: blur(8px);
+        z-index: 1001;
+        opacity: 0;
+        visibility: hidden;
+        transition: all 0.3s ease;
+    }
+
+    .ai-modal-overlay.active {
+        opacity: 1;
+        visibility: visible;
+    }
+
+    .ai-modal {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%) scale(0.9);
+        width: 95%;
+        max-width: 950px;
+        height: 80vh;
+        max-height: 650px;
+        background: #f8fafc;
+        border-radius: 24px;
+        box-shadow: 0 25px 80px rgba(0, 0, 0, 0.35);
+        z-index: 1002;
+        opacity: 0;
+        visibility: hidden;
+        transition: all 0.3s ease;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .ai-modal.active {
+        opacity: 1;
+        visibility: visible;
+        transform: translate(-50%, -50%) scale(1);
+    }
+
+    .ai-modal-header {
+        background: linear-gradient(135deg, #1f2937 0%, #374151 100%);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 1rem 1.5rem;
+        flex-shrink: 0;
+    }
+
+    .ai-modal-header h5 {
+        font-size: 1.1rem;
+        font-weight: 700;
+        margin: 0;
+        color: white;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+    }
+
+    .ai-modal-header .ai-icon {
+        width: 36px;
+        height: 36px;
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: var(--primary-gradient);
+        color: white;
+        font-size: 1rem;
+    }
+
+    .ai-modal-close {
+        background: rgba(255, 255, 255, 0.1);
+        border: none;
+        color: white;
+        width: 38px;
+        height: 38px;
+        border-radius: 10px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem;
+        transition: all 0.2s ease;
+    }
+
+    .ai-modal-close:hover {
+        background: rgba(255, 255, 255, 0.2);
+        transform: scale(1.05);
+    }
+
+    .ai-modal-content {
+        display: flex;
+        flex: 1;
+        overflow: hidden;
+    }
+
+    /* Sidebar Tabs */
+    .ai-modal-sidebar {
+        width: 200px;
+        background: white;
+        border-right: 1px solid #e2e8f0;
+        padding: 1rem 0;
+        flex-shrink: 0;
+        overflow-y: auto;
+    }
+
+    .ai-tab-btn {
+        width: 100%;
+        padding: 0.875rem 1.25rem;
+        border: none;
+        background: transparent;
+        text-align: left;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        font-size: 0.875rem;
+        font-weight: 500;
+        color: #64748b;
+        transition: all 0.2s ease;
+        position: relative;
+    }
+
+    .ai-tab-btn:hover {
+        background: #f1f5f9;
+        color: #1f2937;
+    }
+
+    .ai-tab-btn.active {
+        background: linear-gradient(90deg, #f0fdf9 0%, transparent 100%);
+        color: #1dd3b0;
+        font-weight: 600;
+    }
+
+    .ai-tab-btn.active::before {
+        content: '';
+        position: absolute;
+        left: 0;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 4px;
+        height: 60%;
+        background: var(--primary-gradient);
+        border-radius: 0 4px 4px 0;
+    }
+
+    .ai-tab-btn .tab-icon {
+        font-size: 1.1rem;
+        width: 24px;
+        text-align: center;
+    }
+
+    /* Tab Content */
+    .ai-modal-body {
+        flex: 1;
+        padding: 0;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .ai-tab-content {
+        display: none;
+        padding: 1.5rem;
+        height: 100%;
+        overflow-y: auto;
+        animation: fadeIn 0.3s ease;
+    }
+
+    .ai-tab-content.active {
+        display: block;
+    }
+
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(10px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    .ai-content-card {
+        background: white;
+        border-radius: 16px;
+        padding: 1.5rem;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+        height: 100%;
+        overflow-y: auto;
+    }
+
+    .ai-content-header {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        margin-bottom: 1.25rem;
+        padding-bottom: 1rem;
+        border-bottom: 2px solid #e2e8f0;
+    }
+
+    .ai-content-header .content-icon {
+        width: 40px;
+        height: 40px;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: var(--primary-gradient);
+        font-size: 1.25rem;
+    }
+
+    .ai-content-header h4 {
+        margin: 0;
+        font-size: 1.1rem;
+        font-weight: 700;
+        color: #1f2937;
+    }
+
+    .ai-content-text {
+        font-size: 0.925rem;
+        color: #475569;
+        line-height: 1.9;
+        white-space: pre-line;
+    }
+
+    .ai-modal-date {
+        font-size: 0.75rem;
+        color: #9ca3af;
+        background: rgba(255, 255, 255, 0.15);
+        padding: 0.35rem 0.85rem;
+        border-radius: 20px;
+        white-space: nowrap;
+    }
+
+    /* Mobile responsive */
+    @media (max-width: 768px) {
+        .ai-modal {
+            width: 100%;
+            height: 100%;
+            max-height: 100%;
+            border-radius: 0;
+        }
+
+        .ai-modal-content {
+            flex-direction: column;
+        }
+
+        .ai-modal-sidebar {
+            width: 100%;
+            border-right: none;
+            border-bottom: 1px solid #e2e8f0;
+            padding: 0.5rem;
+            display: flex;
+            overflow-x: auto;
+            overflow-y: hidden;
+            flex-shrink: 0;
+        }
+
+        .ai-tab-btn {
+            padding: 0.75rem 1rem;
+            flex-direction: column;
+            gap: 0.25rem;
+            min-width: max-content;
+            font-size: 0.75rem;
+        }
+
+        .ai-tab-btn.active::before {
+            display: none;
+        }
+
+        .ai-tab-btn.active {
+            background: var(--primary-gradient);
+            color: white;
+            border-radius: 8px;
+        }
+
+        .ai-tab-content {
+            padding: 1rem;
+        }
+
+        .ai-content-card {
+            padding: 1rem;
+        }
+    }
+
     /* Top row: overview full width. Next 2x2 grid for the rest */
     @media (min-width: 768px) {
         .ai-sections-grid {
@@ -359,13 +647,12 @@
     }
 
     @media (max-width: 767px) {
-        .ai-card-header {
+        .ai-modal-header {
             padding: 1rem;
-            flex-direction: column;
-            align-items: flex-start;
+            flex-direction: row;
         }
 
-        .ai-card-body {
+        .ai-modal-body {
             padding: 1rem;
         }
 
@@ -376,6 +663,17 @@
         .ai-section p {
             font-size: 0.8rem;
             line-height: 1.7;
+        }
+
+        .ai-floating-btn {
+            bottom: 20px;
+            right: 20px;
+            width: 55px;
+            height: 55px;
+        }
+
+        .ai-floating-btn .btn-tooltip {
+            display: none;
         }
     }
 
@@ -399,27 +697,6 @@
             <li class="breadcrumb-item"><a href="{{ url('/dashboard')}}">Dashboard</a></li>
             <li class="breadcrumb-item active text-white">Analytics</li>
         </ol>
-    </div>
-
-    <!-- AI Analytics Card -->
-    <div class="row mb-4">
-        <div class="col-12">
-            <div class="ai-card" id="aiAnalyticsCard">
-                <div class="ai-card-header">
-                    <h5>
-                        <span class="ai-icon">🤖</span>
-                        AI Analytics Insights
-                    </h5>
-                    <span class="ai-card-date" id="aiGeneratedDate">Loading...</span>
-                </div>
-                <div class="ai-card-body" id="aiContent">
-                    <div class="ai-loading">
-                        <div class="spinner"></div>
-                        <p>Generating AI insights...</p>
-                    </div>
-                </div>
-            </div>
-        </div>
     </div>
 
     <!-- Main Chart - Full Width -->
@@ -578,6 +855,60 @@
     </div>
 </div>
 
+<!-- Floating AI Button -->
+<button class="ai-floating-btn" id="aiFloatingBtn" title="AI Insights">
+    <span class="btn-icon">🤖</span>
+    <span class="btn-tooltip">AI Analytics Insights</span>
+</button>
+
+<!-- AI Modal Overlay -->
+<div class="ai-modal-overlay" id="aiModalOverlay"></div>
+
+<!-- AI Modal -->
+<div class="ai-modal" id="aiModal">
+    <div class="ai-modal-header">
+        <h5>
+            <span class="ai-icon">🤖</span>
+            AI Analytics Insights
+        </h5>
+        <div style="display: flex; align-items: center; gap: 1rem;">
+            <span class="ai-modal-date" id="aiGeneratedDate">Click to generate</span>
+            <button class="ai-modal-close" id="aiModalClose">&times;</button>
+        </div>
+    </div>
+    <div class="ai-modal-content">
+        <!-- Sidebar Tabs -->
+        <div class="ai-modal-sidebar" id="aiSidebar">
+            <button class="ai-tab-btn active" data-tab="overview">
+                <span class="tab-icon">📋</span>
+                <span>Overview</span>
+            </button>
+            <button class="ai-tab-btn" data-tab="busiestMonths">
+                <span class="tab-icon">📅</span>
+                <span>Busiest Months</span>
+            </button>
+            <button class="ai-tab-btn" data-tab="trends">
+                <span class="tab-icon">📈</span>
+                <span>Trends</span>
+            </button>
+            <button class="ai-tab-btn" data-tab="forecast">
+                <span class="tab-icon">🔮</span>
+                <span>Forecast</span>
+            </button>
+            <button class="ai-tab-btn" data-tab="processAndOperations">
+                <span class="tab-icon">⚙️</span>
+                <span>Operations</span>
+            </button>
+        </div>
+        <!-- Tab Content -->
+        <div class="ai-modal-body" id="aiContent">
+            <div class="ai-loading">
+                <div class="spinner"></div>
+                <p>Click to generate AI insights...</p>
+            </div>
+        </div>
+    </div>
+</div>
 
 <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
 <script>
@@ -1270,39 +1601,68 @@
     });
 
     // ✅ AI Analytics - auto-load on page open
-    function renderAIContent(data) {
-        const sections = [
-            { key: 'overview', icon: '📋', title: 'Overview', cssClass: 'ai-section-overview' },
-            { key: 'busiestMonths', icon: '📅', title: 'Busiest Months', cssClass: '' },
-            { key: 'trends', icon: '📈', title: 'Trends', cssClass: '' },
-            { key: 'forecast', icon: '🔮', title: 'Forecast', cssClass: '' },
-            { key: 'processAndOperations', icon: '⚙️', title: 'Process & Operations', cssClass: '' },
-        ];
+    let aiData = null; // Store AI data globally for tab switching
+    
+    const aiSections = [
+        { key: 'overview', icon: '📋', title: 'Overview' },
+        { key: 'busiestMonths', icon: '📅', title: 'Busiest Months' },
+        { key: 'trends', icon: '📈', title: 'Trends' },
+        { key: 'forecast', icon: '🔮', title: 'Forecast' },
+        { key: 'processAndOperations', icon: '⚙️', title: 'Process & Operations' },
+    ];
 
-        let html = '<div class="ai-sections-grid">';
-        sections.forEach(section => {
-            if (data[section.key]) {
-                html += `
-                    <div class="ai-section ${section.cssClass}">
-                        <h6><span class="ai-section-icon">${section.icon}</span> ${section.title}</h6>
-                        <p>${data[section.key]}</p>
+    function renderTabContent(tabKey) {
+        if (!aiData || !aiData[tabKey]) {
+            return `<div class="ai-content-card">
+                <div class="ai-loading">
+                    <p>No data available for this section.</p>
+                </div>
+            </div>`;
+        }
+
+        const section = aiSections.find(s => s.key === tabKey);
+        return `
+            <div class="ai-tab-content active" data-content="${tabKey}">
+                <div class="ai-content-card">
+                    <div class="ai-content-header">
+                        <span class="content-icon">${section.icon}</span>
+                        <h4>${section.title}</h4>
                     </div>
-                `;
-            }
-        });
-        html += '</div>';
+                    <div class="ai-content-text">${aiData[tabKey]}</div>
+                </div>
+            </div>
+        `;
+    }
 
-        document.getElementById('aiContent').innerHTML = html;
+    function renderAIContent(data) {
+        aiData = data;
+        
+        // Render the first tab (overview) by default
+        document.getElementById('aiContent').innerHTML = renderTabContent('overview');
 
         // Update date
         const generatedAt = data.generated_at || data.data_period?.start || '';
         if (generatedAt) {
             const date = new Date(generatedAt);
-            document.getElementById('aiGeneratedDate').textContent = 'Generated: ' + date.toLocaleDateString('en-US', {
-                year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit'
+            document.getElementById('aiGeneratedDate').textContent = date.toLocaleDateString('en-US', {
+                month: 'short', day: 'numeric', year: 'numeric'
             });
         }
     }
+
+    // Tab switching
+    document.getElementById('aiSidebar').addEventListener('click', function(e) {
+        const tabBtn = e.target.closest('.ai-tab-btn');
+        if (!tabBtn || !aiData) return;
+
+        // Update active tab button
+        document.querySelectorAll('.ai-tab-btn').forEach(btn => btn.classList.remove('active'));
+        tabBtn.classList.add('active');
+
+        // Render the selected tab content
+        const tabKey = tabBtn.dataset.tab;
+        document.getElementById('aiContent').innerHTML = renderTabContent(tabKey);
+    });
 
     function loadAIAnalytics() {
         fetch('{{ route("analytics.generateAI") }}')
@@ -1310,8 +1670,12 @@
             .then(result => {
                 if (result.error) {
                     document.getElementById('aiContent').innerHTML = `
-                        <div class="ai-error">
-                            <p>⚠️ ${result.error}</p>
+                        <div class="ai-tab-content active">
+                            <div class="ai-content-card">
+                                <div class="ai-error">
+                                    <p>⚠️ ${result.error}</p>
+                                </div>
+                            </div>
                         </div>
                     `;
                     return;
@@ -1330,8 +1694,8 @@
                                 const genDate = latest.generated_at;
                                 if (genDate) {
                                     const date = new Date(genDate);
-                                    document.getElementById('aiGeneratedDate').textContent = 'Generated: ' + date.toLocaleDateString('en-US', {
-                                        year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit'
+                                    document.getElementById('aiGeneratedDate').textContent = date.toLocaleDateString('en-US', {
+                                        month: 'short', day: 'numeric', year: 'numeric'
                                     });
                                 }
                             }
@@ -1340,14 +1704,68 @@
             })
             .catch(err => {
                 document.getElementById('aiContent').innerHTML = `
-                    <div class="ai-error">
-                        <p>⚠️ Failed to load AI insights. Please try again later.</p>
+                    <div class="ai-tab-content active">
+                        <div class="ai-content-card">
+                            <div class="ai-error">
+                                <p>⚠️ Failed to load AI insights. Please try again later.</p>
+                            </div>
+                        </div>
                     </div>
                 `;
             });
     }
 
-    // Auto-load AI analytics on page open
-    loadAIAnalytics();
+    // Modal functionality
+    const aiFloatingBtn = document.getElementById('aiFloatingBtn');
+    const aiModalOverlay = document.getElementById('aiModalOverlay');
+    const aiModal = document.getElementById('aiModal');
+    const aiModalClose = document.getElementById('aiModalClose');
+    let aiLoaded = false; // Track if AI has been loaded
+
+    function openAIModal() {
+        aiModalOverlay.classList.add('active');
+        aiModal.classList.add('active');
+        document.body.style.overflow = 'hidden';
+        
+        // Reset to first tab
+        document.querySelectorAll('.ai-tab-btn').forEach(btn => btn.classList.remove('active'));
+        document.querySelector('.ai-tab-btn[data-tab="overview"]').classList.add('active');
+        
+        // Only load AI analytics on first open
+        if (!aiLoaded) {
+            aiLoaded = true;
+            document.getElementById('aiContent').innerHTML = `
+                <div class="ai-tab-content active">
+                    <div class="ai-content-card">
+                        <div class="ai-loading">
+                            <div class="spinner"></div>
+                            <p>Generating AI insights...</p>
+                        </div>
+                    </div>
+                </div>
+            `;
+            loadAIAnalytics();
+        } else if (aiData) {
+            // Re-render the overview tab if data exists
+            document.getElementById('aiContent').innerHTML = renderTabContent('overview');
+        }
+    }
+
+    function closeAIModal() {
+        aiModalOverlay.classList.remove('active');
+        aiModal.classList.remove('active');
+        document.body.style.overflow = '';
+    }
+
+    aiFloatingBtn.addEventListener('click', openAIModal);
+    aiModalClose.addEventListener('click', closeAIModal);
+    aiModalOverlay.addEventListener('click', closeAIModal);
+
+    // Close modal on Escape key
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape' && aiModal.classList.contains('active')) {
+            closeAIModal();
+        }
+    });
 </script>
 @endsection

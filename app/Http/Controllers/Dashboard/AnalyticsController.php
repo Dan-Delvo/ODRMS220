@@ -27,8 +27,15 @@ class AnalyticsController extends Controller
             abort(404);
         }
 
-        // Default to current year if no input
-        $startDate = $request->input('start_date') ?? Carbon::now()->startOfYear()->toDateString();
+        // Get the earliest request date from the database for smart defaults
+        $earliestDate = DB::table('doc_requests')->min('request_date');
+        
+        // Default to earliest data date if exists, otherwise current year
+        if (!$request->input('start_date') && $earliestDate) {
+            $startDate = Carbon::parse($earliestDate)->startOfYear()->toDateString();
+        } else {
+            $startDate = $request->input('start_date') ?? Carbon::now()->startOfYear()->toDateString();
+        }
         $endDate = $request->input('end_date') ?? Carbon::now()->endOfYear()->toDateString();
 
         // Ensure dates are properly formatted (handle cases where only a year is passed)
