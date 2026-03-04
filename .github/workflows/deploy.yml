@@ -14,7 +14,10 @@ jobs:
 
       - name: Sync and Update Stack
         run: |
-          # Move new code to the Dockge stack directory
+          
+          sudo chown -R 33:33 /opt/stacks/odrms/storage /opt/stacks/odrms/bootstrap/cache
+          sudo chmod -R 775 /opt/stacks/odrms/storage /opt/stacks/odrms/bootstrap/cache
+          
           sudo rsync -av --exclude='.git' ./ /opt/stacks/odrms/
           
           
