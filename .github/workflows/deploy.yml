@@ -15,11 +15,10 @@ jobs:
       - name: Sync and Update Stack
         run: |
           
-          sudo chown -R 33:33 /opt/stacks/odrms/storage /opt/stacks/odrms/bootstrap/cache
-          sudo chmod -R 775 /opt/stacks/odrms/storage /opt/stacks/odrms/bootstrap/cache
-          
           sudo rsync -av --exclude='.git' ./ /opt/stacks/odrms/
           
+          sudo chown -R 33:33 /opt/stacks/odrms/storage /opt/stacks/odrms/bootstrap/cache
+          sudo chmod -R 775 /opt/stacks/odrms/storage /opt/stacks/odrms/bootstrap/cache
           
           cd /opt/stacks/odrms
           docker compose up -d
