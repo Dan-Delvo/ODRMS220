@@ -1,0 +1,41 @@
+name: Deploy ODRMS to Laptop Server
+
+on:
+  push:
+    branches: [ main ] # Triggered whenever you push to the main branch
+
+jobs:
+  deploy:
+    runs-on: self-hosted  # This tells GitHub to use your ASUS TUF runner
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Sync and Update Stack
+        run: |
+          # Move new code to the Dockge stack directory
+          sudo rsync -av --exclude='.git' ./ /opt/stacks/odrms/
+          
+          
+          cd /opt/stacks/odrms
+          docker compose up -d
+          
+          
+          docker exec odrms_app php artisan config:cache
+          docker exec odrms_app php artisan view:cache
+          docker exec odrms_app php artisan route:cache
+
+      - name: Notify Telegram on Success
+        if: success()
+        run: |
+          curl -s -X POST https://api.telegram.org/bot${{ secrets.TELEGRAM_BOT_TOKEN }}/sendMessage \
+          -d chat_id=${{ secrets.TELEGRAM_CHAT_ID }} \
+          -d text="🚀 ODRMS Deployment Successful! Changes are now live on your ASUS TUF server."
+
+      - name: Notify Telegram on Failure
+        if: failure()
+        run: |
+          curl -s -X POST https://api.telegram.org/bot${{ secrets.TELEGRAM_BOT_TOKEN }}/sendMessage \
+          -d chat_id=${{ secrets.TELEGRAM_CHAT_ID }} \
+          -d text="❌ ODRMS Deployment Failed! Check the GitHub Actions logs."
