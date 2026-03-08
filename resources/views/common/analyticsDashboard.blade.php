@@ -107,6 +107,25 @@
         outline: none;
     }
 
+    .filter-date-input,
+    .filter-year-input {
+        width: 140px;
+        min-width: 120px;
+    }
+
+    @media (min-width: 769px) {
+        .filter-date-input,
+        .filter-year-input {
+            flex: 0 0 auto;
+        }
+    }
+
+    .filter-select {
+        width: auto;
+        border-radius: 8px;
+        border: 1px solid #e2e8f0;
+    }
+
     .btn-filter {
         background: var(--primary-gradient);
         border: none;
@@ -584,6 +603,19 @@
         white-space: nowrap;
     }
 
+    .ai-modal-header-right {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        flex-shrink: 0;
+    }
+
+    .ai-modal-title-text {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
     /* Mobile responsive */
     @media (max-width: 768px) {
         .ai-modal {
@@ -609,11 +641,13 @@
         }
 
         .ai-tab-btn {
+            width: auto;
             padding: 0.75rem 1rem;
             flex-direction: column;
             gap: 0.25rem;
             min-width: max-content;
             font-size: 0.75rem;
+            flex-shrink: 0;
         }
 
         .ai-tab-btn.active::before {
@@ -687,6 +721,360 @@
             justify-content: center;
         }
     }
+
+    /* ========== MOBILE RESPONSIVE STYLES ========== */
+    @media (max-width: 576px) {
+        .container-fluid {
+            padding-left: 0.75rem !important;
+            padding-right: 0.75rem !important;
+        }
+
+        .page-header {
+            padding: 1.25rem;
+            border-radius: 12px;
+            margin-bottom: 1rem;
+        }
+
+        .page-header h1 {
+            font-size: 1.25rem;
+        }
+
+        .breadcrumb {
+            font-size: 0.8rem;
+        }
+
+        .modern-card {
+            border-radius: 12px;
+        }
+
+        .card-header-modern {
+            padding: 1rem;
+        }
+
+        .card-header-modern h5 {
+            font-size: 0.875rem;
+            flex-wrap: wrap;
+        }
+
+        .card-header-modern .icon {
+            width: 28px;
+            height: 28px;
+            font-size: 0.75rem;
+        }
+
+        .card-body-modern {
+            padding: 1rem;
+            padding-top: 0.5rem;
+        }
+
+        /* Filter section mobile fixes */
+        .filter-section {
+            width: 100%;
+        }
+
+        .filter-section .d-flex {
+            flex-direction: column !important;
+            width: 100%;
+            gap: 0.5rem !important;
+        }
+
+        .filter-section input[type="date"],
+        .filter-section input[type="number"],
+        .filter-date-input,
+        .filter-year-input {
+            width: 100% !important;
+            min-width: unset !important;
+        }
+
+        .filter-section .btn-filter,
+        .filter-section .btn-outline-secondary {
+            width: 100%;
+        }
+
+        .filter-select {
+            width: 100% !important;
+            margin-top: 0.5rem;
+        }
+
+        .toggle-switch {
+            width: 100%;
+            justify-content: center;
+            margin-top: 0.5rem;
+        }
+
+        /* Chart containers */
+        .chart-container {
+            min-height: 250px;
+            margin: 0 -0.5rem;
+        }
+
+        #monthlyRequestsChart,
+        #unclaimedChart,
+        #docTypeChart,
+        #modeChart,
+        #gradeLevelChart,
+        #revenueChart {
+            width: 100% !important;
+        }
+
+        .stats-text {
+            font-size: 0.8rem;
+        }
+
+        /* Card header with dropdown flex */
+        .card-header-modern .d-flex.justify-content-between {
+            flex-direction: column;
+            align-items: flex-start !important;
+            gap: 0.75rem;
+        }
+
+        /* Grid row gaps */
+        .row.g-4 {
+            --bs-gutter-y: 1rem;
+        }
+
+        .row.mb-4 {
+            margin-bottom: 1rem !important;
+        }
+
+        /* AI Floating Button */
+        .ai-floating-btn {
+            bottom: 15px;
+            right: 15px;
+            width: 50px;
+            height: 50px;
+        }
+
+        .ai-floating-btn .btn-icon {
+            font-size: 1.25rem;
+        }
+    }
+
+    /* AI Modal Mobile Styles */
+    @media (max-width: 768px) {
+        .ai-modal {
+            width: 100%;
+            height: calc(100% - 60px);
+            max-height: calc(100% - 60px);
+            border-radius: 16px 16px 0 0;
+            max-width: 100%;
+            top: auto;
+            bottom: 0;
+            left: 0;
+            transform: translateY(100%);
+        }
+
+        .ai-modal.active {
+            transform: translateY(0);
+        }
+
+        .ai-modal-header {
+            padding: 0.75rem 1rem;
+            flex-wrap: nowrap;
+            gap: 0.5rem;
+        }
+
+        .ai-modal-header h5 {
+            font-size: 0.85rem;
+            gap: 0.5rem;
+            flex: 1;
+            min-width: 0;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .ai-modal-header-right {
+            flex-shrink: 0;
+            gap: 0.5rem;
+        }
+
+        .ai-modal-header .ai-icon {
+            width: 28px;
+            height: 28px;
+            font-size: 0.75rem;
+            flex-shrink: 0;
+        }
+
+        .ai-modal-date {
+            font-size: 0.6rem;
+            padding: 0.2rem 0.4rem;
+            display: none;
+        }
+
+        .ai-modal-close {
+            width: 36px;
+            height: 36px;
+            font-size: 1.5rem;
+            flex-shrink: 0;
+            min-width: 36px;
+        }
+
+        .ai-modal-content {
+            flex-direction: column;
+            flex: 1;
+            overflow: hidden;
+        }
+
+        .ai-modal-sidebar {
+            width: 100%;
+            border-right: none;
+            border-bottom: 1px solid #e2e8f0;
+            padding: 0.5rem;
+            display: flex;
+            overflow-x: auto;
+            overflow-y: hidden;
+            flex-shrink: 0;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+        }
+
+        .ai-modal-sidebar::-webkit-scrollbar {
+            display: none;
+        }
+
+        .ai-tab-btn {
+            width: auto;
+            padding: 0.6rem 0.75rem;
+            flex-direction: column;
+            gap: 0.2rem;
+            min-width: max-content;
+            font-size: 0.7rem;
+            flex-shrink: 0;
+        }
+
+        .ai-tab-btn .tab-icon {
+            font-size: 1rem;
+        }
+
+        .ai-tab-btn.active::before {
+            display: none;
+        }
+
+        .ai-tab-btn.active {
+            background: var(--primary-gradient);
+            color: white;
+            border-radius: 8px;
+        }
+
+        .ai-modal-body {
+            flex: 1;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .ai-tab-content {
+            padding: 1rem;
+            height: auto;
+            min-height: 100%;
+        }
+
+        .ai-content-card {
+            padding: 1rem;
+            border-radius: 12px;
+            height: auto;
+            overflow: visible;
+        }
+
+        .ai-content-header {
+            margin-bottom: 1rem;
+            padding-bottom: 0.75rem;
+        }
+
+        .ai-content-header .content-icon {
+            width: 34px;
+            height: 34px;
+            font-size: 1rem;
+        }
+
+        .ai-content-header h4 {
+            font-size: 1rem;
+        }
+
+        .ai-content-text {
+            font-size: 0.85rem;
+            line-height: 1.75;
+        }
+
+        .ai-loading {
+            min-height: 200px;
+            padding: 2rem 1rem;
+        }
+
+        .ai-loading .spinner {
+            width: 30px;
+            height: 30px;
+        }
+    }
+
+    /* Extra small mobile screens */
+    @media (max-width: 400px) {
+        .ai-modal-header h5 {
+            font-size: 0.75rem;
+        }
+
+        .ai-modal-header .ai-icon {
+            width: 24px;
+            height: 24px;
+            font-size: 0.7rem;
+        }
+
+        .ai-modal-close {
+            width: 32px;
+            height: 32px;
+            min-width: 32px;
+            font-size: 1.25rem;
+        }
+
+        .ai-tab-btn {
+            padding: 0.5rem 0.6rem;
+            font-size: 0.65rem;
+        }
+
+        .ai-tab-btn .tab-icon {
+            font-size: 0.9rem;
+        }
+
+        .ai-content-header h4 {
+            font-size: 0.9rem;
+        }
+
+        .ai-content-text {
+            font-size: 0.8rem;
+            line-height: 1.7;
+        }
+    }
+
+    /* Extra small devices - general */
+    @media (max-width: 400px) {
+        .page-header h1 {
+            font-size: 1.1rem;
+        }
+
+        .card-header-modern h5 {
+            font-size: 0.8rem;
+        }
+    }
+
+    /* Prevent horizontal overflow globally */
+    html, body {
+        overflow-x: hidden;
+        max-width: 100vw;
+    }
+
+    .container-fluid {
+        overflow-x: hidden;
+    }
+
+    /* ApexCharts responsive fix */
+    .apexcharts-canvas {
+        max-width: 100% !important;
+    }
+
+    .apexcharts-svg {
+        max-width: 100% !important;
+    }
 </style>
 
 <div class="container-fluid px-4 py-4">
@@ -710,14 +1098,14 @@
                             <span id="mainChartTitle">Monthly Document Requests</span>
                         </h5>
                         <div class="filter-section">
-                            <div class="d-flex align-items-center gap-2 flex-wrap">
-                                <input type="date" id="mainStartDate" name="start_date" value="{{ $startDate }}" class="form-control form-control-sm" style="width: 140px; min-width: 120px;">
-                                <input type="date" id="mainEndDate" name="end_date" value="{{ $endDate }}" class="form-control form-control-sm" style="width: 140px; min-width: 120px;">
-                                <input type="number" id="mainStartYear" placeholder="Start Year" class="form-control form-control-sm" style="width: 120px; min-width: 100px; display: none;" min="2000" max="2100">
-                                <input type="number" id="mainEndYear" placeholder="End Year" class="form-control form-control-sm" style="width: 120px; min-width: 100px; display: none;" min="2000" max="2100">
+                            <div class="d-flex align-items-center gap-2 flex-wrap w-100">
+                                <input type="date" id="mainStartDate" name="start_date" value="{{ $startDate }}" class="form-control form-control-sm filter-date-input">
+                                <input type="date" id="mainEndDate" name="end_date" value="{{ $endDate }}" class="form-control form-control-sm filter-date-input">
+                                <input type="number" id="mainStartYear" placeholder="Start Year" class="form-control form-control-sm filter-year-input" style="display: none;" min="2000" max="2100">
+                                <input type="number" id="mainEndYear" placeholder="End Year" class="form-control form-control-sm filter-year-input" style="display: none;" min="2000" max="2100">
                                 <button type="button" id="mainFilterBtn" class="btn btn-filter btn-sm">Filter</button>
                                 <button type="button" id="mainResetBtn" class="btn btn-outline-secondary btn-sm" style="border-radius: 8px;">Reset</button>
-                                <div class="toggle-switch mt-2">
+                                <div class="toggle-switch mt-2 mt-md-0">
                                     <span class="small text-muted">Monthly</span>
                                     <label class="switch mb-0">
                                         <input type="checkbox" id="toggleYearly">
@@ -752,12 +1140,12 @@
                         Unclaimed Documents
                     </h5>
                     <div class="filter-section">
-                        <div class="d-flex align-items-center gap-2 flex-wrap">
-                            <input type="date" id="unclaimedStartDate" class="form-control form-control-sm" style="width: 140px;">
-                            <input type="date" id="unclaimedEndDate" class="form-control form-control-sm" style="width: 140px;">
+                        <div class="d-flex align-items-center gap-2 flex-wrap w-100">
+                            <input type="date" id="unclaimedStartDate" class="form-control form-control-sm filter-date-input">
+                            <input type="date" id="unclaimedEndDate" class="form-control form-control-sm filter-date-input">
                             <button type="button" id="unclaimedFilterBtn" class="btn btn-filter btn-sm">Filter</button>
                             <button type="button" id="unclaimedResetBtn" class="btn btn-outline-secondary btn-sm" style="border-radius: 8px;">Reset</button>
-                            <div class="toggle-switch">
+                            <div class="toggle-switch mt-2 mt-md-0">
                                 <span class="small text-muted">Monthly</span>
                                 <label class="switch mb-0">
                                     <input type="checkbox" id="toggleUnclaimedYearly">
@@ -785,7 +1173,7 @@
                             <span class="icon">📄</span>
                             Request by Document Type
                         </h5>
-                        <select id="docTypeFilter" class="form-select form-select-sm" style="width: auto; border-radius: 8px; border: 1px solid #e2e8f0;">
+                        <select id="docTypeFilter" class="form-select form-select-sm filter-select">
                             <option value="all">All Types</option>
                         </select>
                     </div>
@@ -803,7 +1191,7 @@
                             <span class="icon">🌐</span>
                             Request Mode
                         </h5>
-                        <select id="requestModeFilter" class="form-select form-select-sm" style="width: auto; border-radius: 8px; border: 1px solid #e2e8f0;">
+                        <select id="requestModeFilter" class="form-select form-select-sm filter-select">
                             <option value="all">All Types</option>
                         </select>
                     </div>
@@ -825,7 +1213,7 @@
                             <span class="icon">🎓</span>
                             Grade Level Distribution
                         </h5>
-                        <select id="gradeLevelFilter" class="form-select form-select-sm" style="width: auto; border-radius: 8px; border: 1px solid #e2e8f0;">
+                        <select id="gradeLevelFilter" class="form-select form-select-sm filter-select">
                             <option value="all">All Types</option>
                         </select>
                     </div>
@@ -869,9 +1257,9 @@
     <div class="ai-modal-header">
         <h5>
             <span class="ai-icon">🤖</span>
-            AI Analytics Insights
+            <span class="ai-modal-title-text">AI Analytics Insights</span>
         </h5>
-        <div style="display: flex; align-items: center; gap: 1rem;">
+        <div class="ai-modal-header-right">
             <span class="ai-modal-date" id="aiGeneratedDate">Click to generate</span>
             <button class="ai-modal-close" id="aiModalClose">&times;</button>
         </div>
@@ -1023,7 +1411,23 @@
                 tickAmount: undefined,
                 forceNiceScale: true,
                 decimalsInFloat: 0
-            }
+            },
+            responsive: [{
+                breakpoint: 576,
+                options: {
+                    chart: {
+                        height: 250,
+                        toolbar: { show: false }
+                    },
+                    xaxis: {
+                        labels: {
+                            rotate: -45,
+                            style: { fontSize: '10px' }
+                        }
+                    },
+                    dataLabels: { enabled: false }
+                }
+            }]
         };
 
         if (monthlyRequestsChart) {
@@ -1207,7 +1611,14 @@
                     fontSize: '14px',
                     colors: ['#fff']
                 }
-            }
+            },
+            responsive: [{
+                breakpoint: 576,
+                options: {
+                    chart: { height: 250 },
+                    legend: { position: 'bottom', fontSize: '11px' }
+                }
+            }]
         };
 
         // Destroy existing chart and create new one
@@ -1287,7 +1698,14 @@
                     fontSize: '14px',
                     colors: ['#fff']
                 }
-            }
+            },
+            responsive: [{
+                breakpoint: 576,
+                options: {
+                    chart: { height: 250 },
+                    legend: { position: 'bottom', fontSize: '11px' }
+                }
+            }]
         };
 
         // Destroy existing chart and create new one
@@ -1362,7 +1780,15 @@
             title: {
                 text: 'Requests by Grade Level',
                 align: 'center'
-            }
+            },
+            responsive: [{
+                breakpoint: 576,
+                options: {
+                    chart: { height: 250, toolbar: { show: false } },
+                    xaxis: { labels: { rotate: -45, style: { fontSize: '10px' } } },
+                    dataLabels: { enabled: false }
+                }
+            }]
         };
 
         // Destroy existing chart and create new one
@@ -1442,6 +1868,19 @@
                 title: {
                     style: {
                         fontSize: '14px'
+                    }
+                }
+            }
+        }, {
+            breakpoint: 576,
+            options: {
+                chart: {
+                    height: 220
+                },
+                xaxis: {
+                    labels: {
+                        rotate: -45,
+                        style: { fontSize: '10px' }
                     }
                 }
             }
@@ -1540,7 +1979,15 @@
             title: {
                 text: 'Unclaimed Documents',
                 align: 'center'
-            }
+            },
+            responsive: [{
+                breakpoint: 576,
+                options: {
+                    chart: { height: 220, toolbar: { show: false } },
+                    xaxis: { labels: { rotate: -45, style: { fontSize: '10px' } } },
+                    dataLabels: { enabled: false }
+                }
+            }]
         };
 
         // Destroy existing chart and create new one
