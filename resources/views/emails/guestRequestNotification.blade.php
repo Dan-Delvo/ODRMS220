@@ -110,7 +110,7 @@
                 <li>Your request is now being processed by our team</li>
                 <li>The student/requestor will be notified when the document is ready</li>
                 <li>Please bring a valid ID when claiming the document</li>
-                <li>For status updates, please contact the school office directly</li>
+                <li>You will receive email updates as your request status changes</li>
             </ul>
 
             <p>If you have any questions or concerns, please contact our office.</p>

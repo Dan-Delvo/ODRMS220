@@ -4,20 +4,42 @@ namespace App\Service\requests;
 
 use App\Mail\RequestApprovedMail;
 use App\Models\DocumentRequestModel;
+use App\Models\Guest;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 
 class Pending
 {
+    private function resolveRecipient(DocumentRequestModel $documentRequest): array
+    {
+        $account = $documentRequest->account;
+        $stud = $documentRequest->studentInformation;
+        $guest = Guest::where('doc_request_id', $documentRequest->id)->first();
+
+        $isGuestRequest = !is_null($guest);
+
+        if ($isGuestRequest) {
+            $email = $guest->email_address ?? 'nubzman123@gmail.com';
+            $name = $stud->full_name ?? $guest->name ?? 'Guest';
+        } else {
+            $email = $account->email_address ?? 'nubzman123@gmail.com';
+            $name = $stud->full_name ?? 'Guest';
+        }
+
+        return [
+            'email' => $email,
+            'name' => $name,
+            'is_guest' => $isGuestRequest,
+        ];
+    }
 
     public function decline($request, $id) {
         $documentRequest = DocumentRequestModel::findOrFail($id);
-        $account = $documentRequest->account;
-        $stud = $documentRequest->studentInformation;
+        $recipient = $this->resolveRecipient($documentRequest);
 
-        $email = $account->email_address ?? 'nubzman123@gmail.com';
-        $name = $stud->full_name;
+        $email = $recipient['email'];
+        $name = $recipient['name'];
         $subject = 'Your Request is Declined!';
         $reason = $request->remarks;
 
@@ -35,11 +57,10 @@ class Pending
 
     public function complete($id){
         $documentRequest = DocumentRequestModel::findOrFail($id);
-        $account = $documentRequest->account;
-        $stud = $documentRequest->studentInformation;
+        $recipient = $this->resolveRecipient($documentRequest);
 
-        $email = $account->email_address ?? 'nubzman123@gmail.com';
-        $name = $stud->full_name;
+        $email = $recipient['email'];
+        $name = $recipient['name'];
         $subject = 'Your Request is Approved!';
         $view = 'emails.toOngoing';
 
