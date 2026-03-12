@@ -22,7 +22,7 @@ A comprehensive document/records management system designed for modern organizat
 
 ## 🔍 Overview
 
-ODRMS is a robust online document and records management system that provides organizations with efficient tools for document storage, retrieval, and management. The system offers secure access controls, version management, and comprehensive audit trails.
+ODRMS is a robust online document and records management system that provides organizations with efficient tools for document storage, retrieval, and management. The system offers secure access controls, version management, and comprehensive audit trails. s
 
 <p align="center">
   <img src="https://laravel.com/img/logomark.min.svg" alt="Laravel Logo" width="100"/>
