@@ -243,7 +243,7 @@
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
             </div>
             <form id="revertForm" action="{{ route('tables.revert', '') }}" method="POST"
-                data-swal-loading="true" data-swal-title="Reverting Request to Processing"
+                data-swal-loading="true" data-swal-skip="true" data-swal-title="Reverting Request to Processing"
                 data-swal-text="This may take a few seconds...">
                 @csrf
                 @method('PUT')
@@ -852,13 +852,24 @@
                 },
                 body: formData
             })
-            .then(response => response.json())
+            .then(async response => {
+                const contentType = response.headers.get('content-type') || '';
+                const data = contentType.includes('application/json')
+                    ? await response.json()
+                    : null;
+
+                if (!response.ok) {
+                    throw new Error(data?.message || `Server returned an unexpected response (${response.status}).`);
+                }
+
+                return data;
+            })
             .then(data => {
-                if (data.success) {
+                if (data?.success) {
                     // Reload immediately - success message will show after page loads
                     window.location.reload();
                 } else {
-                    throw new Error(data.message || 'Failed to revert document');
+                    throw new Error(data?.message || 'Failed to revert document');
                 }
             })
             .catch(error => {
@@ -873,6 +884,23 @@
                 ? '<span class="spinner-border spinner-border-sm me-1"></span>Reverting...'
                 : '<i class="fas fa-undo me-1"></i>Revert to Processing';
             revertReason.disabled = isLoading;
+
+            if (typeof Swal === 'undefined') {
+                return;
+            }
+
+            if (isLoading) {
+                Swal.fire({
+                    title: revertForm.dataset.swalTitle,
+                    html: revertForm.dataset.swalText,
+                    allowOutsideClick: false,
+                    allowEscapeKey: false,
+                    showConfirmButton: false,
+                    didOpen: () => Swal.showLoading()
+                });
+            } else {
+                Swal.close();
+            }
         }
 
         function showRevertErrorModal(message) {

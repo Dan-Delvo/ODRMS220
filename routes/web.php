@@ -108,7 +108,7 @@ Route::group(['middleware' => 'useradmin'], function () {
         Route::prefix('tables')->group(function() {
             Route::put('/completeRequest/{id}', [DocumentRequestController::class, 'completeRequest'])
                 ->name('document-request3.complete');
-            Route::put('/tables/revert/{id}', [DocumentRequestController::class, 'revertToProcessing'])
+            Route::put('/revert/{id}', [DocumentRequestController::class, 'revertToProcessing'])
                 ->name('tables.revert');
         });
 
