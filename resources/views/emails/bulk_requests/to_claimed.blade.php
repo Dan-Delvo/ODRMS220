@@ -99,20 +99,6 @@
             padding: 10px 0;
             color: #555;
         }
-        .cta-button {
-            display: inline-block;
-            background-color: #1dd3b0;
-            color: #ffffff;
-            text-decoration: none;
-            padding: 12px 30px;
-            border-radius: 5px;
-            font-weight: 600;
-            margin: 20px 0;
-            text-align: center;
-        }
-        .cta-button:hover {
-            background-color: #1abc9c;
-        }
         .footer {
             background-color: #1f2937;
             color: #ffffff;

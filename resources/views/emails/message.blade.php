@@ -1,92 +1,16 @@
-<!DOCTYPE html>
-<html lang="en">
+@php
+    $emailTitle = 'Password Reset Code';
+    $eyebrow = 'Security Notice';
+    $accent = '#4f46e5';
+@endphp
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Verify OTP</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f9;
-            margin: 0;
-            padding: 0;
-        }
+@extends('emails.layout')
 
-        .email-container {
-            max-width: 600px;
-            margin: 30px auto;
-            background-color: #ffffff;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            overflow: hidden;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-        }
-
-        .email-header {
-            background-color: #6777ef;
-            color: #ffffff;
-            text-align: center;
-            padding: 20px;
-        }
-
-        .email-header h1 {
-            margin: 0;
-            font-size: 24px;
-        }
-
-        .email-body {
-            padding: 20px;
-            color: #333333;
-            line-height: 1.6;
-        }
-
-        .email-body a {
-            color: #6777ef;
-            text-decoration: none;
-            font-weight: bold;
-        }
-
-        .email-footer {
-            background-color: #f4f4f9;
-            text-align: center;
-            padding: 10px;
-            font-size: 12px;
-            color: #777777;
-        }
-    </style>
-</head>
-
-<body>
-    <div class="email-container">
-        <div class="email-header">
-            <h1>Requesting Password Reset</h1>
-        </div>
-        <div class="email-body">
-            <p>NEVER SHARE YOUR OTP especially on
-                social media and SMS or email links. ODRMS
-                will only need your OTP when using the
-                ODRMS Web App. Your OTP to link your email is <bold>{{$name}}</bold>.
-                If this was not you, please ignore.
-            </p>
-            <p style="text-align: center; margin-top: 20px;">
-                <a href="https://popberry.site/" style="
-                    display: inline-block;
-                    padding: 10px 20px;
-                    background-color: #6777ef;
-                    color: #ffffff;
-                    border-radius: 4px;
-                    text-decoration: none;
-                    font-size: 16px;
-                ">
-                    <bold>{{$name}}</bold>
-                </a>
-            </p>
-        </div>
-        <div class="email-footer">
-            <p>&copy; {{ date('Y') }} ODRMS. All rights reserved.</p>
-        </div>
+@section('content')
+    <p style="margin:0 0 16px;">Use the verification code below to continue your password reset:</p>
+    <div style="margin:24px 0; padding:20px; background:#eef2ff; border:1px solid #c7d2fe; border-radius:10px; color:#312e81; font-size:30px; font-weight:700; letter-spacing:8px; text-align:center;">
+        {{ $name }}
     </div>
-</body>
-
-</html>
+    <p style="margin:0 0 12px;"><strong>Never share this code.</strong> ODRMS will only ask for it inside the official web application.</p>
+    <p style="margin:0;">If you did not request a password reset, you can safely ignore this email.</p>
+@endsection

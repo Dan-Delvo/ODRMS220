@@ -1,45 +1,22 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <meta charset="UTF-8">
-    <title>Temporary Password Notification</title>
-</head>
-<body style="font-family: Arial, sans-serif; background-color: #f8f9fa; padding: 20px; color: #333;">
-    <div style="max-width: 600px; margin: auto; background: #ffffff; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); padding: 20px;">
+@php
+    $emailTitle = 'Temporary Login Details';
+    $eyebrow = 'Account Created';
+    $accent = '#2563eb';
+@endphp
 
-        <h2 style="color: #007bff; text-align: center;">🔐 Temporary Login Details</h2>
+@extends('emails.layout')
 
-        <p>Hello <strong>{{ $name }}</strong>,</p>
-
-        <p>We’ve created a temporary password for your account. Please use the details below to log in and make sure to change your password right away for security purposes:</p>
-
-        <div style="background: #f1f3f5; padding: 15px; border-radius: 6px; font-size: 15px;">
-            <p><strong>Email Address:</strong> {{ $email }}</p>
-            <p><strong>Temporary Password:</strong> {{ $tempPassword }}</p>
-        </div>
-
-        <p style="margin-top: 20px;">For your security:</p>
-        <ul>
-            <li>Log in as soon as possible.</li>
-            <li>Change your password immediately after logging in.</li>
-            <li>Do not share your login details with anyone.</li>
-        </ul>
-
-        <!-- Login Button -->
-        <div style="text-align: center; margin-top: 25px;">
-            <a href="https://popberry.site/"
-               style="background-color: #007bff; color: #ffffff; padding: 12px 25px; text-decoration: none; border-radius: 5px; font-size: 16px;">
-                🔑 Login to Your Account
-            </a>
-        </div>
-
-        <p style="margin-top: 20px; text-align: center; font-size: 14px; color: #777;">
-            If the button doesn’t work, copy and paste this link into your browser:<br>
-            <a href="https://popberry.site/" style="color: #007bff;">https://popberry.site/</a>
-        </p>
-
-        <p>Thank you,<br>
-        <strong>Your System Administrator</strong></p>
+@section('content')
+    <p style="margin:0 0 16px;">Hello <strong>{{ $name }}</strong>,</p>
+    <p style="margin:0 0 16px;">A temporary password was created for your account. Use these details to sign in, then change your password immediately.</p>
+    <div style="margin:22px 0; padding:16px 18px; background:#eff6ff; border-left:4px solid {{ $accent }}; border-radius:8px;">
+        <p style="margin:0 0 8px;"><strong>Email address:</strong> {{ $email }}</p>
+        <p style="margin:0;"><strong>Temporary password:</strong> {{ $tempPassword }}</p>
     </div>
-</body>
-</html>
+    <p style="margin:0 0 12px;"><strong>For your security:</strong></p>
+    <ul style="margin:0; padding-left:20px;">
+        <li>Sign in as soon as possible.</li>
+        <li>Change the temporary password immediately.</li>
+        <li>Do not share your login details.</li>
+    </ul>
+@endsection

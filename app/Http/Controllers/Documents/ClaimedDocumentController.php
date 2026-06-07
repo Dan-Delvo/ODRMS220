@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
 use App\Models\ClaimerModel;
 use App\Models\DocumentsModel;
+use App\Service\requests\RevertEmailNotification;
 
 class ClaimedDocumentController extends Controller
 {
@@ -206,15 +207,30 @@ class ClaimedDocumentController extends Controller
                 'remarks' => $request->revert_reason,
             ]);
 
+            $emailStatus = app(RevertEmailNotification::class)->send(
+                $documentRequest,
+                'For Release',
+                $request->revert_reason
+            );
+            $emailSent = $emailStatus === 'sent';
+            $notificationMessage = match ($emailStatus) {
+                'sent' => 'Document has been reverted to For Release and the notification email was sent.',
+                default => 'Document has been reverted to For Release, but the notification email could not be delivered.',
+            };
+
             if ($request->expectsJson()) {
                 return response()->json([
                     'success' => true,
-                    'message' => 'Document has been successfully reverted to For Release status.',
+                    'message' => $notificationMessage,
+                    'email_sent' => $emailSent,
                     'redirect' => route('claimed-documents.index')
                 ]);
             }
 
-            return redirect('/claimed-documents')->with('Status', 'Document reverted to For Release successfully');
+            return redirect('/claimed-documents')->with(
+                $emailSent ? 'Status' : 'Warning',
+                $notificationMessage
+            );
 
         } catch (\Illuminate\Validation\ValidationException $e) {
             Log::error('Validation error in revertToForRelease: ' . json_encode($e->errors()));

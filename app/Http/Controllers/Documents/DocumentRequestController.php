@@ -16,6 +16,7 @@ use App\Models\DocumentsModel;
 use App\Models\DocuPaymentFee;
 use App\Models\Guest;
 use App\Service\AuditTrailLogger;
+use App\Service\requests\RevertEmailNotification;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\DB;
@@ -334,15 +335,30 @@ class DocumentRequestController extends Controller
                 'remarks' => $request->revert_reason,
             ]);
 
+            $emailStatus = app(RevertEmailNotification::class)->send(
+                $documentRequest,
+                'Processing',
+                $request->revert_reason
+            );
+            $emailSent = $emailStatus === 'sent';
+            $notificationMessage = match ($emailStatus) {
+                'sent' => 'Document has been reverted to Processing and the notification email was sent.',
+                default => 'Document has been reverted to Processing, but the notification email could not be delivered.',
+            };
+
             if ($request->expectsJson()) {
                 return response()->json([
                     'success' => true,
-                    'message' => 'Document has been successfully reverted to Processing status.',
+                    'message' => $notificationMessage,
+                    'email_sent' => $emailSent,
                     'redirect' => route('tables.index')
                 ]);
             }
 
-            return redirect('/tables')->with('Status', 'Document reverted to Processing successfully');
+            return redirect('/tables')->with(
+                $emailSent ? 'Status' : 'Warning',
+                $notificationMessage
+            );
 
         } catch (\Illuminate\Validation\ValidationException $e) {
             Log::error('Validation error in revertToProcessing: ' . json_encode($e->errors()));

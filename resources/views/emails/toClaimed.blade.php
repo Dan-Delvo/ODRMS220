@@ -1,71 +1,16 @@
-<!DOCTYPE html>
-<html lang="en">
+@php
+    $emailTitle = 'Document Successfully Claimed';
+    $eyebrow = 'Request Completed';
+    $accent = '#15803d';
+@endphp
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ $subject }}</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f9f9f9;
-            margin: 0;
-            padding: 0;
-        }
+@extends('emails.layout')
 
-        .email-container {
-            max-width: 600px;
-            margin: 30px auto;
-            background-color: #ffffff;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            overflow: hidden;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-        }
-
-        .email-header {
-            background-color: #28a745;
-            color: #ffffff;
-            text-align: center;
-            padding: 20px;
-        }
-
-        .email-header h1 {
-            margin: 0;
-            font-size: 24px;
-        }
-
-        .email-body {
-            padding: 20px;
-            color: #333333;
-            line-height: 1.6;
-        }
-
-        .email-footer {
-            background-color: #f9f9f9;
-            text-align: center;
-            padding: 10px;
-            font-size: 12px;
-            color: #777777;
-        }
-    </style>
-</head>
-
-<body>
-    <div class="email-container">
-        <div class="email-header">
-            <h1>Document Successfully Claimed</h1>
-        </div>
-        <div class="email-body">
-            <p>Hello <strong>{{ $name }}</strong>,</p>
-            <p>We’re happy to inform you that your requested document has been successfully claimed.</p>
-            <p>If you have any further requests or need additional documents, feel free to reach out through the system or contact the registrar’s office.</p>
-            <p>Thank you for using the Online Document Request Management System (ODRMS).</p>
-        </div>
-        <div class="email-footer">
-            <p>&copy; {{ date('Y') }} ODRMS. All rights reserved.</p>
-        </div>
+@section('content')
+    <p style="margin:0 0 16px;">Hello <strong>{{ $name }}</strong>,</p>
+    <p style="margin:0 0 16px;">This confirms that your requested document has been successfully claimed.</p>
+    <div style="margin:22px 0; padding:16px 18px; background:#f0fdf4; border-left:4px solid {{ $accent }}; border-radius:8px;">
+        Your request is now complete.
     </div>
-</body>
-
-</html>
+    <p style="margin:0;">Thank you for using the Online Document Request Management System.</p>
+@endsection

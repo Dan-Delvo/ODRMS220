@@ -38,7 +38,7 @@ class RequestStatus extends Notification
      */
     public function toMail(object $notifiable): MailMessage
     {
-        Log::info('Sending mail to: ascascas' . $this->email);
+        Log::info('Sending request status email', ['email' => $this->email]);
 
         // Mail::raw('This is a test email from the notification.', function ($message) {
         //     $message->to($this->email)
@@ -47,11 +47,11 @@ class RequestStatus extends Notification
         // });
 
         return (new MailMessage)
-            ->subject('Testing')
-                    ->line('The introduction to the notification.')
-                    ->line('Hello ' . $this->name)
-                    ->action('Notification Action', url('/'))
-                    ->line('Thank you for using our application!');
+            ->subject('Document Request Status Update')
+            ->greeting('Hello ' . $this->name)
+            ->line('The status of your document request has been updated.')
+            ->line('Please contact the registrar\'s office if you need assistance.')
+            ->salutation('Online Document Request Management System');
 
     }
 

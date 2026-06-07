@@ -573,10 +573,10 @@
                 relationshipInput.required = true;
                 relationshipLabel.classList.add('required-label');
 
-                // Make email optional
-                emailInput.required = false;
+                  // Email is optional for guest requests
+                  emailInput.required = false;
                 emailLabel.classList.remove('required-label');
-                emailHelpText.textContent = 'Optional for guest requests';
+                emailHelpText.textContent = 'Optional for guest requests; provide one to receive status notifications';
             }
 
             requestingCheckbox.addEventListener('change', function() {
@@ -589,10 +589,10 @@
                     relationshipLabel.classList.add('required-label');
                     relationshipInput.focus();
 
-                    // Make email optional
-                    emailInput.required = false;
+                      // Email is optional for guest requests
+                      emailInput.required = false;
                     emailLabel.classList.remove('required-label');
-                    emailHelpText.textContent = 'Optional for guest requests';
+                    emailHelpText.textContent = 'Optional for guest requests; provide one to receive status notifications';
                     emailInput.classList.remove('is-invalid');
                 } else {
                     // SELF REQUEST MODE
