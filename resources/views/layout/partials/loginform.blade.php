@@ -243,8 +243,15 @@
             'X-Requested-With': 'XMLHttpRequest',
             'Accept': 'application/json'
           },
-          credentials: 'same-origin'
+          credentials: 'same-origin',
+          cache: 'no-store'
         });
+
+        if (response.status === 419) {
+          showError('Your login session expired. Refreshing the page...');
+          setTimeout(() => window.location.reload(), 1200);
+          return;
+        }
 
         const data = await response.json();
 

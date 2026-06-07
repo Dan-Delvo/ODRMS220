@@ -173,12 +173,6 @@
     </script>
 
     <script>
-    // Force refresh once when page is loaded
-    if (!sessionStorage.getItem('pageRefreshed')) {
-        sessionStorage.setItem('pageRefreshed', 'true');
-        location.reload();
-    }
-
         document.querySelectorAll('form').forEach(form => {
             form.setAttribute('autocomplete', 'off');
         });

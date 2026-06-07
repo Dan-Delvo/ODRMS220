@@ -1,12 +1,11 @@
 // Import OneSignal's service worker SDK
 importScripts('https://cdn.onesignal.com/sdks/OneSignalSDKWorker.js');
 
-// Cache name and files to cache for offline functionality
-const CACHE_NAME = 'offline-v1';
+// Cache only public, session-independent assets. Dynamic pages can contain
+// session-specific CSRF tokens and must always come from the network.
+const CACHE_NAME = 'offline-v2';
 const filesToCache = [
-    '/',
     '/offline.html'
-
 ];
 
 // Preload the files for caching
@@ -19,53 +18,23 @@ const preLoad = function () {
 
 // Install event for caching resources
 self.addEventListener("install", function (event) {
-    event.waitUntil(preLoad());
+    event.waitUntil(
+        preLoad().then(function () {
+            return self.skipWaiting();
+        })
+    );
 });
 
-// Check if the response is available from the network
-const checkResponse = function (request) {
-    return new Promise(function (fulfill, reject) {
-        fetch(request).then(function (response) {
-            if (response.status !== 404) {
-                fulfill(response);
-            } else {
-                reject();
-            }
-        }, reject);
-    });
-};
-
-// Add successful responses to the cache
-const addToCache = function (request) {
-    return caches.open(CACHE_NAME).then(function (cache) {
-        return fetch(request).then(function (response) {
-            return cache.put(request, response);
-        });
-    });
-};
-
-// Return the cached response or fallback to offline.html
-const returnFromCache = function (request) {
-    return caches.open(CACHE_NAME).then(function (cache) {
-        return cache.match(request).then(function (matching) {
-            if (!matching || matching.status === 404) {
-                return cache.match("offline.html");
-            } else {
-                return matching;
-            }
-        });
-    });
-};
-
-// Fetch event listener to handle network requests and fallback to cache
+// Use the offline page only when a navigation request cannot reach the server.
+// Other requests pass through untouched so authenticated responses and CSRF
+// tokens are never persisted by the service worker.
 self.addEventListener("fetch", function (event) {
-    event.respondWith(checkResponse(event.request).catch(function () {
-        return returnFromCache(event.request);
-    }));
-
-    // Cache all HTTP requests except offline.html
-    if (event.request.url.startsWith('http') && !event.request.url.includes('offline.html')) {
-        event.waitUntil(addToCache(event.request));
+    if (event.request.mode === 'navigate') {
+        event.respondWith(
+            fetch(event.request).catch(function () {
+                return caches.match('/offline.html');
+            })
+        );
     }
 });
 
@@ -81,6 +50,8 @@ self.addEventListener('activate', function(event) {
                     }
                 })
             );
+        }).then(function () {
+            return self.clients.claim();
         })
     );
 });
